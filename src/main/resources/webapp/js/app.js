@@ -1,0 +1,45 @@
+'use strict';
+
+/* App Module */
+
+var soaRepApp = angular.module('SoaRepApp', [
+  'ngRoute',
+  'soaRepAnimations',
+
+  'soaRepDirectives',
+  'soaRepControllers',
+  'soaRepFilters',
+  'soaRepServices'
+]);
+
+soaRepApp.config(['$routeProvider',
+  function($routeProvider) {
+    $routeProvider.
+      when('/services', {
+        templateUrl: 'partials/service-list.html',
+        controller: 'ServiceListCtrl'
+      }).
+      when('/services/:serviceId', {
+        templateUrl: 'partials/service-detail.html',
+        controller: 'ServiceDetailCtrl'
+      }).
+       when('/createService', {
+        templateUrl: 'partials/service-create.html',
+        controller: 'ServiceCreateCtrl'
+      }).
+       when('/editService/:serviceId', {
+        templateUrl: 'partials/service-edit.html',
+        controller: 'ServiceEditCtrl'
+      }).
+       when('/graphService', {
+        templateUrl: 'partials/service-graph.html',
+        controller: 'ServiceGraphCtrl'
+      }).
+       when('/help', {
+        templateUrl: 'partials/service-help.html',
+        controller: 'ServiceHelpCtrl'
+      }).
+      otherwise({
+        redirectTo: '/services'
+      });
+  }]);

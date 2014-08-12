@@ -1,0 +1,38 @@
+<h1>Service</h1>
+<h3>Service</h3>
+<dl class="dl-horizontal">
+  <dt>Abbreviation</dt><dd>Short name for the service, max 8 characters.</dd>
+  <dt>Name</dt><dd>The service's full name, max 30 characters.</dd>
+  <dt>Team Name</dt><dd>The team that owns the service, max 30 characters.</dd>
+  <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service, max 30 characters.</dd>
+  <dt>Access</dt><dd>If the service is externally accessible or only offered internally.</dd>
+  <dt>Type</dt><dd>Applications offers a human UI versus a service which can only be accessed by other services.</dd>
+  <dt>State</dt><dd>Does the service persist state or is stateless.</dd>
+</dl>
+<h3>Service Version</h3>
+<dl class="dl-horizontal">
+  <dt>API</dt><dd>The version of the service's API.</dd>
+  <dt>Impl</dt><dd>The current version of the software that implements the service.</dd>
+  <dt>Status</dt><dd>The life cycle of this version of the service:<br/>
+      <strong>Proposed</strong>, The service has been proposed and is under development, but is not yet in production.<br/>
+      <strong>Active</strong>, The service is in production and is actively maintained.<br/>
+      <strong>Live</strong>, The service is in production but is not actively being maintained.<br/>
+      <strong>Retiring</strong>, The service is in production but the owning team is in the process of turning off the service.<br/>
+      <strong>Retired</strong>, The service is no longer in production.</dd>
+</dl>
+<h1>Service Graph</h1>
+<h3>Shape</h3>
+<dl class="dl-horizontal">
+  <dt>Box</dt><dd>Applications</dd>
+  <dt>Ellipse</dt><dd>Service</dd>
+</dl>
+<h3>Colour</h3>
+<dl class="dl-horizontal">
+  <dt>White</dt><dd>Internal service or application</dd>
+  <dt>Yellow</dt><dd>External service or application</dd>
+</dl>
+<h3>Border</h3>
+<dl class="dl-horizontal">
+  <dt>Black</dt><dd>Actively supported version</dd>
+  <dt>Red</dt><dd>Version is retired or is retiring</dd>
+</dl>

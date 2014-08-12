@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-md-4">
+
+        <div class="phone-images">
+            <img ng-src="{{img}}"
+                 class="phone"
+                 ng-repeat="img in service.images"
+                 ng-class="{active: mainImageUrl == img}">
+        </div>
+
+    </div>
+    <div class="col-md-8">
+
+        <h1>{{service._id}} - {{service.name}} <a href="#/editService/{{service._id}}" class="btn btn-info btn-xs">Edit</a></h1>
+        
+        <p>{{service.description}}</p>
+        <dl class="dl-horizontal">
+            <dt>Team</dt><dd>{{service.team}}</dd>
+            <dt>State</dt><dd>{{service.state}}</dd>
+            <dt>Access</dt><dd>{{service.access}}</dd>
+            <dt>Type</dt><dd>{{service.type}}</dd>
+            <div ng-repeat="ep in service.endpoints">
+                <dt>{{ep.env}}</dt>
+                <dd>{{ep.endpoint}}</dd>
+            </div>
+            <div ng-repeat="link in service.links">
+                <dt>{{link.name}}</dt>
+                <dd><a href="{{link.url}}">{{link.url}}</a></dd>
+            </div>
+        </dl>
+
+        <ul class="service-thumbs">
+            <li ng-repeat="img in service.images">
+                <img ng-src="{{img}}" ng-click="setImage(img)">
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div ng-repeat="version in service.versions">
+    <div class ="row">
+        <div class="col-md-12">
+            <h1>{{service._id}} - Version {{version.api}}</h1>
+        </div>
+    </div>
+    <div class ="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>API Ver</dt>
+                <dd>{{version.api}}</dd>
+                <dt>Impl Ver</dt>
+                <dd>{{version.impl}}</dd>
+                <dt>Status</dt>
+                <dd>{{version.status}}</dd>
+                <div ng-repeat="link in version.links">
+                    <dt>{{link.name}}</dt>
+                    <dd><a ng-repeat="ep in service.endpoints" href="{{ep.endpoint}}{{link.url}}">{{ep.env}} </a></dd>
+                </div>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <h4>{{service.id}} uses:</h4>
+            <ul>
+                <li ng-repeat="s in version.uses"><a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}</li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h4>{{service.id}} used by:</h4>
+            <ul>
+                <li ng-repeat="s in version.usedby"><a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
