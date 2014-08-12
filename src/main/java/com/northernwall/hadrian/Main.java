@@ -7,6 +7,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -37,35 +38,43 @@ public class Main {
     }
 
     private void loadConfig(String[] args) {
+        String filename;
         properties = new Properties();
         if (args == null || args.length == 0) {
-            System.out.println("Missing properties parameter, using defaults");
+            System.out.println("Missing command line argument properties filename, using hadrian.properties");
+            filename = "hadrian.properties";
+        } else {
+            filename = args[0];
         }
         try {
-            properties.load(new FileInputStream(args[0]));
-        } catch (Exception ex) {
-            System.out.println("Can not load properties from " + args[0] + ", using defaults, " + ex.getMessage());
+            properties.load(new FileInputStream(filename));
+        } catch (IOException ex) {
+            System.out.println("Can not load properties from " + filename + ", using defaults");
+            properties = new Properties();
         }
     }
 
     private void startLogging() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
+        String filename = properties.getProperty("logback.filename","logback.xml");
         try {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
             context.reset();
-            configurator.doConfigure(new File("logback.xml"));
+            configurator.doConfigure(new File(filename));
         } catch (JoranException je) {
+            System.out.println("Can not load logback config from " + filename + ", exiting");
+            System.exit(0);
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
     }
 
     private void startCouch() {
         CouchDbProperties dbProperties = new CouchDbProperties()
-                .setDbName(properties.getProperty("couchdb.name","SoaRepWeb-db"))
+                .setDbName(properties.getProperty("couchdb.name","soarep"))
                 .setCreateDbIfNotExist(Boolean.parseBoolean(properties.getProperty("couchdb.if-not-exist", "true")))
-                .setProtocol(properties.getProperty("couchdb.protocol", "https"))
+                .setProtocol(properties.getProperty("couchdb.protocol", "http"))
                 .setHost(properties.getProperty("couchdb.host", "127.0.0.1"))
                 .setPort(Integer.parseInt(properties.getProperty("couchdb.port","5984")))
                 .setMaxConnections(100)
@@ -73,6 +82,7 @@ public class Main {
         CouchDbClient client = new CouchDbClient(dbProperties);
         gson = client.getGson();
         dataAccess = new SoaRepDataAccess(client);
+        logger.info("Couch access established");
     }
 
     private void startJetty() {
