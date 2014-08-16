@@ -1,3 +1,8 @@
+<div class ="row">
+    <div class="col-md-12">
+        <h1>{{service._id}} - {{service.name}} <a href="#/editService/{{service._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span></a> <a href="#/createVersion/{{service._id}}" class="btn btn-info btn-xs">Add Version</a></h1>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-4">
 
@@ -10,22 +15,33 @@
 
     </div>
     <div class="col-md-8">
-
-        <h1>{{service._id}} - {{service.name}} <a href="#/editService/{{service._id}}" class="btn btn-info btn-xs">Edit</a></h1>
-        
         <p>{{service.description}}</p>
         <dl class="dl-horizontal">
-            <dt>Team</dt><dd>{{service.team}}</dd>
-            <dt>State</dt><dd>{{service.state}}</dd>
-            <dt>Access</dt><dd>{{service.access}}</dd>
-            <dt>Type</dt><dd>{{service.type}}</dd>
+            <dt>Team</dt>
+            <dd>{{service.team}}</dd>
+            <dt>State</dt>
+            <dd>{{service.state}}</dd>
+            <dt>Access</dt>
+            <dd>{{service.access}}</dd>
+            <dt>Type</dt>
+            <dd>{{service.type}}</dd>
+            <dt>Endpoints:</dt>
+            <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
             <div ng-repeat="ep in service.endpoints">
                 <dt>{{ep.env}}</dt>
-                <dd>{{ep.endpoint}}</dd>
+                <dd>
+                    {{ep.endpoint}} 
+                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                </dd>
             </div>
+            <dt>Links:</dt>
+            <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
             <div ng-repeat="link in service.links">
                 <dt>{{link.name}}</dt>
-                <dd><a href="{{link.url}}">{{link.url}}</a></dd>
+                <dd>
+                    <a href="{{link.url}}">{{link.url}}</a>
+                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                </dd>
             </div>
         </dl>
 
@@ -41,7 +57,7 @@
 <div ng-repeat="version in service.versions">
     <div class ="row">
         <div class="col-md-12">
-            <h1>{{service._id}} - Version {{version.api}}</h1>
+            <h1>{{service._id}} - Version {{version.api}}<a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></h1>
         </div>
     </div>
     <div class ="row">
@@ -53,16 +69,24 @@
                 <dd>{{version.impl}}</dd>
                 <dt>Status</dt>
                 <dd>{{version.status}}</dd>
+                <dt>Pages:</dt>
+                <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
-                    <dd><a ng-repeat="ep in service.endpoints" href="{{ep.endpoint}}{{link.url}}">{{ep.env}} </a></dd>
+                    <dd>
+                        <a ng-repeat="ep in service.endpoints" href="{{ep.endpoint}}{{link.url}}">{{ep.env}} </a> 
+                        <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                    </dd>
                 </div>
             </dl>
         </div>
         <div class="col-md-4">
-            <h4>{{service.id}} uses:</h4>
+            <h4>{{service.id}} uses: <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></h4>
             <ul>
-                <li ng-repeat="s in version.uses"><a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}</li>
+                <li ng-repeat="s in version.uses">
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}
+                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                </li>
             </ul>
         </div>
         <div class="col-md-4">

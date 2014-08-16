@@ -10,6 +10,8 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
+import com.northernwall.hadrian.formData.ServiceFormData;
+import com.northernwall.hadrian.formData.VersionFormData;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +46,7 @@ public class SoaRepHandler extends AbstractHandler {
                 redirect(response);
             } else if (target.equals("/availablity")) {
             } else if (target.equals("/services/services.json")) {
+                logger.warn("-1-");
                 switch (request.getMethod()) {
                     case "GET":
                         listServices(response);
@@ -52,8 +55,34 @@ public class SoaRepHandler extends AbstractHandler {
                         createService(request, response);
                         break;
                 }
-            } else if (target.startsWith("/services/") && target.endsWith(".json")) {
-                getService(response, target.substring(10, target.length() - 5));
+            } else if (target.matches("/services/\\w+.json")) {
+                logger.warn("-2-");
+                switch (request.getMethod()) {
+                    case "GET":
+                        getService(response, target.substring(10, target.length() - 5));
+                        break;
+                    case "POST":
+                        updateService(request, response);
+                        break;
+                }
+            } else if (target.matches("/services/\\w+/versions.json")) {
+                logger.warn("-3-");
+                switch (request.getMethod()) {
+                    case "GET":
+                        break;
+                    case "POST":
+                        createVersion(request, response);
+                        break;
+                }
+            } else if (target.matches("/services/\\w+/\\w.json")) {
+                logger.warn("-4-");
+                switch (request.getMethod()) {
+                    case "GET":
+                        break;
+                    case "POST":
+                        updateVersion(request, response);
+                        break;
+                }
             } else if (target.startsWith("/servicesGraph.json")) {
                 getServicesGraph(response);
             } else if (target.equals("/ui/")) {
@@ -217,25 +246,83 @@ public class SoaRepHandler extends AbstractHandler {
     }
 
     private void createService(Request request, HttpServletResponse response) throws IOException {
-        Service service = gson.fromJson(new InputStreamReader(request.getInputStream()), Service.class);
-        Service cur = dataAccess.getService(service.getId());
+        ServiceFormData serviceData = gson.fromJson(new InputStreamReader(request.getInputStream()), ServiceFormData.class);
+        Service cur = dataAccess.getService(serviceData._id);
+
+        if (cur != null) {
+            return;
+        }
+        Service service = new Service();
+        service.setId(serviceData._id);
+        service.name = serviceData.name;
+        service.team = serviceData.team;
+        service.description = serviceData.description;
+        service.access = serviceData.access;
+        service.type = serviceData.type;
+        service.state = serviceData.state;
+        Version version = new Version();
+        version.api = serviceData.api;
+        version.impl = serviceData.impl;
+        version.status = serviceData.status;
+        service.versions = new LinkedList<>();
+        service.versions.add(version);
+        dataAccess.save(service);
+    }
+
+    private void updateService(Request request, HttpServletResponse response) throws IOException {
+        ServiceFormData serviceData = gson.fromJson(new InputStreamReader(request.getInputStream()), ServiceFormData.class);
+        Service cur = dataAccess.getService(serviceData._id);
 
         if (cur == null) {
-            Version version = new Version();
-            version.api = "1";
-            version.impl = "0";
-            version.status = "Proposed";
-            service.versions = new LinkedList<>();
-            service.versions.add(version);
-            dataAccess.save(service);
-        } else {
-            cur.name = service.name;
-            cur.team = service.team;
-            cur.description = service.description;
-            cur.access = service.access;
-            cur.type = service.type;
-            cur.state = service.state;
-            dataAccess.update(cur);
+            return;
+        }
+        cur.name = serviceData.name;
+        cur.team = serviceData.team;
+        cur.description = serviceData.description;
+        cur.access = serviceData.access;
+        cur.type = serviceData.type;
+        cur.state = serviceData.state;
+        dataAccess.update(cur);
+    }
+
+    private void createVersion(Request request, HttpServletResponse response) throws IOException {
+        VersionFormData versionData = gson.fromJson(new InputStreamReader(request.getInputStream()), VersionFormData.class);
+        Service cur = dataAccess.getService(versionData._id);
+
+        if (cur == null) {
+            return;
+        }
+        if (cur.versions == null) {
+            cur.versions = new LinkedList<>();
+        } else if (!cur.versions.isEmpty()) {
+            for (Version version : cur.versions) {
+                if (version.api.equals(versionData.api)) {
+                    return;
+                }
+            }
+        }
+        Version version = new Version();
+        version.api = versionData.api;
+        version.impl = versionData.impl;
+        version.status = versionData.status;
+        cur.versions.add(version);
+        dataAccess.update(cur);
+    }
+
+    private void updateVersion(Request request, HttpServletResponse response) throws IOException {
+        VersionFormData versionData = gson.fromJson(new InputStreamReader(request.getInputStream()), VersionFormData.class);
+        Service cur = dataAccess.getService(versionData._id);
+
+        if (cur == null) {
+            return;
+        }
+        for (Version version : cur.versions) {
+            if (version.api.equals(versionData.api)) {
+                version.impl = versionData.impl;
+                version.status = versionData.status;
+                dataAccess.update(cur);
+                return;
+            }
         }
     }
 

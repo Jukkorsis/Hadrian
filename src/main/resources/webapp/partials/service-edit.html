@@ -3,7 +3,7 @@
     <div class="form-group">
         <label for="_id" class="col-sm-2 control-label">Abbreviation</label>
         <div class="col-sm-10">
-            <input type="text" id="_id" ng-model="editForm._id" ng-readonly="">
+            <input type="text" id="_id" ng-model="editForm._id" readonly>
         </div>
     </div>
     <div class="form-group">
@@ -21,8 +21,8 @@
     <div class="form-group">
         <label for="description" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
-            <input type="text" id="description" ng-model="editForm.description" ng-minlength="1" ng-maxlength="1000" required="true" placeholder="Does stuff">
-        </div>
+           <textarea id="description" ng-model="editForm.description" placeholder="Does stuff" required="true" class="form-control" rows="3"></textarea>
+         </div>
     </div>
     <div class="form-group">
         <label for="access" class="col-sm-2 control-label">Access</label>
@@ -53,7 +53,7 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button ng-click="submitEditForm()">Submit Form</button>
+            <button ng-click="submitEditServiceForm()">Submit Form</button>
         </div>
     </div>
 </form>
