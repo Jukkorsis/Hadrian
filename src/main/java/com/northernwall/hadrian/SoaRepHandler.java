@@ -46,7 +46,6 @@ public class SoaRepHandler extends AbstractHandler {
                 redirect(response);
             } else if (target.equals("/availablity")) {
             } else if (target.equals("/services/services.json")) {
-                logger.warn("-1-");
                 switch (request.getMethod()) {
                     case "GET":
                         listServices(response);
@@ -56,7 +55,6 @@ public class SoaRepHandler extends AbstractHandler {
                         break;
                 }
             } else if (target.matches("/services/\\w+.json")) {
-                logger.warn("-2-");
                 switch (request.getMethod()) {
                     case "GET":
                         getService(response, target.substring(10, target.length() - 5));
@@ -66,7 +64,6 @@ public class SoaRepHandler extends AbstractHandler {
                         break;
                 }
             } else if (target.matches("/services/\\w+/versions.json")) {
-                logger.warn("-3-");
                 switch (request.getMethod()) {
                     case "GET":
                         break;
@@ -75,7 +72,6 @@ public class SoaRepHandler extends AbstractHandler {
                         break;
                 }
             } else if (target.matches("/services/\\w+/\\w.json")) {
-                logger.warn("-4-");
                 switch (request.getMethod()) {
                     case "GET":
                         break;
