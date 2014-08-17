@@ -9,19 +9,19 @@
     <div class="form-group">
         <label for="api" class="col-sm-2 control-label">API Version</label>
         <div class="col-sm-10">
-            <input type="text" id="api" ng-model="myForm.api" ng-minlength="1" ng-maxlength="8" readonly>
+            <input type="text" id="api" ng-model="editForm.api" ng-minlength="1" ng-maxlength="8" readonly>
         </div>
     </div>
     <div class="form-group">
         <label for="impl" class="col-sm-2 control-label">Implementation Version</label>
         <div class="col-sm-10">
-            <input type="text" id="impl" ng-model="myForm.impl" ng-minlength="1" ng-maxlength="8" required="true" placeholder="My First Service">
+            <input type="text" id="impl" ng-model="editForm.impl" ng-minlength="1" ng-maxlength="8" required="true" placeholder="My First Service">
         </div>
     </div>
     <div class="form-group">
         <label for="status" class="col-sm-2 control-label">Status</label>
         <div class="col-sm-10">
-            <select id="status" ng-model="myForm.status">
+            <select id="status" ng-model="editForm.status">
                 <option value="Proposed">Proposed</option>
                 <option value="Active">Active</option>
                 <option value="Live">Live</option>
@@ -32,7 +32,8 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button ng-click="myForm.submitTheForm()">Submit Form</button>
+            <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs">Update Version</button> 
+            <a href="#/services/{{service._id}}" class="btn btn-info btn-xs">Cancel</a>
         </div>
     </div>
 </form>

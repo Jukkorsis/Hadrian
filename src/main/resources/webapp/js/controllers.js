@@ -72,7 +72,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
                 state: $scope.editForm.state
             };
 
-            var responsePromise = $http.post("/services/"+$scope.editForm._id + ".json", dataObject, {});
+            var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
             responsePromise.success(function(dataFromServer, status, headers, config) {
                 console.log(dataFromServer.title);
                 $window.location.href = "#/services/" + $scope.editForm._id;
@@ -98,7 +98,7 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
                 status: $scope.createForm.status
             };
 
-            var responsePromise = $http.post("/services/"+$scope.createForm._id+"/versions.json", dataObject, {});
+            var responsePromise = $http.post("/services/" + $scope.createForm._id + "/versions.json", dataObject, {});
             responsePromise.success(function(dataFromServer, status, headers, config) {
                 console.log(dataFromServer.title);
                 $window.location.href = "#/services/" + $scope.createForm._id;
@@ -112,6 +112,14 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
 soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
     function($scope, $routeParams, Service, $http, $window) {
         $scope.editForm = Service.get({serviceId: $routeParams.serviceId}, function(service) {
+            $scope.editForm._id = service._id;
+            service.versions.forEach(function(version) {
+                if (version.api === $routeParams.versionId) {
+                    $scope.editForm.api = version.api;
+                    $scope.editForm.impl = version.impl;
+                    $scope.editForm.status = version.status;
+                }
+            });
         });
 
         $scope.submitEditVersionForm = function(item, event) {
@@ -123,7 +131,7 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 status: $scope.editForm.status
             };
 
-            var responsePromise = $http.post("/versions/versions.json", dataObject, {});
+            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + ".json", dataObject, {});
             responsePromise.success(function(dataFromServer, status, headers, config) {
                 console.log(dataFromServer.title);
                 $window.location.href = "#/services/" + $scope.editForm._id;
