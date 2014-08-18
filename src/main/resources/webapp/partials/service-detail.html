@@ -81,18 +81,19 @@
             </dl>
         </div>
         <div class="col-md-4">
-            <h4>{{service.id}} uses: <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></h4>
+            <h4>{{service.id}} uses: <a href="#/editVersionUses/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></h4>
             <ul>
                 <li ng-repeat="s in version.uses">
-                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}
-                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}}) {{s.warnings}}
                 </li>
             </ul>
         </div>
         <div class="col-md-4">
             <h4>{{service.id}} used by:</h4>
             <ul>
-                <li ng-repeat="s in version.usedby"><a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}</li>
+                <li ng-repeat="s in version.usedby">
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}
+                </li>
             </ul>
         </div>
     </div>

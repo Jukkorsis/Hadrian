@@ -10,6 +10,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
+import com.northernwall.hadrian.domain.VersionHeader;
 import com.northernwall.hadrian.formData.ServiceFormData;
 import com.northernwall.hadrian.formData.VersionFormData;
 import java.io.IOException;
@@ -79,6 +80,14 @@ public class SoaRepHandler extends AbstractHandler {
                         updateVersion(request, response);
                         break;
                 }
+            } else if (target.matches("/services/\\w+/\\w/uses.json")) {
+                switch (request.getMethod()) {
+                    case "GET":
+                        String temp = target.substring(10, target.length() - 10);
+                        int i = temp.indexOf("/");
+                        getVersionUses(response, temp.substring(0, i), temp.substring(i+1));
+                        break;
+                }
             } else if (target.startsWith("/servicesGraph.json")) {
                 getServicesGraph(response);
             } else if (target.equals("/ui/")) {
@@ -110,7 +119,6 @@ public class SoaRepHandler extends AbstractHandler {
             }
             jw.endArray();
         }
-        response.setStatus(200);
     }
 
     private void getService(HttpServletResponse response, String id) throws IOException {
@@ -171,7 +179,25 @@ public class SoaRepHandler extends AbstractHandler {
                                     edge.from = i;
                                     edge.to = indexes.indexOf(ref.service + "-v" + ref.version);
                                     edge.style = "arrow";
-                                    edge.color = "blue";
+                                    if (ref.warnings != null && !ref.warnings.isEmpty()) {
+                                        edge.label = "Warning";
+                                        edge.title = ref.warnings;
+                                    }
+                                    logger.info("ref.scope -> {}", ref.scope);
+                                    switch (ref.scope) {
+                                        case "sync":
+                                            edge.color = "blue";
+                                            edge.width = 2;
+                                            break;
+                                        case "async":
+                                            edge.color = "black";
+                                            edge.width = 1;
+                                            break;
+                                        case "support":
+                                            edge.color = "green";
+                                            edge.width = 1;
+                                            break;
+                                    }
                                     network.edges.add(edge);
                                 }
                             }
@@ -319,6 +345,20 @@ public class SoaRepHandler extends AbstractHandler {
                 dataAccess.update(cur);
                 return;
             }
+        }
+    }
+
+    private void getVersionUses(HttpServletResponse response, String serviceId, String versionId) throws IOException {
+        logger.info("serviceId {} versionId {}", serviceId, versionId);
+        List<VersionHeader> versions = dataAccess.getVersions();
+        logger.info("version.size() -> {}", versions.size());
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            jw.beginArray();
+            for (VersionHeader version : versions) {
+                logger.info("serviceId {} versionId {}", version.serviceId, version.versionId);
+                gson.toJson(version, VersionHeader.class, jw);
+            }
+            jw.endArray();
         }
     }
 

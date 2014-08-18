@@ -5,4 +5,8 @@ public class Edge {
     public int to;
     public String style;
     public String color;
+    public String label;
+    public String title;
+    public int width;
+    
 }

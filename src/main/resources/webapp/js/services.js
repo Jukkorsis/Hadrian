@@ -10,6 +10,12 @@ soaRepServices.factory('Service', ['$resource', function($resource) {
         });
     }]);
 
+soaRepServices.factory('VersionUses', ['$resource', function($resource) {
+        return $resource('/services/:serviceId/:versionId/uses.json', {}, {
+            query: {method: 'GET', params: {}, isArray: true}
+        });
+    }]);
+
 soaRepServices.factory('Graph', ['$resource', function($resource) {
         return $resource('/servicesGraph.json', {}, {
             query: {method: 'GET', isArray: false}

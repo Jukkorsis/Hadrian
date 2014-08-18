@@ -30,6 +30,11 @@
             </select>
         </div>
     </div>
+    <div ng-repeat="s in editForm.uses">
+        <div class="form-group">
+            {{s}}
+        </div>
+    </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs">Update Version</button> 
