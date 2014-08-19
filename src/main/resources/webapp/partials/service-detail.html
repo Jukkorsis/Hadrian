@@ -25,22 +25,16 @@
             <dd>{{service.access}}</dd>
             <dt>Type</dt>
             <dd>{{service.type}}</dd>
-            <dt>Endpoints:</dt>
-            <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
             <div ng-repeat="ep in service.endpoints">
                 <dt>{{ep.env}}</dt>
                 <dd>
                     {{ep.endpoint}} 
-                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                 </dd>
             </div>
-            <dt>Links:</dt>
-            <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
             <div ng-repeat="link in service.links">
                 <dt>{{link.name}}</dt>
                 <dd>
                     <a href="{{link.url}}">{{link.url}}</a>
-                    <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                 </dd>
             </div>
         </dl>
@@ -57,7 +51,7 @@
 <div ng-repeat="version in service.versions">
     <div class ="row">
         <div class="col-md-12">
-            <h1>{{service._id}} - Version {{version.api}}<a href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></h1>
+            <h1>{{service._id}} - Version {{version.api}}<a href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span>Edit Versoin</a></h1>
         </div>
     </div>
     <div class ="row">
@@ -69,19 +63,16 @@
                 <dd>{{version.impl}}</dd>
                 <dt>Status</dt>
                 <dd>{{version.status}}</dd>
-                <dt>Pages:</dt>
-                <dd><a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></a></dd>
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
                         <a ng-repeat="ep in service.endpoints" href="{{ep.endpoint}}{{link.url}}">{{ep.env}} </a> 
-                        <a href="#/createVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                     </dd>
                 </div>
             </dl>
         </div>
         <div class="col-md-4">
-            <h4>{{service.id}} uses: <a href="#/editVersionUses/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></h4>
+            <h4>{{service.id}} uses:</h4>
             <ul>
                 <li ng-repeat="s in version.uses">
                     <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}}) {{s.warnings}}

@@ -85,7 +85,7 @@ public class SoaRepHandler extends AbstractHandler {
                     case "GET":
                         String temp = target.substring(10, target.length() - 10);
                         int i = temp.indexOf("/");
-                        getVersionUses(response, temp.substring(0, i), temp.substring(i+1));
+                        getVersionUses(response, temp.substring(0, i), temp.substring(i + 1));
                         break;
                 }
             } else if (target.startsWith("/servicesGraph.json")) {
@@ -350,13 +350,27 @@ public class SoaRepHandler extends AbstractHandler {
 
     private void getVersionUses(HttpServletResponse response, String serviceId, String versionId) throws IOException {
         logger.info("serviceId {} versionId {}", serviceId, versionId);
-        List<VersionHeader> versions = dataAccess.getVersions();
-        logger.info("version.size() -> {}", versions.size());
+        Service service = dataAccess.getService(serviceId);
+        Version version = null;
+        for (Version temp : service.versions) {
+            if (temp.api.equals(versionId)) {
+                version = temp;
+            }
+        }
+        List<VersionHeader> versionHeaders = dataAccess.getVersions();
+        logger.info("version.size() -> {}", versionHeaders.size());
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             jw.beginArray();
-            for (VersionHeader version : versions) {
-                logger.info("serviceId {} versionId {}", version.serviceId, version.versionId);
-                gson.toJson(version, VersionHeader.class, jw);
+            for (VersionHeader versionHeader : versionHeaders) {
+                if (!(versionHeader.serviceId.equals(serviceId) && versionHeader.versionId.equals(versionId))) {
+                    for (ServiceRef ref : version.uses) {
+                        if (ref.service.equals(versionHeader.serviceId) && ref.version.equals(versionHeader.versionId)) {
+                            versionHeader.scope = ref.scope;
+                        }
+                    }
+                    logger.info("serviceId {} versionId {}", versionHeader.serviceId, versionHeader.versionId);
+                    gson.toJson(versionHeader, VersionHeader.class, jw);
+                }
             }
             jw.endArray();
         }

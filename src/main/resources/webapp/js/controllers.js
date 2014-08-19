@@ -109,8 +109,8 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
         }
     }]);
 
-soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Service', 'VersionUses', '$http', '$window',
-    function($scope, $routeParams, Service, VersionUses, $http, $window) {
+soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
+    function($scope, $routeParams, Service, $http, $window) {
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
@@ -121,7 +121,8 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                     $scope.editForm.status = version.status;
                     var responsePromise = $http.get("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + "/uses.json", {});
                     responsePromise.success(function(dataFromServer, status, headers, config) {
-                        $scope.editForm.uses = dataFromServer;
+                        $scope.editForm.uses1 = dataFromServer.slice(0,(dataFromServer.length/2));
+                        $scope.editForm.uses2 = dataFromServer.slice((dataFromServer.length/2),dataFromServer.length+1);
                     });
                 }
             });
@@ -146,16 +147,6 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
             responsePromise.error(function(data, status, headers, config) {
                 alert("Submitting form failed!");
             });
-        }
-    }]);
-
-soaRepControllers.controller('VersionUsesEditCtrl', ['$scope', '$routeParams', 'VersionUses', '$http', '$window',
-    function($scope, $routeParams, VersionUses, $http, $window) {
-        $scope.usesForm = VersionUses.get({serviceId: $routeParams.serviceId, versionId: $routeParams.versionId});
-
-        $scope.submitEditVersionUsesForm = function(item, event) {
-            console.log("--> Submitting edit uses form");
-            $window.location.href = "#/services/" + $scope.usesForm._id;
         }
     }]);
 
