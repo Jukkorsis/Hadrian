@@ -136,7 +136,7 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 api: $scope.editForm.api,
                 impl: $scope.editForm.impl,
                 status: $scope.editForm.status,
-                form: $scope.editForm
+                uses: $scope.editForm.uses1
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + ".json", dataObject, {});

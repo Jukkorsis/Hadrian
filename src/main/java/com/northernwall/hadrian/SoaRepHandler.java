@@ -12,7 +12,9 @@ import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
 import com.northernwall.hadrian.domain.VersionHeader;
 import com.northernwall.hadrian.formData.ServiceFormData;
+import com.northernwall.hadrian.formData.UsesFormData;
 import com.northernwall.hadrian.formData.VersionFormData;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -332,7 +334,11 @@ public class SoaRepHandler extends AbstractHandler {
     }
 
     private void updateVersion(Request request, HttpServletResponse response) throws IOException {
-        VersionFormData versionData = gson.fromJson(new InputStreamReader(request.getInputStream()), VersionFormData.class);
+        InputStreamReader isr = new InputStreamReader(request.getInputStream());
+        BufferedReader br = new BufferedReader(isr);
+        String s = br.readLine();
+        System.out.println(s);
+        VersionFormData versionData = gson.fromJson(s, VersionFormData.class);
         Service cur = dataAccess.getService(versionData._id);
 
         if (cur == null) {
@@ -342,6 +348,46 @@ public class SoaRepHandler extends AbstractHandler {
             if (version.api.equals(versionData.api)) {
                 version.impl = versionData.impl;
                 version.status = versionData.status;
+                for (UsesFormData usesData : versionData.uses) {
+                    boolean found = false;
+                    if (version.uses != null && !version.uses.isEmpty()) {
+                        List<ServiceRef> oldRefs = null;
+                        for (ServiceRef serviceRef : version.uses) {
+                            if (usesData.serviceId.equals(serviceRef.service) && usesData.versionId.equals(serviceRef.version)) {
+                                found = true;
+                                if (!usesData.scope.equals(serviceRef.scope)) {
+                                    if (usesData.scope.equals("none")) {
+                                        if (oldRefs == null) {
+                                            oldRefs = new LinkedList<>();
+                                        }
+                                        oldRefs.add(serviceRef);
+                                    } else {
+                                        serviceRef.scope = usesData.scope;
+                                        //todo: calc warnings
+                                        //todo: add usedby
+                                    }
+                                }
+                            }
+                        }
+                        if (oldRefs != null) {
+                            for (ServiceRef serviceRef : oldRefs) {
+                                version.uses.remove(serviceRef);
+                            }
+                        }
+                    }
+                    if (!found && !usesData.scope.equals("none")) {
+                        ServiceRef serviceRef = new ServiceRef();
+                        serviceRef.service = usesData.serviceId;
+                        serviceRef.version = usesData.versionId;
+                        serviceRef.scope = usesData.scope;
+                        //todo: calc warnings
+                        if (version.uses == null) {
+                            version.uses = new LinkedList<>();
+                        }
+                        version.uses.add(serviceRef);
+                        //todo: add usedby
+                    }
+                }
                 dataAccess.update(cur);
                 return;
             }
