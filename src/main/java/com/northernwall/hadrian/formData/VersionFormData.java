@@ -7,6 +7,7 @@ public class VersionFormData {
     public String api;
     public String impl;
     public String status;
-    public List<UsesFormData> uses;
+    public List<UsesFormData> uses1;
+    public List<UsesFormData> uses2;
     
 }

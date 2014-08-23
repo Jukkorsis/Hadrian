@@ -5,6 +5,9 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.handler.ContentHandler;
+import com.northernwall.hadrian.handler.GraphHandler;
+import com.northernwall.hadrian.handler.ServiceHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -96,10 +99,14 @@ public class Main {
             connector.setAcceptQueueSize(Integer.parseInt(properties.getProperty("jetty.acceptQueueSize", "100")));
             server.addConnector(connector);
 
-            Handler soaRepHandler = new SoaRepHandler(dataAccess, gson);
+            Handler contentHandler = new ContentHandler();
+            Handler serviceHandler = new ServiceHandler(dataAccess, gson);
+            Handler graphHandler = new GraphHandler(dataAccess, gson);
 
             HandlerList handlers = new HandlerList();
-            handlers.addHandler(soaRepHandler);
+            handlers.addHandler(contentHandler);
+            handlers.addHandler(serviceHandler);
+            handlers.addHandler(graphHandler);
             server.setHandler(handlers);
 
             server.start();
