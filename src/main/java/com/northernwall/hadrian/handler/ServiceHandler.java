@@ -223,7 +223,7 @@ public class ServiceHandler extends AbstractHandler {
                                     } else {
                                         serviceRef.scope = usesData.scope;
                                         //todo: calc warnings
-                                        //todo: add usedby
+                                        updateUsedBy(usesData.serviceId, usesData.versionId, cur.getId(), version.api, usesData.scope);
                                     }
                                 }
                             }
@@ -244,11 +244,54 @@ public class ServiceHandler extends AbstractHandler {
                             version.uses = new LinkedList<>();
                         }
                         version.uses.add(serviceRef);
-                        //todo: add usedby
+                        addUsedBy(usesData.serviceId, usesData.versionId, cur.getId(), version.api, usesData.scope);
                     }
                 }
                 dataAccess.update(cur);
                 return;
+            }
+        }
+    }
+
+    private void addUsedBy(String serviceId, String versionId, String refServiceId, String refVersionId, String scope) {
+        Service cur = dataAccess.getService(serviceId);
+
+        if (cur == null) {
+            return;
+        }
+
+        ServiceRef serviceRef = new ServiceRef();
+        serviceRef.service = refServiceId;
+        serviceRef.version = refVersionId;
+        serviceRef.scope = scope;
+
+        for (Version version : cur.versions) {
+            if (version.api.equals(versionId)) {
+                version.usedby.add(serviceRef);
+                dataAccess.update(cur);
+                return;
+            }
+        }
+    }
+
+    private void updateUsedBy(String serviceId, String versionId, String refServiceId, String refVersionId, String scope) {
+        Service cur = dataAccess.getService(serviceId);
+
+        if (cur == null) {
+            return;
+        }
+
+        for (Version version : cur.versions) {
+            if (version.api.equals(versionId)) {
+                if (version.usedby != null && !version.usedby.isEmpty()) {
+                    for (ServiceRef serviceRef : version.usedby) {
+                        if (serviceRef.service.equals(refServiceId) && serviceRef.version.equals(refVersionId)) {
+                            serviceRef.scope = scope;
+                            dataAccess.update(cur);
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
@@ -273,7 +316,7 @@ public class ServiceHandler extends AbstractHandler {
             jw.beginArray();
             if (versionHeaders != null && !versionHeaders.isEmpty()) {
                 for (VersionHeader versionHeader : versionHeaders) {
-                    if (!(versionHeader.serviceId.equals(serviceId) && versionHeader.versionId.equals(versionId))) {
+                    if (!versionHeader.serviceId.equals(serviceId)) {
                         if (version.uses != null && !version.uses.isEmpty()) {
                             for (ServiceRef ref : version.uses) {
                                 if (ref.service.equals(versionHeader.serviceId) && ref.version.equals(versionHeader.versionId)) {
@@ -281,6 +324,7 @@ public class ServiceHandler extends AbstractHandler {
                                 }
                             }
                         }
+                        //TODO: check status of version, don't include versions that are retiring or retired and there is no existing link
                         logger.info("serviceId {} versionId {}", versionHeader.serviceId, versionHeader.versionId);
                         gson.toJson(versionHeader, VersionHeader.class, jw);
                     }

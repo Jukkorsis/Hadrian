@@ -74,7 +74,7 @@ public class GraphHandler extends AbstractHandler {
                             } else {
                                 node.color.background = "yellow";
                             }
-                            if (version.status != null && (version.status.equals("Deprecating") || version.status.equals("Deprecated"))) {
+                            if (version.status != null && (version.status.equals("Retiring") || version.status.equals("Retired"))) {
                                 node.color.border = "red";
                                 node.borderWidth = 3;
                             } else {
