@@ -2,14 +2,14 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.SoaRepDataAccess;
-import com.northernwall.hadrian.formData.Color;
-import com.northernwall.hadrian.formData.Edge;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Network;
-import com.northernwall.hadrian.formData.Node;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
+import com.northernwall.hadrian.formData.Color;
+import com.northernwall.hadrian.formData.Edge;
+import com.northernwall.hadrian.formData.Node;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
@@ -26,10 +26,10 @@ public class GraphHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(GraphHandler.class);
 
-    private final SoaRepDataAccess dataAccess;
+    private final DataAccess dataAccess;
     private final Gson gson;
 
-    public GraphHandler(SoaRepDataAccess dataAccess, Gson gson) {
+    public GraphHandler(DataAccess dataAccess, Gson gson) {
         this.dataAccess = dataAccess;
         this.gson = gson;
     }

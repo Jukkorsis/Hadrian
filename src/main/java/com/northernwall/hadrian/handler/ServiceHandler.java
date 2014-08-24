@@ -2,7 +2,7 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.SoaRepDataAccess;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
@@ -24,10 +24,10 @@ public class ServiceHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
-    private final SoaRepDataAccess dataAccess;
+    private final DataAccess dataAccess;
     private final Gson gson;
 
-    public ServiceHandler(SoaRepDataAccess dataAccess, Gson gson) {
+    public ServiceHandler(DataAccess dataAccess, Gson gson) {
         this.dataAccess = dataAccess;
         this.gson = gson;
     }

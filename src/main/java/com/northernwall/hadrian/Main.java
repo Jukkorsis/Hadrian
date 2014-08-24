@@ -5,6 +5,8 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.db.CouchDataAccess;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.handler.ContentHandler;
 import com.northernwall.hadrian.handler.GraphHandler;
 import com.northernwall.hadrian.handler.ServiceHandler;
@@ -18,8 +20,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.lightcouch.CouchDbClient;
-import org.lightcouch.CouchDbProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,7 @@ public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
     private Properties properties;
-    private SoaRepDataAccess dataAccess;
-    private Gson gson;
+    private DataAccess dataAccess;
 
     /**
      * @param args the command line arguments
@@ -75,22 +74,13 @@ public class Main {
     }
 
     private void startCouch() {
-        CouchDbProperties dbProperties = new CouchDbProperties()
-                .setDbName(properties.getProperty("couchdb.name","soarep"))
-                .setCreateDbIfNotExist(Boolean.parseBoolean(properties.getProperty("couchdb.if-not-exist", "true")))
-                .setProtocol(properties.getProperty("couchdb.protocol", "http"))
-                .setHost(properties.getProperty("couchdb.host", "127.0.0.1"))
-                .setPort(Integer.parseInt(properties.getProperty("couchdb.port","5984")))
-                .setMaxConnections(100)
-                .setConnectionTimeout(0);
-        CouchDbClient client = new CouchDbClient(dbProperties);
-        gson = client.getGson();
-        dataAccess = new SoaRepDataAccess(client);
-        logger.info("Couch access established");
+        dataAccess = new CouchDataAccess(properties);
     }
 
     private void startJetty() {
         try {
+            Gson gson = new Gson();
+
             int port = Integer.parseInt(properties.getProperty("jetty.port", "9090"));
             Server server = new Server(new QueuedThreadPool(10, 5));
 

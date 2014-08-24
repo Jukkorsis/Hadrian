@@ -1,7 +1,7 @@
 package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.SoaRepDataAccess;
+import com.northernwall.hadrian.db.CouchDataAccess;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
