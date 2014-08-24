@@ -2,14 +2,13 @@ package com.northernwall.hadrian;
 
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
-import com.northernwall.hadrian.domain.Services;
 import com.northernwall.hadrian.domain.VersionHeader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.DesignDocument;
 import org.lightcouch.NoDocumentException;
 import org.lightcouch.Response;
 import org.slf4j.Logger;
@@ -23,6 +22,16 @@ public class SoaRepDataAccess {
 
     public SoaRepDataAccess(CouchDbClient dbClient) {
         this.dbClient = dbClient;
+        
+        Map<String, DesignDocument.MapReduce> views = new HashMap<>();
+        DesignDocument.MapReduce mapReduce = new DesignDocument.MapReduce();
+        mapReduce.setMap("function(doc) {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, versionId: version.api});});}");
+        views.put("versions", mapReduce);
+        DesignDocument designDoc = new DesignDocument();
+        designDoc.setViews(views);
+        designDoc.setId("_design/app");
+        designDoc.setLanguage("javascript");
+        dbClient.design().synchronizeWithDb(designDoc);
     }
 
     public List<ServiceHeader> getServiceHeaders() {
