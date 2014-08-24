@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.formData;
 
 public class Edge {
     public int from;

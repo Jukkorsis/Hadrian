@@ -83,7 +83,7 @@
             <h4>{{service.id}} used by:</h4>
             <ul>
                 <li ng-repeat="s in version.usedby">
-                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}}
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
                 </li>
             </ul>
         </div>

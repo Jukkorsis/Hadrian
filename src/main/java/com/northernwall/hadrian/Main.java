@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.handler.ContentHandler;
 import com.northernwall.hadrian.handler.GraphHandler;
 import com.northernwall.hadrian.handler.ServiceHandler;
+import com.northernwall.hadrian.handler.VersionHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -101,11 +102,13 @@ public class Main {
 
             Handler contentHandler = new ContentHandler();
             Handler serviceHandler = new ServiceHandler(dataAccess, gson);
+            Handler versionHandler = new VersionHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
 
             HandlerList handlers = new HandlerList();
             handlers.addHandler(contentHandler);
             handlers.addHandler(serviceHandler);
+            handlers.addHandler(versionHandler);
             handlers.addHandler(graphHandler);
             server.setHandler(handlers);
 

@@ -1,5 +1,7 @@
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.formData.Node;
+import com.northernwall.hadrian.formData.Edge;
 import java.util.LinkedList;
 import java.util.List;
 
