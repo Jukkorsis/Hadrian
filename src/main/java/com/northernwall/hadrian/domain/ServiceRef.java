@@ -4,6 +4,6 @@ public class ServiceRef {
     public String service;
     public String version;
     public String scope = "sync";
-    public String warnings;
+    public boolean retireWarnings = false;
   
 }

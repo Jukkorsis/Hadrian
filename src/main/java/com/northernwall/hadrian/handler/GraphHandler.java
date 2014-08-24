@@ -96,10 +96,6 @@ public class GraphHandler extends AbstractHandler {
                                     edge.from = i;
                                     edge.to = indexes.indexOf(ref.service + "-v" + ref.version);
                                     edge.style = "arrow";
-                                    if (ref.warnings != null && !ref.warnings.isEmpty()) {
-                                        edge.label = "Warning";
-                                        edge.title = ref.warnings;
-                                    }
                                     switch (ref.scope) {
                                         case "sync":
                                             edge.color = "blue";

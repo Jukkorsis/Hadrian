@@ -23,35 +23,6 @@ public class SoaRepDataAccess {
 
     public SoaRepDataAccess(CouchDbClient dbClient) {
         this.dbClient = dbClient;
-
-        List<ServiceHeader> temp = dbClient.view("_all_docs").includeDocs(true).query(ServiceHeader.class);
-        if (temp == null || temp.isEmpty()) {
-            loadFromFile();
-        }
-    }
-
-    private void loadFromFile() {
-        FileReader file = null;
-        String fileName = "data.json";
-        Services services;
-        try {
-            file = new FileReader(fileName);
-            services = dbClient.getGson().fromJson(file, Services.class);
-            logger.info("Init complete, data file {} loaded", fileName);
-        } catch (FileNotFoundException ex) {
-            logger.error("Init failed, could not find data file {}", fileName);
-            throw new RuntimeException(ex);
-        } finally {
-            try {
-                file.close();
-            } catch (IOException ex) {
-                logger.error("Failed close data file {} after init load", fileName);
-            }
-        }
-
-        for (Service service : services.services) {
-            save(service);
-        }
     }
 
     public List<ServiceHeader> getServiceHeaders() {

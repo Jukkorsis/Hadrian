@@ -75,7 +75,7 @@
             <h4>{{service.id}} uses:</h4>
             <ul>
                 <li ng-repeat="s in version.uses">
-                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}}) {{s.warnings}}
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}}) {{s.retireWarnings}}
                 </li>
             </ul>
         </div>

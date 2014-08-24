@@ -213,20 +213,13 @@ public class VersionHandler extends AbstractHandler {
         Service usedByService = dataAccess.getService(serviceRef.service);
 
         if (usedByService == null) {
-            serviceRef.warnings = null;
+            logger.error("Could not find service {}", serviceRef.service);
             return;
         }
 
         for (Version usedByVersion : usedByService.versions) {
             if (usedByVersion.api.equals(serviceRef.version)) {
-                switch (usedByVersion.status) {
-                    case "Retired":
-                        serviceRef.warnings = usedByService.getId() + " v" + usedByVersion.api + " is retired";
-                        break;
-                    case "Retiring":
-                        serviceRef.warnings = usedByService.getId() + " v" + usedByVersion.api + " is retiring";
-                        break;
-                }
+                serviceRef.retireWarnings = (usedByVersion.status.equals("Retired") || usedByVersion.status.equals("Retiring"));
             }
         }
     }
@@ -236,21 +229,12 @@ public class VersionHandler extends AbstractHandler {
             for (ServiceRef usedByServiceRef : version.usedby) {
                 Service usedByService = dataAccess.getService(usedByServiceRef.service);
                 if (usedByService != null) {
-                    Version usedByVersion = usedByService.findVersion(version.api);
+                    Version usedByVersion = usedByService.findVersion(usedByServiceRef.version);
                     if (usedByVersion != null) {
-                        if (usedByVersion.uses != null && !usedByVersion.uses.isEmpty()) {
-                            for (ServiceRef serviceRef : usedByVersion.uses) {
-                                switch (version.status) {
-                                    case "Retired":
-                                        serviceRef.warnings = service.getId() + " v" + version.api + " is retired";
-                                        dataAccess.update(usedByService);
-                                        break;
-                                    case "Retiring":
-                                        serviceRef.warnings = service.getId() + " v" + version.api + " is retiring";
-                                        dataAccess.update(usedByService);
-                                        break;
-                                }
-                            }
+                        ServiceRef serviceRef = usedByVersion.findUses(service.getId(), version.api);
+                        if (serviceRef != null) {
+                            serviceRef.retireWarnings = (version.status.equals("Retired") || version.status.equals("Retiring"));
+                            dataAccess.update(usedByService);
                         }
                     }
                 }
