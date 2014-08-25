@@ -27,14 +27,10 @@
     <body>
         <div class="text-left">
             <strong>SOA Service Repository</strong>
-        </div>
-        <div class="tabbable">
-            <ul class="nav nav-pills">
-                <li><a data-toggle="tab" href="#/services">Service List</a></li>
-                <li><a data-toggle="tab" href="#/graphService">Graph Services</a></li>
-                <li><a data-toggle="tab" href="#/createService">Create New Service</a></li>
-                <li><a data-toggle="tab" href="#/help">Help</a></li>
-            </ul>
+            <a href="#/services" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-th-list"></span>Service List</a>
+            <a href="#/graphService" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-signal"></span>Graph Services</a>
+            <a href="#/createService" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span>Create New Service</a>
+            <a href="#/help" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-question-sign"></span>Help</a>
         </div>
         <div class="view-container">
             <div ng-view class="view-frame"></div>
