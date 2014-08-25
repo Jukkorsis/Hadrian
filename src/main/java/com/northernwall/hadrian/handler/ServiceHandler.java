@@ -101,6 +101,9 @@ public class ServiceHandler extends AbstractHandler {
         service.name = serviceData.name;
         service.team = serviceData.team;
         service.description = serviceData.description;
+        service.imageLogo = "/ui/img/serviceLogo.png";
+        service.images = new LinkedList<>();
+        service.images.add(0, "/ui/img/serviceLogo.png");
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.state = serviceData.state;

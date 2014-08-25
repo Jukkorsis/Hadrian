@@ -45,7 +45,7 @@ public class CouchDataAccess implements DataAccess {
         dbClient.design().synchronizeWithDb(designDoc);
         logger.info("Couch views synced");
     }
-
+    
     @Override
     public List<ServiceHeader> getServiceHeaders() {
         return dbClient.view("_all_docs").includeDocs(true).query(ServiceHeader.class);
