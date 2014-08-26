@@ -2,7 +2,8 @@ package com.northernwall.hadrian.db;
 
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
-import com.northernwall.hadrian.domain.VersionHeader;
+import com.northernwall.hadrian.domain.ServiceRefView;
+import com.northernwall.hadrian.domain.VersionView;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,8 +42,12 @@ public class CouchDataAccess implements DataAccess {
         views.put("services", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, versionId: version.api});});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, type: doc.team, type: doc.team, access: doc.access, versionId: version.api, status: version.status});});}}");
         views.put("versions", mapReduce);
+        
+        mapReduce = new DesignDocument.MapReduce();
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {version.uses.forEach(function(ref) {emit(null, {serviceId: doc._id, versionId: version.api, refServiceId: ref.service, refVersionId: ref.version, scope: ref.scope});});});}}");
+        views.put("refs", mapReduce);
         
         DesignDocument designDoc = new DesignDocument();
         designDoc.setViews(views);
@@ -55,11 +60,6 @@ public class CouchDataAccess implements DataAccess {
     @Override
     public List<ServiceHeader> getServiceHeaders() {
         return dbClient.view("app/services").includeDocs(true).query(ServiceHeader.class);
-    }
-
-    @Override
-    public List<Service> getServices() {
-        return dbClient.view("_all_docs").includeDocs(true).query(Service.class);
     }
 
     @Override
@@ -84,16 +84,31 @@ public class CouchDataAccess implements DataAccess {
     }
 
     @Override
-    public List<VersionHeader> getVersions() {
-        List<VersionResult> results = dbClient.view("app/versions").query(VersionResult.class);
-        List<VersionHeader> versions = new LinkedList<>();
-        for (VersionResult result : results) {
+    public List<VersionView> getVersionVeiw() {
+        List<VersionViewResult> results = dbClient.view("app/versions").query(VersionViewResult.class);
+        List<VersionView> versions = new LinkedList<>();
+        for (VersionViewResult result : results) {
             versions.add(result.value);
         }
         return versions;
     }
 
-    public class VersionResult {
-        public VersionHeader value;
+    public class VersionViewResult {
+        public VersionView value;
     }
+    
+    @Override
+    public List<ServiceRefView> getServiceRefVeiw() {
+        List<ServiceRefViewResult> results = dbClient.view("app/refs").query(ServiceRefViewResult.class);
+        List<ServiceRefView> refs = new LinkedList<>();
+        for (ServiceRefViewResult result : results) {
+            refs.add(result.value);
+        }
+        return refs;
+    }
+
+    public class ServiceRefViewResult {
+        public ServiceRefView value;
+    }
+    
 }

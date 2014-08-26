@@ -4,9 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Network;
-import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
-import com.northernwall.hadrian.domain.Version;
+import com.northernwall.hadrian.domain.ServiceRefView;
+import com.northernwall.hadrian.domain.VersionView;
 import com.northernwall.hadrian.formData.Color;
 import com.northernwall.hadrian.formData.Edge;
 import com.northernwall.hadrian.formData.Node;
@@ -53,67 +52,61 @@ public class GraphHandler extends AbstractHandler {
         Network network = new Network();
         List<String> indexes = new LinkedList<>();
         response.setContentType("application/json;charset=utf-8");
-        List<Service> services = dataAccess.getServices();
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            if (services != null) {
-                for (Service service : services) {
-                    if (service.versions != null) {
-                        for (Version version : service.versions) {
-                            Node node = new Node();
-                            node.id = indexes.size();
-                            node.label = service.getId() + "-v" + version.api;
-                            if (service.type != null && service.type.equals("Application")) {
-                                node.shape = "box";
-                            } else {
-                                node.shape = "ellipse";
-                            }
-                            node.title = buildNodeTitle(service, version);
-                            node.color = new Color();
-                            if (service.access != null && service.access.equals("Internal")) {
-                                node.color.background = "white";
-                            } else {
-                                node.color.background = "yellow";
-                            }
-                            if (version.status != null && (version.status.equals("Retiring") || version.status.equals("Retired"))) {
-                                node.color.border = "red";
-                                node.borderWidth = 3;
-                            } else {
-                                node.color.border = "black";
-                                node.borderWidth = 1;
-                            }
-                            indexes.add(service.getId() + "-v" + version.api);
-                            network.nodes.add(node);
-                        }
+            List<VersionView> versions = dataAccess.getVersionVeiw();
+            if (versions != null && !versions.isEmpty()) {
+                for (VersionView version : versions) {
+                    Node node = new Node();
+                    node.id = indexes.size();
+                    node.label = version.serviceId + "-v" + version.versionId;
+                    if (version.type != null && version.type.equals("Application")) {
+                        node.shape = "box";
+                    } else {
+                        node.shape = "ellipse";
                     }
+                    node.title = buildNodeTitle(version);
+                    node.color = new Color();
+                    if (version.access != null && version.access.equals("Internal")) {
+                        node.color.background = "white";
+                    } else {
+                        node.color.background = "yellow";
+                    }
+                    if (version.status != null && (version.status.equals("Retiring") || version.status.equals("Retired"))) {
+                        node.color.border = "red";
+                        node.borderWidth = 3;
+                    } else {
+                        node.color.border = "black";
+                        node.borderWidth = 1;
+                    }
+                    indexes.add(version.serviceId + "-v" + version.versionId);
+                    network.nodes.add(node);
                 }
-                for (Service service : services) {
-                    if (service.versions != null) {
-                        for (Version version : service.versions) {
-                            int i = indexes.indexOf(service.getId() + "-v" + version.api);
-                            if (version.uses != null) {
-                                for (ServiceRef ref : version.uses) {
-                                    Edge edge = new Edge();
-                                    edge.from = i;
-                                    edge.to = indexes.indexOf(ref.service + "-v" + ref.version);
-                                    edge.style = "arrow";
-                                    switch (ref.scope) {
-                                        case "sync":
-                                            edge.color = "blue";
-                                            edge.width = 2;
-                                            break;
-                                        case "async":
-                                            edge.color = "black";
-                                            edge.width = 1;
-                                            break;
-                                        case "support":
-                                            edge.color = "green";
-                                            edge.width = 1;
-                                            break;
-                                    }
-                                    network.edges.add(edge);
-                                }
-                            }
+            }
+            List<ServiceRefView> refs = dataAccess.getServiceRefVeiw();
+            if (refs != null && !refs.isEmpty()) {
+                for (ServiceRefView ref : refs) {
+                    int i = indexes.indexOf(ref.serviceId + "-v" + ref.versionId);
+                    int ii = indexes.indexOf(ref.refServiceId + "-v" + ref.refVersionId);
+                    if (i >= 0 && i >= 0) {
+                        Edge edge = new Edge();
+                        edge.from = i;
+                        edge.to = ii;
+                        edge.style = "arrow";
+                        switch (ref.scope) {
+                            case "sync":
+                                edge.color = "blue";
+                                edge.width = 2;
+                                break;
+                            case "async":
+                                edge.color = "black";
+                                edge.width = 1;
+                                break;
+                            case "support":
+                                edge.color = "green";
+                                edge.width = 1;
+                                break;
                         }
+                        network.edges.add(edge);
                     }
                 }
             }
@@ -122,25 +115,25 @@ public class GraphHandler extends AbstractHandler {
         response.setStatus(200);
     }
 
-    private String buildNodeTitle(Service service, Version version) {
+    private String buildNodeTitle(VersionView version) {
         StringBuilder str = new StringBuilder();
         str.append("<a href='#/services/");
-        str.append(service.getId());
+        str.append(version.serviceId);
         str.append("'>");
-        str.append(service.getId());
+        str.append(version.serviceId);
         str.append(" - ");
-        str.append(service.name);
+        str.append(version.name);
         str.append("</a><br/>");
-        str.append(service.team);
+        str.append(version.team);
         str.append("<br/>");
-        str.append(service.access);
+        str.append(version.access);
         str.append(" ");
-        str.append(service.type);
+        str.append(version.type);
         str.append("<br/>");
         switch (version.status) {
             case "Proposed":
                 str.append("Proposed, ");
-                str.append(service.getId());
+                str.append(version.serviceId);
                 str.append(" is not yet live");
                 break;
             case "Active":
@@ -150,14 +143,14 @@ public class GraphHandler extends AbstractHandler {
                 str.append("Live but not maintained");
                 break;
             case "Retiring":
-                str.append(service.team);
+                str.append(version.team);
                 str.append(" is actively retiring v");
-                str.append(version.api);
+                str.append(version.versionId);
                 break;
             case "Retired":
-                str.append(version.api);
+                str.append(version.versionId);
                 str.append(" of ");
-                str.append(service.getId());
+                str.append(version.serviceId);
                 str.append(" has been retired");
                 break;
         }

@@ -6,7 +6,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
-import com.northernwall.hadrian.domain.VersionHeader;
+import com.northernwall.hadrian.domain.VersionView;
 import com.northernwall.hadrian.formData.UsesFormData;
 import com.northernwall.hadrian.formData.VersionFormData;
 import java.io.BufferedReader;
@@ -257,11 +257,11 @@ public class VersionHandler extends AbstractHandler {
         if (version == null) {
             return;
         }
-        List<VersionHeader> versionHeaders = dataAccess.getVersions();
+        List<VersionView> versionHeaders = dataAccess.getVersionVeiw();
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             jw.beginArray();
             if (versionHeaders != null && !versionHeaders.isEmpty()) {
-                for (VersionHeader versionHeader : versionHeaders) {
+                for (VersionView versionHeader : versionHeaders) {
                     if (!versionHeader.serviceId.equals(serviceId)) {
                         if (version.uses != null && !version.uses.isEmpty()) {
                             for (ServiceRef ref : version.uses) {
@@ -271,7 +271,7 @@ public class VersionHandler extends AbstractHandler {
                             }
                         }
                         //TODO: check status of version, don't include versions that are retiring or retired and there is no existing link
-                        gson.toJson(versionHeader, VersionHeader.class, jw);
+                        gson.toJson(versionHeader, VersionView.class, jw);
                     }
                 }
             }
