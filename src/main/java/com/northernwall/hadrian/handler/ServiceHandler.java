@@ -107,6 +107,7 @@ public class ServiceHandler extends AbstractHandler {
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.state = serviceData.state;
+        service.busImportance = serviceData.busImportance;
         Version version = new Version();
         version.api = serviceData.api;
         version.impl = serviceData.impl;

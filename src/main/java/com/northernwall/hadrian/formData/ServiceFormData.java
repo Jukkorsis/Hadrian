@@ -9,6 +9,7 @@ public class ServiceFormData {
     public String access;
     public String type;
     public String state;
+    public String busImportance;
     public String api;
     public String impl;
     public String status;

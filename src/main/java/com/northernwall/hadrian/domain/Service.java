@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Service extends ServiceHeader {
     public String state = "Statefull";
+    public String busImportance = "Medium";
     public List<Endpoint> endpoints;
     public List<Link> links;
     public List<String> images;
