@@ -35,9 +35,15 @@ public class CouchDataAccess implements DataAccess {
         logger.info("Couch access established");
         
         Map<String, DesignDocument.MapReduce> views = new HashMap<>();
+
         DesignDocument.MapReduce mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, versionId: version.api});});}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
+        views.put("services", mapReduce);
+        
+        mapReduce = new DesignDocument.MapReduce();
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, versionId: version.api});});}}");
         views.put("versions", mapReduce);
+        
         DesignDocument designDoc = new DesignDocument();
         designDoc.setViews(views);
         designDoc.setId("_design/app");
@@ -48,7 +54,7 @@ public class CouchDataAccess implements DataAccess {
     
     @Override
     public List<ServiceHeader> getServiceHeaders() {
-        return dbClient.view("_all_docs").includeDocs(true).query(ServiceHeader.class);
+        return dbClient.view("app/services").includeDocs(true).query(ServiceHeader.class);
     }
 
     @Override
