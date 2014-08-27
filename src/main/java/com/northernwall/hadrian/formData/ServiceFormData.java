@@ -10,6 +10,7 @@ public class ServiceFormData {
     public String type;
     public String state;
     public String busImportance;
+    public String pii;
     public String api;
     public String impl;
     public String status;

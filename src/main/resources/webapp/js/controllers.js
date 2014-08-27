@@ -28,6 +28,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
         $scope.createForm.type = "Service";
         $scope.createForm.state = "Stateless";
         $scope.createForm.busImportance = "Medium";
+        $scope.createForm.pii = "None";
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateServiceForm = function(item, event) {
@@ -41,6 +42,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
                 type: $scope.createForm.type,
                 state: $scope.createForm.state,
                 busImportance: $scope.createForm.busImportance,
+                pii: $scope.createForm.pii,
                 api: $scope.createForm.api,
                 impl: $scope.createForm.impl,
                 status: $scope.createForm.status
@@ -72,7 +74,8 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
                 access: $scope.editForm.access,
                 type: $scope.editForm.type,
                 state: $scope.editForm.state,
-                busImportance: $scope.editForm.busImportance
+                busImportance: $scope.editForm.busImportance,
+                pii: $scope.editForm.pii
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
