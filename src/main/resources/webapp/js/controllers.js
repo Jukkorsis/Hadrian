@@ -144,6 +144,8 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                     $scope.editForm.api = version.api;
                     $scope.editForm.impl = version.impl;
                     $scope.editForm.status = version.status;
+                    $scope.editForm.links = version.links;
+                    $scope.editForm.links.push({name: "", url: ""});
                     var responsePromise = $http.get("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + "/uses.json", {});
                     responsePromise.success(function(dataFromServer, status, headers, config) {
                         $scope.editForm.uses1 = dataFromServer.slice(0,(dataFromServer.length/2));
@@ -160,6 +162,7 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 api: $scope.editForm.api,
                 impl: $scope.editForm.impl,
                 status: $scope.editForm.status,
+                links: $scope.editForm.links,
                 uses1: $scope.editForm.uses1,
                 uses2: $scope.editForm.uses2
             };

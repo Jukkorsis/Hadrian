@@ -3,6 +3,7 @@ package com.northernwall.hadrian.handler;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Version;
@@ -116,6 +117,12 @@ public class VersionHandler extends AbstractHandler {
         if (!version.status.equals(versionData.status)) {
             version.status = versionData.status;
             generateWarningsForUsedBy(cur, version);
+        }
+        cur.links = new LinkedList<>();
+        for (Link link : versionData.links) {
+            if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
+                cur.links.add(link);
+            }
         }
         versionData.uses1.addAll(versionData.uses2);
         for (UsesFormData usesData : versionData.uses1) {

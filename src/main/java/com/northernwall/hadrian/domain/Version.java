@@ -7,7 +7,7 @@ public class Version {
     public String api;
     public String impl;
     public String status = "Live";
-    public List<Link> links;
+    public List<Link> links = new LinkedList<>();
     public List<ServiceRef> uses;
     public List<ServiceRef> usedby;
 
