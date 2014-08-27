@@ -64,6 +64,23 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
         $scope.editForm = Service.get({serviceId: $routeParams.serviceId}, function(service) {
         });
 
+        $scope.editForm = {};
+        Service.get({serviceId: $routeParams.serviceId}, function(service) {
+            $scope.editForm._id = service._id;
+            $scope.editForm.name = service.name;
+            $scope.editForm.team = service.team;
+            $scope.editForm.description = service.description;
+            $scope.editForm.access = service.access;
+            $scope.editForm.type = service.type;
+            $scope.editForm.state = service.state;
+            $scope.editForm.busImportance = service.busImportance;
+            $scope.editForm.pii = service.pii;
+            $scope.editForm.endpoints = service.endpoints;
+            $scope.editForm.endpoints.push({env: "", endpoint: ""});
+            $scope.editForm.links = service.links;
+            $scope.editForm.links.push({name: "", url: ""});
+        });
+
         $scope.submitEditServiceForm = function(item, event) {
             console.log("--> Submitting edit form");
             var dataObject = {
@@ -75,7 +92,9 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
                 type: $scope.editForm.type,
                 state: $scope.editForm.state,
                 busImportance: $scope.editForm.busImportance,
-                pii: $scope.editForm.pii
+                pii: $scope.editForm.pii,
+                endpoints: $scope.editForm.endpoints,
+                links: $scope.editForm.links
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
@@ -133,7 +152,6 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 }
             });
         });
-
 
         $scope.submitEditVersionForm = function(item, event) {
             console.log("--> Submitting edit form");

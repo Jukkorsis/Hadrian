@@ -21,8 +21,8 @@
     <div class="form-group">
         <label for="description" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
-           <textarea id="description" ng-model="editForm.description" placeholder="Does stuff" required="true" class="form-control" rows="3"></textarea>
-         </div>
+            <textarea id="description" ng-model="editForm.description" placeholder="Does stuff" required="true" class="form-control" rows="3"></textarea>
+        </div>
     </div>
     <div class="form-group">
         <label for="access" class="col-sm-2 control-label">Access</label>
@@ -71,10 +71,24 @@
             </select>
         </div>
     </div>
+    <div class="form-group" ng-repeat="u in editForm.endpoints">
+        <label class="col-sm-2 control-label">Endpoint</label>
+        <div class="col-sm-8">
+            <input type="text" id="team" ng-model="u.env" ng-minlength="1" ng-maxlength="30" placeholder="Env">
+            <input type="text" id="team" ng-model="u.endpoint" ng-minlength="1" ng-maxlength="100" placeholder="Endpoint">
+        </div>
+    </div>
+    <div class="form-group" ng-repeat="u in editForm.links">
+        <label class="col-sm-2 control-label">Link</label>
+        <div class="col-sm-8">
+            <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name">
+            <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
+        </div>
+    </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button ng-click="submitEditServiceForm()" class="btn btn-info btn-xs">Submit Form</button> 
-            <a href="#/services/{{service._id}}" class="btn btn-info btn-xs">Cancel</a>
+            <a href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
         </div>
     </div>
 </form>

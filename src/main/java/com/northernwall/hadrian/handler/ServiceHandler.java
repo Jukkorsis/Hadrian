@@ -3,6 +3,8 @@ package com.northernwall.hadrian.handler;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Endpoint;
+import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
@@ -131,6 +133,20 @@ public class ServiceHandler extends AbstractHandler {
         cur.access = serviceData.access;
         cur.type = serviceData.type;
         cur.state = serviceData.state;
+        cur.busImportance = serviceData.busImportance;
+        cur.pii = serviceData.pii;
+        cur.endpoints = new LinkedList<>();
+        for (Endpoint link : serviceData.endpoints) {
+            if (link.env != null && !link.env.isEmpty() && link.endpoint != null && !link.endpoint.isEmpty()) {
+                cur.endpoints.add(link);
+            }
+        }
+        cur.links = new LinkedList<>();
+        for (Link link : serviceData.links) {
+            if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
+                cur.links.add(link);
+            }
+        }
         dataAccess.update(cur);
     }
 

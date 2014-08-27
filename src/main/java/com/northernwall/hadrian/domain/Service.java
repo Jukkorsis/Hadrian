@@ -7,8 +7,8 @@ public class Service extends ServiceHeader {
     public String state = "Statefull";
     public String busImportance = "Medium";
     public String pii = "None";
-    public List<Endpoint> endpoints;
-    public List<Link> links;
+    public List<Endpoint> endpoints = new LinkedList<>();
+    public List<Link> links = new LinkedList<>();
     public List<String> images;
     public List<Version> versions;
     
