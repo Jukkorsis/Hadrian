@@ -21,7 +21,8 @@
       <strong>Retired</strong>, The service is no longer in production.</dd>
   <dt>Scope</dt><dd>Scope defines the nature of service's dependence on another service:<br/>
       <strong>Sync Required</strong>, To complete critical functions this service makes synchronous calls to the dependant service.<br/>
-      <strong>Async Required</strong>, To complete critical functions this service makes async calls (via a queue) to the dependant service.<br/>
+      <strong>Async Required</strong>, To complete critical functions this service makes direct async calls to the dependant service.<br/>
+      <strong>Indirect Required</strong>, To complete critical functions this service makes indirect async calls via a queue to the dependant service.<br/>
       <strong>Support</strong>, In the background this service makes support calls to the dependant service, for example logging or metrics.</dd>
 </dl>
 <h1>Service Graph</h1>
@@ -46,5 +47,6 @@ Hover your mouse over a service to see more details including a link to the serv
 <dl class="dl-horizontal">
   <dt>Blue</dt><dd>Sync Required</dd>
   <dt>Black</dt><dd>Async Required</dd>
+  <dt>Brown</dt><dd>Indirect Async Required</dd>
   <dt>green</dt><dd>Support</dd>
 </dl>

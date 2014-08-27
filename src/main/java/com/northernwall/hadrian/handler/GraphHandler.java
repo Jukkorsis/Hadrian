@@ -101,6 +101,10 @@ public class GraphHandler extends AbstractHandler {
                                 edge.color = "black";
                                 edge.width = 1;
                                 break;
+                            case "indirect":
+                                edge.color = "brown";
+                                edge.width = 1;
+                                break;
                             case "support":
                                 edge.color = "green";
                                 edge.width = 1;
