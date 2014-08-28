@@ -76,7 +76,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
             $scope.editForm.busImportance = service.busImportance;
             $scope.editForm.pii = service.pii;
             $scope.editForm.endpoints = service.endpoints;
-            $scope.editForm.endpoints.push({env: "", endpoint: ""});
+            $scope.editForm.endpoints.push({env: "", url: ""});
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
         });
@@ -139,6 +139,9 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
+            if (service.endpoints.length !== null) {
+                $scope.editForm.envUrl = service.endpoints[0].url;
+            }
             service.versions.forEach(function(version) {
                 if (version.api === $routeParams.versionId) {
                     $scope.editForm.api = version.api;
@@ -148,8 +151,18 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                     $scope.editForm.links.push({name: "", url: ""});
                     var responsePromise = $http.get("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + "/uses.json", {});
                     responsePromise.success(function(dataFromServer, status, headers, config) {
-                        $scope.editForm.uses1 = dataFromServer.slice(0,(dataFromServer.length/2));
-                        $scope.editForm.uses2 = dataFromServer.slice((dataFromServer.length/2),dataFromServer.length+1);
+                        $scope.editForm.uses1 = [];
+                        $scope.editForm.uses2 = [];
+                        $scope.editForm.uses3 = [];
+                        dataFromServer.forEach(function(element, index) {
+                            if (index % 3 === 0) {
+                                $scope.editForm.uses1.push(element);
+                            } else if (index % 3 === 1) {
+                                $scope.editForm.uses2.push(element);
+                            } else if (index % 3 === 2) {
+                                $scope.editForm.uses3.push(element);
+                            }
+                        });
                     });
                 }
             });
@@ -164,7 +177,8 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 status: $scope.editForm.status,
                 links: $scope.editForm.links,
                 uses1: $scope.editForm.uses1,
-                uses2: $scope.editForm.uses2
+                uses2: $scope.editForm.uses2,
+                uses3: $scope.editForm.uses3
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + ".json", dataObject, {});

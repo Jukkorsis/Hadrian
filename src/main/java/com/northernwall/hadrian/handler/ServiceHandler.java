@@ -136,9 +136,9 @@ public class ServiceHandler extends AbstractHandler {
         cur.busImportance = serviceData.busImportance;
         cur.pii = serviceData.pii;
         cur.endpoints = new LinkedList<>();
-        for (Endpoint link : serviceData.endpoints) {
-            if (link.env != null && !link.env.isEmpty() && link.endpoint != null && !link.endpoint.isEmpty()) {
-                cur.endpoints.add(link);
+        for (Endpoint endpoint : serviceData.endpoints) {
+            if (endpoint.env != null && !endpoint.env.isEmpty() && endpoint.url != null && !endpoint.url.isEmpty()) {
+                cur.endpoints.add(endpoint);
             }
         }
         cur.links = new LinkedList<>();

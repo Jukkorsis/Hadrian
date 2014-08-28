@@ -1,51 +1,46 @@
 <h1>Edit Version</h1>
 <form class="form-horizontal" role="form">
     <div class ="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="_id" class="col-sm-4 control-label">Service</label>
-                <div class="col-sm-8">
-                    <input type="text" id="_id" ng-model="editForm._id" readonly>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="api" class="col-sm-4 control-label">API Version</label>
-                <div class="col-sm-8">
-                    <input type="text" id="api" ng-model="editForm.api" ng-minlength="1" ng-maxlength="8" readonly>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="impl" class="col-sm-4 control-label">Impl Version</label>
-                <div class="col-sm-8">
-                    <input type="text" id="impl" ng-model="editForm.impl" ng-minlength="1" ng-maxlength="8" required="true" placeholder="2">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="status" class="col-sm-4 control-label">Status</label>
-                <div class="col-sm-8">
-                    <select id="status" ng-model="editForm.status">
-                        <option value="Proposed">Proposed</option>
-                        <option value="Active">Active</option>
-                        <option value="Live">Live</option>
-                        <option value="Retiring">Retiring</option>
-                        <option value="Retired">Retired</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group" ng-repeat="u in editForm.links">
-                <label class="col-sm-2 control-label">Operation</label>
-                <div class="col-sm-8">
-                    <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name">
-                    <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs">Update Version</button> 
-                    <a href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
-                </div>
+        <div class="form-group">
+            <label for="_id" class="col-sm-2 control-label">Service</label>
+            <div class="col-sm-10">
+                <input type="text" id="_id" ng-model="editForm._id" readonly>
             </div>
         </div>
+        <div class="form-group">
+            <label for="api" class="col-sm-2 control-label">API Version</label>
+            <div class="col-sm-10">
+                <input type="text" id="api" ng-model="editForm.api" ng-minlength="1" ng-maxlength="8" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="impl" class="col-sm-2 control-label">Impl Version</label>
+            <div class="col-sm-10">
+                <input type="text" id="impl" ng-model="editForm.impl" ng-minlength="1" ng-maxlength="8" required="true" placeholder="2">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="status" class="col-sm-2 control-label">Status</label>
+            <div class="col-sm-10">
+                <select id="status" ng-model="editForm.status">
+                    <option value="Proposed">Proposed</option>
+                    <option value="Active">Active</option>
+                    <option value="Live">Live</option>
+                    <option value="Retiring">Retiring</option>
+                    <option value="Retired">Retired</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-repeat="u in editForm.links">
+            <label class="col-sm-2 control-label">Operation</label>
+            <div class="col-sm-10">
+                <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name">
+                <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
+                {{editForm.envUrl}}{{u.url}}
+            </div>
+        </div>
+    </div>
+    <div class ="row">
         <div class="col-md-4">
             <div class="form-group" ng-repeat="u in editForm.uses1">
                 <label class="col-sm-4 control-label">{{u.serviceId}} v{{u.versionId}}</label>
@@ -72,6 +67,28 @@
                         <option value="none">None</option>
                     </select>
                 </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group" ng-repeat="u in editForm.uses3">
+                <label class="col-sm-4 control-label">{{u.serviceId}} v{{u.versionId}}</label>
+                <div class="col-sm-8">
+                    <select ng-model="u.scope">
+                        <option value="sync">Sync Required</option>
+                        <option value="async">Async Required</option>
+                        <option value="indirect">Indirect Required</option>
+                        <option value="support">Support</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class ="row">
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs">Update Version</button> 
+                <a href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
             </div>
         </div>
     </div>

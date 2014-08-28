@@ -70,7 +70,7 @@
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
-                        <a ng-repeat="ep in service.endpoints" href="{{ep.endpoint}}{{link.url}}">{{ep.env}} </a> 
+                        <a ng-repeat="ep in service.endpoints" href="{{ep.url}}{{link.url}}">{{ep.env}} </a> 
                     </dd>
                 </div>
             </dl>

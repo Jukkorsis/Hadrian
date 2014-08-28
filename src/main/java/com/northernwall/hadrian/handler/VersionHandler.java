@@ -118,13 +118,14 @@ public class VersionHandler extends AbstractHandler {
             version.status = versionData.status;
             generateWarningsForUsedBy(cur, version);
         }
-        cur.links = new LinkedList<>();
+        version.links = new LinkedList<>();
         for (Link link : versionData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
-                cur.links.add(link);
+                version.links.add(link);
             }
         }
         versionData.uses1.addAll(versionData.uses2);
+        versionData.uses1.addAll(versionData.uses3);
         for (UsesFormData usesData : versionData.uses1) {
             ServiceRef serviceRef = version.findUses(usesData.serviceId, usesData.versionId);
             if (serviceRef != null) {
