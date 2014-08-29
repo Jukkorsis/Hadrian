@@ -139,8 +139,10 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
-            if (service.endpoints.length !== null) {
-                $scope.editForm.envUrl = service.endpoints[0].url;
+            if ("endpoints" in service) {
+                if (service.endpoints.length > 0) {
+                    $scope.editForm.envUrl = service.endpoints[0].url;
+                }
             }
             service.versions.forEach(function(version) {
                 if (version.api === $routeParams.versionId) {
