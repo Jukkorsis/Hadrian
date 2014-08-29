@@ -79,7 +79,8 @@
             <h4>{{service.id}} uses:</h4>
             <ul>
                 <li ng-repeat="s in version.uses">
-                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}}) {{s.retireWarnings}}
+                    <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
+                    <span ng-if="s.retireWarnings"><span class="glyphicon glyphicon-exclamation-sign"></span> Retired!</span>
                 </li>
             </ul>
         </div>
