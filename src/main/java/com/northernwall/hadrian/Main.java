@@ -7,8 +7,10 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.CouchDataAccess;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.handler.AvailabilityHandler;
 import com.northernwall.hadrian.handler.ContentHandler;
 import com.northernwall.hadrian.handler.GraphHandler;
+import com.northernwall.hadrian.handler.RedirectHandler;
 import com.northernwall.hadrian.handler.ServiceHandler;
 import com.northernwall.hadrian.handler.VersionHandler;
 import java.io.File;
@@ -90,16 +92,20 @@ public class Main {
             connector.setAcceptQueueSize(Integer.parseInt(properties.getProperty("jetty.acceptQueueSize", "100")));
             server.addConnector(connector);
 
+            Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
             Handler serviceHandler = new ServiceHandler(dataAccess, gson);
             Handler versionHandler = new VersionHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
+            Handler redirectHandler = new RedirectHandler();
 
             HandlerList handlers = new HandlerList();
+            handlers.addHandler(availabilityHandler);
             handlers.addHandler(contentHandler);
             handlers.addHandler(serviceHandler);
             handlers.addHandler(versionHandler);
             handlers.addHandler(graphHandler);
+            handlers.addHandler(redirectHandler);
             server.setHandler(handlers);
 
             server.start();

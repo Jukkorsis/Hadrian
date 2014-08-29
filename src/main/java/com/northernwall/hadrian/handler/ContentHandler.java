@@ -1,7 +1,5 @@
 package com.northernwall.hadrian.handler;
 
-import com.google.gson.Gson;
-import com.northernwall.hadrian.db.CouchDataAccess;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
@@ -22,16 +20,7 @@ public class ContentHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.equals("/")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                redirect(response);
-                response.setStatus(200);
-                request.setHandled(true);
-            } else if (target.equals("/availablity")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                response.setStatus(200);
-                request.setHandled(true);
-            } else if (target.equals("/ui/")) {
+            if (target.equals("/ui/")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 getContent(response, "/webapp/index.html");
                 response.setStatus(200);
@@ -46,12 +35,6 @@ public class ContentHandler extends AbstractHandler {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
         }
-    }
-
-    private void redirect(HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=utf-8");
-        response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=/ui/\"></head><body></body></html>");
-        response.setStatus(200);
     }
 
     private void getContent(HttpServletResponse response, String resource) throws IOException {
