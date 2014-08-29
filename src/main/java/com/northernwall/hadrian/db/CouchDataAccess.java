@@ -42,7 +42,7 @@ public class CouchDataAccess implements DataAccess {
         views.put("services", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, type: doc.team, type: doc.team, access: doc.access, versionId: version.api, status: version.status});});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, type: doc.team, team: doc.team, access: doc.access, versionId: version.api, status: version.status});});}}");
         views.put("versions", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
