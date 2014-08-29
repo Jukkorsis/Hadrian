@@ -138,10 +138,13 @@ public class GraphHandler extends AbstractHandler {
             case "Proposed":
                 str.append("Proposed, ");
                 str.append(version.serviceId);
-                str.append(" is not yet live");
+                str.append(" v");
+                str.append(version.versionId);
+                str.append(" is not yet live.");
                 break;
             case "Active":
-                str.append("Live and actively maintained");
+                str.append("Live and actively maintained by ");
+                str.append(version.team);
                 break;
             case "Live":
                 str.append("Live but not maintained");
@@ -150,8 +153,11 @@ public class GraphHandler extends AbstractHandler {
                 str.append(version.team);
                 str.append(" is actively retiring v");
                 str.append(version.versionId);
+                str.append(" of ");
+                str.append(version.serviceId);
                 break;
             case "Retired":
+                str.append("v");
                 str.append(version.versionId);
                 str.append(" of ");
                 str.append(version.serviceId);
