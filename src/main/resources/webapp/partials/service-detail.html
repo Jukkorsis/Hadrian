@@ -15,20 +15,23 @@
 
     </div>
     <div class="col-md-8">
-        <p>{{service.description}}</p>
         <dl class="dl-horizontal">
+            <dt>Description</dt>
+            <dd>{{service.description}}</dd>
             <dt>Team</dt>
             <dd>{{service.team}}</dd>
             <dt>State</dt>
             <dd>{{service.state}}</dd>
-            <dt>Business Importance</dt>
-            <dd>{{service.busImportance}}</dd>
-            <dt>PII</dt>
-            <dd>{{service.pii}}</dd>
             <dt>Access</dt>
             <dd>{{service.access}}</dd>
             <dt>Type</dt>
             <dd>{{service.type}}</dd>
+            <dt>Technology</dt>
+            <dd>{{service.tech}}</dd>
+            <dt>Business Importance</dt>
+            <dd>{{service.busImportance}}</dd>
+            <dt>PII</dt>
+            <dd>{{service.pii}}</dd>
             <div ng-repeat="ep in service.endpoints">
                 <dt>{{ep.env}}</dt>
                 <dd>
@@ -40,6 +43,18 @@
                 <dd>
                     <a href="{{link.url}}">{{link.url}}</a>
                 </dd>
+            </div>
+            <dt>data Center</dt>
+            <dd>
+                <span ng-repeat="datacenter in service.dataCenters">
+                    <span ng-if="datacenter.status != 'None'">
+                        {{datacenter.name}} ({{datacenter.status}}) 
+                    </span>
+                </span>
+            </dd>
+            <div ng-repeat="rating in service.haRatings">
+                <dt>{{rating.dimension}}</dt>
+                <dd>{{rating.code}}</dd>
             </div>
         </dl>
 

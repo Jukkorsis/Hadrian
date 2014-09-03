@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.db.CouchDataAccess;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.handler.AvailabilityHandler;
+import com.northernwall.hadrian.handler.ConfigHandler;
 import com.northernwall.hadrian.handler.ContentHandler;
 import com.northernwall.hadrian.handler.GraphHandler;
 import com.northernwall.hadrian.handler.RedirectHandler;
@@ -18,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -86,7 +89,10 @@ public class Main {
             int port = Integer.parseInt(properties.getProperty("jetty.port", "9090"));
             Server server = new Server(new QueuedThreadPool(10, 5));
 
-            ServerConnector connector = new ServerConnector(server);
+            HttpConfiguration httpConfig = new HttpConfiguration();
+            httpConfig.setSendServerVersion(false);
+            HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
+            ServerConnector connector = new ServerConnector(server, httpFactory);
             connector.setPort(port);
             connector.setIdleTimeout(Integer.parseInt(properties.getProperty("jetty.idleTimeout", "1000")));
             connector.setAcceptQueueSize(Integer.parseInt(properties.getProperty("jetty.acceptQueueSize", "100")));
@@ -94,6 +100,7 @@ public class Main {
 
             Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
+            Handler configHandler = new ConfigHandler(dataAccess, gson);
             Handler serviceHandler = new ServiceHandler(dataAccess, gson);
             Handler versionHandler = new VersionHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
@@ -102,6 +109,7 @@ public class Main {
             HandlerList handlers = new HandlerList();
             handlers.addHandler(availabilityHandler);
             handlers.addHandler(contentHandler);
+            handlers.addHandler(configHandler);
             handlers.addHandler(serviceHandler);
             handlers.addHandler(versionHandler);
             handlers.addHandler(graphHandler);

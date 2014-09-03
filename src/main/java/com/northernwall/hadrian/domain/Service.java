@@ -5,12 +5,16 @@ import java.util.List;
 
 public class Service extends ServiceHeader {
     public String state = "Statefull";
+    public String tech;
     public String busImportance = "Medium";
     public String pii = "None";
     public List<Endpoint> endpoints = new LinkedList<>();
     public List<Link> links = new LinkedList<>();
     public List<String> images;
-    public List<Version> versions;
+    public List<HaRating> haRatings = new LinkedList<>();
+    public List<Version> versions = new LinkedList<>();
+    public List<DataCenter> dataCenters = new LinkedList<>();
+    public List<Warning> warnings = new LinkedList<>();
     
     public Version findVersion(String api) {
         if (versions == null || versions.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRefView;
@@ -8,6 +9,8 @@ import java.util.List;
 
 
 public interface DataAccess {
+    
+    Config getConfig();
 
     Service getService(String id);
 

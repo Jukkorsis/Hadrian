@@ -3,6 +3,8 @@ package com.northernwall.hadrian.handler;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.ConfigItem;
+import com.northernwall.hadrian.domain.DataCenter;
 import com.northernwall.hadrian.domain.Endpoint;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
@@ -86,6 +88,20 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service with id '" + id + "'");
         }
+        for (ConfigItem item : dataAccess.getConfig().dataCenters) {
+            boolean found = false;
+            for (DataCenter dataCenter : service.dataCenters) {
+                if (dataCenter.name.equals(item.code)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                DataCenter dc = new DataCenter();
+                dc.name = item.code;
+                dc.status = "None";
+                service.dataCenters.add(dc);
+            }
+        }
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(service, Service.class, jw);
         }
@@ -106,9 +122,10 @@ public class ServiceHandler extends AbstractHandler {
         service.imageLogo = "/ui/img/serviceLogo.png";
         service.images = new LinkedList<>();
         service.images.add(0, "/ui/img/serviceLogo.png");
+        service.state = serviceData.state;
         service.access = serviceData.access;
         service.type = serviceData.type;
-        service.state = serviceData.state;
+        service.tech = serviceData.tech;
         service.busImportance = serviceData.busImportance;
         service.pii = serviceData.pii;
         Version version = new Version();
@@ -130,9 +147,10 @@ public class ServiceHandler extends AbstractHandler {
         cur.name = serviceData.name;
         cur.team = serviceData.team;
         cur.description = serviceData.description;
+        cur.state = serviceData.state;
         cur.access = serviceData.access;
         cur.type = serviceData.type;
-        cur.state = serviceData.state;
+        cur.tech = serviceData.tech;
         cur.busImportance = serviceData.busImportance;
         cur.pii = serviceData.pii;
         cur.endpoints = new LinkedList<>();
@@ -145,6 +163,12 @@ public class ServiceHandler extends AbstractHandler {
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
                 cur.links.add(link);
+            }
+        }
+        cur.dataCenters = new LinkedList<>();
+        for (DataCenter dataCenter : serviceData.dataCenters) {
+            if (dataCenter.status != null && !dataCenter.status.equals("None")) {
+                cur.dataCenters.add(dataCenter);
             }
         }
         dataAccess.update(cur);

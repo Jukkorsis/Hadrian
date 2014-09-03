@@ -130,8 +130,10 @@ public class GraphHandler extends AbstractHandler {
         str.append("</a><br/>");
         str.append(version.team);
         str.append("<br/>");
+        str.append(version.state);
+        str.append(" - ");
         str.append(version.access);
-        str.append(" ");
+        str.append(" - ");
         str.append(version.type);
         str.append("<br/>");
         switch (version.status) {

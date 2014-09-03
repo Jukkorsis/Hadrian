@@ -24,9 +24,9 @@ soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Se
 soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
     function($scope, $http, $window) {
         $scope.createForm = {};
+        $scope.createForm.state = "Stateless";
         $scope.createForm.access = "Internal";
         $scope.createForm.type = "Service";
-        $scope.createForm.state = "Stateless";
         $scope.createForm.busImportance = "Medium";
         $scope.createForm.pii = "None";
         $scope.createForm.status = "Proposed";
@@ -38,9 +38,10 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
                 name: $scope.createForm.name,
                 team: $scope.createForm.team,
                 description: $scope.createForm.description,
+                state: $scope.createForm.state,
                 access: $scope.createForm.access,
                 type: $scope.createForm.type,
-                state: $scope.createForm.state,
+                tech: $scope.createForm.tech,
                 busImportance: $scope.createForm.busImportance,
                 pii: $scope.createForm.pii,
                 api: $scope.createForm.api,
@@ -61,24 +62,23 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
 
 soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
     function($scope, $routeParams, Service, $http, $window) {
-        $scope.editForm = Service.get({serviceId: $routeParams.serviceId}, function(service) {
-        });
-
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
             $scope.editForm.name = service.name;
             $scope.editForm.team = service.team;
             $scope.editForm.description = service.description;
+            $scope.editForm.state = service.state;
             $scope.editForm.access = service.access;
             $scope.editForm.type = service.type;
-            $scope.editForm.state = service.state;
+            $scope.editForm.tech = service.tech;
             $scope.editForm.busImportance = service.busImportance;
             $scope.editForm.pii = service.pii;
             $scope.editForm.endpoints = service.endpoints;
             $scope.editForm.endpoints.push({env: "", url: ""});
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
+            $scope.editForm.dataCenters = service.dataCenters;
         });
 
         $scope.submitEditServiceForm = function(item, event) {
@@ -88,13 +88,15 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
                 name: $scope.editForm.name,
                 team: $scope.editForm.team,
                 description: $scope.editForm.description,
+                state: $scope.editForm.state,
                 access: $scope.editForm.access,
                 type: $scope.editForm.type,
-                state: $scope.editForm.state,
+                tech: $scope.editForm.tech,
                 busImportance: $scope.editForm.busImportance,
                 pii: $scope.editForm.pii,
                 endpoints: $scope.editForm.endpoints,
-                links: $scope.editForm.links
+                links: $scope.editForm.links,
+                dataCenters: $scope.editForm.dataCenters
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});

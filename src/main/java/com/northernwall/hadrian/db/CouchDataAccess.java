@@ -1,5 +1,8 @@
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.domain.ConfigItem;
+import com.northernwall.hadrian.domain.HaDimension;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRefView;
@@ -22,6 +25,7 @@ public class CouchDataAccess implements DataAccess {
     private final static Logger logger = LoggerFactory.getLogger(CouchDataAccess.class);
 
     private final CouchDbClient dbClient;
+    private Config config;
 
     public CouchDataAccess(Properties properties) {
         CouchDbProperties dbProperties = new CouchDbProperties()
@@ -38,15 +42,15 @@ public class CouchDataAccess implements DataAccess {
         Map<String, DesignDocument.MapReduce> views = new HashMap<>();
 
         DesignDocument.MapReduce mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
         views.put("services", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, type: doc.team, team: doc.team, access: doc.access, versionId: version.api, status: version.status});});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, team: doc.team, state: doc.state, access: doc.access, type: doc.type, versionId: version.api, status: version.status});});}}");
         views.put("versions", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\") {doc.versions.forEach(function(version) {version.uses.forEach(function(ref) {emit(null, {serviceId: doc._id, versionId: version.api, refServiceId: ref.service, refVersionId: ref.version, scope: ref.scope});});});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {doc.versions.forEach(function(version) {version.uses.forEach(function(ref) {emit(null, {serviceId: doc._id, versionId: version.api, refServiceId: ref.service, refVersionId: ref.version, scope: ref.scope});});});}}");
         views.put("refs", mapReduce);
         
         DesignDocument designDoc = new DesignDocument();
@@ -55,8 +59,81 @@ public class CouchDataAccess implements DataAccess {
         designDoc.setLanguage("javascript");
         dbClient.design().synchronizeWithDb(designDoc);
         logger.info("Couch views synced");
+        
+        config = getConfig();
+        if (config == null) {
+            initConfig();
+        }
     }
     
+    private void initConfig() {
+        ConfigItem item;
+        config = new Config();
+        config.setId("SoaConfig");
+
+        item = new ConfigItem();
+        item.code = "DC1";
+        item.description = "DC1";
+        config.dataCenters.add(item);
+
+        item = new ConfigItem();
+        item.code = "DC2";
+        item.description = "DC2";
+        config.dataCenters.add(item);
+
+        item = new ConfigItem();
+        item.code = "DC3";
+        item.description = "DC3";
+        config.dataCenters.add(item);
+
+        HaDimension dimension = new HaDimension();
+        dimension.name = "Points of Failure";
+        item = new ConfigItem();
+        item.code = "None";
+        item.description = "No single point of failure, 3+ data centers in Active-Active configuration";
+        dimension.levels.add(item);
+        item = new ConfigItem();
+        item.code = "Active-Standby";
+        item.description = "Some compoents exist in 2 data centers in Active-Standby configuration";
+        dimension.levels.add(item);
+        item = new ConfigItem();
+        item.code = "Single DC";
+        item.description = "Some compoents exist on 2+ hosts, but in a single data center";
+        dimension.levels.add(item);
+        item = new ConfigItem();
+        item.code = "Single Host";
+        item.description = "Some compoents exist on a single host";
+        dimension.levels.add(item);
+        config.haDimensions.add(dimension);
+
+        dimension = new HaDimension();
+        dimension.name = "Intervention";
+        item = new ConfigItem();
+        item.code = "None";
+        item.description = "No manual intervention is required to respond to a failure";
+        dimension.levels.add(item);
+        item = new ConfigItem();
+        item.code = "short";
+        item.description = "Manual intervention is required to respond to a failure. Process once started take less than 15 minutes to complete.";
+        dimension.levels.add(item);
+        item = new ConfigItem();
+        item.code = "Long";
+        item.description = "Manual intervention is required to respond to a failure. Process once started take more than 15 minutes to complete.";
+        dimension.levels.add(item);
+        config.haDimensions.add(dimension);
+        
+        dbClient.save(config);
+    }
+    
+    @Override
+    public Config getConfig() {
+        try {
+            return dbClient.find(Config.class, "SoaConfig");
+        } catch (NoDocumentException nde) {
+            return null;
+        }
+    }
+
     @Override
     public List<ServiceHeader> getServiceHeaders() {
         return dbClient.view("app/services").includeDocs(true).query(ServiceHeader.class);
