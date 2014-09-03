@@ -2,6 +2,7 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.DataCenter;
@@ -30,10 +31,12 @@ public class ServiceHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
     private final Gson gson;
+    private final WarningProcessor warningProcessor;
 
-    public ServiceHandler(DataAccess dataAccess, Gson gson) {
+    public ServiceHandler(DataAccess dataAccess, Gson gson, WarningProcessor warningProcessor) {
         this.dataAccess = dataAccess;
         this.gson = gson;
+        this.warningProcessor = warningProcessor;
     }
 
     @Override
@@ -172,6 +175,8 @@ public class ServiceHandler extends AbstractHandler {
             }
         }
         dataAccess.update(cur);
+        
+        warningProcessor.scanServices();
     }
 
 }

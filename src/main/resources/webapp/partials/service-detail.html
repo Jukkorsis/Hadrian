@@ -56,6 +56,10 @@
                 <dt>{{rating.dimension}}</dt>
                 <dd>{{rating.code}}</dd>
             </div>
+            <div ng-repeat="warning in service.warnings">
+                <dt>Warning</dt>
+                <dd>{{warning.text}}</dd>
+            </div>
         </dl>
 
         <ul class="service-thumbs">
@@ -95,7 +99,6 @@
             <ul>
                 <li ng-repeat="s in version.uses">
                     <a href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
-                    <span ng-if="s.retireWarnings"><span class="glyphicon glyphicon-exclamation-sign"></span> Retired!</span>
                 </li>
             </ul>
         </div>

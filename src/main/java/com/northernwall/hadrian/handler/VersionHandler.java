@@ -2,6 +2,7 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
@@ -25,15 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionHandler extends AbstractHandler {
-
     private final static Logger logger = LoggerFactory.getLogger(VersionHandler.class);
 
     private final DataAccess dataAccess;
     private final Gson gson;
+    private final WarningProcessor warningProcessor;
 
-    public VersionHandler(DataAccess dataAccess, Gson gson) {
+    public VersionHandler(DataAccess dataAccess, Gson gson, WarningProcessor warningProcessor) {
         this.dataAccess = dataAccess;
         this.gson = gson;
+        this.warningProcessor = warningProcessor;
     }
 
     @Override
@@ -114,10 +116,7 @@ public class VersionHandler extends AbstractHandler {
             return;
         }
         version.impl = versionData.impl;
-        if (!version.status.equals(versionData.status)) {
-            version.status = versionData.status;
-            generateWarningsForUsedBy(cur, version);
-        }
+        version.status = versionData.status;
         version.links = new LinkedList<>();
         for (Link link : versionData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
@@ -143,7 +142,6 @@ public class VersionHandler extends AbstractHandler {
                 serviceRef.service = usesData.serviceId;
                 serviceRef.version = usesData.versionId;
                 serviceRef.scope = usesData.scope;
-                generateWarningsForUsesRef(serviceRef);
                 if (version.uses == null) {
                     version.uses = new LinkedList<>();
                 }
@@ -152,6 +150,8 @@ public class VersionHandler extends AbstractHandler {
             }
         }
         dataAccess.update(cur);
+        
+        warningProcessor.scanServices();
     }
 
     private void addUsedBy(String serviceId, String versionId, String refServiceId, String refVersionId, String scope) {
@@ -215,39 +215,6 @@ public class VersionHandler extends AbstractHandler {
         }
         version.usedby.remove(serviceRef);
         dataAccess.update(cur);
-    }
-
-    private void generateWarningsForUsesRef(ServiceRef serviceRef) {
-        Service usedByService = dataAccess.getService(serviceRef.service);
-
-        if (usedByService == null) {
-            logger.error("Could not find service {}", serviceRef.service);
-            return;
-        }
-
-        for (Version usedByVersion : usedByService.versions) {
-            if (usedByVersion.api.equals(serviceRef.version)) {
-                serviceRef.retireWarnings = (usedByVersion.status.equals("Retired") || usedByVersion.status.equals("Retiring"));
-            }
-        }
-    }
-
-    private void generateWarningsForUsedBy(Service service, Version version) {
-        if (version.usedby != null && !version.usedby.isEmpty()) {
-            for (ServiceRef usedByServiceRef : version.usedby) {
-                Service usedByService = dataAccess.getService(usedByServiceRef.service);
-                if (usedByService != null) {
-                    Version usedByVersion = usedByService.findVersion(usedByServiceRef.version);
-                    if (usedByVersion != null) {
-                        ServiceRef serviceRef = usedByVersion.findUses(service.getId(), version.api);
-                        if (serviceRef != null) {
-                            serviceRef.retireWarnings = (version.status.equals("Retired") || version.status.equals("Retiring"));
-                            dataAccess.update(usedByService);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private void getVersionUses(HttpServletResponse response, String serviceId, String versionId) throws IOException {

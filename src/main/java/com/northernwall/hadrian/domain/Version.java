@@ -8,8 +8,8 @@ public class Version {
     public String impl;
     public String status = "Live";
     public List<Link> links = new LinkedList<>();
-    public List<ServiceRef> uses;
-    public List<ServiceRef> usedby;
+    public List<ServiceRef> uses = new LinkedList<>();
+    public List<ServiceRef> usedby = new LinkedList<>();
 
     public ServiceRef findUses(String service, String version) {
         if (uses == null || uses.isEmpty()) {

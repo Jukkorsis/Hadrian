@@ -85,6 +85,7 @@ public class Main {
     private void startJetty() {
         try {
             Gson gson = new Gson();
+            WarningProcessor warningProcessor = new WarningProcessor(dataAccess);
 
             int port = Integer.parseInt(properties.getProperty("jetty.port", "9090"));
             Server server = new Server(new QueuedThreadPool(10, 5));
@@ -101,8 +102,8 @@ public class Main {
             Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
             Handler configHandler = new ConfigHandler(dataAccess, gson);
-            Handler serviceHandler = new ServiceHandler(dataAccess, gson);
-            Handler versionHandler = new VersionHandler(dataAccess, gson);
+            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor);
+            Handler versionHandler = new VersionHandler(dataAccess, gson, warningProcessor);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
             Handler redirectHandler = new RedirectHandler();
 
