@@ -7,6 +7,8 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.DataCenter;
 import com.northernwall.hadrian.domain.Endpoint;
+import com.northernwall.hadrian.domain.HaDimension;
+import com.northernwall.hadrian.domain.HaRating;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
@@ -105,6 +107,28 @@ public class ServiceHandler extends AbstractHandler {
                 service.dataCenters.add(dc);
             }
         }
+        for (HaDimension haDimension : dataAccess.getConfig().haDimensions) {
+            boolean found = false;
+            for (HaRating haRating : service.haRatings) {
+                if (haRating.name.equals(haDimension.name)) {
+                    found = true;
+                    haRating.levels = new LinkedList<>();
+                    for (ConfigItem item : haDimension.levels) {
+                        haRating.levels.add(item.code);
+                    }
+                }
+            }
+            if (!found) {
+                HaRating haRating = new HaRating();
+                haRating.name = haDimension.name;
+                haRating.level = haDimension.levels.get(haDimension.levels.size()-1).code;
+                    haRating.levels = new LinkedList<>();
+                    for (ConfigItem item : haDimension.levels) {
+                        haRating.levels.add(item.code);
+                    }
+                service.haRatings.add(haRating);
+            }
+        }
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(service, Service.class, jw);
         }
@@ -129,7 +153,7 @@ public class ServiceHandler extends AbstractHandler {
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.tech = serviceData.tech;
-        service.busImportance = serviceData.busImportance;
+        service.busValue = serviceData.busValue;
         service.pii = serviceData.pii;
         Version version = new Version();
         version.api = serviceData.api;
@@ -137,6 +161,12 @@ public class ServiceHandler extends AbstractHandler {
         version.status = serviceData.status;
         service.versions = new LinkedList<>();
         service.versions.add(version);
+        for (HaDimension haDimension : dataAccess.getConfig().haDimensions) {
+            HaRating haRating = new HaRating();
+            haRating.name = haDimension.name;
+            haRating.level = haDimension.levels.get(haDimension.levels.size()-1).code;
+            service.haRatings.add(haRating);
+        }
         dataAccess.save(service);
     }
 
@@ -154,7 +184,7 @@ public class ServiceHandler extends AbstractHandler {
         cur.access = serviceData.access;
         cur.type = serviceData.type;
         cur.tech = serviceData.tech;
-        cur.busImportance = serviceData.busImportance;
+        cur.busValue = serviceData.busValue;
         cur.pii = serviceData.pii;
         cur.endpoints = new LinkedList<>();
         for (Endpoint endpoint : serviceData.endpoints) {
@@ -174,6 +204,7 @@ public class ServiceHandler extends AbstractHandler {
                 cur.dataCenters.add(dataCenter);
             }
         }
+        cur.haRatings = serviceData.haRatings;
         dataAccess.update(cur);
         
         warningProcessor.scanServices();

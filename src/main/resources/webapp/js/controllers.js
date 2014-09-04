@@ -27,7 +27,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
         $scope.createForm.state = "Stateless";
         $scope.createForm.access = "Internal";
         $scope.createForm.type = "Service";
-        $scope.createForm.busImportance = "Medium";
+        $scope.createForm.busValue = "Medium";
         $scope.createForm.pii = "None";
         $scope.createForm.status = "Proposed";
 
@@ -42,7 +42,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
                 access: $scope.createForm.access,
                 type: $scope.createForm.type,
                 tech: $scope.createForm.tech,
-                busImportance: $scope.createForm.busImportance,
+                busValue: $scope.createForm.busValue,
                 pii: $scope.createForm.pii,
                 api: $scope.createForm.api,
                 impl: $scope.createForm.impl,
@@ -72,13 +72,14 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
             $scope.editForm.access = service.access;
             $scope.editForm.type = service.type;
             $scope.editForm.tech = service.tech;
-            $scope.editForm.busImportance = service.busImportance;
+            $scope.editForm.busValue = service.busValue;
             $scope.editForm.pii = service.pii;
             $scope.editForm.endpoints = service.endpoints;
             $scope.editForm.endpoints.push({env: "", url: ""});
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
             $scope.editForm.dataCenters = service.dataCenters;
+            $scope.editForm.haRatings = service.haRatings;
         });
 
         $scope.submitEditServiceForm = function(item, event) {
@@ -92,11 +93,12 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
                 access: $scope.editForm.access,
                 type: $scope.editForm.type,
                 tech: $scope.editForm.tech,
-                busImportance: $scope.editForm.busImportance,
+                busValue: $scope.editForm.busValue,
                 pii: $scope.editForm.pii,
                 endpoints: $scope.editForm.endpoints,
                 links: $scope.editForm.links,
-                dataCenters: $scope.editForm.dataCenters
+                dataCenters: $scope.editForm.dataCenters,
+                haRatings: $scope.editForm.haRatings
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});

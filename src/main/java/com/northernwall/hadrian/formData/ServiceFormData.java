@@ -2,7 +2,9 @@ package com.northernwall.hadrian.formData;
 
 import com.northernwall.hadrian.domain.DataCenter;
 import com.northernwall.hadrian.domain.Endpoint;
+import com.northernwall.hadrian.domain.HaRating;
 import com.northernwall.hadrian.domain.Link;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ServiceFormData {
@@ -15,11 +17,12 @@ public class ServiceFormData {
     public String type;
     public String state;
     public String tech;
-    public String busImportance;
+    public String busValue;
     public String pii;
     public List<Endpoint> endpoints;
     public List<Link> links;
     public List<DataCenter> dataCenters;
+    public List<HaRating> haRatings = new LinkedList<>();
     public String api;
     public String impl;
     public String status;

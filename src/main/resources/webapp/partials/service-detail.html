@@ -28,34 +28,36 @@
             <dd>{{service.type}}</dd>
             <dt>Technology</dt>
             <dd>{{service.tech}}</dd>
-            <dt>Business Importance</dt>
-            <dd>{{service.busImportance}}</dd>
+            <dt>Business Value</dt>
+            <dd>{{service.busValue}}</dd>
             <dt>PII</dt>
             <dd>{{service.pii}}</dd>
-            <div ng-repeat="ep in service.endpoints">
-                <dt>{{ep.env}}</dt>
-                <dd>
-                    {{ep.url}} 
-                </dd>
-            </div>
-            <div ng-repeat="link in service.links">
-                <dt>{{link.name}}</dt>
-                <dd>
-                    <a href="{{link.url}}">{{link.url}}</a>
-                </dd>
-            </div>
-            <dt>data Center</dt>
+            <dt>End Points</dt>
+            <dd>
+                <span ng-repeat="ep in service.endpoints">
+                    <strong>{{ep.env}}</strong> {{ep.url}} <br/>
+                </span>
+            </dd>
+            <dt>Links</dt>
+            <dd>
+                <span ng-repeat="link in service.links">
+                    <strong>{{link.name}}</strong> <a href="{{link.url}}">{{link.url}}</a> <br/>
+                </span>
+            </dd>
+            <dt>Data Centers</dt>
             <dd>
                 <span ng-repeat="datacenter in service.dataCenters">
                     <span ng-if="datacenter.status != 'None'">
-                        {{datacenter.name}} ({{datacenter.status}}) 
+                        <strong>{{datacenter.name}}</strong> {{datacenter.status}} <br/>
                     </span>
                 </span>
             </dd>
-            <div ng-repeat="rating in service.haRatings">
-                <dt>{{rating.dimension}}</dt>
-                <dd>{{rating.code}}</dd>
-            </div>
+            <dt>HA Ratings</dt>
+            <dd>
+                <span ng-repeat="rating in service.haRatings">
+                    <strong>{{rating.name}}</strong> {{rating.level}} <br/>
+                </span>
+            </dd>
             <div ng-repeat="warning in service.warnings">
                 <dt>Warning</dt>
                 <dd>{{warning.text}}</dd>
@@ -89,7 +91,9 @@
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
-                        <a ng-repeat="ep in service.endpoints" href="{{ep.url}}{{link.url}}">{{ep.env}} </a> 
+                        <span ng-repeat="ep in service.endpoints">
+                            <a href="{{ep.url}}{{link.url}}">{{ep.env}}</a><br/>
+                        </span>
                     </dd>
                 </div>
             </dl>
