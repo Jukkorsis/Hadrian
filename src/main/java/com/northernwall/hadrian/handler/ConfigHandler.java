@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.Service;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
