@@ -21,3 +21,9 @@ soaRepServices.factory('Graph', ['$resource', function($resource) {
             query: {method: 'GET', isArray: false}
         });
     }]);
+
+soaRepServices.factory('Config', ['$resource', function($resource) {
+        return $resource('/config.json', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);

@@ -204,7 +204,8 @@ soaRepControllers.controller('ServiceGraphCtrl', ['$scope', 'Graph',
         $scope.options = {navigation: true, width: '100%', height: '600px'};
     }]);
 
-soaRepControllers.controller('ServiceHelpCtrl', ['$scope',
-    function($scope) {
+soaRepControllers.controller('ServiceHelpCtrl', ['$scope', 'Config',
+    function($scope, Config) {
+        $scope.config = Config.get();
     }]);
 

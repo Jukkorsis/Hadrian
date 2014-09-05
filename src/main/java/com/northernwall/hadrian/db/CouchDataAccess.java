@@ -73,17 +73,17 @@ public class CouchDataAccess implements DataAccess {
 
         item = new ConfigItem();
         item.code = "DC1";
-        item.description = "DC1";
+        item.description = "The west coast data center";
         config.dataCenters.add(item);
 
         item = new ConfigItem();
         item.code = "DC2";
-        item.description = "DC2";
+        item.description = "The east coast data center";
         config.dataCenters.add(item);
 
         item = new ConfigItem();
         item.code = "DC3";
-        item.description = "DC3";
+        item.description = "The central data center";
         config.dataCenters.add(item);
 
         HaDimension dimension = new HaDimension();

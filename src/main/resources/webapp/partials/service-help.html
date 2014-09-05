@@ -4,10 +4,13 @@
     <dt>Abbreviation</dt><dd>Short name for the service, max 8 characters.</dd>
     <dt>Name</dt><dd>The service's full name, max 30 characters.</dd>
     <dt>Team Name</dt><dd>The team that owns the service, max 30 characters.</dd>
-    <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service, max 30 characters.</dd>
+    <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service.</dd>
     <dt>Access</dt><dd>If the service is externally accessible or only offered internally.</dd>
     <dt>Type</dt><dd>Applications offers a human UI versus a service which can only be accessed by other services.</dd>
-    <dt>State</dt><dd>Does the service persist state or is stateless.</dd>
+    <dt>State</dt><dd>
+        <strong>Statefull</strong>, The service persists state between requests.<br/>
+        <strong>Stateless</strong>, All requests are handled individually, no state is persisted between requests.</dd>
+    <dt>Technology</dt><dd>A list or paragraph that describes the technologies (components, libraries, etc.) used to by the service.</dd>
     <dt>Business Value</dt><dd>Describes the Value of this service to the business<br/>
         <strong>High</strong>, High Value services provides critical business functionality<br/>
         <strong>Medium</strong>, Medium Value service supports "High" Value services, for example reporting, configuration, logging systems<br/>
@@ -16,6 +19,15 @@
         <strong>Service stores PII</strong><br/>
         <strong>Service processes PII</strong><br/>
         <strong>None</strong></dd>
+    <dt>Data Centers</dt><dd>
+        <div ng-repeat="r in config.dataCenters"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
+</dl>
+<h3>Service HA Ratings</h3>
+<dl class="dl-horizontal">
+    <div ng-repeat="haDim in config.haDimensions">
+        <dt>{{haDim.name}}</dt><dd>
+            <div ng-repeat="r in haDim.levels"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
+    </div>
 </dl>
 <h3>Service Version</h3>
 <dl class="dl-horizontal">
