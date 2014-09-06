@@ -38,11 +38,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Main main = new Main();
-        main.loadConfig(args);
-        main.startLogging();
-        main.startCouch();
-        main.startJetty();
+        try {
+            Main main = new Main();
+            main.loadConfig(args);
+            main.startLogging();
+            main.startCouch();
+            main.startJetty();
+        } catch (Exception e) {
+            logger.error("Unknown failure", e);
+        }
     }
 
     private void loadConfig(String[] args) {
@@ -65,7 +69,7 @@ public class Main {
     private void startLogging() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-        String filename = properties.getProperty("logback.filename","logback.xml");
+        String filename = properties.getProperty("logback.filename", "logback.xml");
         try {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
