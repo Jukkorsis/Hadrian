@@ -7,11 +7,15 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRefView;
 import com.northernwall.hadrian.domain.VersionView;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbProperties;
 import org.lightcouch.DesignDocument;
@@ -24,16 +28,20 @@ public class CouchDataAccess implements DataAccess {
 
     private final static Logger logger = LoggerFactory.getLogger(CouchDataAccess.class);
 
+    private final int port;
+    private final String host;
     private final CouchDbClient dbClient;
     private Config config;
 
     public CouchDataAccess(Properties properties) {
+        port = Integer.parseInt(properties.getProperty("couchdb.port","5984"));
+        host = properties.getProperty("couchdb.host", "127.0.0.1");
         CouchDbProperties dbProperties = new CouchDbProperties()
                 .setDbName(properties.getProperty("couchdb.name","soarep"))
                 .setCreateDbIfNotExist(Boolean.parseBoolean(properties.getProperty("couchdb.if-not-exist", "true")))
                 .setProtocol(properties.getProperty("couchdb.protocol", "http"))
-                .setHost(properties.getProperty("couchdb.host", "127.0.0.1"))
-                .setPort(Integer.parseInt(properties.getProperty("couchdb.port","5984")))
+                .setHost(host)
+                .setPort(port)
                 .setMaxConnections(100)
                 .setConnectionTimeout(0);
         dbClient = new CouchDbClient(dbProperties);
@@ -158,6 +166,43 @@ public class CouchDataAccess implements DataAccess {
     public void update(Service service) {
         Response rev = dbClient.update(service);
         logger.info("Update: id {} rev {} error {} reason {}", rev.getId(), rev.getRev(), rev.getError(), rev.getReason());
+    }
+
+    @Override
+    public void uploadImage(String serviceId, String name, String contentType, InputStream openStream) {
+        Service service = getService(serviceId);
+        if (service == null) {
+            logger.warn("Could not find service {} to add attachment {}", serviceId, name);
+            return;
+        }
+        dbClient.saveAttachment(openStream, name, contentType, service.getId(), service.getRevision());
+        service = getService(serviceId);
+        if (service.isImageLogoBlank()) {
+            service.imageLogo = "/services/" + serviceId + "/image/" + name;
+            dbClient.update(service);
+        }
+        logger.info("Uploaded attachment {} of type {} to {} {}", name,contentType, service.getId(), service.getRevision());
+    }
+
+    @Override
+    public InputStream downloadImage(String serviceId, String name) throws IOException {
+        Service service = getService(serviceId);
+        if (service == null) {
+            logger.warn("Could not find service {} to download attachment {}", serviceId, name);
+            return null;
+        }
+        if (service.getAttachments() != null) {
+            for (String key : service.getAttachments().keySet()) {
+                if (key.equals(name)) {
+                    String url = "http://"+host+":"+port+"/soarep/"+serviceId+"/"+name;
+                    logger.info("Downloading attachement {}", url);
+                    HttpGet get = new HttpGet(url);
+                    HttpResponse response = dbClient.executeRequest(get);
+                    return response.getEntity().getContent();
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -129,6 +129,18 @@ public class ServiceHandler extends AbstractHandler {
                 service.haRatings.add(haRating);
             }
         }
+        service.images = new LinkedList<>();
+        if (service.getAttachments() == null || service.getAttachments().isEmpty()) {
+            service.images.add(Service.DEFAULT_IMAGE);
+        } else {
+            for (String name : service.getAttachments().keySet()) {
+                String image = "/services/" + service.getId() + "/image/" + name;
+                service.images.add(image);
+                if (service.isImageLogoBlank()) {
+                    service.imageLogo = image;
+                }
+            }
+        }
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(service, Service.class, jw);
         }
@@ -136,6 +148,10 @@ public class ServiceHandler extends AbstractHandler {
 
     private void createService(Request request) throws IOException {
         ServiceFormData serviceData = gson.fromJson(new InputStreamReader(request.getInputStream()), ServiceFormData.class);
+        if (!serviceData._id.matches("\\w+")) {
+            logger.warn("New service {} contains an illegal character", serviceData._id);
+            return;
+        }
         Service cur = dataAccess.getService(serviceData._id);
 
         if (cur != null) {
@@ -146,15 +162,13 @@ public class ServiceHandler extends AbstractHandler {
         service.name = serviceData.name;
         service.team = serviceData.team;
         service.description = serviceData.description;
-        service.imageLogo = "/ui/img/serviceLogo.png";
-        service.images = new LinkedList<>();
-        service.images.add(0, "/ui/img/serviceLogo.png");
         service.state = serviceData.state;
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.tech = serviceData.tech;
         service.busValue = serviceData.busValue;
         service.pii = serviceData.pii;
+        service.imageLogo = Service.DEFAULT_IMAGE;
         Version version = new Version();
         version.api = serviceData.api;
         version.impl = serviceData.impl;

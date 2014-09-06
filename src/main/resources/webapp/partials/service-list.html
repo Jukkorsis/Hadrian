@@ -17,9 +17,9 @@
         <div class="col-md-10">
             <!--Body content-->
 
-            <ul class="phones">
+            <ul class="services">
                 <li ng-repeat="service in services| filter:query | orderBy:orderProp"
-                    class="thumbnail phone-listing">
+                    class="thumbnail">
                     <a href="#/services/{{service._id}}" class="thumb"><img ng-src="{{service.imageLogo}}"></a>
                     <a href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a> {{service.access}} {{service.type}}
                     <p>{{service.team}}</p>

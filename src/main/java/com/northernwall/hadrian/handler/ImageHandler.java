@@ -2,11 +2,8 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +11,6 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -44,6 +40,19 @@ public class ImageHandler extends AbstractHandler {
                 }
                 response.setStatus(200);
                 request.setHandled(true);
+            } else if (target.matches("/services/\\w+/image/.+")) {
+                logger.info("Handling {} request {}", request.getMethod(), target);
+                switch (request.getMethod()) {
+                    case "GET":
+                        int i = target.indexOf("/",10);
+                        String serviceId = target.substring(10, i);
+                        String name = target.substring(i+7);
+                        logger.info("service '{}' name '{}'", serviceId, name);
+                        getImage(serviceId, name, response);
+                        break;
+                }
+                response.setStatus(200);
+                request.setHandled(true);
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
@@ -63,15 +72,25 @@ public class ImageHandler extends AbstractHandler {
         FileItemIterator iter = upload.getItemIterator(request);
         while (iter.hasNext()) {
             FileItemStream item = iter.next();
-            String name = item.getFieldName();
-            InputStream stream = item.openStream();
-            if (item.isFormField()) {
-                System.out.println("Form field '" + name + "' with value '" + Streams.asString(stream) + "' detected.");
-            } else {
-                System.out.println("File field '" + name + "' with file name '" + item.getName() + "' detected.");
-                item.openStream();
+            if (!item.isFormField()) {
+                dataAccess.uploadImage(serviceId, item.getName(), item.getContentType(), item.openStream());
             }
         }
+    }
+
+    private void getImage(String serviceId, String name, HttpServletResponse response) throws IOException {
+        byte[] buffer = new byte[1024];
+        try (InputStream is = dataAccess.downloadImage(serviceId, name)) {
+            if (is == null) {
+                throw new RuntimeException("Can not find attachment '" + name + "' on service '" + serviceId + "'");
+            }
+            int len = is.read(buffer);
+            while (len != -1) {
+                response.getOutputStream().write(buffer, 0, len);
+                len = is.read(buffer);
+            }
+        }
+        response.setStatus(200);
     }
 
 }

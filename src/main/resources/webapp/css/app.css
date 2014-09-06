@@ -5,7 +5,7 @@ body {
 }
 
 
-.phone-images {
+.service-image {
   background-color: white;
   width: 450px;
   height: 450px;
@@ -14,7 +14,7 @@ body {
   float: left;
 }
 
-.phones {
+.services {
   list-style: none;
 }
 
@@ -26,14 +26,14 @@ body {
   width: 100px;
 }
 
-.phones li {
+.services li {
   clear: both;
   height: 115px;
   padding-top: 15px;
 }
 
 /** Detail View **/
-img.phone {
+.service-image img {
   float: left;
   margin-right: 3em;
   margin-bottom: 2em;
@@ -44,10 +44,9 @@ img.phone {
   display: none;
 }
 
-img.phone:first-child {
+.service-image:first-child img {
   display: block;
 }
-
 
 ul.service-thumbs {
   margin: 0;
@@ -70,7 +69,6 @@ ul.service-thumbs img {
 ul.service-thumbs img:hover {
   cursor: pointer;
 }
-
 
 ul.specs {
   clear: both;

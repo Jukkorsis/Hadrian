@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Service extends ServiceHeader {
+    public static final String DEFAULT_IMAGE = "/ui/img/serviceLogo.png";
+
     public String state = "Statefull";
     public String tech;
     public String busValue = "Medium";
@@ -15,7 +17,7 @@ public class Service extends ServiceHeader {
     public List<Version> versions = new LinkedList<>();
     public List<DataCenter> dataCenters = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();
-    
+
     public Version findVersion(String api) {
         if (versions == null || versions.isEmpty()) {
             return null;
@@ -27,12 +29,17 @@ public class Service extends ServiceHeader {
         }
         return null;
     }
-    
+
     public void addVersion(Version version) {
         if (versions == null) {
             versions = new LinkedList<>();
         }
         versions.add(version);
+    }
+
+    public boolean isImageLogoBlank() {
+        return (imageLogo == null || imageLogo.isEmpty() || imageLogo.equals(DEFAULT_IMAGE));
+
     }
 
 }

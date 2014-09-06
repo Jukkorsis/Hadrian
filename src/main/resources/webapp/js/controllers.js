@@ -13,7 +13,7 @@ soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Service',
 soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Service',
     function($scope, $routeParams, Service) {
         $scope.service = Service.get({serviceId: $routeParams.serviceId}, function(service) {
-            $scope.mainImageUrl = service.images[0];
+            $scope.mainImageUrl = service.imageLogo;
         });
 
         $scope.setImage = function(imageUrl) {
@@ -122,12 +122,12 @@ soaRepControllers.controller('ImageAddCtrl', ['$scope', '$routeParams', '$upload
                 var file = $files[i];
                 $scope.upload = $upload.upload({
                     url: '/services/' + $routeParams.serviceId + '/image.json',
-                    data: {myObj: $scope.myModelObj},
+                    data: {myObj: $routeParams.serviceId},
                     file: file
                 }).progress(function(evt) {
                     $scope.progress = 'Upload process: ' + parseInt(100.0 * evt.loaded / evt.total) + '%';
                 }).success(function(data, status, headers, config) {
-                    console.log(data);
+                    $window.location.href = "#/services/" + $routeParams.serviceId;
                 });
             }
         };

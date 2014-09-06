@@ -4,8 +4,6 @@
 
 var soaRepApp = angular.module('SoaRepApp', [
   'ngRoute',
-  'soaRepAnimations',
-
   'soaRepDirectives',
   'soaRepControllers',
   'soaRepFilters',
