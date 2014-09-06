@@ -112,6 +112,27 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
         }
     }]);
 
+soaRepControllers.controller('ImageAddCtrl', ['$scope', '$routeParams', '$upload', '$http', '$window',
+    function($scope, $routeParams, $upload, $http, $window) {
+        $scope.serviceId = $routeParams.serviceId;
+        $scope.progress = 'No file selected.';
+
+        $scope.onFileSelect = function($files) {
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/services/' + $routeParams.serviceId + '/image.json',
+                    data: {myObj: $scope.myModelObj},
+                    file: file
+                }).progress(function(evt) {
+                    $scope.progress = 'Upload process: ' + parseInt(100.0 * evt.loaded / evt.total) + '%';
+                }).success(function(data, status, headers, config) {
+                    console.log(data);
+                });
+            }
+        };
+    }]);
+
 soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$http', '$window',
     function($scope, $routeParams, $http, $window) {
         $scope.createForm = {};

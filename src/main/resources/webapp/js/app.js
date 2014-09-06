@@ -31,6 +31,10 @@ soaRepApp.config(['$routeProvider',
         templateUrl: 'partials/service-edit.html',
         controller: 'ServiceEditCtrl'
       }).
+       when('/addImage/:serviceId', {
+        templateUrl: 'partials/image-add.html',
+        controller: 'ImageAddCtrl'
+      }).
        when('/createVersion/:serviceId', {
         templateUrl: 'partials/version-create.html',
         controller: 'VersionCreateCtrl'

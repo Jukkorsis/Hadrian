@@ -2,7 +2,7 @@
 
 /* Directives */
 
-var soaRepDirectives = angular.module('soaRepDirectives', []);
+var soaRepDirectives = angular.module('soaRepDirectives', ['angularFileUpload']);
 
 soaRepDirectives.directive('visNetwork', function() {
     return {

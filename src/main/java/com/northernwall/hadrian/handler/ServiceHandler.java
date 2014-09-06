@@ -121,11 +121,11 @@ public class ServiceHandler extends AbstractHandler {
             if (!found) {
                 HaRating haRating = new HaRating();
                 haRating.name = haDimension.name;
-                haRating.level = haDimension.levels.get(haDimension.levels.size()-1).code;
-                    haRating.levels = new LinkedList<>();
-                    for (ConfigItem item : haDimension.levels) {
-                        haRating.levels.add(item.code);
-                    }
+                haRating.level = haDimension.levels.get(haDimension.levels.size() - 1).code;
+                haRating.levels = new LinkedList<>();
+                for (ConfigItem item : haDimension.levels) {
+                    haRating.levels.add(item.code);
+                }
                 service.haRatings.add(haRating);
             }
         }
@@ -164,7 +164,7 @@ public class ServiceHandler extends AbstractHandler {
         for (HaDimension haDimension : dataAccess.getConfig().haDimensions) {
             HaRating haRating = new HaRating();
             haRating.name = haDimension.name;
-            haRating.level = haDimension.levels.get(haDimension.levels.size()-1).code;
+            haRating.level = haDimension.levels.get(haDimension.levels.size() - 1).code;
             service.haRatings.add(haRating);
         }
         dataAccess.save(service);
@@ -206,7 +206,7 @@ public class ServiceHandler extends AbstractHandler {
         }
         cur.haRatings = serviceData.haRatings;
         dataAccess.update(cur);
-        
+
         warningProcessor.scanServices();
     }
 
