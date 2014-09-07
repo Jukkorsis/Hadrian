@@ -181,7 +181,7 @@ public class CouchDataAccess implements DataAccess {
             service.imageLogo = "/services/" + serviceId + "/image/" + name;
             dbClient.update(service);
         }
-        logger.info("Uploaded attachment {} of type {} to {} {}", name,contentType, service.getId(), service.getRevision());
+        logger.info("Uploaded attachment {} of type {} to {} {}", name, contentType, service.getId(), service.getRevision());
     }
 
     @Override

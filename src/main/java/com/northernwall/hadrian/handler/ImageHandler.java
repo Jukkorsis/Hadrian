@@ -73,7 +73,31 @@ public class ImageHandler extends AbstractHandler {
         while (iter.hasNext()) {
             FileItemStream item = iter.next();
             if (!item.isFormField()) {
-                dataAccess.uploadImage(serviceId, item.getName(), item.getContentType(), item.openStream());
+                String name = item.getName();
+                name = name.replace(' ', '-')
+                        .replace('&', '-')
+                        .replace('<', '-')
+                        .replace('>', '-')
+                        .replace('/', '-')
+                        .replace('\\', '-')
+                        .replace('&', '-')
+                        .replace('@', '-')
+                        .replace('?', '-')
+                        .replace('^', '-')
+                        .replace('#', '-')
+                        .replace('%', '-')
+                        .replace('=', '-')
+                        .replace('$', '-')
+                        .replace('{', '-')
+                        .replace('}', '-')
+                        .replace('[', '-')
+                        .replace(']', '-')
+                        .replace('|', '-')
+                        .replace(';', '-')
+                        .replace(':', '-')
+                        .replace('~', '-')
+                        .replace('`', '-');
+                dataAccess.uploadImage(serviceId, name, item.getContentType(), item.openStream());
             }
         }
     }
