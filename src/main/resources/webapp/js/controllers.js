@@ -115,7 +115,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Serv
 soaRepControllers.controller('ImageAddCtrl', ['$scope', '$routeParams', '$upload', '$http', '$window',
     function($scope, $routeParams, $upload, $http, $window) {
         $scope.serviceId = $routeParams.serviceId;
-        $scope.progress = 'No file selected.';
+        $scope.progress = ' ';
 
         $scope.onFileSelect = function($files) {
             for (var i = 0; i < $files.length; i++) {
