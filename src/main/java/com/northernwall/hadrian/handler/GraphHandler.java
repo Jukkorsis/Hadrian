@@ -56,30 +56,32 @@ public class GraphHandler extends AbstractHandler {
             List<VersionView> versions = dataAccess.getVersionVeiw();
             if (versions != null && !versions.isEmpty()) {
                 for (VersionView version : versions) {
-                    Node node = new Node();
-                    node.id = indexes.size();
-                    node.label = version.serviceId + "-v" + version.versionId;
-                    if (version.type != null && version.type.equals("Application")) {
-                        node.shape = "box";
-                    } else {
-                        node.shape = "ellipse";
+                    if (version.status != null && !version.status.equals("Retired")) {
+                        Node node = new Node();
+                        node.id = indexes.size();
+                        node.label = version.serviceId + "-v" + version.versionId;
+                        if (version.type != null && version.type.equals("Application")) {
+                            node.shape = "box";
+                        } else {
+                            node.shape = "ellipse";
+                        }
+                        node.title = buildNodeTitle(version);
+                        node.color = new Color();
+                        if (version.access != null && version.access.equals("Internal")) {
+                            node.color.background = "white";
+                        } else {
+                            node.color.background = "yellow";
+                        }
+                        if (version.status.equals("Retiring")) {
+                            node.color.border = "red";
+                            node.borderWidth = 3;
+                        } else {
+                            node.color.border = "black";
+                            node.borderWidth = 1;
+                        }
+                        indexes.add(version.serviceId + "-v" + version.versionId);
+                        network.nodes.add(node);
                     }
-                    node.title = buildNodeTitle(version);
-                    node.color = new Color();
-                    if (version.access != null && version.access.equals("Internal")) {
-                        node.color.background = "white";
-                    } else {
-                        node.color.background = "yellow";
-                    }
-                    if (version.status != null && (version.status.equals("Retiring") || version.status.equals("Retired"))) {
-                        node.color.border = "red";
-                        node.borderWidth = 3;
-                    } else {
-                        node.color.border = "black";
-                        node.borderWidth = 1;
-                    }
-                    indexes.add(version.serviceId + "-v" + version.versionId);
-                    network.nodes.add(node);
                 }
             }
             List<ServiceRefView> refs = dataAccess.getServiceRefVeiw();
