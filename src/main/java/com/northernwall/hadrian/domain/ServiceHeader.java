@@ -7,6 +7,7 @@ public class ServiceHeader extends Document {
     public long date;
     public String team;
     public String description;
+    public String state = "Statefull";
     public String access = "Internal";
     public String type = "service";
     public String imageLogo;

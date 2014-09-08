@@ -1,28 +1,52 @@
+<br/>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
-            <!--Sidebar content-->
             <p>
-                <label for="query">Search:</label>
+                <label for="query">Description:</label>
                 <input ng-model="query" id="query" class="form-control" placeholder="Search query">
             </p>
             <p>
-                <label for="orderProp">Sort by:</label>
-                <select ng-model="orderProp" id="orderProp" class="form-control">
-                    <option value="name">Alphabetical</option>
-                    <option value="age">Newest</option>
+                <label for="orderProp">Team:</label>
+                <select ng-model="team" id="team" class="form-control">
+                    <option value="">Any Team</option>
+                    <option value="IDS Team">IDS Team</option>
+                    <option value="Reporting Team">Reporting Team</option>
+                </select>
+            </p>
+            <p>
+                <label for="orderProp">State:</label>
+                <select ng-model="state" id="state" class="form-control">
+                    <option value="">Any State</option>
+                    <option value="Stateless">Stateless</option>
+                    <option value="Statefull">Statefull</option>
+                </select>
+            </p>
+            <p>
+                <label for="orderProp">Access:</label>
+                <select ng-model="access" id="access" class="form-control">
+                    <option value="">Any Access Level</option>
+                    <option value="Internal">Internal</option>
+                    <option value="External">External</option>
+                </select>
+            </p>
+            <p>
+                <label for="orderProp">Type:</label>
+                <select ng-model="type" id="type" class="form-control">
+                    <option value="">Any Type</option>
+                    <option value="Service">Service</option>
+                    <option value="Application">Application</option>
                 </select>
             </p>
         </div>
         <div class="col-md-10">
-            <!--Body content-->
-
             <ul class="services">
-                <li ng-repeat="service in services| filter:query | orderBy:orderProp"
+                <li ng-repeat="service in services| filter:{description: query } | filter:{team: team } | filter:{state: state } | filter:{access: access } | filter:{type: type } | orderBy:'Alphabetical'"
                     class="thumbnail">
                     <a href="#/services/{{service._id}}" class="thumb"><img ng-src="{{service.imageLogo}}"></a>
-                    <a href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a> {{service.access}} {{service.type}}
+                    <a href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a> 
                     <p>{{service.team}}</p>
+                    <p>{{service.state}} {{service.access}} {{service.type}}</p>
                     <p>{{service.description}}</p>
                 </li>
             </ul>

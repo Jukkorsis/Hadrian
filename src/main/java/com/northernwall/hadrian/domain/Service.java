@@ -6,7 +6,6 @@ import java.util.List;
 public class Service extends ServiceHeader {
     public static final String DEFAULT_IMAGE = "/ui/img/serviceLogo.png";
 
-    public String state = "Statefull";
     public String tech;
     public String busValue = "Medium";
     public String pii = "None";

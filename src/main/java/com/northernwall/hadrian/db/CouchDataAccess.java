@@ -50,7 +50,7 @@ public class CouchDataAccess implements DataAccess {
         Map<String, DesignDocument.MapReduce> views = new HashMap<>();
 
         DesignDocument.MapReduce mapReduce = new DesignDocument.MapReduce();
-        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
+        mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, state: doc.state, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
         views.put("services", mapReduce);
         
         mapReduce = new DesignDocument.MapReduce();
