@@ -15,7 +15,7 @@
     <div class="form-group">
         <label for="team" class="col-sm-2 control-label">Team Name</label>
         <div class="col-sm-10">
-            <input type="text" id="team" ng-model="editForm.team" ng-minlength="1" ng-maxlength="30" required="true" placeholder="My team">
+            <select ng-model="editForm.team" ng-options="t.code as t.code for t in config.teams" id="team" class="form-control"></select>
         </div>
     </div>
     <div class="form-group">
@@ -110,7 +110,7 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button ng-click="submitEditServiceForm()" class="btn btn-info btn-xs">Submit Form</button> 
-            <a href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
+            <a ng-href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
         </div>
     </div>
 </form>

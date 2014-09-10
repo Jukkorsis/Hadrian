@@ -4,14 +4,18 @@
 
 var soaRepControllers = angular.module('soaRepControllers', []);
 
-soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Service',
-    function($scope, Service) {
+soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Config', 'Service',
+    function($scope, Config, Service) {
+        $scope.config = Config.get();
+        
         $scope.services = Service.query();
         $scope.orderProp = 'name';
     }]);
 
-soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Service',
-    function($scope, $routeParams, Service) {
+soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Config', 'Service',
+    function($scope, $routeParams, Config, Service) {
+        $scope.config = Config.get();
+
         $scope.service = Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.mainImageUrl = service.imageLogo;
         });
@@ -21,8 +25,10 @@ soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Se
         }
     }]);
 
-soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
-    function($scope, $http, $window) {
+soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', '$window',
+    function($scope, Config, $http, $window) {
+        $scope.config = Config.get();
+
         $scope.createForm = {};
         $scope.createForm.state = "Stateless";
         $scope.createForm.access = "Internal";
@@ -60,8 +66,10 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', '$http', '$window',
         }
     }]);
 
-soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
-    function($scope, $routeParams, Service, $http, $window) {
+soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
+    function($scope, $routeParams, Config, Service, $http, $window) {
+        $scope.config = Config.get();
+        
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;

@@ -3,7 +3,12 @@
 <dl class="dl-horizontal">
     <dt>Abbreviation</dt><dd>Short name for the service. Max 8 characters or numbers.</dd>
     <dt>Name</dt><dd>The service's full name, max 30 characters.</dd>
-    <dt>Team Name</dt><dd>The team that owns the service, max 30 characters.</dd>
+    <dt>Team Name</dt>
+    <dd>The team that owns the service.
+        <div ng-repeat="t in config.teams">
+            <strong>{{t.code}}</strong><span ng-if="t.description">, {{t.description}}</span><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span><br/>
+        </div>
+    </dd>
     <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service.</dd>
     <dt>Access</dt><dd>If the service is externally accessible or only offered internally.</dd>
     <dt>Type</dt><dd>Applications offers a human UI versus a service which can only be accessed by other services.</dd>
@@ -21,8 +26,12 @@
         <strong>Service stores PII</strong><br/>
         <strong>Service processes PII</strong><br/>
         <strong>None</strong></dd>
-    <dt>Data Centers</dt><dd>
-        <div ng-repeat="r in config.dataCenters"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
+    <dt>Data Centers</dt>
+    <dd>
+        <div ng-repeat="r in config.dataCenters">
+            <strong>{{r.code}}</strong>, {{r.description}}<br/>
+        </div>
+    </dd>
 </dl>
 <h3>Service HA Ratings</h3>
 <dl class="dl-horizontal">

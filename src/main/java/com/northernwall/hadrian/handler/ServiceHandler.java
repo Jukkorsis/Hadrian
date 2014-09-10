@@ -7,16 +7,18 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.DataCenter;
 import com.northernwall.hadrian.domain.Endpoint;
-import com.northernwall.hadrian.domain.HaDimension;
 import com.northernwall.hadrian.domain.HaRating;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
 import com.northernwall.hadrian.formData.ServiceFormData;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -107,23 +109,23 @@ public class ServiceHandler extends AbstractHandler {
                 service.dataCenters.add(dc);
             }
         }
-        for (HaDimension haDimension : dataAccess.getConfig().haDimensions) {
+        for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
             boolean found = false;
             for (HaRating haRating : service.haRatings) {
-                if (haRating.name.equals(haDimension.name)) {
+                if (haRating.name.equals(haDimension.code)) {
                     found = true;
                     haRating.levels = new LinkedList<>();
-                    for (ConfigItem item : haDimension.levels) {
+                    for (ConfigItem item : haDimension.subItems) {
                         haRating.levels.add(item.code);
                     }
                 }
             }
             if (!found) {
                 HaRating haRating = new HaRating();
-                haRating.name = haDimension.name;
-                haRating.level = haDimension.levels.get(haDimension.levels.size() - 1).code;
+                haRating.name = haDimension.code;
+                haRating.level = haDimension.subItems.get(haDimension.subItems.size() - 1).code;
                 haRating.levels = new LinkedList<>();
-                for (ConfigItem item : haDimension.levels) {
+                for (ConfigItem item : haDimension.subItems) {
                     haRating.levels.add(item.code);
                 }
                 service.haRatings.add(haRating);
@@ -147,7 +149,7 @@ public class ServiceHandler extends AbstractHandler {
     }
 
     private void createService(Request request) throws IOException {
-        ServiceFormData serviceData = gson.fromJson(new InputStreamReader(request.getInputStream()), ServiceFormData.class);
+        ServiceFormData serviceData = fromJson(request, ServiceFormData.class);
         if (!serviceData._id.matches("\\w+")) {
             logger.warn("New service {} contains an illegal character", serviceData._id);
             return;
@@ -175,17 +177,17 @@ public class ServiceHandler extends AbstractHandler {
         version.status = serviceData.status;
         service.versions = new LinkedList<>();
         service.versions.add(version);
-        for (HaDimension haDimension : dataAccess.getConfig().haDimensions) {
+        for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
             HaRating haRating = new HaRating();
-            haRating.name = haDimension.name;
-            haRating.level = haDimension.levels.get(haDimension.levels.size() - 1).code;
+            haRating.name = haDimension.code;
+            haRating.level = haDimension.subItems.get(haDimension.subItems.size() - 1).code;
             service.haRatings.add(haRating);
         }
         dataAccess.save(service);
     }
 
     private void updateService(Request request) throws IOException {
-        ServiceFormData serviceData = gson.fromJson(new InputStreamReader(request.getInputStream()), ServiceFormData.class);
+        ServiceFormData serviceData = fromJson(request, ServiceFormData.class);
         Service cur = dataAccess.getService(serviceData._id);
 
         if (cur == null) {
@@ -222,6 +224,13 @@ public class ServiceHandler extends AbstractHandler {
         dataAccess.update(cur);
 
         warningProcessor.scanServices();
+    }
+
+    private <T> T fromJson(Request request, Class<T> classOfT) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String s = reader.readLine();
+        logger.debug("JSON input -> {}", s);
+        return gson.fromJson(s, classOfT);
     }
 
 }

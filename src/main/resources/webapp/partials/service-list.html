@@ -8,12 +8,11 @@
             </p>
             <p>
                 <label for="orderProp">Team:</label>
-                <select ng-model="team" id="team" class="form-control">
+                <select ng-model="team" ng-options="t.code as t.code for t in config.teams" id="team" class="form-control">
                     <option value="">Any Team</option>
-                    <option value="IDS Team">IDS Team</option>
-                    <option value="Reporting Team">Reporting Team</option>
                 </select>
             </p>
+            {{team}}
             <p>
                 <label for="orderProp">State:</label>
                 <select ng-model="state" id="state" class="form-control">
@@ -43,11 +42,11 @@
             <ul class="services">
                 <li ng-repeat="service in services| filter:{description: query } | filter:{team: team } | filter:{state: state } | filter:{access: access } | filter:{type: type } | orderBy:'Alphabetical'"
                     class="thumbnail">
-                    <a href="#/services/{{service._id}}" class="thumb"><img ng-src="{{service.imageLogo}}"></a>
-                    <a href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a> 
-                    <p>{{service.team}}</p>
-                    <p>{{service.state}} {{service.access}} {{service.type}}</p>
-                    <p>{{service.description}}</p>
+                    <a ng-href="#/services/{{service._id}}" class="thumb"><img ng-src="{{service.imageLogo}}"></a>
+                    <a ng-href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a><br/>
+                    {{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span><br/>
+                    {{service.state}} {{service.access}} {{service.type}}<br/>
+                    {{service.description}}
                 </li>
             </ul>
 

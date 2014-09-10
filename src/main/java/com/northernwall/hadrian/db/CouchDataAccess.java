@@ -2,7 +2,6 @@ package com.northernwall.hadrian.db;
 
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.ConfigItem;
-import com.northernwall.hadrian.domain.HaDimension;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRefView;
@@ -94,40 +93,46 @@ public class CouchDataAccess implements DataAccess {
         item.description = "The central data center";
         config.dataCenters.add(item);
 
-        HaDimension dimension = new HaDimension();
-        dimension.name = "Points of Failure";
+        item = new ConfigItem();
+        item.code = "My Team";
+        item.description = "My Team";
+        item.url = "https://github.com/Jukkorsis";
+        config.dataCenters.add(item);
+
+        ConfigItem dimension = new ConfigItem();
+        dimension.code = "Points of Failure";
         item = new ConfigItem();
         item.code = "None";
         item.description = "No single point of failure, 3+ data centers in Active-Active configuration";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         item = new ConfigItem();
         item.code = "Active-Standby";
         item.description = "Some compoents exist in 2 data centers in Active-Standby configuration";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         item = new ConfigItem();
         item.code = "Single DC";
         item.description = "Some compoents exist on 2+ hosts, but in a single data center";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         item = new ConfigItem();
         item.code = "Single Host";
         item.description = "Some compoents exist on a single host";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         config.haDimensions.add(dimension);
 
-        dimension = new HaDimension();
-        dimension.name = "Intervention";
+        dimension = new ConfigItem();
+        dimension.code = "Intervention";
         item = new ConfigItem();
         item.code = "None";
         item.description = "No manual intervention is required to respond to a failure";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         item = new ConfigItem();
         item.code = "short";
         item.description = "Manual intervention is required to respond to a failure. Process once started take less than 15 minutes to complete.";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         item = new ConfigItem();
         item.code = "Long";
         item.description = "Manual intervention is required to respond to a failure. Process once started take more than 15 minutes to complete.";
-        dimension.levels.add(item);
+        dimension.subItems.add(item);
         config.haDimensions.add(dimension);
         
         dbClient.save(config);
