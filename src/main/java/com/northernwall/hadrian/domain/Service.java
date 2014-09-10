@@ -12,7 +12,7 @@ public class Service extends ServiceHeader {
     public List<Endpoint> endpoints = new LinkedList<>();
     public List<Link> links = new LinkedList<>();
     public List<String> images;
-    public List<HaRating> haRatings = new LinkedList<>();
+    public List<ListItem> haRatings = new LinkedList<>();
     public List<Version> versions = new LinkedList<>();
     public List<DataCenter> dataCenters = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();

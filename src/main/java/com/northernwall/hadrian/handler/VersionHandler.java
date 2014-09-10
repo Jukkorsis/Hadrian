@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Endpoint;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -15,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -123,6 +126,12 @@ public class VersionHandler extends AbstractHandler {
                 version.links.add(link);
             }
         }
+        Collections.sort(versionData.links, new Comparator<Link>(){
+            @Override
+            public int compare(Link o1, Link o2) {
+                return o1.name.compareTo(o2.name);
+            }
+        });
         versionData.uses1.addAll(versionData.uses2);
         versionData.uses1.addAll(versionData.uses3);
         for (UsesFormData usesData : versionData.uses1) {

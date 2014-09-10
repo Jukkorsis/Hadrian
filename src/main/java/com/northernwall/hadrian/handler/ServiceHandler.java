@@ -7,18 +7,18 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.DataCenter;
 import com.northernwall.hadrian.domain.Endpoint;
-import com.northernwall.hadrian.domain.HaRating;
 import com.northernwall.hadrian.domain.Link;
+import com.northernwall.hadrian.domain.ListItem;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
 import com.northernwall.hadrian.formData.ServiceFormData;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -111,23 +111,15 @@ public class ServiceHandler extends AbstractHandler {
         }
         for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
             boolean found = false;
-            for (HaRating haRating : service.haRatings) {
+            for (ListItem haRating : service.haRatings) {
                 if (haRating.name.equals(haDimension.code)) {
                     found = true;
-                    haRating.levels = new LinkedList<>();
-                    for (ConfigItem item : haDimension.subItems) {
-                        haRating.levels.add(item.code);
-                    }
                 }
             }
             if (!found) {
-                HaRating haRating = new HaRating();
+                ListItem haRating = new ListItem();
                 haRating.name = haDimension.code;
                 haRating.level = haDimension.subItems.get(haDimension.subItems.size() - 1).code;
-                haRating.levels = new LinkedList<>();
-                for (ConfigItem item : haDimension.subItems) {
-                    haRating.levels.add(item.code);
-                }
                 service.haRatings.add(haRating);
             }
         }
@@ -161,6 +153,7 @@ public class ServiceHandler extends AbstractHandler {
         }
         Service service = new Service();
         service.setId(serviceData._id);
+        service.date = System.currentTimeMillis();
         service.name = serviceData.name;
         service.team = serviceData.team;
         service.description = serviceData.description;
@@ -178,7 +171,7 @@ public class ServiceHandler extends AbstractHandler {
         service.versions = new LinkedList<>();
         service.versions.add(version);
         for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
-            HaRating haRating = new HaRating();
+            ListItem haRating = new ListItem();
             haRating.name = haDimension.code;
             haRating.level = haDimension.subItems.get(haDimension.subItems.size() - 1).code;
             service.haRatings.add(haRating);
@@ -208,12 +201,24 @@ public class ServiceHandler extends AbstractHandler {
                 cur.endpoints.add(endpoint);
             }
         }
+        Collections.sort(cur.endpoints, new Comparator<Endpoint>(){
+            @Override
+            public int compare(Endpoint o1, Endpoint o2) {
+                return o1.env.compareTo(o2.env);
+            }
+        });
         cur.links = new LinkedList<>();
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
                 cur.links.add(link);
             }
         }
+        Collections.sort(cur.links, new Comparator<Link>(){
+            @Override
+            public int compare(Link o1, Link o2) {
+                return o1.name.compareTo(o2.name);
+            }
+        });
         cur.dataCenters = new LinkedList<>();
         for (DataCenter dataCenter : serviceData.dataCenters) {
             if (dataCenter.status != null && !dataCenter.status.equals("None")) {
