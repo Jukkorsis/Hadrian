@@ -36,8 +36,8 @@
 <h3>Service HA Ratings</h3>
 <dl class="dl-horizontal">
     <div ng-repeat="haDim in config.haDimensions">
-        <dt>{{haDim.name}}</dt><dd>
-            <div ng-repeat="r in haDim.levels"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
+        <dt>{{haDim.code}}</dt><dd>
+            <div ng-repeat="r in haDim.subItems"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
     </div>
 </dl>
 <h3>Service Version</h3>
