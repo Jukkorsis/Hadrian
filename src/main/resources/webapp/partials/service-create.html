@@ -20,6 +20,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="team" class="col-sm-2 control-label">Product Name</label>
+        <div class="col-sm-10">
+            <select ng-model="createForm.product" ng-options="t.code as t.code for t in config.products" id="team" class="form-control"></select>
+        </div>
+    </div>
+    <div class="form-group">
         <label for="description" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
             <textarea id="description" ng-model="createForm.description" placeholder="Does stuff" required="true" class="form-control" rows="3"></textarea>
@@ -28,7 +34,7 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">State</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="createForm.state">
+            <select id="type" ng-model="createForm.state" class="form-control">
                 <option value="Stateless">Stateless</option>
                 <option value="Statefull">Statefull</option>
             </select>
@@ -37,7 +43,7 @@
     <div class="form-group">
         <label for="access" class="col-sm-2 control-label">Access</label>
         <div class="col-sm-10">
-            <select id="access" ng-model="createForm.access">
+            <select id="access" ng-model="createForm.access" class="form-control">
                 <option value="Internal">Internal</option>
                 <option value="External">External</option>
             </select>
@@ -46,7 +52,7 @@
     <div class="form-group">
         <label for="type" class="col-sm-2 control-label">Type</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="createForm.type">
+            <select id="type" ng-model="createForm.type" class="form-control">
                 <option value="Service">Service</option>
                 <option value="Application">Application</option>
             </select>
@@ -61,7 +67,7 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">Business Value</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="createForm.busValue">
+            <select id="type" ng-model="createForm.busValue" class="form-control">
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
@@ -71,11 +77,17 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">PII</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="createForm.pii">
+            <select id="type" ng-model="createForm.pii" class="form-control">
                 <option value="Stores">Service stores PII</option>
                 <option value="Processes">Service processes PII</option>
                 <option value="None">None</option>
             </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Version URL</label>
+        <div class="col-sm-10">
+            <input type="text" id="versionUrl" ng-model="createForm.versionUrl" ng-minlength="1" ng-maxlength="30" required="true" placeholder="/version">
         </div>
     </div>
     <h4>Service Version Details</h4>
@@ -86,15 +98,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="impl" class="col-sm-2 control-label">Implementation Version</label>
-        <div class="col-sm-10">
-            <input type="text" id="impl" ng-model="createForm.impl" ng-minlength="1" ng-maxlength="8" required="true" placeholder="0.1">
-        </div>
-    </div>
-    <div class="form-group">
         <label for="status" class="col-sm-2 control-label">Status</label>
         <div class="col-sm-10">
-            <select id="status" ng-model="createForm.status">
+            <select id="status" ng-model="createForm.status" class="form-control">
                 <option value="Proposed">Proposed</option>
                 <option value="Active">Active</option>
                 <option value="Live">Live</option>

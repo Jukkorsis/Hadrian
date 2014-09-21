@@ -5,17 +5,15 @@ import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.ConfigItem;
-import com.northernwall.hadrian.domain.DataCenter;
-import com.northernwall.hadrian.domain.Endpoint;
+import com.northernwall.hadrian.domain.Env;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.ListItem;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
 import com.northernwall.hadrian.formData.ServiceFormData;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,21 +23,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceHandler extends AbstractHandler {
+public class ServiceHandler extends SoaAbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     private final DataAccess dataAccess;
-    private final Gson gson;
     private final WarningProcessor warningProcessor;
 
     public ServiceHandler(DataAccess dataAccess, Gson gson, WarningProcessor warningProcessor) {
+        super(gson);
         this.dataAccess = dataAccess;
-        this.gson = gson;
         this.warningProcessor = warningProcessor;
     }
 
@@ -95,18 +91,9 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service with id '" + id + "'");
         }
-        for (ConfigItem item : dataAccess.getConfig().dataCenters) {
-            boolean found = false;
-            for (DataCenter dataCenter : service.dataCenters) {
-                if (dataCenter.name.equals(item.code)) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                DataCenter dc = new DataCenter();
-                dc.name = item.code;
-                dc.status = "None";
-                service.dataCenters.add(dc);
+        for (Env env : service.envs) {
+            for (Host host : env.hosts) {
+                host.implVersion = urlGet(host.name, service.versionUrl);
             }
         }
         for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
@@ -140,6 +127,10 @@ public class ServiceHandler extends AbstractHandler {
         }
     }
 
+    private String urlGet(String name, String versionUrl) {
+        return "123";
+    }
+
     private void createService(Request request) throws IOException {
         ServiceFormData serviceData = fromJson(request, ServiceFormData.class);
         if (!serviceData._id.matches("\\w+")) {
@@ -156,6 +147,7 @@ public class ServiceHandler extends AbstractHandler {
         service.date = System.currentTimeMillis();
         service.name = serviceData.name;
         service.team = serviceData.team;
+        service.product = serviceData.product;
         service.description = serviceData.description;
         service.state = serviceData.state;
         service.access = serviceData.access;
@@ -163,10 +155,10 @@ public class ServiceHandler extends AbstractHandler {
         service.tech = serviceData.tech;
         service.busValue = serviceData.busValue;
         service.pii = serviceData.pii;
+        service.versionUrl = serviceData.versionUrl;
         service.imageLogo = Service.DEFAULT_IMAGE;
         Version version = new Version();
         version.api = serviceData.api;
-        version.impl = serviceData.impl;
         version.status = serviceData.status;
         service.versions = new LinkedList<>();
         service.versions.add(version);
@@ -188,6 +180,7 @@ public class ServiceHandler extends AbstractHandler {
         }
         cur.name = serviceData.name;
         cur.team = serviceData.team;
+        cur.product = serviceData.product;
         cur.description = serviceData.description;
         cur.state = serviceData.state;
         cur.access = serviceData.access;
@@ -195,18 +188,6 @@ public class ServiceHandler extends AbstractHandler {
         cur.tech = serviceData.tech;
         cur.busValue = serviceData.busValue;
         cur.pii = serviceData.pii;
-        cur.endpoints = new LinkedList<>();
-        for (Endpoint endpoint : serviceData.endpoints) {
-            if (endpoint.env != null && !endpoint.env.isEmpty() && endpoint.url != null && !endpoint.url.isEmpty()) {
-                cur.endpoints.add(endpoint);
-            }
-        }
-        Collections.sort(cur.endpoints, new Comparator<Endpoint>(){
-            @Override
-            public int compare(Endpoint o1, Endpoint o2) {
-                return o1.env.compareTo(o2.env);
-            }
-        });
         cur.links = new LinkedList<>();
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
@@ -219,23 +200,10 @@ public class ServiceHandler extends AbstractHandler {
                 return o1.name.compareTo(o2.name);
             }
         });
-        cur.dataCenters = new LinkedList<>();
-        for (DataCenter dataCenter : serviceData.dataCenters) {
-            if (dataCenter.status != null && !dataCenter.status.equals("None")) {
-                cur.dataCenters.add(dataCenter);
-            }
-        }
         cur.haRatings = serviceData.haRatings;
-        dataAccess.update(cur);
+        dataAccess.save(cur);
 
         warningProcessor.scanServices();
-    }
-
-    private <T> T fromJson(Request request, Class<T> classOfT) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String s = reader.readLine();
-        logger.debug("JSON input -> {}", s);
-        return gson.fromJson(s, classOfT);
     }
 
 }

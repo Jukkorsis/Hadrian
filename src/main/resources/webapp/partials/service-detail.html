@@ -3,6 +3,7 @@
         <h1>{{service._id}} - {{service.name}} 
             <a href="#/editService/{{service._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Service</a> 
             <a href="#/createVersion/{{service._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Version</a>
+            <a href="#/createEnv/{{service._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Env</a>
             <a href="#/addImage/{{service._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-picture"></span> Add Image</a>
         </h1>
     </div>
@@ -20,8 +21,9 @@
             <dt>Description</dt>
             <dd>{{service.description}}</dd>
             <dt>Team</dt>
-            <dd>{{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span>
-            </dd>
+            <dd>{{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">team web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span></dd>
+            <dt>Product</dt>
+            <dd>{{service.product}}<span ng-repeat="t in config.products"><span ng-if="t.code == service.product"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">product web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">product email</a></span></span></span></dd>
             <dt>State</dt>
             <dd>{{service.state}}</dd>
             <dt>Access</dt>
@@ -34,24 +36,10 @@
             <dd>{{service.busValue}}</dd>
             <dt>PII</dt>
             <dd>{{service.pii}}</dd>
-            <dt>End Points</dt>
-            <dd>
-                <span ng-repeat="ep in service.endpoints">
-                    <strong>{{ep.env}}</strong> {{ep.url}} <br/>
-                </span>
-            </dd>
             <dt>Links</dt>
             <dd>
                 <span ng-repeat="link in service.links">
                     <strong>{{link.name}}</strong> <a ng-href="{{link.url}}" target="_blank">{{link.url}}</a> <br/>
-                </span>
-            </dd>
-            <dt>Data Centers</dt>
-            <dd>
-                <span ng-repeat="datacenter in service.dataCenters">
-                    <span ng-if="datacenter.status != 'None'">
-                        <strong>{{datacenter.name}}</strong> {{datacenter.status}} <br/>
-                    </span>
                 </span>
             </dd>
             <dt>HA Ratings</dt>
@@ -78,7 +66,7 @@
 <div ng-repeat="version in service.versions">
     <div class ="row">
         <div class="col-md-12">
-            <h1>{{service._id}} - Version {{version.api}}<a ng-href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Version</a></h1>
+            <h1>Version {{version.api}}<a ng-href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Version</a></h1>
         </div>
     </div>
     <div class ="row">
@@ -86,15 +74,13 @@
             <dl class="dl-horizontal">
                 <dt>API Ver</dt>
                 <dd>{{version.api}}</dd>
-                <dt>Impl Ver</dt>
-                <dd>{{version.impl}}</dd>
                 <dt>Status</dt>
                 <dd>{{version.status}}</dd>
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
-                        <span ng-repeat="ep in service.endpoints">
-                            <a ng-href="{{ep.url}}{{link.url}}" target="_blank">{{ep.env}}</a><br/>
+                        <span ng-repeat="env in service.envs">
+                            <a ng-href="http://{{env.vip}}{{link.url}}" target="_blank">{{env.name}}</a><br/>
                         </span>
                     </dd>
                 </div>
@@ -115,6 +101,34 @@
                     <a ng-href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
                 </li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<div ng-repeat="env in service.envs">
+    <div class ="row">
+        <div class="col-md-12">
+            <h1>Env {{env.name}}<a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
+        </div>
+    </div>
+    <div class ="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>Env</dt>
+                <dd>{{env.name}}</dd>
+                <dt>VIP Name</dt>
+                <dd>{{env.vip}}</dd>
+            </dl>
+        </div>
+        <div class="col-md-8">
+            <div ng-repeat="host in env.hosts">
+                {{host.dataCenter}} {{host.name}} {{host.status}} {{host.implVersion}}
+                <span ng-repeat="version in service.versions">
+                    <span ng-repeat="link in version.links">
+                        <a ng-href="http://{{host.name}}{{link.url}}" target="_blank">{{link.name}}</a>
+                    </span>
+                </span>
+            </div>
         </div>
     </div>
 </div>

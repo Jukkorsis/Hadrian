@@ -9,12 +9,12 @@ public class Service extends ServiceHeader {
     public String tech;
     public String busValue = "Medium";
     public String pii = "None";
-    public List<Endpoint> endpoints = new LinkedList<>();
+    public List<Env> envs = new LinkedList<>();
+    public String versionUrl;
     public List<Link> links = new LinkedList<>();
     public List<String> images;
     public List<ListItem> haRatings = new LinkedList<>();
     public List<Version> versions = new LinkedList<>();
-    public List<DataCenter> dataCenters = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();
 
     public Version findVersion(String api) {
@@ -34,6 +34,25 @@ public class Service extends ServiceHeader {
             versions = new LinkedList<>();
         }
         versions.add(version);
+    }
+
+    public Env findEnv(String name) {
+        if (envs == null || envs.isEmpty()) {
+            return null;
+        }
+        for (Env env : envs) {
+            if (env.name.equals(name)) {
+                return env;
+            }
+        }
+        return null;
+    }
+
+    public void addEnv(Env env) {
+        if (envs == null) {
+            envs = new LinkedList<>();
+        }
+        envs.add(env);
     }
 
     public boolean isImageLogoBlank() {

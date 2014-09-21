@@ -11,7 +11,7 @@ soaRepServices.factory('Service', ['$resource', function($resource) {
     }]);
 
 soaRepServices.factory('VersionUses', ['$resource', function($resource) {
-        return $resource('/services/:serviceId/:versionId/uses.json', {}, {
+        return $resource('/services/:serviceId/versions/:versionId/uses.json', {}, {
             query: {method: 'GET', params: {}, isArray: true}
         });
     }]);

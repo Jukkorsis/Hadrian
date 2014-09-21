@@ -33,10 +33,10 @@ public class CouchDataAccess implements DataAccess {
     private Config config;
 
     public CouchDataAccess(Properties properties) {
-        port = Integer.parseInt(properties.getProperty("couchdb.port","5984"));
+        port = Integer.parseInt(properties.getProperty("couchdb.port", "5984"));
         host = properties.getProperty("couchdb.host", "127.0.0.1");
         CouchDbProperties dbProperties = new CouchDbProperties()
-                .setDbName(properties.getProperty("couchdb.name","soarep"))
+                .setDbName(properties.getProperty("couchdb.name", "soarep"))
                 .setCreateDbIfNotExist(Boolean.parseBoolean(properties.getProperty("couchdb.if-not-exist", "true")))
                 .setProtocol(properties.getProperty("couchdb.protocol", "http"))
                 .setHost(host)
@@ -45,105 +45,49 @@ public class CouchDataAccess implements DataAccess {
                 .setConnectionTimeout(0);
         dbClient = new CouchDbClient(dbProperties);
         logger.info("Couch access established");
-        
+
         Map<String, DesignDocument.MapReduce> views = new HashMap<>();
 
         DesignDocument.MapReduce mapReduce = new DesignDocument.MapReduce();
         mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {emit(doc._id, {_id: doc._id, name: doc.name, date: doc.date, team: doc.team, description: doc.description, state: doc.state, access: doc.access, type: doc.type, imageLogo: doc.imageLogo});}}");
         views.put("services", mapReduce);
-        
+
         mapReduce = new DesignDocument.MapReduce();
         mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {doc.versions.forEach(function(version) {emit(null, {serviceId: doc._id, name: doc.name, team: doc.team, state: doc.state, access: doc.access, type: doc.type, versionId: version.api, status: version.status});});}}");
         views.put("versions", mapReduce);
-        
+
         mapReduce = new DesignDocument.MapReduce();
         mapReduce.setMap("function(doc) {if (doc._id != \"_design/app\" && doc._id != \"SoaConfig\") {doc.versions.forEach(function(version) {version.uses.forEach(function(ref) {emit(null, {serviceId: doc._id, versionId: version.api, refServiceId: ref.service, refVersionId: ref.version, scope: ref.scope});});});}}");
         views.put("refs", mapReduce);
-        
+
         DesignDocument designDoc = new DesignDocument();
         designDoc.setViews(views);
         designDoc.setId("_design/app");
         designDoc.setLanguage("javascript");
         dbClient.design().synchronizeWithDb(designDoc);
         logger.info("Couch views synced");
-        
-        config = getConfig();
-        if (config == null) {
-            initConfig();
-        }
     }
-    
-    private void initConfig() {
-        ConfigItem item;
-        config = new Config();
-        config.setId("SoaConfig");
 
-        item = new ConfigItem();
-        item.code = "DC1";
-        item.description = "The west coast data center";
-        config.dataCenters.add(item);
-
-        item = new ConfigItem();
-        item.code = "DC2";
-        item.description = "The east coast data center";
-        config.dataCenters.add(item);
-
-        item = new ConfigItem();
-        item.code = "DC3";
-        item.description = "The central data center";
-        config.dataCenters.add(item);
-
-        item = new ConfigItem();
-        item.code = "My Team";
-        item.description = "My Team";
-        item.url = "https://github.com/Jukkorsis";
-        config.dataCenters.add(item);
-
-        ConfigItem dimension = new ConfigItem();
-        dimension.code = "Points of Failure";
-        item = new ConfigItem();
-        item.code = "None";
-        item.description = "No single point of failure, 3+ data centers in Active-Active configuration";
-        dimension.subItems.add(item);
-        item = new ConfigItem();
-        item.code = "Active-Standby";
-        item.description = "Some compoents exist in 2 data centers in Active-Standby configuration";
-        dimension.subItems.add(item);
-        item = new ConfigItem();
-        item.code = "Single DC";
-        item.description = "Some compoents exist on 2+ hosts, but in a single data center";
-        dimension.subItems.add(item);
-        item = new ConfigItem();
-        item.code = "Single Host";
-        item.description = "Some compoents exist on a single host";
-        dimension.subItems.add(item);
-        config.haDimensions.add(dimension);
-
-        dimension = new ConfigItem();
-        dimension.code = "Intervention";
-        item = new ConfigItem();
-        item.code = "None";
-        item.description = "No manual intervention is required to respond to a failure";
-        dimension.subItems.add(item);
-        item = new ConfigItem();
-        item.code = "short";
-        item.description = "Manual intervention is required to respond to a failure. Process once started take less than 15 minutes to complete.";
-        dimension.subItems.add(item);
-        item = new ConfigItem();
-        item.code = "Long";
-        item.description = "Manual intervention is required to respond to a failure. Process once started take more than 15 minutes to complete.";
-        dimension.subItems.add(item);
-        config.haDimensions.add(dimension);
-        
-        dbClient.save(config);
-    }
-    
     @Override
     public Config getConfig() {
         try {
             return dbClient.find(Config.class, "SoaConfig");
         } catch (NoDocumentException nde) {
-            return null;
+            logger.info("No config found, returning empty config");
+            Config temp = new Config();
+            temp.setId("SoaConfig");
+            return temp;
+        }
+    }
+
+    @Override
+    public void save(Config config) {
+        if (config.getRevision() == null) {
+            Response rev = dbClient.save(config);
+            logger.info("Config Saved: rev {}", rev.getRev());
+        } else {
+            Response rev = dbClient.update(config);
+            logger.info("Config Updated: rev {}", rev.getRev());
         }
     }
 
@@ -163,14 +107,13 @@ public class CouchDataAccess implements DataAccess {
 
     @Override
     public void save(Service service) {
-        Response rev = dbClient.save(service);
-        logger.info("Save: id {} rev {} error {} reason {}", rev.getId(), rev.getRev(), rev.getError(), rev.getReason());
-    }
-
-    @Override
-    public void update(Service service) {
-        Response rev = dbClient.update(service);
-        logger.info("Update: id {} rev {} error {} reason {}", rev.getId(), rev.getRev(), rev.getError(), rev.getReason());
+        if (service.getRevision() == null) {
+            Response rev = dbClient.save(service);
+            logger.info("Service Saved: id {} rev {} error {} reason {}", rev.getId(), rev.getRev(), rev.getError(), rev.getReason());
+        } else {
+            Response rev = dbClient.update(service);
+            logger.info("Service Updated: id {} rev {} error {} reason {}", rev.getId(), rev.getRev(), rev.getError(), rev.getReason());
+        }
     }
 
     @Override
@@ -199,7 +142,7 @@ public class CouchDataAccess implements DataAccess {
         if (service.getAttachments() != null) {
             for (String key : service.getAttachments().keySet()) {
                 if (key.equals(name)) {
-                    String url = "http://"+host+":"+port+"/soarep/"+serviceId+"/"+name;
+                    String url = "http://" + host + ":" + port + "/soarep/" + serviceId + "/" + name;
                     logger.info("Downloading attachement {}", url);
                     HttpGet get = new HttpGet(url);
                     HttpResponse response = dbClient.executeRequest(get);
@@ -221,9 +164,10 @@ public class CouchDataAccess implements DataAccess {
     }
 
     public class VersionViewResult {
+
         public VersionView value;
     }
-    
+
     @Override
     public List<ServiceRefView> getServiceRefVeiw() {
         List<ServiceRefViewResult> results = dbClient.view("app/refs").query(ServiceRefViewResult.class);
@@ -235,7 +179,8 @@ public class CouchDataAccess implements DataAccess {
     }
 
     public class ServiceRefViewResult {
+
         public ServiceRefView value;
     }
-    
+
 }

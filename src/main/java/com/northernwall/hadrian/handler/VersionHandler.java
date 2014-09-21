@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Endpoint;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -55,7 +54,7 @@ public class VersionHandler extends AbstractHandler {
                 }
                 response.setStatus(200);
                 request.setHandled(true);
-            } else if (target.matches("/services/\\w+/\\w.json")) {
+            } else if (target.matches("/services/\\w+/versions/\\w+.json")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 switch (request.getMethod()) {
                     case "GET":
@@ -66,13 +65,14 @@ public class VersionHandler extends AbstractHandler {
                 }
                 response.setStatus(200);
                 request.setHandled(true);
-            } else if (target.matches("/services/\\w+/\\w/uses.json")) {
+            } else if (target.matches("/services/\\w+/versions/\\w+/uses.json")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 switch (request.getMethod()) {
                     case "GET":
                         String temp = target.substring(10, target.length() - 10);
                         int i = temp.indexOf("/");
-                        getVersionUses(response, temp.substring(0, i), temp.substring(i + 1));
+                        int ii = temp.indexOf("/", i+1);
+                        getVersionUses(response, temp.substring(0, i), temp.substring(ii + 1));
                         break;
                 }
                 response.setStatus(200);
@@ -97,10 +97,9 @@ public class VersionHandler extends AbstractHandler {
         }
         Version version = new Version();
         version.api = versionData.api;
-        version.impl = versionData.impl;
         version.status = versionData.status;
         cur.addVersion(version);
-        dataAccess.update(cur);
+        dataAccess.save(cur);
     }
 
     private void updateVersion(Request request) throws IOException {
@@ -118,7 +117,6 @@ public class VersionHandler extends AbstractHandler {
         if (version == null) {
             return;
         }
-        version.impl = versionData.impl;
         version.status = versionData.status;
         version.links = new LinkedList<>();
         for (Link link : versionData.links) {
@@ -158,7 +156,7 @@ public class VersionHandler extends AbstractHandler {
                 addUsedBy(usesData.serviceId, usesData.versionId, cur.getId(), version.api, usesData.scope);
             }
         }
-        dataAccess.update(cur);
+        dataAccess.save(cur);
         
         warningProcessor.scanServices();
     }
@@ -181,7 +179,7 @@ public class VersionHandler extends AbstractHandler {
         serviceRef.scope = scope;
 
         version.addUsedBy(serviceRef);
-        dataAccess.update(cur);
+        dataAccess.save(cur);
     }
 
     private void updateUsedBy(String serviceId, String versionId, String refServiceId, String refVersionId, String scope) {
@@ -202,7 +200,7 @@ public class VersionHandler extends AbstractHandler {
             return;
         }
         serviceRef.scope = scope;
-        dataAccess.update(cur);
+        dataAccess.save(cur);
     }
 
     private void removeUsedBy(String serviceId, String versionId, String refServiceId, String refVersionId) {
@@ -223,7 +221,7 @@ public class VersionHandler extends AbstractHandler {
             return;
         }
         version.usedby.remove(serviceRef);
-        dataAccess.update(cur);
+        dataAccess.save(cur);
     }
 
     private void getVersionUses(HttpServletResponse response, String serviceId, String versionId) throws IOException {

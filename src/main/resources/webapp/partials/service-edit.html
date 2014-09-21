@@ -19,6 +19,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="team" class="col-sm-2 control-label">Product Name</label>
+        <div class="col-sm-10">
+            <select ng-model="editForm.product" ng-options="t.code as t.code for t in config.products" id="product" class="form-control"></select>
+        </div>
+    </div>
+    <div class="form-group">
         <label for="description" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
             <textarea id="description" ng-model="editForm.description" placeholder="Does stuff" required="true" class="form-control" rows="3"></textarea>
@@ -27,7 +33,7 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">State</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="editForm.state">
+            <select id="type" ng-model="editForm.state" class="form-control">
                 <option value="Stateless">Stateless</option>
                 <option value="Statefull">Statefull</option>
             </select>
@@ -36,7 +42,7 @@
     <div class="form-group">
         <label for="access" class="col-sm-2 control-label">Access</label>
         <div class="col-sm-10">
-            <select id="access" ng-model="editForm.access">
+            <select id="access" ng-model="editForm.access" class="form-control">
                 <option value="Internal">Internal</option>
                 <option value="External">External</option>
             </select>
@@ -45,7 +51,7 @@
     <div class="form-group">
         <label for="type" class="col-sm-2 control-label">Type</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="editForm.type">
+            <select id="type" ng-model="editForm.type" class="form-control">
                 <option value="Service">Service</option>
                 <option value="Application">Application</option>
             </select>
@@ -60,7 +66,7 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">Business Value</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="editForm.busValue">
+            <select id="type" ng-model="editForm.busValue" class="form-control">
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
@@ -70,18 +76,11 @@
     <div class="form-group">
         <label for="state" class="col-sm-2 control-label">PII</label>
         <div class="col-sm-10">
-            <select id="type" ng-model="editForm.pii">
+            <select id="type" ng-model="editForm.pii" class="form-control">
                 <option value="Stores">Service stores PII</option>
                 <option value="Processes">Service processes PII</option>
                 <option value="None">None</option>
             </select>
-        </div>
-    </div>
-    <div class="form-group" ng-repeat="u in editForm.endpoints">
-        <label class="col-sm-2 control-label">Endpoint</label>
-        <div class="col-sm-10">
-            <input type="text" id="team" ng-model="u.env" ng-minlength="1" ng-maxlength="30" placeholder="Env">
-            <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
         </div>
     </div>
     <div class="form-group" ng-repeat="u in editForm.links">
@@ -91,20 +90,10 @@
             <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
         </div>
     </div>
-    <div class="form-group" ng-repeat="u in editForm.dataCenters">
-        <label class="col-sm-2 control-label">{{u.name}}</label>
-        <div class="col-sm-10">
-            <select ng-model="u.status">
-                <option value="Active">Active</option>
-                <option value="Standby">Standby</option>
-                <option value="None">None</option>
-            </select>
-        </div>
-    </div>
     <div class="form-group" ng-repeat="u in editForm.haRatings">
         <label class="col-sm-2 control-label">{{u.name}}</label>
         <div class="col-sm-10">
-            <span ng-repeat="haDim in config.haDimensions">
+            <span ng-repeat="haDim in config.haDimensions" class="form-control">
                 <span ng-if="haDim.code == u.name">
             <select ng-model="u.level" ng-options="t.code as t.code for t in haDim.subItems"></select>
             </span>

@@ -44,7 +44,7 @@ public class WarningProcessor {
                         ServiceRef serviceRef = usedByVersion.findUses(service.getId(), version.api);
                         if (serviceRef != null) {
                             //serviceRef.retireWarnings = (version.status.equals("Retired") || version.status.equals("Retiring"));
-                            dataAccess.update(usedByService);
+                            dataAccess.save(usedByService);
                         }
                     }
                 }

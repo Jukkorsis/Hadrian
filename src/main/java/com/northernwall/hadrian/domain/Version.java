@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Version {
     public String api;
-    public String impl;
     public String status = "Live";
     public List<Link> links = new LinkedList<>();
     public List<ServiceRef> uses = new LinkedList<>();

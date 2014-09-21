@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handler;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,12 @@ public class AvailabilityHandler extends AbstractHandler {
             if (target.equals("/availablity")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
+                request.setHandled(true);
+            } else if (target.equals("/version")) {
+                logger.info("Handling {} request {}", request.getMethod(), target);
+                response.setStatus(200);
+                String version = "0.1.0";
+                response.getOutputStream().write(version.getBytes());
                 request.setHandled(true);
             }
         } catch (Exception e) {

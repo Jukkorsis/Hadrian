@@ -7,9 +7,8 @@ var soaRepControllers = angular.module('soaRepControllers', []);
 soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Config', 'Service',
     function($scope, Config, Service) {
         $scope.config = Config.get();
-        
+
         $scope.services = Service.query();
-        $scope.orderProp = 'name';
     }]);
 
 soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Config', 'Service',
@@ -38,11 +37,11 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateServiceForm = function(item, event) {
-            console.log("--> Submitting create form");
             var dataObject = {
                 _id: $scope.createForm._id,
                 name: $scope.createForm.name,
                 team: $scope.createForm.team,
+                product: $scope.createForm.product,
                 description: $scope.createForm.description,
                 state: $scope.createForm.state,
                 access: $scope.createForm.access,
@@ -50,8 +49,8 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
                 tech: $scope.createForm.tech,
                 busValue: $scope.createForm.busValue,
                 pii: $scope.createForm.pii,
+                versionUrl: $scope.createForm.versionUrl,
                 api: $scope.createForm.api,
-                impl: $scope.createForm.impl,
                 status: $scope.createForm.status
             };
 
@@ -69,12 +68,13 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
 soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
     function($scope, $routeParams, Config, Service, $http, $window) {
         $scope.config = Config.get();
-        
+
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
             $scope.editForm.name = service.name;
             $scope.editForm.team = service.team;
+            $scope.editForm.product = service.product;
             $scope.editForm.description = service.description;
             $scope.editForm.state = service.state;
             $scope.editForm.access = service.access;
@@ -91,11 +91,11 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
         });
 
         $scope.submitEditServiceForm = function(item, event) {
-            console.log("--> Submitting edit form");
             var dataObject = {
                 _id: $scope.editForm._id,
                 name: $scope.editForm.name,
                 team: $scope.editForm.team,
+                product: $scope.editForm.product,
                 description: $scope.editForm.description,
                 state: $scope.editForm.state,
                 access: $scope.editForm.access,
@@ -148,11 +148,9 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateVersionForm = function(item, event) {
-            console.log("--> Submitting create form");
             var dataObject = {
                 _id: $scope.createForm._id,
                 api: $scope.createForm.api,
-                impl: $scope.createForm.impl,
                 status: $scope.createForm.status
             };
 
@@ -180,11 +178,10 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
             service.versions.forEach(function(version) {
                 if (version.api === $routeParams.versionId) {
                     $scope.editForm.api = version.api;
-                    $scope.editForm.impl = version.impl;
                     $scope.editForm.status = version.status;
                     $scope.editForm.links = version.links;
                     $scope.editForm.links.push({name: "", url: ""});
-                    var responsePromise = $http.get("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + "/uses.json", {});
+                    var responsePromise = $http.get("/services/" + $scope.editForm._id + "/versions/" + $scope.editForm.api + "/uses.json", {});
                     responsePromise.success(function(dataFromServer, status, headers, config) {
                         $scope.editForm.uses1 = [];
                         $scope.editForm.uses2 = [];
@@ -204,11 +201,9 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
         });
 
         $scope.submitEditVersionForm = function(item, event) {
-            console.log("--> Submitting edit form");
             var dataObject = {
                 _id: $scope.editForm._id,
                 api: $scope.editForm.api,
-                impl: $scope.editForm.impl,
                 status: $scope.editForm.status,
                 links: $scope.editForm.links,
                 uses1: $scope.editForm.uses1,
@@ -216,7 +211,65 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 uses3: $scope.editForm.uses3
             };
 
-            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/" + $scope.editForm.api + ".json", dataObject, {});
+            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/versions/" + $scope.editForm.api + ".json", dataObject, {});
+            responsePromise.success(function(dataFromServer, status, headers, config) {
+                console.log(dataFromServer.title);
+                $window.location.href = "#/services/" + $scope.editForm._id;
+            });
+            responsePromise.error(function(data, status, headers, config) {
+                alert("Submitting form failed!");
+            });
+        }
+    }]);
+
+soaRepControllers.controller('EnvCreateCtrl', ['$scope', '$routeParams', '$http', '$window',
+    function($scope, $routeParams, $http, $window) {
+        $scope.createForm = {};
+        $scope.createForm._id = $routeParams.serviceId;
+
+        $scope.submitCreateEnvForm = function(item, event) {
+            var dataObject = {
+                _id: $scope.createForm._id,
+                name: $scope.createForm.name,
+                vip: $scope.createForm.vip
+            };
+
+            var responsePromise = $http.post("/services/" + $scope.createForm._id + "/envs.json", dataObject, {});
+            responsePromise.success(function(dataFromServer, status, headers, config) {
+                console.log(dataFromServer.title);
+                $window.location.href = "#/services/" + $scope.createForm._id;
+            });
+            responsePromise.error(function(data, status, headers, config) {
+                alert("Submitting form failed!");
+            });
+        }
+    }]);
+
+soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
+    function($scope, $routeParams, Config, Service, $http, $window) {
+        $scope.config = Config.get();
+        $scope.editForm = {};
+        Service.get({serviceId: $routeParams.serviceId}, function(service) {
+            $scope.editForm._id = service._id;
+            service.envs.forEach(function(env) {
+                if (env.name === $routeParams.env) {
+                    $scope.editForm.name = env.name;
+                    $scope.editForm.vip = env.vip;
+                    $scope.editForm.hosts = env.hosts;
+                    $scope.editForm.hosts.push({dataCenter: "", name: "", status: "Active"});
+                }
+            });
+        });
+
+        $scope.submitEditEnvForm = function(item, event) {
+            var dataObject = {
+                _id: $scope.editForm._id,
+                name: $scope.editForm.name,
+                vip: $scope.editForm.vip,
+                hosts: $scope.editForm.hosts
+            };
+
+            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/envs/" + $scope.editForm.name + ".json", dataObject, {});
             responsePromise.success(function(dataFromServer, status, headers, config) {
                 console.log(dataFromServer.title);
                 $window.location.href = "#/services/" + $scope.editForm._id;

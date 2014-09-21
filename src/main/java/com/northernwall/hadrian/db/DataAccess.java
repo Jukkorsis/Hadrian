@@ -13,6 +13,8 @@ import java.util.List;
 public interface DataAccess {
     
     Config getConfig();
+    
+    void save(Config config);
 
     Service getService(String id);
 
@@ -23,8 +25,6 @@ public interface DataAccess {
     List<ServiceRefView> getServiceRefVeiw();
 
     void save(Service service);
-
-    void update(Service service);
 
     public void uploadImage(String serviceId, String name, String contentType, InputStream openStream);
     

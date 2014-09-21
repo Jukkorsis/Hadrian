@@ -45,6 +45,14 @@ soaRepApp.config(['$routeProvider',
         templateUrl: 'partials/versionUses-edit.html',
         controller: 'VersionUsesEditCtrl'
       }).
+       when('/createEnv/:serviceId', {
+        templateUrl: 'partials/env-create.html',
+        controller: 'EnvCreateCtrl'
+      }).
+       when('/editEnv/:serviceId/:env', {
+        templateUrl: 'partials/env-edit.html',
+        controller: 'EnvEditCtrl'
+      }).
        when('/graphService', {
         templateUrl: 'partials/service-graph.html',
         controller: 'ServiceGraphCtrl'

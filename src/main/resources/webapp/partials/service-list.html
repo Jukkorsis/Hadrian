@@ -7,13 +7,19 @@
                 <input ng-model="query" id="query" class="form-control" placeholder="Search query">
             </p>
             <p>
-                <label for="orderProp">Team:</label>
+                <label for="team">Team:</label>
                 <select ng-model="team" ng-options="t.code as t.code for t in config.teams" id="team" class="form-control">
                     <option value="">Any Team</option>
                 </select>
             </p>
             <p>
-                <label for="orderProp">State:</label>
+                <label for="team">Product</label>
+                <select ng-model="product" ng-options="t.code as t.code for t in config.products" id="team" class="form-control">
+                    <option value="">Any Product</option>
+                </select>
+            </p>
+            <p>
+                <label for="state">State:</label>
                 <select ng-model="state" id="state" class="form-control">
                     <option value="">Any State</option>
                     <option value="Stateless">Stateless</option>
@@ -21,7 +27,7 @@
                 </select>
             </p>
             <p>
-                <label for="orderProp">Access:</label>
+                <label for="access">Access:</label>
                 <select ng-model="access" id="access" class="form-control">
                     <option value="">Any Access Level</option>
                     <option value="Internal">Internal</option>
@@ -29,7 +35,7 @@
                 </select>
             </p>
             <p>
-                <label for="orderProp">Type:</label>
+                <label for="type">Type:</label>
                 <select ng-model="type" id="type" class="form-control">
                     <option value="">Any Type</option>
                     <option value="Service">Service</option>
@@ -39,11 +45,12 @@
         </div>
         <div class="col-md-10">
             <ul class="services">
-                <li ng-repeat="service in services| filter:{description: query } | filter:{team: team } | filter:{state: state } | filter:{access: access } | filter:{type: type } | orderBy:'Alphabetical'"
+                <li ng-repeat="service in services| filter:{description: query } | filter:{team: team } | filter:{product: product } | filter:{state: state } | filter:{access: access } | filter:{type: type } | orderBy:'Alphabetical'"
                     class="thumbnail">
                     <a ng-href="#/services/{{service._id}}" class="thumb"><img ng-src="{{service.imageLogo}}"></a>
                     <a ng-href="#/services/{{service._id}}">{{service._id}} - {{service.name}}</a><br/>
-                    {{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span><br/>
+                    {{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">team web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span><br/>
+                    {{service.product}}<span ng-repeat="t in config.products"><span ng-if="t.code == service.product"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">product web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">product email</a></span></span></span><br/>
                     {{service.state}} {{service.access}} {{service.type}}<br/>
                     {{service.description}}
                 </li>
