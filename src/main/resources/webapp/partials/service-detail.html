@@ -8,15 +8,9 @@
         </h1>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-4">
-
-        <div class="service-image">
-            <img ng-src="{{mainImageUrl}}">
-        </div>
-
-    </div>
-    <div class="col-md-8">
         <dl class="dl-horizontal">
             <dt>Description</dt>
             <dd>{{service.description}}</dd>
@@ -32,36 +26,37 @@
             <dd>{{service.type}}</dd>
             <dt>Technology</dt>
             <dd>{{service.tech}}</dd>
-            <dt>Links</dt>
-            <dd>
-                <span ng-repeat="link in service.links">
-                    <strong>{{link.name}}</strong> <a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a> <br/>
-                </span>
-            </dd>
-            <dt>HA Ratings</dt>
-            <dd>
-                <span ng-repeat="rating in service.haRatings">
-                    <strong>{{rating.name}}</strong> {{rating.level}} <br/>
-                </span>
-            </dd>
-            <dt>Classification Ratings</dt>
-            <dd>
-                <span ng-repeat="rating in service.classRatings">
-                    <strong>{{rating.name}}</strong> {{rating.level}} <br/>
-                </span>
-            </dd>
-            <div ng-repeat="warning in service.warnings">
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>Links:</dt><dd> </dd>
+            <span ng-repeat="link in service.links">
+                <dt>{{link.name}}</dt>
+                <dd><a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a></dd>
+            </span>
+            <!--
+            <dt><br/>Warnings</dt><dd> </dd>
+            <span ng-repeat="warning in service.warnings">
                 <dt>Warning</dt>
                 <dd>{{warning.text}}</dd>
-            </div>
+            </span>
+            -->
         </dl>
-
-        <ul class="service-thumbs">
-            <li ng-repeat="img in service.images">
-                <img ng-src="{{img}}" ng-click="setImage(img)">
-            </li>
-        </ul>
-
+    </div>
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>HA Ratings:</dt><dd> </dd>
+            <span ng-repeat="rating in service.haRatings">
+                <dt>{{rating.name}}</dt>
+                <dd>{{rating.level}}</dd>
+            </span>
+            <dt><br/>Classification Ratings:</dt><dd> </dd>
+            <span ng-repeat="rating in service.classRatings">
+                <dt>{{rating.name}}</dt>
+                <dd>{{rating.level}}</dd>
+            </span>
+        </dl>
     </div>
 </div>
 
@@ -95,7 +90,7 @@
             </dl>
         </div>
         <div class="col-md-4">
-            <h4>{{service.id}} uses:</h4>
+            <h4>{{service._id}} uses:</h4>
             <ul>
                 <li ng-repeat="s in version.uses">
                     <a ng-href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
@@ -103,7 +98,7 @@
             </ul>
         </div>
         <div class="col-md-4">
-            <h4>{{service.id}} used by:</h4>
+            <h4>{{service._id}} used by:</h4>
             <ul>
                 <li ng-repeat="s in version.usedby">
                     <a ng-href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
@@ -145,5 +140,21 @@
                 </tr>
             </table>
         </div>
+    </div>
+</div>
+
+<h1>Images</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div class="service-image">
+            <img ng-src="{{mainImageUrl}}">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <ul class="service-thumbs">
+            <li ng-repeat="img in service.images">
+                <img ng-src="{{img}}" ng-click="setImage(img)">
+            </li>
+        </ul>
     </div>
 </div>
