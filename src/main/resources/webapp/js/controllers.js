@@ -32,8 +32,6 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
         $scope.createForm.state = "Stateless";
         $scope.createForm.access = "Internal";
         $scope.createForm.type = "Service";
-        $scope.createForm.busValue = "Medium";
-        $scope.createForm.pii = "None";
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateServiceForm = function(item, event) {
@@ -48,8 +46,6 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
                     access: $scope.createForm.access,
                     type: $scope.createForm.type,
                     tech: $scope.createForm.tech,
-                    busValue: $scope.createForm.busValue,
-                    pii: $scope.createForm.pii,
                     versionUrl: $scope.createForm.versionUrl,
                     api: $scope.createForm.api,
                     status: $scope.createForm.status
@@ -82,11 +78,10 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.access = service.access;
             $scope.editForm.type = service.type;
             $scope.editForm.tech = service.tech;
-            $scope.editForm.busValue = service.busValue;
-            $scope.editForm.pii = service.pii;
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
             $scope.editForm.haRatings = service.haRatings;
+            $scope.editForm.classRatings = service.classRatings;
             $scope.editForm.versionUrl = service.versionUrl;
         });
 
@@ -101,12 +96,11 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
                 access: $scope.editForm.access,
                 type: $scope.editForm.type,
                 tech: $scope.editForm.tech,
-                busValue: $scope.editForm.busValue,
-                pii: $scope.editForm.pii,
                 endpoints: $scope.editForm.endpoints,
                 links: $scope.editForm.links,
                 dataCenters: $scope.editForm.dataCenters,
                 haRatings: $scope.editForm.haRatings,
+                classRatings: $scope.editForm.classRatings,
                 versionUrl: $scope.editForm.versionUrl
             };
 

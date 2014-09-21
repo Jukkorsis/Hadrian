@@ -154,6 +154,20 @@ public class ServiceHandler extends SoaAbstractHandler {
                 service.haRatings.add(haRating);
             }
         }
+        for (ConfigItem classDimension : dataAccess.getConfig().classDimensions) {
+            boolean found = false;
+            for (ListItem classRating : service.classRatings) {
+                if (classRating.name.equals(classDimension.code)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                ListItem classRating = new ListItem();
+                classRating.name = classDimension.code;
+                classRating.level = classDimension.subItems.get(classDimension.subItems.size() - 1).code;
+                service.classRatings.add(classRating);
+            }
+        }
         service.images = new LinkedList<>();
         if (service.getAttachments() == null || service.getAttachments().isEmpty()) {
             service.images.add(Service.DEFAULT_IMAGE);
@@ -224,8 +238,6 @@ public class ServiceHandler extends SoaAbstractHandler {
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.tech = serviceData.tech;
-        service.busValue = serviceData.busValue;
-        service.pii = serviceData.pii;
         service.versionUrl = serviceData.versionUrl;
         service.imageLogo = Service.DEFAULT_IMAGE;
         Version version = new Version();
@@ -238,6 +250,12 @@ public class ServiceHandler extends SoaAbstractHandler {
             haRating.name = haDimension.code;
             haRating.level = haDimension.subItems.get(haDimension.subItems.size() - 1).code;
             service.haRatings.add(haRating);
+        }
+        for (ConfigItem classDimension : dataAccess.getConfig().classDimensions) {
+            ListItem classRating = new ListItem();
+            classRating.name = classDimension.code;
+            classRating.level = classDimension.subItems.get(classDimension.subItems.size() - 1).code;
+            service.haRatings.add(classRating);
         }
         dataAccess.save(service);
     }
@@ -257,8 +275,6 @@ public class ServiceHandler extends SoaAbstractHandler {
         cur.access = serviceData.access;
         cur.type = serviceData.type;
         cur.tech = serviceData.tech;
-        cur.busValue = serviceData.busValue;
-        cur.pii = serviceData.pii;
         cur.links = new LinkedList<>();
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
@@ -272,6 +288,7 @@ public class ServiceHandler extends SoaAbstractHandler {
             }
         });
         cur.haRatings = serviceData.haRatings;
+        cur.classRatings = serviceData.classRatings;
         cur.versionUrl = serviceData.versionUrl;
         dataAccess.save(cur);
 

@@ -17,15 +17,6 @@
         <strong>Stateless</strong>, All requests are handled individually, no state is persisted between requests.</dd>
     <dt>Technology</dt><dd>A list or paragraph that describes the technologies (components, libraries, etc.) used to by the service.</dd>
     <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
-    <dt>Endpoints</dt><dd>A list of endpoint URLs</dd>
-    <dt>Business Value</dt><dd>Describes the Value of this service to the business<br/>
-        <strong>High</strong>, High Value services provides critical business functionality<br/>
-        <strong>Medium</strong>, Medium Value service supports "High" Value services, for example reporting, configuration, logging systems<br/>
-        <strong>Low</strong>, Low Value services provide non-critical business functionality, for example a system that stores meta-data about other services...doh</dd>
-    <dt>PII</dt><dd>Describes if and how the service interacts with Personally Identifying Information<br/>
-        <strong>Service stores PII</strong><br/>
-        <strong>Service processes PII</strong><br/>
-        <strong>None</strong></dd>
     <dt>Data Centers</dt>
     <dd>
         <div ng-repeat="r in config.dataCenters">
@@ -40,10 +31,17 @@
             <div ng-repeat="r in haDim.subItems"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
     </div>
 </dl>
+<h3>Service Classification Ratings</h3>
+<dl class="dl-horizontal">
+    <div ng-repeat="classDim in config.classDimensions">
+        <dt>{{classDim.code}}</dt><dd>
+            <div ng-repeat="r in classDim.subItems"><strong>{{r.code}}</strong>, {{r.description}}<br/></div>
+    </div>
+</dl>
 <h3>Service Version</h3>
 <dl class="dl-horizontal">
     <dt>API</dt><dd>The version of the service's API.</dd>
-    <dt>Impl</dt><dd>The current version of the software that implements the service.</dd>
+    <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
     <dt>Status</dt><dd>The life cycle of this version of the service:<br/>
         <strong>Proposed</strong>, The service has been proposed and is under development, but is not yet in production.<br/>
         <strong>Active</strong>, The service is in production and is actively maintained.<br/>
@@ -56,6 +54,11 @@
         <strong>Async Required</strong>, To complete critical functions this service makes direct async calls to the dependant service.<br/>
         <strong>Indirect Required</strong>, To complete critical functions this service makes indirect async calls via a queue to the dependant service.<br/>
         <strong>Support</strong>, In the background this service makes support calls to the dependant service, for example logging or metrics.</dd>
+</dl>
+<h3>Service Environment</h3>
+<dl class="dl-horizontal">
+    <dt>Name</dt><dd>The name of the environment.</dd>
+    <dt>VIP</dt><dd>The VIP/LB name.</dd>
 </dl>
 <h1>Service Graph</h1>
 <h3>Service Shape</h3>

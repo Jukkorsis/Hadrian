@@ -32,10 +32,6 @@
             <dd>{{service.type}}</dd>
             <dt>Technology</dt>
             <dd>{{service.tech}}</dd>
-            <dt>Business Value</dt>
-            <dd>{{service.busValue}}</dd>
-            <dt>PII</dt>
-            <dd>{{service.pii}}</dd>
             <dt>Links</dt>
             <dd>
                 <span ng-repeat="link in service.links">
@@ -45,6 +41,12 @@
             <dt>HA Ratings</dt>
             <dd>
                 <span ng-repeat="rating in service.haRatings">
+                    <strong>{{rating.name}}</strong> {{rating.level}} <br/>
+                </span>
+            </dd>
+            <dt>Classification Ratings</dt>
+            <dd>
+                <span ng-repeat="rating in service.classRatings">
                     <strong>{{rating.name}}</strong> {{rating.level}} <br/>
                 </span>
             </dd>
@@ -114,7 +116,7 @@
 <div ng-repeat="env in service.envs">
     <div class ="row">
         <div class="col-md-12">
-            <h1>Env {{env.name}}<a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
+            <h1>Environment {{env.name}}<a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
         </div>
     </div>
     <div class ="row">

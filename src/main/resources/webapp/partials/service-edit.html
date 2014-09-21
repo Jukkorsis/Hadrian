@@ -1,5 +1,6 @@
 <h1>Edit Service {{editForm._id}}</h1>
 <form class="form-horizontal" role="form">
+    <h4>Service Details</h4>
     <div class="form-group">
         <label for="name" class="col-sm-2 control-label">Name</label>
         <div class="col-sm-10">
@@ -57,26 +58,6 @@
             <textarea id="tech" ng-model="editForm.tech" placeholder="How the service does stuff" required="true" class="form-control" rows="3"></textarea>
         </div>
     </div>
-    <div class="form-group">
-        <label for="state" class="col-sm-2 control-label">Business Value</label>
-        <div class="col-sm-10">
-            <select id="type" ng-model="editForm.busValue" class="form-control">
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="state" class="col-sm-2 control-label">PII</label>
-        <div class="col-sm-10">
-            <select id="type" ng-model="editForm.pii" class="form-control">
-                <option value="Stores">Service stores PII</option>
-                <option value="Processes">Service processes PII</option>
-                <option value="None">None</option>
-            </select>
-        </div>
-    </div>
     <div class="form-group" ng-repeat="link in editForm.links">
         <label class="col-sm-2 control-label">Link</label>
         <div class="col-sm-4">
@@ -86,6 +67,13 @@
             <input type="text" id="team" ng-model="link.url" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
         </div>
     </div>
+    <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Version URL</label>
+        <div class="col-sm-10">
+            <input type="text" id="versionUrl" ng-model="editForm.versionUrl" ng-minlength="1" ng-maxlength="30" required="true" placeholder="/version" class="form-control">
+        </div>
+    </div>
+    <h4>HA Ratings</h4>
     <div class="form-group" ng-repeat="haRating in editForm.haRatings">
         <label class="col-sm-2 control-label">{{haRating.name}}</label>
         <div class="col-sm-10">
@@ -96,10 +84,15 @@
             </span>
         </div>
     </div>
-    <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Version URL</label>
+    <h4>Classification Ratings</h4>
+    <div class="form-group" ng-repeat="classRating in editForm.classRatings">
+        <label class="col-sm-2 control-label">{{classRating.name}}</label>
         <div class="col-sm-10">
-            <input type="text" id="versionUrl" ng-model="editForm.versionUrl" ng-minlength="1" ng-maxlength="30" required="true" placeholder="/version" class="form-control">
+            <span ng-repeat="classDim in config.classDimensions">
+                <span ng-if="classDim.code == classRating.name">
+                    <select ng-model="classRating.level" ng-options="t.code as t.code for t in classDim.subItems" class="form-control"></select>
+                </span>
+            </span>
         </div>
     </div>
     <div class="form-group">

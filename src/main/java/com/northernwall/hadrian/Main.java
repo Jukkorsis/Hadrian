@@ -193,6 +193,56 @@ public class Main {
             requiresUpdate = true;
         }
         
+        if (config.classDimensions.isEmpty()) {
+            logger.info("Adding default Classification Dimensions to config");
+            
+            ConfigItem dimension = new ConfigItem();
+            dimension.code = "Business Value";
+            item = new ConfigItem();
+            item.code = "High";
+            item.description = "High Value services provides critical business functionality.";
+            dimension.subItems.add(item);
+            item = new ConfigItem();
+            item.code = "Medium";
+            item.description = "Medium Value service supports \"High\" Value services, for example reporting, configuration, logging systems.";
+            dimension.subItems.add(item);
+            item = new ConfigItem();
+            item.code = "Low";
+            item.description = "Low Value services provide non-critical business functionality, for example a system that stores meta-data about other services...doh.";
+            dimension.subItems.add(item);
+            config.classDimensions.add(dimension);
+
+            dimension = new ConfigItem();
+            dimension.code = "PII";
+            item = new ConfigItem();
+            item.code = "None";
+            item.description = "Service does not store or process Personally Identifying Information.";
+            dimension.subItems.add(item);
+            item = new ConfigItem();
+            item.code = "Processes";
+            item.description = "Service processes Personally Identifying Information.";
+            dimension.subItems.add(item);
+            item = new ConfigItem();
+            item.code = "Stores";
+            item.description = "Service stores Personally Identifying Information.";
+            dimension.subItems.add(item);
+            config.classDimensions.add(dimension);
+
+            dimension = new ConfigItem();
+            dimension.code = "Sensitive";
+            item = new ConfigItem();
+            item.code = "Public";
+            item.description = "service contains no sensitive information.";
+            dimension.subItems.add(item);
+            item = new ConfigItem();
+            item.code = "NonPublic";
+            item.description = "Service contains sensitive information to can not be shared with the public..";
+            dimension.subItems.add(item);
+            config.classDimensions.add(dimension);
+            
+            requiresUpdate = true;
+        }
+        
         if (requiresUpdate) {
             dataAccess.save(config);
         }

@@ -16,10 +16,9 @@ public class ServiceFormData {
     public String type;
     public String state;
     public String tech;
-    public String busValue;
-    public String pii;
     public List<Link> links = new LinkedList<>();
     public List<ListItem> haRatings = new LinkedList<>();
+    public List<ListItem> classRatings = new LinkedList<>();
     public String versionUrl;
     public String api;
     public String status;

@@ -1,12 +1,13 @@
-<h1>Edit Env {{editForm.name}} for Service {{editForm._id}}</h1>
+<h1>Edit Environment {{editForm.name}} for Service {{editForm._id}}</h1>
 <form class="form-horizontal" role="form">
-    <h4>Version Details</h4>
+    <h4>Environment Details</h4>
     <div class="form-group">
         <label for="vip" class="col-sm-2 control-label">VIP</label>
         <div class="col-sm-10">
             <input type="text" id="vip" ng-model="editForm.vip" ng-minlength="1" ng-maxlength="100" class="form-control">
         </div>
     </div>
+    <h4>Host Details</h4>
     <div class="form-group" ng-repeat="h in editForm.hosts">
         <label class="col-sm-2 control-label">Hosts</label>
         <div class="col-sm-2">

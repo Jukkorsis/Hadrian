@@ -7,13 +7,12 @@ public class Service extends ServiceHeader {
     public static final String DEFAULT_IMAGE = "/ui/img/serviceLogo.png";
 
     public String tech;
-    public String busValue = "Medium";
-    public String pii = "None";
     public List<Env> envs = new LinkedList<>();
     public String versionUrl;
     public List<Link> links = new LinkedList<>();
     public List<String> images;
     public List<ListItem> haRatings = new LinkedList<>();
+    public List<ListItem> classRatings = new LinkedList<>();
     public List<Version> versions = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();
 

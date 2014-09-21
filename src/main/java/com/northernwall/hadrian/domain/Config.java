@@ -9,5 +9,6 @@ public class Config extends Document {
     public List<ConfigItem> teams = new LinkedList<>();
     public List<ConfigItem> products = new LinkedList<>();
     public List<ConfigItem> haDimensions = new LinkedList<>();
+    public List<ConfigItem> classDimensions = new LinkedList<>();
 
 }
