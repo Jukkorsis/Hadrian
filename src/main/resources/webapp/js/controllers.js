@@ -37,31 +37,33 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateServiceForm = function(item, event) {
-            var dataObject = {
-                _id: $scope.createForm._id,
-                name: $scope.createForm.name,
-                team: $scope.createForm.team,
-                product: $scope.createForm.product,
-                description: $scope.createForm.description,
-                state: $scope.createForm.state,
-                access: $scope.createForm.access,
-                type: $scope.createForm.type,
-                tech: $scope.createForm.tech,
-                busValue: $scope.createForm.busValue,
-                pii: $scope.createForm.pii,
-                versionUrl: $scope.createForm.versionUrl,
-                api: $scope.createForm.api,
-                status: $scope.createForm.status
-            };
+            if ($scope.createForm._id && $scope.createForm.name && $scope.createForm.team && $scope.createForm.product && $scope.createForm.description && $scope.createForm.api) {
+                var dataObject = {
+                    _id: $scope.createForm._id,
+                    name: $scope.createForm.name,
+                    team: $scope.createForm.team,
+                    product: $scope.createForm.product,
+                    description: $scope.createForm.description,
+                    state: $scope.createForm.state,
+                    access: $scope.createForm.access,
+                    type: $scope.createForm.type,
+                    tech: $scope.createForm.tech,
+                    busValue: $scope.createForm.busValue,
+                    pii: $scope.createForm.pii,
+                    versionUrl: $scope.createForm.versionUrl,
+                    api: $scope.createForm.api,
+                    status: $scope.createForm.status
+                };
 
-            var responsePromise = $http.post("/services/services.json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
-                $window.location.href = "#/services/" + $scope.createForm._id;
-            });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
-            });
+                var responsePromise = $http.post("/services/services.json", dataObject, {});
+                responsePromise.success(function(dataFromServer, status, headers, config) {
+                    console.log(dataFromServer.title);
+                    $window.location.href = "#/services/" + $scope.createForm._id;
+                });
+                responsePromise.error(function(data, status, headers, config) {
+                    alert("Submitting form failed!");
+                });
+            }
         }
     }]);
 
@@ -145,20 +147,22 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
         $scope.createForm.status = "Proposed";
 
         $scope.submitCreateVersionForm = function(item, event) {
-            var dataObject = {
-                _id: $scope.createForm._id,
-                api: $scope.createForm.api,
-                status: $scope.createForm.status
-            };
+            if ($scope.createForm.api) {
+                var dataObject = {
+                    _id: $scope.createForm._id,
+                    api: $scope.createForm.api,
+                    status: $scope.createForm.status
+                };
 
-            var responsePromise = $http.post("/services/" + $scope.createForm._id + "/versions.json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
-                $window.location.href = "#/services/" + $scope.createForm._id;
-            });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
-            });
+                var responsePromise = $http.post("/services/" + $scope.createForm._id + "/versions.json", dataObject, {});
+                responsePromise.success(function(dataFromServer, status, headers, config) {
+                    console.log(dataFromServer.title);
+                    $window.location.href = "#/services/" + $scope.createForm._id;
+                });
+                responsePromise.error(function(data, status, headers, config) {
+                    alert("Submitting form failed!");
+                });
+            }
         }
     }]);
 
@@ -228,20 +232,22 @@ soaRepControllers.controller('EnvCreateCtrl', ['$scope', '$routeParams', '$http'
         $scope.createForm._id = $routeParams.serviceId;
 
         $scope.submitCreateEnvForm = function(item, event) {
-            var dataObject = {
-                _id: $scope.createForm._id,
-                name: $scope.createForm.name,
-                vip: $scope.createForm.vip
-            };
+            if ($scope.createForm.name) {
+                var dataObject = {
+                    _id: $scope.createForm._id,
+                    name: $scope.createForm.name,
+                    vip: $scope.createForm.vip
+                };
 
-            var responsePromise = $http.post("/services/" + $scope.createForm._id + "/envs.json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
-                $window.location.href = "#/services/" + $scope.createForm._id;
-            });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
-            });
+                var responsePromise = $http.post("/services/" + $scope.createForm._id + "/envs.json", dataObject, {});
+                responsePromise.success(function(dataFromServer, status, headers, config) {
+                    console.log(dataFromServer.title);
+                    $window.location.href = "#/services/" + $scope.createForm._id;
+                });
+                responsePromise.error(function(data, status, headers, config) {
+                    alert("Submitting form failed!");
+                });
+            }
         }
     }]);
 
