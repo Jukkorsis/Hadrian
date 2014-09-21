@@ -1,7 +1,6 @@
 package com.northernwall.hadrian.db;
 
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.ServiceRefView;
@@ -30,7 +29,8 @@ public class CouchDataAccess implements DataAccess {
     private final int port;
     private final String host;
     private final CouchDbClient dbClient;
-    private Config config;
+    private Config configCached;
+    private long configCacheReloadTime;
 
     public CouchDataAccess(Properties properties) {
         port = Integer.parseInt(properties.getProperty("couchdb.port", "5984"));
@@ -65,19 +65,27 @@ public class CouchDataAccess implements DataAccess {
         designDoc.setId("_design/app");
         designDoc.setLanguage("javascript");
         dbClient.design().synchronizeWithDb(designDoc);
+        
         logger.info("Couch views synced");
+        
+        configCached = null;
+        configCacheReloadTime = 0;
     }
 
     @Override
     public Config getConfig() {
-        try {
-            return dbClient.find(Config.class, "SoaConfig");
-        } catch (NoDocumentException nde) {
-            logger.info("No config found, returning empty config");
-            Config temp = new Config();
-            temp.setId("SoaConfig");
-            return temp;
+        if (configCached == null || configCacheReloadTime < System.currentTimeMillis()) {
+            configCacheReloadTime = System.currentTimeMillis() + 5*60*1000;
+            try {
+                configCached = dbClient.find(Config.class, "SoaConfig");
+                logger.info("Config found and loaded");
+            } catch (NoDocumentException nde) {
+                logger.info("No config found, returning empty config");
+                configCached = new Config();
+                configCached.setId("SoaConfig");
+            }
         }
+        return configCached;
     }
 
     @Override
@@ -89,6 +97,8 @@ public class CouchDataAccess implements DataAccess {
             Response rev = dbClient.update(config);
             logger.info("Config Updated: rev {}", rev.getRev());
         }
+        configCached = config;
+        configCacheReloadTime = System.currentTimeMillis() + 5*60*1000;
     }
 
     @Override
