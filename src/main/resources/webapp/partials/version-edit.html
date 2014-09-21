@@ -1,16 +1,16 @@
-<h1>Edit Version</h1>
+<h1>Edit Version {{editForm.api}} for Service {{editForm._id}}</h1>
 <form class="form-horizontal" role="form">
     <h4>Version Details</h4>
     <div class="form-group">
         <label for="_id" class="col-sm-2 control-label">Service</label>
         <div class="col-sm-10">
-            <input type="text" id="_id" ng-model="editForm._id" readonly>
+            <input type="text" id="_id" ng-model="editForm._id" ng-readonly="" class="form-control">
         </div>
     </div>
     <div class="form-group">
         <label for="api" class="col-sm-2 control-label">API Version</label>
         <div class="col-sm-10">
-            <input type="text" id="api" ng-model="editForm.api" ng-minlength="1" ng-maxlength="8" readonly>
+            <input type="text" id="api" ng-model="editForm.api" ng-readonly="" class="form-control">
         </div>
     </div>
     <div class="form-group">
@@ -26,10 +26,23 @@
         </div>
     </div>
     <div class="form-group" ng-repeat="u in editForm.links">
+        <label class="col-sm-2 control-label">links</label>
+        <div class="col-sm-3">
+            <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name" class="form-control">
+        </div>
+        <div class="col-sm-7">
+            <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
+        </div>
+    </div>
+    <div class="form-group" ng-repeat="u in editForm.operations">
         <label class="col-sm-2 control-label">Operation</label>
-        <div class="col-sm-10">
-            <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name">
-            <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL">
+        <div class="col-sm-3">
+            <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name" class="form-control">
+        </div>
+        <div class="col-sm-3">
+            <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
+        </div>
+        <div class="col-sm-4">
             {{editForm.envUrl}}{{u.url}}
         </div>
     </div>

@@ -39,7 +39,7 @@
             <dt>Links</dt>
             <dd>
                 <span ng-repeat="link in service.links">
-                    <strong>{{link.name}}</strong> <a ng-href="{{link.url}}" target="_blank">{{link.url}}</a> <br/>
+                    <strong>{{link.name}}</strong> <a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a> <br/>
                 </span>
             </dd>
             <dt>HA Ratings</dt>
@@ -79,8 +79,14 @@
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
+                        <a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a><br/>
+                    </dd>
+                </div>
+                <div ng-repeat="oper in version.operations">
+                    <dt>{{oper.name}}</dt>
+                    <dd>
                         <span ng-repeat="env in service.envs">
-                            <a ng-href="http://{{env.vip}}{{link.url}}" target="_blank">{{env.name}}</a><br/>
+                            <a ng-href="http://{{env.vip}}{{oper.url}}" target="_blank">{{env.name}}</a><br/>
                         </span>
                     </dd>
                 </div>
@@ -124,8 +130,8 @@
             <div ng-repeat="host in env.hosts">
                 {{host.dataCenter}} {{host.name}} {{host.status}} {{host.implVersion}}
                 <span ng-repeat="version in service.versions">
-                    <span ng-repeat="link in version.links">
-                        <a ng-href="http://{{host.name}}{{link.url}}" target="_blank">{{link.name}}</a>
+                    <span ng-repeat="oper in version.operations">
+                        <a ng-href="http://{{host.name}}{{oper.url}}" target="_blank">{{oper.name}}</a>
                     </span>
                 </span>
             </div>

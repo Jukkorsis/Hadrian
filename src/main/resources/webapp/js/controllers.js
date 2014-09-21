@@ -82,11 +82,8 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.tech = service.tech;
             $scope.editForm.busValue = service.busValue;
             $scope.editForm.pii = service.pii;
-            $scope.editForm.endpoints = service.endpoints;
-            $scope.editForm.endpoints.push({env: "", url: ""});
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
-            $scope.editForm.dataCenters = service.dataCenters;
             $scope.editForm.haRatings = service.haRatings;
         });
 
@@ -170,9 +167,9 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
         $scope.editForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.editForm._id = service._id;
-            if ("endpoints" in service) {
-                if (service.endpoints.length > 0) {
-                    $scope.editForm.envUrl = service.endpoints[0].url;
+            if ("envs" in service) {
+                if (service.envs.length > 0) {
+                    $scope.editForm.envUrl = service.envs[0].vip;
                 }
             }
             service.versions.forEach(function(version) {
@@ -181,6 +178,8 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                     $scope.editForm.status = version.status;
                     $scope.editForm.links = version.links;
                     $scope.editForm.links.push({name: "", url: ""});
+                    $scope.editForm.operations = version.operations;
+                    $scope.editForm.operations.push({name: "", url: ""});
                     var responsePromise = $http.get("/services/" + $scope.editForm._id + "/versions/" + $scope.editForm.api + "/uses.json", {});
                     responsePromise.success(function(dataFromServer, status, headers, config) {
                         $scope.editForm.uses1 = [];
@@ -206,6 +205,7 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
                 api: $scope.editForm.api,
                 status: $scope.editForm.status,
                 links: $scope.editForm.links,
+                operations: $scope.editForm.operations,
                 uses1: $scope.editForm.uses1,
                 uses2: $scope.editForm.uses2,
                 uses3: $scope.editForm.uses3

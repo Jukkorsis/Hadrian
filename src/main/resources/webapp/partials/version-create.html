@@ -3,13 +3,13 @@
     <div class="form-group">
         <label for="_id" class="col-sm-2 control-label">Service</label>
         <div class="col-sm-10">
-            <input type="text" id="_id" ng-model="createForm._id" readonly>
+            <input type="text" id="_id" ng-model="createForm._id" ng-readonly="" class="form-control">
         </div>
     </div>
     <div class="form-group">
         <label for="api" class="col-sm-2 control-label">API Version</label>
         <div class="col-sm-10">
-            <input type="text" id="api" ng-model="createForm.api" ng-minlength="1" ng-maxlength="8" required="true" placeholder="2">
+            <input type="text" id="api" ng-model="createForm.api" ng-minlength="1" ng-maxlength="8" required="true" placeholder="2" class="form-control">
         </div>
     </div>
     <div class="form-group">
@@ -27,7 +27,7 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button ng-click="submitCreateVersionForm()" class="btn btn-info btn-xs">Create New Version</button> 
-            <a href="#/services/{{service._id}}" class="btn btn-info btn-xs">Cancel</a>
+            <a href="#/services/{{createForm._id}}" class="btn btn-info btn-xs">Cancel</a>
         </div>
     </div>
 </form>
