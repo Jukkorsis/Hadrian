@@ -9,20 +9,31 @@
             <strong>{{t.code}}</strong><span ng-if="t.description">, {{t.description}}</span><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span><br/>
         </div>
     </dd>
-    <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service.</dd>
-    <dt>Access</dt><dd>If the service is externally accessible or only offered internally.</dd>
-    <dt>Type</dt><dd>Applications offers a human UI versus a service which can only be accessed by other services.</dd>
-    <dt>State</dt><dd>
-        <strong>Statefull</strong>, The service persists state between requests.<br/>
-        <strong>Stateless</strong>, All requests are handled individually, no state is persisted between requests.</dd>
-    <dt>Technology</dt><dd>A list or paragraph that describes the technologies (components, libraries, etc.) used to by the service.</dd>
-    <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
-    <dt>Data Centers</dt>
-    <dd>
-        <div ng-repeat="r in config.dataCenters">
-            <strong>{{r.code}}</strong>, {{r.description}}<br/>
+    <dt>Product Name</dt>
+    <dd>The product/group that the service is part of.
+        <div ng-repeat="t in config.products">
+            <strong>{{t.code}}</strong><span ng-if="t.description">, {{t.description}}</span><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span><br/>
         </div>
     </dd>
+    <dt>Description</dt><dd>A paragraph or two that describes the function/domain/responsibilities of the service.</dd>
+    <dt>Access</dt>
+    <dd>
+        <strong>Internal</strong>, The service is only accessed by internal services, applications, or users.<br/>
+        <strong>External</strong>, The service is only accessed by internal and external services, applications, or users.
+    </dd>
+    <dt>Type</dt>
+    <dd>
+        <strong>Service</strong>, Services only offer functionality to other services.<br/>
+        <strong>Application</strong>, Applications offers a human UI.
+    </dd>
+    <dt>State</dt>
+    <dd>
+        <strong>Statefull</strong>, The service persists state between requests.<br/>
+        <strong>Stateless</strong>, All requests are handled individually, no state is persisted between requests.
+    </dd>
+    <dt>Technology</dt><dd>A list or paragraph that describes the technologies (components, libraries, etc.) used to by the service.</dd>
+    <dt>Version URL</dt><dd>The URL that can be used to determine the version of the software implementing the service.</dd>
+    <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
 </dl>
 <h3>Service HA Ratings</h3>
 <dl class="dl-horizontal">
@@ -41,13 +52,13 @@
 <h3>Service Version</h3>
 <dl class="dl-horizontal">
     <dt>API</dt><dd>The version of the service's API.</dd>
-    <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
     <dt>Status</dt><dd>The life cycle of this version of the service:<br/>
         <strong>Proposed</strong>, The service has been proposed and is under development, but is not yet in production.<br/>
         <strong>Active</strong>, The service is in production and is actively maintained.<br/>
         <strong>Live</strong>, The service is in production but is not actively being maintained.<br/>
         <strong>Retiring</strong>, The service is in production but the owning team is in the process of turning off the service.<br/>
         <strong>Retired</strong>, The service is no longer in production.</dd>
+    <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
     <dt>Operations</dt><dd>A list of operations/URLs that can be performed on the versions, such as health, version, availability, etc.</dd>
     <dt>Scope</dt><dd>Scope defines the nature of service's dependence on another service:<br/>
         <strong>Sync Required</strong>, To complete critical functions this service makes synchronous calls to the dependant service.<br/>
@@ -59,6 +70,24 @@
 <dl class="dl-horizontal">
     <dt>Name</dt><dd>The name of the environment.</dd>
     <dt>VIP</dt><dd>The VIP/LB name.</dd>
+    <dt>Hosts</dt><dd>List of hosts that make up this environment.</dd>
+</dl>
+<h3>Service Host</h3>
+<dl class="dl-horizontal">
+    <dt>Data Center</dt>
+    <dd>The data center the host is located in.<br/>
+        <div ng-repeat="r in config.dataCenters">
+            <strong>{{r.code}}</strong>, {{r.description}}<br/>
+        </div>
+    </dd>
+    <dt>Name</dt><dd>The name of the host.</dd>
+    <dt>Port</dt><dd>The service listens on this port.</dd>
+    <dt>Status</dt>
+    <dd>
+        <strong>Active</strong>, The service is either in an active-active configuration or is the active part of an active-standby configuration.<br/>
+        <strong>Standby</strong>, The service is the standby part of an active-standby configuration.
+    </dd>
+    <dt>Impl Version</dt><dd>The version of the software. The version is dynamically pulled using the name, port, and the Version Url attribute on the service.</dd>
 </dl>
 <h1>Service Graph</h1>
 <h3>Service Shape</h3>
