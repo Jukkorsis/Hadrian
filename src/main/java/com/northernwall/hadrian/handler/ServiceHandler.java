@@ -13,15 +13,32 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
 import com.northernwall.hadrian.formData.ServiceFormData;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.http.Consts;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +49,38 @@ public class ServiceHandler extends SoaAbstractHandler {
 
     private final DataAccess dataAccess;
     private final WarningProcessor warningProcessor;
+    private final CloseableHttpClient client;
 
-    public ServiceHandler(DataAccess dataAccess, Gson gson, WarningProcessor warningProcessor) {
+    public ServiceHandler(DataAccess dataAccess, Gson gson, WarningProcessor warningProcessor, Properties properties) {
         super(gson);
         this.dataAccess = dataAccess;
         this.warningProcessor = warningProcessor;
+        try {
+            int maxConnections = Integer.parseInt(properties.getProperty("maxConnections", "100"));
+            int maxPerRoute = Integer.parseInt(properties.getProperty("maxPerRoute", "10"));
+            int socketTimeout = Integer.parseInt(properties.getProperty("socketTimeout", "1000"));
+            int connectionTimeout = Integer.parseInt(properties.getProperty("connectionTimeout", "1000"));
+
+            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
+            Registry<ConnectionSocketFactory> registry = registryBuilder.register("http", PlainConnectionSocketFactory.INSTANCE).build();
+
+            PoolingHttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager(registry);
+            ccm.setMaxTotal(maxConnections);
+            ccm.setDefaultMaxPerRoute(maxPerRoute);
+
+            HttpClientBuilder clientBuilder = HttpClients.custom()
+                    .setConnectionManager(ccm)
+                    .setDefaultConnectionConfig(ConnectionConfig.custom()
+                            .setCharset(Consts.UTF_8).build())
+                    .setDefaultRequestConfig(RequestConfig.custom()
+                            .setSocketTimeout(socketTimeout)
+                            .setConnectTimeout(connectionTimeout).build());
+            client = clientBuilder.build();
+        } catch (NumberFormatException nfe) {
+            throw new IllegalStateException("Error Creating HTTPClient, could not parse property");
+        } catch (Exception e) {
+            throw new IllegalStateException("Error Creating HTTPClient: ", e);
+        }
     }
 
     @Override
@@ -93,7 +137,7 @@ public class ServiceHandler extends SoaAbstractHandler {
         }
         for (Env env : service.envs) {
             for (Host host : env.hosts) {
-                host.implVersion = urlGet(host.name, service.versionUrl);
+                host.implVersion = urlGet(host.name, host.port, service.versionUrl);
             }
         }
         for (ConfigItem haDimension : dataAccess.getConfig().haDimensions) {
@@ -127,8 +171,35 @@ public class ServiceHandler extends SoaAbstractHandler {
         }
     }
 
-    private String urlGet(String name, String versionUrl) {
-        return "123";
+    private String urlGet(String name, int port, String versionUrl) {
+        CloseableHttpResponse response = null;
+        try {
+            HttpHost host = new HttpHost(name, port);
+            HttpGet request = new HttpGet(versionUrl);
+            response = client.execute(host, request);
+            if (response.getStatusLine().getStatusCode() >= 300) {
+                return "E" + response.getStatusLine().getStatusCode();
+            }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String content = reader.readLine();
+            if (content == null || content.isEmpty()) {
+                return "NULL";
+            }
+            if (content.length() > 12) {
+                return content.substring(0, 12);
+            }
+            return content;
+        } catch (IOException ex) {
+            return "Unknown";
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException ex) {
+                    logger.error("Could not close http version connection");
+                }
+            }
+        }
     }
 
     private void createService(Request request) throws IOException {
@@ -194,13 +265,14 @@ public class ServiceHandler extends SoaAbstractHandler {
                 cur.links.add(link);
             }
         }
-        Collections.sort(cur.links, new Comparator<Link>(){
+        Collections.sort(cur.links, new Comparator<Link>() {
             @Override
             public int compare(Link o1, Link o2) {
                 return o1.name.compareTo(o2.name);
             }
         });
         cur.haRatings = serviceData.haRatings;
+        cur.versionUrl = serviceData.versionUrl;
         dataAccess.save(cur);
 
         warningProcessor.scanServices();

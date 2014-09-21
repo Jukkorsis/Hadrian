@@ -87,6 +87,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
             $scope.editForm.haRatings = service.haRatings;
+            $scope.editForm.versionUrl = service.versionUrl;
         });
 
         $scope.submitEditServiceForm = function(item, event) {
@@ -105,7 +106,8 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
                 endpoints: $scope.editForm.endpoints,
                 links: $scope.editForm.links,
                 dataCenters: $scope.editForm.dataCenters,
-                haRatings: $scope.editForm.haRatings
+                haRatings: $scope.editForm.haRatings,
+                versionUrl: $scope.editForm.versionUrl
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});

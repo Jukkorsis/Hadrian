@@ -218,7 +218,7 @@ public class Main {
             Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
             Handler configHandler = new ConfigHandler(dataAccess, gson);
-            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor);
+            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor, properties);
             Handler versionHandler = new VersionHandler(dataAccess, gson, warningProcessor);
             Handler envHandler = new EnvHandler(dataAccess, gson);
             Handler imageHandler = new ImageHandler(dataAccess, gson);

@@ -12,8 +12,11 @@
         <div class="col-sm-2">
             <select ng-model="h.dataCenter" ng-options="t.code as t.code for t in config.dataCenters" id="team" class="form-control"></select>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <input type="text" id="name" ng-model="h.name" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
+        </div>
+        <div class="col-sm-2">
+            <input type="text" id="port" ng-model="h.port" ng-minlength="1" ng-maxlength="6" placeholder="port" class="form-control">
         </div>
         <div class="col-sm-2">
             <select id="type" ng-model="h.status" class="form-control">
