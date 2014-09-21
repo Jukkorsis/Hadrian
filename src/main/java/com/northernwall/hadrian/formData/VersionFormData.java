@@ -9,6 +9,7 @@ public class VersionFormData {
     public String api;
     public String status;
     public List<Link> links;
+    public List<Link> operations;
     public List<UsesFormData> uses1 = new LinkedList<>();
     public List<UsesFormData> uses2 = new LinkedList<>();
     public List<UsesFormData> uses3 = new LinkedList<>();

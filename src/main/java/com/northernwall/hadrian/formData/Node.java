@@ -7,4 +7,6 @@ public class Node {
     public String shape;
     public Color color;
     public int borderWidth;
+    public int mass;
+    
 }

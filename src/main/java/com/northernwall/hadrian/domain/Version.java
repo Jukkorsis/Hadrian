@@ -7,6 +7,7 @@ public class Version {
     public String api;
     public String status = "Live";
     public List<Link> links = new LinkedList<>();
+    public List<Link> operations = new LinkedList<>();
     public List<ServiceRef> uses = new LinkedList<>();
     public List<ServiceRef> usedby = new LinkedList<>();
 

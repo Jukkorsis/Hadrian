@@ -9,6 +9,7 @@ public class VersionView {
     public String type;
     public String versionId;
     public String status;
+    public int refs;
     public String scope = "none";
 
 }

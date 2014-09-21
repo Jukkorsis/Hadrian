@@ -130,6 +130,18 @@ public class VersionHandler extends AbstractHandler {
                 return o1.name.compareTo(o2.name);
             }
         });
+        version.operations = new LinkedList<>();
+        for (Link link : versionData.operations) {
+            if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
+                version.operations.add(link);
+            }
+        }
+        Collections.sort(versionData.operations, new Comparator<Link>(){
+            @Override
+            public int compare(Link o1, Link o2) {
+                return o1.name.compareTo(o2.name);
+            }
+        });
         versionData.uses1.addAll(versionData.uses2);
         versionData.uses1.addAll(versionData.uses3);
         for (UsesFormData usesData : versionData.uses1) {

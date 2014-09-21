@@ -79,6 +79,10 @@ public class GraphHandler extends AbstractHandler {
                             node.color.border = "black";
                             node.borderWidth = 1;
                         }
+                        node.mass = version.refs;
+                        if (node.mass < 2) {
+                            node.mass = 1;
+                        }
                         indexes.add(version.serviceId + "-v" + version.versionId);
                         network.nodes.add(node);
                     }
