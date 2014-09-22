@@ -8,8 +8,9 @@ public class Service extends ServiceHeader {
 
     public String tech;
     public List<Env> envs = new LinkedList<>();
-    public String versionUrl;
     public List<Link> links = new LinkedList<>();
+    public String mavenUrl;
+    public String versionUrl;
     public List<String> images;
     public List<ListItem> haRatings = new LinkedList<>();
     public List<ListItem> classRatings = new LinkedList<>();

@@ -30,6 +30,12 @@ public class AvailabilityHandler extends AbstractHandler {
                 String version = "0.1.0";
                 response.getOutputStream().write(version.getBytes());
                 request.setHandled(true);
+            } else if (target.equals("/health")) {
+                logger.info("Handling {} request {}", request.getMethod(), target);
+                response.setStatus(200);
+                String version = "Good";
+                response.getOutputStream().write(version.getBytes());
+                request.setHandled(true);
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);

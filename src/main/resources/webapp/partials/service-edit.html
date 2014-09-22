@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="description" class="col-sm-2 control-label">Technology</label>
+        <label for="tech" class="col-sm-2 control-label">Technology</label>
         <div class="col-sm-10">
             <textarea id="tech" ng-model="editForm.tech" placeholder="How the service does stuff" required="true" class="form-control" rows="3"></textarea>
         </div>
@@ -65,12 +65,6 @@
         </div>
         <div class="col-sm-6">
             <input type="text" id="team" ng-model="link.url" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Version URL</label>
-        <div class="col-sm-10">
-            <input type="text" id="versionUrl" ng-model="editForm.versionUrl" ng-minlength="1" ng-maxlength="30" required="true" placeholder="/version" class="form-control">
         </div>
     </div>
     <h4>HA Ratings</h4>
@@ -93,6 +87,19 @@
                     <select ng-model="classRating.level" ng-options="t.code as t.code for t in classDim.subItems" class="form-control"></select>
                 </span>
             </span>
+        </div>
+    </div>
+    <h4>Technical Details</h4>
+    <div class="form-group">
+        <label for="mavenUrl" class="col-sm-2 control-label">Maven URL</label>
+        <div class="col-sm-10">
+            <input type="text" id="mavenUrl" ng-model="createForm.mavenUrl" ng-minlength="1" ng-maxlength="100" required="true" placeholder="http://repo1.maven.org/maven2/HTTPClient/HTTPClient/" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="versionUrl" class="col-sm-2 control-label">Version URL</label>
+        <div class="col-sm-10">
+            <input type="text" id="versionUrl" ng-model="editForm.versionUrl" ng-minlength="1" ng-maxlength="30" required="true" placeholder="/version" class="form-control">
         </div>
     </div>
     <div class="form-group">

@@ -46,6 +46,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
                     access: $scope.createForm.access,
                     type: $scope.createForm.type,
                     tech: $scope.createForm.tech,
+                    mavenUrl: $scope.createForm.mavenUrl,
                     versionUrl: $scope.createForm.versionUrl,
                     api: $scope.createForm.api,
                     status: $scope.createForm.status
@@ -82,6 +83,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.links.push({name: "", url: ""});
             $scope.editForm.haRatings = service.haRatings;
             $scope.editForm.classRatings = service.classRatings;
+            $scope.editForm.mavenUrl = service.mavenUrl;
             $scope.editForm.versionUrl = service.versionUrl;
         });
 
@@ -101,6 +103,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
                 dataCenters: $scope.editForm.dataCenters,
                 haRatings: $scope.editForm.haRatings,
                 classRatings: $scope.editForm.classRatings,
+                mavenUrl: $scope.editForm.mavenUrl,
                 versionUrl: $scope.editForm.versionUrl
             };
 

@@ -55,6 +55,7 @@ public class ServiceHandler extends SoaAbstractHandler {
         super(gson);
         this.dataAccess = dataAccess;
         this.warningProcessor = warningProcessor;
+        
         try {
             int maxConnections = Integer.parseInt(properties.getProperty("maxConnections", "100"));
             int maxPerRoute = Integer.parseInt(properties.getProperty("maxPerRoute", "10"));
@@ -238,6 +239,7 @@ public class ServiceHandler extends SoaAbstractHandler {
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.tech = serviceData.tech;
+        service.mavenUrl = serviceData.mavenUrl;
         service.versionUrl = serviceData.versionUrl;
         service.imageLogo = Service.DEFAULT_IMAGE;
         Version version = new Version();
@@ -289,6 +291,7 @@ public class ServiceHandler extends SoaAbstractHandler {
         });
         cur.haRatings = serviceData.haRatings;
         cur.classRatings = serviceData.classRatings;
+        cur.mavenUrl = serviceData.mavenUrl;
         cur.versionUrl = serviceData.versionUrl;
         dataAccess.save(cur);
 

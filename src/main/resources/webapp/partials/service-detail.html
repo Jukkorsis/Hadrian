@@ -127,13 +127,13 @@
             <table class="table table-hover">
                 <tr ng-repeat="host in env.hosts">
                     <td>{{host.dataCenter}}</td>
-                    <td>{{host.name}}</td>
+                    <td>{{host.name}}:{{host.port}}</td>
                     <td>{{host.status}}</td>
                     <td>{{host.implVersion}}</td>
                     <td>
                         <span ng-repeat="version in service.versions">
                             <span ng-repeat="oper in version.operations">
-                                <a ng-href="http://{{host.name}}{{oper.url}}" target="_blank">{{oper.name}}</a>
+                                <a ng-href="http://{{host.name}}:{{host.port}}{{oper.url}}" target="_blank">{{oper.name}}</a>
                             </span>
                         </span>
                     </td>
