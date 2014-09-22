@@ -15,9 +15,9 @@
             <dt>Description</dt>
             <dd>{{service.description}}</dd>
             <dt>Team</dt>
-            <dd>{{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">team web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">team email</a></span></span></span></dd>
+            <dd>{{service.team}}<span ng-repeat="t in config.teams"><span ng-if="t.code == service.team"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">email</a></span></span></span></dd>
             <dt>Product</dt>
-            <dd>{{service.product}}<span ng-repeat="t in config.products"><span ng-if="t.code == service.product"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">product web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">product email</a></span></span></span></dd>
+            <dd>{{service.product}}<span ng-repeat="t in config.products"><span ng-if="t.code == service.product"><span ng-if="t.url">, <a ng-href="{{t.url}}" target="_blank">web page</a></span><span ng-if="t.email">, <a ng-href="mailto:{{t.email}}">email</a></span></span></span></dd>
             <dt>State</dt>
             <dd>{{service.state}}</dd>
             <dt>Access</dt>
@@ -63,7 +63,7 @@
 <div ng-repeat="version in service.versions">
     <div class ="row">
         <div class="col-md-12">
-            <h1>Version {{version.api}}<a ng-href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Version</a></h1>
+            <h1>Version {{version.api}} <a ng-href="#/editVersion/{{service._id}}/{{version.api}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Version</a></h1>
         </div>
     </div>
     <div class ="row">
@@ -90,20 +90,24 @@
             </dl>
         </div>
         <div class="col-md-4">
-            <h4>{{service._id}} uses:</h4>
-            <ul>
-                <li ng-repeat="s in version.uses">
-                    <a ng-href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
-                </li>
-            </ul>
+            <table class="table table-hover">
+                <tr><th>Uses</th><th>Version</th><th>Scope</th></tr>
+                <tr ng-repeat="s in version.uses">
+                    <td><a ng-href="#/services/{{s.service}}">{{s.service}}</a></td>
+                    <td>v{{s.version}}</td>
+                    <td>{{s.scope}}</td>
+                </tr>
+            </table>
         </div>
         <div class="col-md-4">
-            <h4>{{service._id}} used by:</h4>
-            <ul>
-                <li ng-repeat="s in version.usedby">
-                    <a ng-href="#/services/{{s.service}}">{{s.service}}</a> v{{s.version}} ({{s.scope}})
-                </li>
-            </ul>
+            <table class="table table-hover">
+                <tr><th>Use By</th><th>Version</th><th>Scope</th></tr>
+                <tr ng-repeat="s in version.usedby">
+                    <td><a ng-href="#/services/{{s.service}}">{{s.service}}</a></td>
+                    <td>v{{s.version}}</td>
+                    <td>{{s.scope}}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
@@ -111,7 +115,7 @@
 <div ng-repeat="env in service.envs">
     <div class ="row">
         <div class="col-md-12">
-            <h1>Environment {{env.name}}<a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
+            <h1>Environment {{env.name}} <a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
         </div>
     </div>
     <div class ="row">
@@ -125,6 +129,7 @@
         </div>
         <div class="col-md-8">
             <table class="table table-hover">
+                <tr><th>DC</th><th>Name</th><th>Status</th><th>Version</th><th>Operations</th></tr>
                 <tr ng-repeat="host in env.hosts">
                     <td>{{host.dataCenter}}</td>
                     <td>{{host.name}}:{{host.port}}</td>

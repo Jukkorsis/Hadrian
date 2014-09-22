@@ -268,9 +268,9 @@ public class Main {
             Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
             Handler configHandler = new ConfigHandler(dataAccess, gson);
-            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor, properties);
+            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor);
             Handler versionHandler = new VersionHandler(dataAccess, gson, warningProcessor);
-            Handler envHandler = new EnvHandler(dataAccess, gson);
+            Handler envHandler = new EnvHandler(dataAccess, gson, properties);
             Handler imageHandler = new ImageHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
             Handler redirectHandler = new RedirectHandler();

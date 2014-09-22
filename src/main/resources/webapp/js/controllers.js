@@ -11,14 +11,22 @@ soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Config', 'Service',
         $scope.services = Service.query();
     }]);
 
-soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', 'Config', 'Service',
-    function($scope, $routeParams, Config, Service) {
+soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', '$http', 'Config', 'Service',
+    function($scope, $routeParams, $http, Config, Service) {
         $scope.config = Config.get();
 
         $scope.service = Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.mainImageUrl = service.imageLogo;
+            service.envs.forEach(function(env) {
+                env.hosts.forEach(function(host) {
+                    host.implVersion = "Loading...";
+                    var responsePromise = $http.get("/services/" + service._id + "/envs/" + env.name + "/hosts/" + host.name + ".json", {});
+                    responsePromise.success(function(dataFromServer, status, headers, config) {
+                        host.implVersion = dataFromServer;
+                    });
+                });
+            });
         });
-
         $scope.setImage = function(imageUrl) {
             $scope.mainImageUrl = imageUrl;
         }

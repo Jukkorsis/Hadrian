@@ -239,15 +239,7 @@ public class VersionHandler extends AbstractHandler {
     private void getVersionUses(HttpServletResponse response, String serviceId, String versionId) throws IOException {
         logger.info("serviceId {} versionId {}", serviceId, versionId);
         Service service = dataAccess.getService(serviceId);
-        Version version = null;
-        if (service.versions == null || service.versions.isEmpty()) {
-            return;
-        }
-        for (Version temp : service.versions) {
-            if (temp.api.equals(versionId)) {
-                version = temp;
-            }
-        }
+        Version version = service.findVersion(versionId);
         if (version == null) {
             return;
         }
