@@ -284,12 +284,58 @@ soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config',
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + "/envs/" + $scope.editForm.name + ".json", dataObject, {});
             responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
                 $window.location.href = "#/services/" + $scope.editForm._id;
             });
             responsePromise.error(function(data, status, headers, config) {
                 alert("Submitting form failed!");
             });
+        }
+    }]);
+
+soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
+    function($scope, $routeParams, Config, Service, $http, $window) {
+        $scope.config = Config.get();
+        $scope.manageForm = {};
+        Service.get({serviceId: $routeParams.serviceId}, function(service) {
+            $scope.manageForm._id = service._id;
+            service.envs.forEach(function(env) {
+                if (env.name === $routeParams.env) {
+                    $scope.manageForm.name = env.name;
+                    $scope.manageForm.hosts = env.hosts;
+                }
+            });
+        });
+
+        $scope.submitManageEnvForm = function(item, event) {
+            var url = $scope.config.manageHostUrl;
+            url = url + '?app=' + $scope.manageForm._id;
+            if ($scope.manageForm.version) {
+                url = url + '&version=' + $scope.manageForm.version;
+            }
+            if ($scope.manageForm.deploy) {
+                url = url + '&action=deploy';
+            }
+            if ($scope.manageForm.stop) {
+                url = url + '&action=stop';
+            }
+            if ($scope.manageForm.link) {
+                url = url + '&action=link';
+            }
+            if ($scope.manageForm.start) {
+                url = url + '&action=start';
+            }
+            if ($scope.manageForm.smoke) {
+                url = url + '&action=smoke';
+            }
+            $scope.manageForm.hosts.forEach(function(host) {
+                if (host.check) {
+                    url = url + '&host=' + host.name;
+                }
+            });
+            var win = window.open(url, '_blank');
+            win.focus();
+
+            $window.location.href = "#/services/" + $scope.manageForm._id;
         }
     }]);
 

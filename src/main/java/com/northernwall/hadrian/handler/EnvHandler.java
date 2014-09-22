@@ -94,6 +94,15 @@ public class EnvHandler extends SoaAbstractHandler {
                 }
                 response.setStatus(200);
                 request.setHandled(true);
+            } else if (target.matches("/manage.json")) {
+                logger.info("Handling {} request {}", request.getMethod(), target);
+                switch (request.getMethod()) {
+                    case "GET":
+                        manageHosts(request, response);
+                        break;
+                }
+                response.setStatus(200);
+                request.setHandled(true);
             } else if (target.matches("/services/\\w+/envs/\\w+/hosts/.+.json")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 switch (request.getMethod()) {
@@ -167,7 +176,22 @@ public class EnvHandler extends SoaAbstractHandler {
         dataAccess.save(cur);
     }
 
+    private void manageHosts(Request request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain;charset=utf-8");
+        try (BufferedWriter writer = new BufferedWriter(new java.io.OutputStreamWriter(response.getOutputStream()))) {
+            String content = "*** TODO Process request ***  ";
+            for (String k : request.getParameterMap().keySet()) {
+                content = content + " param[" + k + "]=";
+                for (String v : request.getParameterValues(k)) {
+                    content = content + v + ",";
+                }
+            }
+            writer.write(content, 0, content.length());
+        }
+    }
+
     private void getImplVersion(HttpServletResponse response, String serviceId, String envId, String hostName) throws IOException {
+        response.setContentType("text/plain;charset=utf-8");
         logger.info("serviceId {} envId {} hostName {}", serviceId, envId, hostName);
         Service service = dataAccess.getService(serviceId);
         Env env = service.findEnv(envId);
