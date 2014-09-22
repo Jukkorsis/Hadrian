@@ -324,8 +324,8 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             if ($scope.manageForm.start) {
                 url = url + '&action=start';
             }
-            if ($scope.manageForm.smoke) {
-                url = url + '&action=smoke';
+            if ($scope.manageForm.smoketest) {
+                url = url + '&action=smoketest';
             }
             $scope.manageForm.hosts.forEach(function(host) {
                 if (host.check) {

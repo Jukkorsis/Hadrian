@@ -10,6 +10,6 @@ public class Config extends Document {
     public List<ConfigItem> products = new LinkedList<>();
     public List<ConfigItem> haDimensions = new LinkedList<>();
     public List<ConfigItem> classDimensions = new LinkedList<>();
-    public String manageHostUrl = "/manage.json";
+    public String manageHostUrl = "/manage";
 
 }
