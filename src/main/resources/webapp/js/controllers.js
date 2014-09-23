@@ -354,12 +354,12 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             
             var inputUsername = document.createElement("textarea");
             inputUsername.name = "username";
-            inputUsername.value = $scope.manageForm.username;
+            inputUsername.value = $('#username').val();
             form.appendChild(inputUsername);
             
             var inputPassword = document.createElement("textarea");
             inputPassword.name = "password";
-            inputPassword.value = $scope.manageForm.password;
+            inputPassword.value = $('#password').val();
             form.appendChild(inputPassword);
             
             var inputVer = document.createElement("textarea");

@@ -100,8 +100,8 @@ public class ManageHandler extends SoaAbstractHandler {
                     writeLine(writer, "*** Starting " + host + " ***");
                     writeLine(writer, " ");
                     execute(writer, app, env, username, password, version, host, actions);
-                    writeLine(writer, " ");
                     writeLine(writer, "*** Finished " + host + " ***");
+                    writeLine(writer, " ");
                 }
             }
             writeLine(writer, " ");
@@ -142,6 +142,7 @@ public class ManageHandler extends SoaAbstractHandler {
         writeLine(writer, "    TODO: Actually execute the script and pipe back the results...");
         writeLine(writer, " ");
         writeLine(writer, "*** Executed '" + safeCommand + "' ***");
+        writeLine(writer, " ");
     }
 
     private void writeLine(BufferedWriter writer, String text) throws IOException {
