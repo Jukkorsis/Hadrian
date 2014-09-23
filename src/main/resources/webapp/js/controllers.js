@@ -306,6 +306,34 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             });
         });
 
+        $scope.checkAllActions = function(item, event) {
+            $scope.manageForm.deploy = true;
+            $scope.manageForm.stop = true;
+            $scope.manageForm.link = true;
+            $scope.manageForm.start = true;
+            $scope.manageForm.smoketest = true;
+        }
+        
+        $scope.uncheckAllActions = function(item, event) {
+            $scope.manageForm.deploy = false;
+            $scope.manageForm.stop = false;
+            $scope.manageForm.link = false;
+            $scope.manageForm.start = false;
+            $scope.manageForm.smoketest = false;
+        }
+        
+        $scope.checkAllHosts = function(item, event) {
+            $scope.manageForm.hosts.forEach(function(host) {
+                host.check = true;
+            });
+        }
+        
+        $scope.uncheckAllHosts = function(item, event) {
+            $scope.manageForm.hosts.forEach(function(host) {
+                host.check = false;
+            });
+        }
+        
         $scope.submitManageEnvForm = function(item, event) {
             var url = $scope.config.manageHostUrl;
             url = url + '?app=' + $scope.manageForm._id;
