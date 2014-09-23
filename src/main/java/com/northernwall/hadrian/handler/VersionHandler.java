@@ -121,6 +121,9 @@ public class VersionHandler extends AbstractHandler {
         version.links = new LinkedList<>();
         for (Link link : versionData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
+                if (!link.url.toLowerCase().startsWith("http://") && !link.url.toLowerCase().startsWith("https://")) {
+                    link.url = "http://" + link.url;
+                }
                 version.links.add(link);
             }
         }

@@ -10,7 +10,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <dl class="dl-horizontal">
             <dt>Description</dt>
             <dd>{{service.description}}</dd>
@@ -28,12 +28,12 @@
             <dd>{{service.tech}}</dd>
         </dl>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <dl class="dl-horizontal">
             <dt>Links:</dt><dd> </dd>
             <span ng-repeat="link in service.links">
                 <dt>{{link.name}}</dt>
-                <dd><a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a></dd>
+                <dd><a ng-href="{{link.url}}" target="_blank">{{link.url}}</a></dd>
             </span>
             <!--
             <dt><br/>Warnings</dt><dd> </dd>
@@ -44,7 +44,7 @@
             -->
         </dl>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <dl class="dl-horizontal">
             <dt>HA Ratings:</dt><dd> </dd>
             <span ng-repeat="rating in service.haRatings">
@@ -76,7 +76,7 @@
                 <div ng-repeat="link in version.links">
                     <dt>{{link.name}}</dt>
                     <dd>
-                        <a ng-href="http://{{link.url}}" target="_blank">http://{{link.url}}</a><br/>
+                        <a ng-href="{{link.url}}" target="_blank">{{link.url}}</a><br/>
                     </dd>
                 </div>
                 <div ng-repeat="oper in version.operations">

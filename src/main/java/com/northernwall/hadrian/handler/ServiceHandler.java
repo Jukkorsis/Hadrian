@@ -199,6 +199,9 @@ public class ServiceHandler extends SoaAbstractHandler {
         cur.links = new LinkedList<>();
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
+                if (!link.url.toLowerCase().startsWith("http://") && !link.url.toLowerCase().startsWith("https://")) {
+                    link.url = "http://" + link.url;
+                }
                 cur.links.add(link);
             }
         }
