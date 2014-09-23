@@ -29,7 +29,7 @@ soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', '$h
         });
         $scope.setImage = function(imageUrl) {
             $scope.mainImageUrl = imageUrl;
-        }
+        };
     }]);
 
 soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', '$window',
@@ -69,7 +69,7 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
                     alert("Submitting form failed!");
                 });
             }
-        }
+        };
     }]);
 
 soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
@@ -123,7 +123,7 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             responsePromise.error(function(data, status, headers, config) {
                 alert("Submitting form failed!");
             });
-        }
+        };
     }]);
 
 soaRepControllers.controller('ImageAddCtrl', ['$scope', '$routeParams', '$upload', '$http', '$window',
@@ -170,7 +170,7 @@ soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$h
                     alert("Submitting form failed!");
                 });
             }
-        }
+        };
     }]);
 
 soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
@@ -230,7 +230,7 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
             responsePromise.error(function(data, status, headers, config) {
                 alert("Submitting form failed!");
             });
-        }
+        };
     }]);
 
 soaRepControllers.controller('EnvCreateCtrl', ['$scope', '$routeParams', '$http', '$window',
@@ -255,7 +255,7 @@ soaRepControllers.controller('EnvCreateCtrl', ['$scope', '$routeParams', '$http'
                     alert("Submitting form failed!");
                 });
             }
-        }
+        };
     }]);
 
 soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
@@ -289,7 +289,7 @@ soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config',
             responsePromise.error(function(data, status, headers, config) {
                 alert("Submitting form failed!");
             });
-        }
+        };
     }]);
 
 soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
@@ -312,59 +312,99 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             $scope.manageForm.link = true;
             $scope.manageForm.start = true;
             $scope.manageForm.smoketest = true;
-        }
-        
+        };
+
         $scope.uncheckAllActions = function(item, event) {
             $scope.manageForm.deploy = false;
             $scope.manageForm.stop = false;
             $scope.manageForm.link = false;
             $scope.manageForm.start = false;
             $scope.manageForm.smoketest = false;
-        }
-        
+        };
+
         $scope.checkAllHosts = function(item, event) {
             $scope.manageForm.hosts.forEach(function(host) {
                 host.check = true;
             });
-        }
-        
+        };
+
         $scope.uncheckAllHosts = function(item, event) {
             $scope.manageForm.hosts.forEach(function(host) {
                 host.check = false;
             });
-        }
-        
+        };
+
         $scope.submitManageEnvForm = function(item, event) {
-            var url = $scope.config.manageHostUrl;
-            url = url + '?app=' + $scope.manageForm._id;
-            if ($scope.manageForm.version) {
-                url = url + '&version=' + $scope.manageForm.version;
-            }
+
+            var form = document.createElement("form");
+            form.action = "/manage";
+            form.method = "post";
+            form.target = "_blank";
+            form.style.display = 'none';
+
+            var inputApp = document.createElement("textarea");
+            inputApp.name = "app";
+            inputApp.value = $scope.manageForm._id;
+            form.appendChild(inputApp);
+            
+            var inputEnv = document.createElement("textarea");
+            inputEnv.name = "env";
+            inputEnv.value = $scope.manageForm.name;
+            form.appendChild(inputEnv);
+            
+            var inputUsername = document.createElement("textarea");
+            inputUsername.name = "username";
+            inputUsername.value = $scope.manageForm.username;
+            form.appendChild(inputUsername);
+            
+            var inputPassword = document.createElement("textarea");
+            inputPassword.name = "password";
+            inputPassword.value = $scope.manageForm.password;
+            form.appendChild(inputPassword);
+            
+            var inputVer = document.createElement("textarea");
+            inputVer.name = "version";
+            inputVer.value = $scope.manageForm.version;
+            form.appendChild(inputVer);
+            
+            var actions = "";
             if ($scope.manageForm.deploy) {
-                url = url + '&action=deploy';
+                actions = actions + 'deploy,';
             }
             if ($scope.manageForm.stop) {
-                url = url + '&action=stop';
+                actions = actions + 'stop,';
             }
             if ($scope.manageForm.link) {
-                url = url + '&action=link';
+                actions = actions + 'link,';
             }
             if ($scope.manageForm.start) {
-                url = url + '&action=start';
+                actions = actions + 'start,';
             }
             if ($scope.manageForm.smoketest) {
-                url = url + '&action=smoketest';
+                actions = actions + 'smoketest';
             }
+            var inputActions = document.createElement("textarea");
+            inputActions.name = "actions";
+            inputActions.value = actions;
+            form.appendChild(inputActions);
+            
+            var hosts = "";
             $scope.manageForm.hosts.forEach(function(host) {
                 if (host.check) {
-                    url = url + '&host=' + host.name;
+                    hosts = hosts + host.name + ",";
                 }
             });
-            var win = window.open(url, '_blank');
-            win.focus();
+
+            var inputHosts = document.createElement("textarea");
+            inputHosts.name = "hosts";
+            inputHosts.value = hosts;
+            form.appendChild(inputHosts);
+            
+            document.body.appendChild(form);
+            form.submit();
 
             $window.location.href = "#/services/" + $scope.manageForm._id;
-        }
+        };
     }]);
 
 soaRepControllers.controller('ServiceGraphCtrl', ['$scope', 'Graph',

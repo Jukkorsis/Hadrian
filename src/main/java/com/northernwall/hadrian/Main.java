@@ -22,6 +22,7 @@ import com.northernwall.hadrian.handler.VersionHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.BindException;
 import java.util.Properties;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -250,11 +251,12 @@ public class Main {
     }
 
     private void startJetty() {
+        int port = -1;
         try {
             Gson gson = new Gson();
             WarningProcessor warningProcessor = new WarningProcessor(dataAccess);
 
-            int port = Integer.parseInt(properties.getProperty("jetty.port", "9090"));
+            port = Integer.parseInt(properties.getProperty("jetty.port", "9090"));
             Server server = new Server(new QueuedThreadPool(10, 5));
 
             HttpConfiguration httpConfig = new HttpConfiguration();
@@ -293,6 +295,9 @@ public class Main {
             server.start();
             logger.info("Jetty server started on port {}, joining with server thread now", port);
             server.join();
+        } catch (BindException be) {
+            logger.error("Can not bind to port {}, exiting", port);
+            System.exit(0);
         } catch (Exception ex) {
             logger.error("Exception {} occured", ex.getMessage());
         }

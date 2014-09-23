@@ -25,14 +25,14 @@ public class RedirectHandler extends AbstractHandler {
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
+        } finally {
+            request.setHandled(true);
         }
-        request.setHandled(true);
     }
 
     private void redirect(HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=/ui/\"></head><body></body></html>");
-        response.setStatus(200);
     }
 
 }
