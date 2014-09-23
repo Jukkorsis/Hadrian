@@ -51,7 +51,7 @@ public class ManageHandler extends SoaAbstractHandler {
 
         response.setContentType("text/plain;charset=utf-8");
         try (BufferedWriter writer = new BufferedWriter(new java.io.OutputStreamWriter(response.getOutputStream()))) {
-            //Validation
+            //Validation parameters
             if (!data.containsKey("app")) {
                 writeLine(writer, "Error: Missing 'app' query parameter.");
                 return;
@@ -78,7 +78,7 @@ public class ManageHandler extends SoaAbstractHandler {
                     return;
                 }
             }
-            //Execute
+            //Grab parameters
             String app = data.get("app");
             String env = data.get("env");
             String username = data.get("username");
@@ -92,6 +92,7 @@ public class ManageHandler extends SoaAbstractHandler {
                 actions = actions.substring(0, actions.length() - 1);
             }
             String[] hosts = data.get("hosts").split(",");
+            //Execute
             writeLine(writer, "*** Performing " + actions + " on " + hosts.length + " hosts ***");
             writeLine(writer, " ");
             for (String host : hosts) {
