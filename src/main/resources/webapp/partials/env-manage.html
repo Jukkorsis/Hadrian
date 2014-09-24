@@ -33,10 +33,16 @@
                 <button ng-click="uncheckAllActions()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove-circle"> Uncheck All</button> 
             </div>
             <div class="form-group">
-                <label for="state" class="col-sm-6 control-label">Deploy Version</label>
+                <label for="state" class="col-sm-6 control-label">Prepare New Version</label>
                 <div class="col-sm-6">
-                    <input type="checkbox" ng-model="manageForm.deploy"> 
+                    <input type="checkbox" ng-model="manageForm.prepare"> 
                 </div> 
+            </div>
+            <div class="form-group">
+                <label for="state" class="col-sm-6 control-label">Offline</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="manageForm.offline">
+                </div>
             </div>
             <div class="form-group">
                 <label for="state" class="col-sm-6 control-label">Stop Service</label>
@@ -45,9 +51,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="state" class="col-sm-6 control-label">Link to Version</label>
+                <label for="state" class="col-sm-6 control-label">Install New Version</label>
                 <div class="col-sm-6">
-                    <input type="checkbox" ng-model="manageForm.link">
+                    <input type="checkbox" ng-model="manageForm.install">
                 </div>
             </div>
             <div class="form-group">
@@ -60,6 +66,12 @@
                 <label for="state" class="col-sm-6 control-label">Smoke Test</label>
                 <div class="col-sm-6">
                     <input type="checkbox" ng-model="manageForm.smoketest"> 
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="state" class="col-sm-6 control-label">Online</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="manageForm.online">
                 </div>
             </div>
         </div>

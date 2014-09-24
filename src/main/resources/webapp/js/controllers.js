@@ -328,19 +328,23 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
         });
 
         $scope.checkAllActions = function(item, event) {
-            $scope.manageForm.deploy = true;
+            $scope.manageForm.prepare = true;
+            $scope.manageForm.offline = true;
             $scope.manageForm.stop = true;
-            $scope.manageForm.link = true;
+            $scope.manageForm.install = true;
             $scope.manageForm.start = true;
             $scope.manageForm.smoketest = true;
+            $scope.manageForm.online = true;
         };
 
         $scope.uncheckAllActions = function(item, event) {
-            $scope.manageForm.deploy = false;
+            $scope.manageForm.prepare = false;
+            $scope.manageForm.offline = false;
             $scope.manageForm.stop = false;
-            $scope.manageForm.link = false;
+            $scope.manageForm.install = false;
             $scope.manageForm.start = false;
             $scope.manageForm.smoketest = false;
+            $scope.manageForm.online = false;
         };
 
         $scope.checkAllHosts = function(item, event) {
@@ -389,20 +393,26 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             form.appendChild(inputVer);
 
             var actions = "";
-            if ($scope.manageForm.deploy) {
-                actions = actions + 'deploy,';
+            if ($scope.manageForm.prepare) {
+                actions = actions + 'prepare,';
+            }
+            if ($scope.manageForm.offline) {
+                actions = actions + 'offline,';
             }
             if ($scope.manageForm.stop) {
                 actions = actions + 'stop,';
             }
-            if ($scope.manageForm.link) {
-                actions = actions + 'link,';
+            if ($scope.manageForm.install) {
+                actions = actions + 'install,';
             }
             if ($scope.manageForm.start) {
                 actions = actions + 'start,';
             }
             if ($scope.manageForm.smoketest) {
-                actions = actions + 'smoketest';
+                actions = actions + 'smoketest,';
+            }
+            if ($scope.manageForm.online) {
+                actions = actions + 'online';
             }
             var inputActions = document.createElement("textarea");
             inputActions.name = "actions";

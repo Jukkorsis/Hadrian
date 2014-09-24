@@ -32,9 +32,9 @@
         <strong>Stateless</strong>, All requests are handled individually, no state is persisted between requests.
     </dd>
     <dt>Technology</dt><dd>A list or paragraph that describes the technologies (components, libraries, etc.) used to by the service.</dd>
-    <dt>Maven URL</dt><dd>The URL that can be used to get the "maven-metadata.xml" file associated to this service.</dd>
-    <dt>Version URL</dt><dd>The URL that can be used to determine the version of the software implementing the service.</dd>
     <dt>Links</dt><dd>A list of links, such as wiki pages, monitoring pages, etc.</dd>
+    <dt>Maven URL</dt><dd>The URL that can be used to get the "maven-metadata.xml" file associated to this service. See "Manage Environment Deployments" below for more information.</dd>
+    <dt>Version URL</dt><dd>The URL that can be used to determine the version of the service deployed to each host.</dd>
 </dl>
 <h3>Service HA Ratings</h3>
 <dl class="dl-horizontal">
@@ -89,6 +89,24 @@
         <strong>Standby</strong>, The service is the standby part of an active-standby configuration.
     </dd>
     <dt>Impl Version</dt><dd>The version of the software. The version is dynamically pulled using the name, port, and the Version Url attribute on the service.</dd>
+</dl>
+<h1>Manage Environment Deployments</h1>
+<h3>Deployment Steps</h3>
+<dl class="dl-horizontal">
+    <dt>Prepare</dt>
+    <dd>The prepare step copies the specified version of the service onto the host. The prepare step should do as much as possible to reduce the time spent in the Install step.</dd>
+    <dt>Offline</dt>
+    <dd>The Offline step removes the service from any Load Balancers and disables monitors.</dd>
+    <dt>Stop</dt>
+    <dd>The Stop step stops the service.</dd>
+    <dt>Install</dt>
+    <dd>The Install step does any required deployment tasks that can only be done while the service is not executing.</dd>
+    <dt>Start</dt>
+    <dd>The Start step starts the service.</dd>
+    <dt>Test</dt>
+    <dd>The Test step preforms a set of test upon the live service.</dd>
+    <dt>Online</dt>
+    <dd>The Online step add the service from any Load Balancers and enables monitors</dd>
 </dl>
 <h1>Service Graph</h1>
 <h3>Service Shape</h3>
