@@ -6,8 +6,8 @@ body {
 
 .service-image {
   background-color: white;
-  width: 450px;
-  height: 450px;
+  width: 550px;
+  height: 550px;
   overflow: hidden;
   position: relative;
   float: left;
@@ -38,8 +38,8 @@ body {
   margin-bottom: 2em;
   background-color: white;
   padding: 2em;
-  height: 400px;
-  width: 400px;
+  height: 500px;
+  width: 500px;
   display: none;
 }
 
