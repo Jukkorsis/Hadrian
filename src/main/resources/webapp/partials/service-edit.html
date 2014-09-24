@@ -58,6 +58,7 @@
             <textarea id="tech" ng-model="editForm.tech" placeholder="How the service does stuff" required="true" class="form-control" rows="3"></textarea>
         </div>
     </div>
+    <h4>Links <button ng-click="addServiceLink()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></button></h4>
     <div class="form-group" ng-repeat="link in editForm.links">
         <label class="col-sm-2 control-label">Link</label>
         <div class="col-sm-4">
@@ -104,8 +105,8 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button ng-click="submitEditServiceForm()" class="btn btn-info btn-xs">Submit Form</button> 
-            <a ng-href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
+            <button ng-click="submitEditServiceForm()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-ok"> Submit Form</button> 
+            <a ng-href="#/services/{{editForm._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"> Cancel</a>
         </div>
     </div>
 </form>

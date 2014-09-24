@@ -13,8 +13,9 @@
             </select>
         </div>
     </div>
+    <h4>links <button ng-click="addVersionLink()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></button></h4>
     <div class="form-group" ng-repeat="u in editForm.links">
-        <label class="col-sm-2 control-label">links</label>
+        <label class="col-sm-2 control-label">link</label>
         <div class="col-sm-3">
             <input type="text" id="team" ng-model="u.name" ng-minlength="1" ng-maxlength="30" placeholder="Name" class="form-control">
         </div>
@@ -22,6 +23,7 @@
             <input type="text" id="team" ng-model="u.url" ng-minlength="1" ng-maxlength="100" placeholder="URL" class="form-control">
         </div>
     </div>
+    <h4>Operations <button ng-click="addVersionOperation()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></button></h4>
     <div class="form-group" ng-repeat="u in editForm.operations">
         <label class="col-sm-2 control-label">Operation</label>
         <div class="col-sm-3">
@@ -79,8 +81,8 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs">Update Version</button> 
-            <a ng-href="#/services/{{editForm._id}}" class="btn btn-info btn-xs">Cancel</a>
+            <button ng-click="submitEditVersionForm()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-ok"> Update Version</button> 
+            <a ng-href="#/services/{{editForm._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"> Cancel</a>
         </div>
     </div>
 </form>

@@ -95,6 +95,10 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.versionUrl = service.versionUrl;
         });
 
+        $scope.addServiceLink = function(item, event) {
+            $scope.editForm.links.push({name: "", url: ""});
+        };
+
         $scope.submitEditServiceForm = function(item, event) {
             var dataObject = {
                 _id: $scope.editForm._id,
@@ -210,6 +214,14 @@ soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Serv
             });
         });
 
+        $scope.addVersionLink = function(item, event) {
+            $scope.editForm.links.push({name: "", url: ""});
+        };
+
+        $scope.addVersionOperation = function(item, event) {
+            $scope.editForm.operations.push({name: "", url: ""});
+        };
+
         $scope.submitEditVersionForm = function(item, event) {
             var dataObject = {
                 _id: $scope.editForm._id,
@@ -273,6 +285,10 @@ soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config',
                 }
             });
         });
+
+        $scope.addHost = function(item, event) {
+            $scope.editForm.hosts.push({dataCenter: "", name: "", status: "Active"});
+        };
 
         $scope.submitEditEnvForm = function(item, event) {
             var dataObject = {
