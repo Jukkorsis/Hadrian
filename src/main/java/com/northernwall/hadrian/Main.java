@@ -24,6 +24,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.BindException;
 import java.util.Properties;
+import org.apache.http.Consts;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -39,6 +50,7 @@ public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
     private Properties properties;
     private DataAccess dataAccess;
+    private CloseableHttpClient client;
 
     /**
      * @param args the command line arguments
@@ -50,6 +62,7 @@ public class Main {
             main.startLogging();
             main.startDataAccess();
             main.checkConfig();
+            main.startHttpClient();
             main.startJetty();
         } catch (Exception e) {
             e.printStackTrace();
@@ -250,6 +263,35 @@ public class Main {
         }
     }
 
+    private void startHttpClient() {
+        try {
+            int maxConnections = Integer.parseInt(properties.getProperty("maxConnections", "100"));
+            int maxPerRoute = Integer.parseInt(properties.getProperty("maxPerRoute", "10"));
+            int socketTimeout = Integer.parseInt(properties.getProperty("socketTimeout", "1000"));
+            int connectionTimeout = Integer.parseInt(properties.getProperty("connectionTimeout", "1000"));
+
+            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
+            Registry<ConnectionSocketFactory> registry = registryBuilder.register("http", PlainConnectionSocketFactory.INSTANCE).build();
+
+            PoolingHttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager(registry);
+            ccm.setMaxTotal(maxConnections);
+            ccm.setDefaultMaxPerRoute(maxPerRoute);
+
+            HttpClientBuilder clientBuilder = HttpClients.custom()
+                    .setConnectionManager(ccm)
+                    .setDefaultConnectionConfig(ConnectionConfig.custom()
+                            .setCharset(Consts.UTF_8).build())
+                    .setDefaultRequestConfig(RequestConfig.custom()
+                            .setSocketTimeout(socketTimeout)
+                            .setConnectTimeout(connectionTimeout).build());
+            client = clientBuilder.build();
+        } catch (NumberFormatException nfe) {
+            throw new IllegalStateException("Error Creating HTTPClient, could not parse property");
+        } catch (Exception e) {
+            throw new IllegalStateException("Error Creating HTTPClient: ", e);
+        }
+    }
+
     private void startJetty() {
         int port = -1;
         try {
@@ -271,9 +313,9 @@ public class Main {
             Handler availabilityHandler = new AvailabilityHandler();
             Handler contentHandler = new ContentHandler();
             Handler configHandler = new ConfigHandler(dataAccess, gson);
-            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor);
+            Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor, client);
             Handler versionHandler = new VersionHandler(dataAccess, gson, warningProcessor);
-            Handler envHandler = new EnvHandler(dataAccess, gson, properties);
+            Handler envHandler = new EnvHandler(dataAccess, gson, client);
             Handler manageHandler = new ManageHandler(dataAccess, gson);
             Handler imageHandler = new ImageHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);

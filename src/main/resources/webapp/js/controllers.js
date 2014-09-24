@@ -306,6 +306,11 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             });
         });
 
+        var responsePromise = $http.get("/services/" + $routeParams.serviceId + "/packageVersions.json", {});
+        responsePromise.success(function(dataFromServer, status, headers, config) {
+            $scope.versions = dataFromServer;
+        });
+
         $scope.checkAllActions = function(item, event) {
             $scope.manageForm.deploy = true;
             $scope.manageForm.stop = true;
@@ -346,27 +351,27 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             inputApp.name = "app";
             inputApp.value = $scope.manageForm._id;
             form.appendChild(inputApp);
-            
+
             var inputEnv = document.createElement("textarea");
             inputEnv.name = "env";
             inputEnv.value = $scope.manageForm.name;
             form.appendChild(inputEnv);
-            
+
             var inputUsername = document.createElement("textarea");
             inputUsername.name = "username";
             inputUsername.value = $('#username').val();
             form.appendChild(inputUsername);
-            
+
             var inputPassword = document.createElement("textarea");
             inputPassword.name = "password";
             inputPassword.value = $('#password').val();
             form.appendChild(inputPassword);
-            
+
             var inputVer = document.createElement("textarea");
             inputVer.name = "version";
             inputVer.value = $scope.manageForm.version;
             form.appendChild(inputVer);
-            
+
             var actions = "";
             if ($scope.manageForm.deploy) {
                 actions = actions + 'deploy,';
@@ -387,7 +392,7 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             inputActions.name = "actions";
             inputActions.value = actions;
             form.appendChild(inputActions);
-            
+
             var hosts = "";
             $scope.manageForm.hosts.forEach(function(host) {
                 if (host.check) {
@@ -399,7 +404,7 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             inputHosts.name = "hosts";
             inputHosts.value = hosts;
             form.appendChild(inputHosts);
-            
+
             document.body.appendChild(form);
             form.submit();
 

@@ -10,7 +10,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <dl class="dl-horizontal">
             <dt>Description</dt>
             <dd>{{service.description}}</dd>
@@ -28,23 +28,23 @@
             <dd>{{service.tech}}</dd>
         </dl>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <dl class="dl-horizontal">
-            <dt>Links:</dt><dd> </dd>
-            <span ng-repeat="link in service.links">
-                <dt>{{link.name}}</dt>
-                <dd><a ng-href="{{link.url}}" target="_blank">{{link.url}}</a></dd>
-            </span>
+            <dt>Links</dt><dd>
+                <div ng-repeat="link in service.links">
+                    <a ng-href="{{link.url}}" target="_blank">{{link.name}}</a><br/>
+                </div>
+            </dd>
             <!--
             <dt><br/>Warnings</dt><dd> </dd>
             <span ng-repeat="warning in service.warnings">
                 <dt>Warning</dt>
                 <dd>{{warning.text}}</dd>
             </span>
-            -->
+            --> 
         </dl>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <dl class="dl-horizontal">
             <dt>HA Ratings:</dt><dd> </dd>
             <span ng-repeat="rating in service.haRatings">
@@ -73,12 +73,12 @@
                 <dd>{{version.api}}</dd>
                 <dt>Status</dt>
                 <dd>{{version.status}}</dd>
-                <div ng-repeat="link in version.links">
-                    <dt>{{link.name}}</dt>
-                    <dd>
-                        <a ng-href="{{link.url}}" target="_blank">{{link.url}}</a><br/>
-                    </dd>
-                </div>
+                <dt>Links</dt>
+                <dd>
+                    <div ng-repeat="link in version.links">
+                        <a ng-href="{{link.url}}" target="_blank">{{link.name}}</a><br/>
+                    </div>
+                </dd>
                 <div ng-repeat="oper in version.operations">
                     <dt>{{oper.name}}</dt>
                     <dd>

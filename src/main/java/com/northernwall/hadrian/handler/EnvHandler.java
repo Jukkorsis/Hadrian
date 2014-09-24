@@ -13,24 +13,13 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.http.Consts;
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,36 +30,10 @@ public class EnvHandler extends SoaAbstractHandler {
     private final DataAccess dataAccess;
     private final CloseableHttpClient client;
 
-    public EnvHandler(DataAccess dataAccess, Gson gson, Properties properties) {
+    public EnvHandler(DataAccess dataAccess, Gson gson, CloseableHttpClient client) {
         super(gson);
         this.dataAccess = dataAccess;
-        
-        try {
-            int maxConnections = Integer.parseInt(properties.getProperty("maxConnections", "100"));
-            int maxPerRoute = Integer.parseInt(properties.getProperty("maxPerRoute", "10"));
-            int socketTimeout = Integer.parseInt(properties.getProperty("socketTimeout", "1000"));
-            int connectionTimeout = Integer.parseInt(properties.getProperty("connectionTimeout", "1000"));
-
-            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
-            Registry<ConnectionSocketFactory> registry = registryBuilder.register("http", PlainConnectionSocketFactory.INSTANCE).build();
-
-            PoolingHttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager(registry);
-            ccm.setMaxTotal(maxConnections);
-            ccm.setDefaultMaxPerRoute(maxPerRoute);
-
-            HttpClientBuilder clientBuilder = HttpClients.custom()
-                    .setConnectionManager(ccm)
-                    .setDefaultConnectionConfig(ConnectionConfig.custom()
-                            .setCharset(Consts.UTF_8).build())
-                    .setDefaultRequestConfig(RequestConfig.custom()
-                            .setSocketTimeout(socketTimeout)
-                            .setConnectTimeout(connectionTimeout).build());
-            client = clientBuilder.build();
-        } catch (NumberFormatException nfe) {
-            throw new IllegalStateException("Error Creating HTTPClient, could not parse property");
-        } catch (Exception e) {
-            throw new IllegalStateException("Error Creating HTTPClient: ", e);
-        }
+        this.client = client;
     }
 
     @Override
