@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Action;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.ListItem;
@@ -235,6 +236,12 @@ public class ServiceHandler extends SoaAbstractHandler {
         cur.classRatings = serviceData.classRatings;
         cur.mavenUrl = serviceData.mavenUrl;
         cur.versionUrl = serviceData.versionUrl;
+        cur.actions = new LinkedList<>();
+        for (Action action : serviceData.actions) {
+            if (action.name != null && !action.name.isEmpty()) {
+                cur.actions.add(action);
+            }
+        }
         dataAccess.save(cur);
 
         warningProcessor.scanServices();

@@ -93,10 +93,16 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.classRatings = service.classRatings;
             $scope.editForm.mavenUrl = service.mavenUrl;
             $scope.editForm.versionUrl = service.versionUrl;
+            $scope.editForm.actions = service.actions;
+            $scope.editForm.actions.push({name: ""});
         });
 
         $scope.addServiceLink = function(item, event) {
             $scope.editForm.links.push({name: "", url: ""});
+        };
+
+        $scope.addServiceAction = function(item, event) {
+            $scope.editForm.actions.push({name: ""});
         };
 
         $scope.submitEditServiceForm = function(item, event) {
@@ -116,7 +122,8 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
                 haRatings: $scope.editForm.haRatings,
                 classRatings: $scope.editForm.classRatings,
                 mavenUrl: $scope.editForm.mavenUrl,
-                versionUrl: $scope.editForm.versionUrl
+                versionUrl: $scope.editForm.versionUrl,
+                actions: $scope.editForm.actions
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
@@ -314,6 +321,7 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
         $scope.manageForm = {};
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.manageForm._id = service._id;
+            $scope.manageForm.actions = service.actions;
             service.envs.forEach(function(env) {
                 if (env.name === $routeParams.env) {
                     $scope.manageForm.name = env.name;
@@ -328,23 +336,15 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
         });
 
         $scope.checkAllActions = function(item, event) {
-            $scope.manageForm.prepare = true;
-            $scope.manageForm.offline = true;
-            $scope.manageForm.stop = true;
-            $scope.manageForm.install = true;
-            $scope.manageForm.start = true;
-            $scope.manageForm.smoketest = true;
-            $scope.manageForm.online = true;
+            $scope.manageForm.actions.forEach(function(action) {
+                action.check = true;
+            });
         };
 
         $scope.uncheckAllActions = function(item, event) {
-            $scope.manageForm.prepare = false;
-            $scope.manageForm.offline = false;
-            $scope.manageForm.stop = false;
-            $scope.manageForm.install = false;
-            $scope.manageForm.start = false;
-            $scope.manageForm.smoketest = false;
-            $scope.manageForm.online = false;
+            $scope.manageForm.actions.forEach(function(action) {
+                action.check = false;
+            });
         };
 
         $scope.checkAllHosts = function(item, event) {
@@ -393,27 +393,12 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
             form.appendChild(inputVer);
 
             var actions = "";
-            if ($scope.manageForm.prepare) {
-                actions = actions + 'prepare,';
-            }
-            if ($scope.manageForm.offline) {
-                actions = actions + 'offline,';
-            }
-            if ($scope.manageForm.stop) {
-                actions = actions + 'stop,';
-            }
-            if ($scope.manageForm.install) {
-                actions = actions + 'install,';
-            }
-            if ($scope.manageForm.start) {
-                actions = actions + 'start,';
-            }
-            if ($scope.manageForm.smoketest) {
-                actions = actions + 'smoketest,';
-            }
-            if ($scope.manageForm.online) {
-                actions = actions + 'online';
-            }
+            $scope.manageForm.actions.forEach(function(action) {
+                if (action.check) {
+                    actions = actions + action.name + ",";
+                }
+            });
+
             var inputActions = document.createElement("textarea");
             inputActions.name = "actions";
             inputActions.value = actions;

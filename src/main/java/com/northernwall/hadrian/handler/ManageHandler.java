@@ -104,7 +104,6 @@ public class ManageHandler extends SoaAbstractHandler {
                     writeLine(writer, " ");
                 }
             }
-            writeLine(writer, " ");
             writeLine(writer, "*** Finished all hosts ***");
         }
     }

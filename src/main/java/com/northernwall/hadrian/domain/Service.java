@@ -16,6 +16,7 @@ public class Service extends ServiceHeader {
     public List<ListItem> classRatings = new LinkedList<>();
     public List<Version> versions = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();
+    public List<Action> actions = new LinkedList<>();
 
     public Version findVersion(String api) {
         if (versions == null || versions.isEmpty()) {

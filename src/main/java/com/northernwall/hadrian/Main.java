@@ -265,10 +265,10 @@ public class Main {
 
     private void startHttpClient() {
         try {
-            int maxConnections = Integer.parseInt(properties.getProperty("maxConnections", "100"));
-            int maxPerRoute = Integer.parseInt(properties.getProperty("maxPerRoute", "10"));
-            int socketTimeout = Integer.parseInt(properties.getProperty("socketTimeout", "1000"));
-            int connectionTimeout = Integer.parseInt(properties.getProperty("connectionTimeout", "1000"));
+            int maxConnections = Integer.parseInt(properties.getProperty("http.maxConnections", "100"));
+            int maxPerRoute = Integer.parseInt(properties.getProperty("http.maxPerRoute", "10"));
+            int socketTimeout = Integer.parseInt(properties.getProperty("http.socketTimeout", "1000"));
+            int connectionTimeout = Integer.parseInt(properties.getProperty("http.connectionTimeout", "1000"));
 
             RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
             Registry<ConnectionSocketFactory> registry = registryBuilder.register("http", PlainConnectionSocketFactory.INSTANCE).build();
