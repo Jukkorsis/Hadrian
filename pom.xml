@@ -5,6 +5,9 @@
     <artifactId>Hadrian</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <organization>
+        <name>Richard Thurston</name>
+    </organization>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -46,6 +49,11 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${fileuploadVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.schmizz</groupId>
+            <artifactId>sshj</artifactId>
+            <version>0.10.0</version>
         </dependency>
     </dependencies>
     <build>

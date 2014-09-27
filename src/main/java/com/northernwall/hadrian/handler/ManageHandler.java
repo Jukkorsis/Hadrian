@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 Richard Thurston.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
@@ -5,16 +20,30 @@ import com.northernwall.hadrian.db.DataAccess;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.common.IOUtils;
+import net.schmizz.sshj.connection.ConnectionException;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.connection.channel.direct.Session.Command;
+import net.schmizz.sshj.transport.TransportException;
+import net.schmizz.sshj.userauth.UserAuthException;
+import net.schmizz.sshj.xfer.InMemorySourceFile;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Richard Thurston
+ */
 public class ManageHandler extends SoaAbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ManageHandler.class);
@@ -47,7 +76,7 @@ public class ManageHandler extends SoaAbstractHandler {
 
     private void manage(Request request, HttpServletResponse response) throws IOException, ServletException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        Map<String, String> data = parseFormDate(reader.readLine());
+        Map<String, String> data = parseFormData(reader.readLine());
 
         response.setContentType("text/plain;charset=utf-8");
         try (BufferedWriter writer = new BufferedWriter(new java.io.OutputStreamWriter(response.getOutputStream()))) {
@@ -108,7 +137,7 @@ public class ManageHandler extends SoaAbstractHandler {
         }
     }
 
-    private Map<String, String> parseFormDate(String input) {
+    private Map<String, String> parseFormData(String input) {
         Map<String, String> data = new HashMap<>();
         input = input.replaceAll("%2C", ",");
         int i = input.indexOf("=");
@@ -129,24 +158,94 @@ public class ManageHandler extends SoaAbstractHandler {
         return data;
     }
 
-    private void execute(BufferedWriter writer, String app, String env, String username, String password, String version, String host, String actions) throws IOException {
-        String command = app + ".sh -u " + username + " -p " + password + " -e " + env + " -h " + host + " -a " + actions;
-        String safeCommand = app + ".sh -u " + username + " -p **** -e " + env + " -h " + host + " -a " + actions;
+    private void execute(BufferedWriter writer, String app, String env, String username, String password, String version, String host, String actions) {
+        String commandText = app + ".sh -e " + env + " -a " + actions;
         if (version != null) {
-            command = command + " -v " + version;
-            safeCommand = safeCommand + " -v " + version;
+            commandText = commandText + " -v " + version;
         }
-        writeLine(writer, "*** Executing '" + safeCommand + "' ***");
-        writeLine(writer, " ");
-        writeLine(writer, "    TODO: Actually execute the script and pipe back the results...");
-        writeLine(writer, " ");
-        writeLine(writer, "*** Executed '" + safeCommand + "' ***");
-        writeLine(writer, " ");
+
+        commandText = "ls -l";
+
+        final SSHClient ssh = new SSHClient();
+        try {
+            try {
+                ssh.loadKnownHosts();
+                ssh.connect(host);
+                ssh.authPassword(username, password);
+            } catch (UserAuthException uae) {
+                writeLine(writer, "!!! User Authentication error, " + uae.getMessage() + " !!!");
+                writeLine(writer, " ");
+                return;
+            } catch (IOException ioe) {
+                logger.warn("{} {} while connecting to {}", ioe.getClass().getSimpleName(), ioe.getMessage(), host);
+                writeLine(writer, "!!! System error occured while establishing a connection to " + host + ", " + ioe.getMessage() + " !!!");
+                writeLine(writer, " ");
+                return;
+            }
+            writeLine(writer, "*** Transfering Script to execute ***");
+            try {
+                ssh.newSCPFileTransfer().upload(new ScriptSourceFile(app, dataAccess), host);
+            } catch (IOException ioe) {
+                logger.warn("{} {} while SCPing file to {}", ioe.getClass().getSimpleName(), ioe.getMessage(), host);
+                writeLine(writer, "!!! System error occured while transfering script to " + host + ", " + ioe.getMessage() + " !!!");
+                writeLine(writer, " ");
+                return;
+            }
+            writeLine(writer, "*** Transfer complete ***");
+            writeLine(writer, " ");
+            writeLine(writer, "*** Executing '" + commandText + "' ***");
+            writeLine(writer, " ");
+            Session session = null;
+            try {
+                session = ssh.startSession();
+                final Command cmd = session.exec(commandText);
+                writeLine(writer, cmd.getInputStream());
+                cmd.join(5, TimeUnit.SECONDS);
+                writeLine(writer, " ");
+                writeLine(writer, "*** Executed '" + commandText + "' exit status '" + cmd.getExitStatus() + "' ***");
+                writeLine(writer, " ");
+            } catch (TransportException  | ConnectionException ex) {
+                logger.warn("{} {} while executing command on {}", ex.getClass().getSimpleName(), ex.getMessage(), host);
+                writeLine(writer, "!!! System error occured while executing script on " + host + ", " + ex.getMessage() + " !!!");
+                writeLine(writer, " ");
+            } finally {
+                if (session != null) {
+                    try {
+                        session.close();
+                    } catch (TransportException | ConnectionException ex) {
+                        logger.warn("{} {} while closing session to {}", ex.getClass().getSimpleName(), ex.getMessage(), host);
+                    }
+                }
+            }
+        } finally {
+            try {
+                ssh.disconnect();
+            } catch (IOException ex) {
+                logger.warn("{} {} while disconnecting from {}", ex.getClass().getSimpleName(), ex.getMessage(), host);
+            }
+        }
+
     }
 
-    private void writeLine(BufferedWriter writer, String text) throws IOException {
+    private void writeLine(BufferedWriter writer, InputStream stream) {
+        String text = null;
+        try {
+            text = IOUtils.readFully(stream).toString();
+        } catch (IOException ex) {
+            logger.error("Exception reading command's response", ex);
+        }
+        if (text != null) {
+            writeLine(writer, text);
+        }
+    }
+
+    private void writeLine(BufferedWriter writer, String text) {
         text = text + System.lineSeparator();
-        writer.write(text, 0, text.length());
+        try {
+            writer.write(text, 0, text.length());
+        } catch (IOException ex) {
+            logger.error("Exception while writing http response stream", ex);
+        }
     }
 
 }
