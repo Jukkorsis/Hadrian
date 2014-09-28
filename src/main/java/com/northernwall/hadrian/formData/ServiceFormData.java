@@ -37,11 +37,13 @@ public class ServiceFormData {
     public String type;
     public String state;
     public String tech;
+    public String versionUrl;
     public List<Link> links = new LinkedList<>();
     public List<ListItem> haRatings = new LinkedList<>();
     public List<ListItem> classRatings = new LinkedList<>();
+    public boolean enableManage = false;
+    public String script;
     public String mavenUrl;
-    public String versionUrl;
     public List<Action> actions = new LinkedList<>();
     public String api;
     public String status;

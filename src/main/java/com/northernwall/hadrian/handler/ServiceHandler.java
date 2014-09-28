@@ -199,7 +199,6 @@ public class ServiceHandler extends SoaAbstractHandler {
         service.access = serviceData.access;
         service.type = serviceData.type;
         service.tech = serviceData.tech;
-        service.mavenUrl = serviceData.mavenUrl;
         service.versionUrl = serviceData.versionUrl;
         service.imageLogo = Service.DEFAULT_IMAGE;
         Version version = new Version();
@@ -219,6 +218,9 @@ public class ServiceHandler extends SoaAbstractHandler {
             classRating.level = classDimension.subItems.get(classDimension.subItems.size() - 1).code;
             service.haRatings.add(classRating);
         }
+        service.enableManage = serviceData.enableManage;
+        service.mavenUrl = serviceData.mavenUrl;
+        service.script = serviceData.script;
         dataAccess.save(service);
     }
 
@@ -237,6 +239,7 @@ public class ServiceHandler extends SoaAbstractHandler {
         cur.access = serviceData.access;
         cur.type = serviceData.type;
         cur.tech = serviceData.tech;
+        cur.versionUrl = serviceData.versionUrl;
         cur.links = new LinkedList<>();
         for (Link link : serviceData.links) {
             if (link.name != null && !link.name.isEmpty() && link.url != null && !link.url.isEmpty()) {
@@ -254,8 +257,9 @@ public class ServiceHandler extends SoaAbstractHandler {
         });
         cur.haRatings = serviceData.haRatings;
         cur.classRatings = serviceData.classRatings;
+        cur.enableManage = serviceData.enableManage;
+        cur.script = serviceData.script;
         cur.mavenUrl = serviceData.mavenUrl;
-        cur.versionUrl = serviceData.versionUrl;
         cur.actions = new LinkedList<>();
         for (Action action : serviceData.actions) {
             if (action.name != null && !action.name.isEmpty()) {

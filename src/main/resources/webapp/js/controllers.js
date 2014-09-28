@@ -54,10 +54,12 @@ soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', 
                     access: $scope.createForm.access,
                     type: $scope.createForm.type,
                     tech: $scope.createForm.tech,
-                    mavenUrl: $scope.createForm.mavenUrl,
                     versionUrl: $scope.createForm.versionUrl,
                     api: $scope.createForm.api,
-                    status: $scope.createForm.status
+                    status: $scope.createForm.status,
+                    enableManage: $scope.createForm.enableManage,
+                    mavenUrl: $scope.createForm.mavenUrl,
+                    script: $scope.createForm.script
                 };
 
                 var responsePromise = $http.post("/services/services.json", dataObject, {});
@@ -87,12 +89,14 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
             $scope.editForm.access = service.access;
             $scope.editForm.type = service.type;
             $scope.editForm.tech = service.tech;
+            $scope.editForm.versionUrl = service.versionUrl;
             $scope.editForm.links = service.links;
             $scope.editForm.links.push({name: "", url: ""});
             $scope.editForm.haRatings = service.haRatings;
             $scope.editForm.classRatings = service.classRatings;
+            $scope.editForm.enableManage = service.enableManage;
             $scope.editForm.mavenUrl = service.mavenUrl;
-            $scope.editForm.versionUrl = service.versionUrl;
+            $scope.editForm.script = service.script;
             $scope.editForm.actions = service.actions;
             $scope.editForm.actions.push({name: ""});
         });
@@ -116,14 +120,16 @@ soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Conf
                 access: $scope.editForm.access,
                 type: $scope.editForm.type,
                 tech: $scope.editForm.tech,
+                versionUrl: $scope.editForm.versionUrl,
                 endpoints: $scope.editForm.endpoints,
                 links: $scope.editForm.links,
                 dataCenters: $scope.editForm.dataCenters,
                 haRatings: $scope.editForm.haRatings,
                 classRatings: $scope.editForm.classRatings,
+                actions: $scope.editForm.actions,
+                enableManage: $scope.editForm.enableManage,
                 mavenUrl: $scope.editForm.mavenUrl,
-                versionUrl: $scope.editForm.versionUrl,
-                actions: $scope.editForm.actions
+                script: $scope.editForm.script
             };
 
             var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
@@ -322,6 +328,7 @@ soaRepControllers.controller('EnvManageCtrl', ['$scope', '$routeParams', 'Config
         Service.get({serviceId: $routeParams.serviceId}, function(service) {
             $scope.manageForm._id = service._id;
             $scope.manageForm.actions = service.actions;
+            $scope.manageForm.script = service.script;
             service.envs.forEach(function(env) {
                 if (env.name === $routeParams.env) {
                     $scope.manageForm.name = env.name;

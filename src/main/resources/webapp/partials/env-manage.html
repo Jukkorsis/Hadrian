@@ -26,6 +26,9 @@
                     <a ng-href="#/services/{{manageForm._id}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"> Cancel</a>
                 </div>
             </div>
+            <div class="col-sm-offset-1 col-sm-11">
+                <textarea id="tech" ng-model="manageForm.script" placeholder="Bash script goes here" ng-readonly="true" class="form-control" rows="20"></textarea>
+            </div>
         </div>
         <div class="col-sm-4">
             <div class="col-sm-12">
