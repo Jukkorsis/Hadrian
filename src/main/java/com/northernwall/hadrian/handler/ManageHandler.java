@@ -36,6 +36,7 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.xfer.InMemorySourceFile;
+import net.schmizz.sshj.xfer.LocalSourceFile;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,7 @@ public class ManageHandler extends SoaAbstractHandler {
                     return;
                 }
             }
+
             //Grab parameters
             String app = data.get("app");
             String env = data.get("env");
@@ -121,16 +123,36 @@ public class ManageHandler extends SoaAbstractHandler {
                 actions = actions.substring(0, actions.length() - 1);
             }
             String[] hosts = data.get("hosts").split(",");
+
+            //Load script
+            LocalSourceFile file = null;
+            try {
+                file = new ScriptSourceFile(app, dataAccess);
+            } catch (Exception e) {
+                writeLine(writer, "Error: Could not load script, " + e.getMessage());
+                writeLine(writer, " ");
+                return;
+            }
+
+            //build command
+            String commandText = app + ".sh -e " + env + " -a " + actions;
+            if (version != null) {
+                commandText = commandText + " -v " + version;
+            }
+            commandText = "ls -l";
+
             //Execute
             writeLine(writer, "*** Performing " + actions + " on " + hosts.length + " hosts ***");
             writeLine(writer, " ");
             for (String host : hosts) {
                 if (host != null && !host.isEmpty()) {
+                    logger.info("Calling execute for service {} on {} on behalf of {}", app, host, username);
                     writeLine(writer, "*** Starting " + host + " ***");
                     writeLine(writer, " ");
-                    execute(writer, app, env, username, password, version, host, actions);
+                    execute(writer, file, commandText, username, password, host);
                     writeLine(writer, "*** Finished " + host + " ***");
                     writeLine(writer, " ");
+                    logger.info("Called execute for service {} on {} on behalf of {}", app, host, username);
                 }
             }
             writeLine(writer, "*** Finished all hosts ***");
@@ -158,14 +180,7 @@ public class ManageHandler extends SoaAbstractHandler {
         return data;
     }
 
-    private void execute(BufferedWriter writer, String app, String env, String username, String password, String version, String host, String actions) {
-        String commandText = app + ".sh -e " + env + " -a " + actions;
-        if (version != null) {
-            commandText = commandText + " -v " + version;
-        }
-
-        commandText = "ls -l";
-
+    private void execute(BufferedWriter writer, LocalSourceFile file, String commandText, String username, String password, String host) {
         final SSHClient ssh = new SSHClient();
         try {
             try {
@@ -173,21 +188,21 @@ public class ManageHandler extends SoaAbstractHandler {
                 ssh.connect(host);
                 ssh.authPassword(username, password);
             } catch (UserAuthException uae) {
-                writeLine(writer, "!!! User Authentication error, " + uae.getMessage() + " !!!");
+                writeLine(writer, "Error: User Authentication error, " + uae.getMessage());
                 writeLine(writer, " ");
                 return;
             } catch (IOException ioe) {
                 logger.warn("{} {} while connecting to {}", ioe.getClass().getSimpleName(), ioe.getMessage(), host);
-                writeLine(writer, "!!! System error occured while establishing a connection to " + host + ", " + ioe.getMessage() + " !!!");
+                writeLine(writer, "Error: System error occured while establishing a connection to " + host + ", " + ioe.getMessage());
                 writeLine(writer, " ");
                 return;
             }
             writeLine(writer, "*** Transfering Script to execute ***");
             try {
-                ssh.newSCPFileTransfer().upload(new ScriptSourceFile(app, dataAccess), host);
+                ssh.newSCPFileTransfer().upload(file, "");
             } catch (IOException ioe) {
                 logger.warn("{} {} while SCPing file to {}", ioe.getClass().getSimpleName(), ioe.getMessage(), host);
-                writeLine(writer, "!!! System error occured while transfering script to " + host + ", " + ioe.getMessage() + " !!!");
+                writeLine(writer, "Error: System error occured while transfering script to " + host + ", " + ioe.getMessage());
                 writeLine(writer, " ");
                 return;
             }
@@ -204,9 +219,9 @@ public class ManageHandler extends SoaAbstractHandler {
                 writeLine(writer, " ");
                 writeLine(writer, "*** Executed '" + commandText + "' exit status '" + cmd.getExitStatus() + "' ***");
                 writeLine(writer, " ");
-            } catch (TransportException  | ConnectionException ex) {
+            } catch (TransportException | ConnectionException ex) {
                 logger.warn("{} {} while executing command on {}", ex.getClass().getSimpleName(), ex.getMessage(), host);
-                writeLine(writer, "!!! System error occured while executing script on " + host + ", " + ex.getMessage() + " !!!");
+                writeLine(writer, "Error: System error occured while executing script on " + host + ", " + ex.getMessage());
                 writeLine(writer, " ");
             } finally {
                 if (session != null) {
