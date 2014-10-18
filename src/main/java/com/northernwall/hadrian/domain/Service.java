@@ -35,10 +35,7 @@ public class Service extends ServiceHeader {
     public List<ListItem> classRatings = new LinkedList<>();
     public List<Version> versions = new LinkedList<>();
     public List<Warning> warnings = new LinkedList<>();
-    public boolean enableManage = false;
-    public String script;
-    public String mavenUrl;
-    public List<Action> actions = new LinkedList<>();
+    public List<Audit> audits = new LinkedList<>();
 
     public Version findVersion(String api) {
         if (versions == null || versions.isEmpty()) {
@@ -78,9 +75,11 @@ public class Service extends ServiceHeader {
         envs.add(env);
     }
 
-    public boolean isImageLogoBlank() {
-        return (imageLogo == null || imageLogo.isEmpty() || imageLogo.equals(DEFAULT_IMAGE));
-
+    public void addAudit(Audit audit) {
+        if (audits == null) {
+            audits = new LinkedList<>();
+        }
+        audits.add(audit);
     }
 
 }

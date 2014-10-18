@@ -41,10 +41,6 @@ public class ServiceFormData {
     public List<Link> links = new LinkedList<>();
     public List<ListItem> haRatings = new LinkedList<>();
     public List<ListItem> classRatings = new LinkedList<>();
-    public boolean enableManage = false;
-    public String script;
-    public String mavenUrl;
-    public List<Action> actions = new LinkedList<>();
     public String api;
     public String status;
 

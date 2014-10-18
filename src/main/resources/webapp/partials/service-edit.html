@@ -96,32 +96,6 @@
             </span>
         </div>
     </div>
-    <h4>Manage/Deploy Details</h4>
-    <div class="form-group">
-        <label for="enableManage" class="col-sm-2 control-label">Use Manage/Deploy</label>
-        <div class="col-sm-10">
-            <input type="checkbox" id="enableManage" ng-model="editForm.enableManage">
-        </div>
-    </div>
-    <div class="form-group" ng-show="editForm.enableManage">
-        <label for="mavenUrl" class="col-sm-2 control-label">Maven URL</label>
-        <div class="col-sm-10">
-            <input type="text" id="mavenUrl" ng-model="editForm.mavenUrl" ng-minlength="1" ng-maxlength="100" required="true" placeholder="http://repo1.maven.org/maven2/HTTPClient/HTTPClient/maven-metadata.xml" class="form-control">
-        </div>
-    </div>
-    <div class="form-group" ng-show="editForm.enableManage">
-        <label for="mavenUrl" class="col-sm-2 control-label">Script</label>
-        <div class="col-sm-10">
-            <textarea id="tech" ng-model="editForm.script" placeholder="Bash script goes here" class="form-control" rows="20"></textarea>
-        </div>
-    </div>
-    <h4 ng-show="editForm.enableManage">Manage/Deploy Actions <button ng-click="addServiceAction()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></button></h4>
-    <div class="form-group" ng-show="editForm.enableManage" ng-repeat="action in editForm.actions">
-        <label class="col-sm-2 control-label">Actions</label>
-        <div class="col-sm-10">
-            <input type="text" id="name" ng-model="action.name" ng-minlength="1" ng-maxlength="30" placeholder="Prepare, Stop, Install, Start, Test" class="form-control">
-        </div>
-    </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button ng-click="submitEditServiceForm()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-ok"> Submit</button> 

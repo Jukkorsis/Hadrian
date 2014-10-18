@@ -156,7 +156,7 @@ public class CouchDataAccess implements DataAccess {
         dbClient.saveAttachment(openStream, name, contentType, service.getId(), service.getRevision());
         service = getService(serviceId);
         if (service.isImageLogoBlank()) {
-            service.imageLogo = "/services/" + serviceId + "/image/" + name;
+            service.setImageLogo("/services/" + serviceId + "/image/" + name);
             dbClient.update(service);
         }
         logger.info("Uploaded attachment {} of type {} to {} {}", name, contentType, service.getId(), service.getRevision());

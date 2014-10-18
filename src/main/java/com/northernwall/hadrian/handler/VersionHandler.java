@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -119,6 +120,7 @@ public class VersionHandler extends AbstractHandler {
         version.api = versionData.api;
         version.status = versionData.status;
         cur.addVersion(version);
+        cur.addAudit(new Audit("User", "Version "+versionData.api+" added"));
         dataAccess.save(cur);
     }
 
@@ -191,6 +193,7 @@ public class VersionHandler extends AbstractHandler {
                 addUsedBy(usesData.serviceId, usesData.versionId, cur.getId(), version.api, usesData.scope);
             }
         }
+        cur.addAudit(new Audit("User", "Version "+versionData.api+" updated"));
         dataAccess.save(cur);
         
         warningProcessor.scanServices();

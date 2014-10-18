@@ -31,7 +31,6 @@ import com.northernwall.hadrian.handler.ContentHandler;
 import com.northernwall.hadrian.handler.EnvHandler;
 import com.northernwall.hadrian.handler.GraphHandler;
 import com.northernwall.hadrian.handler.ImageHandler;
-import com.northernwall.hadrian.handler.ManageHandler;
 import com.northernwall.hadrian.handler.RedirectHandler;
 import com.northernwall.hadrian.handler.ServiceHandler;
 import com.northernwall.hadrian.handler.VersionHandler;
@@ -336,7 +335,6 @@ public class Main {
             Handler serviceHandler = new ServiceHandler(dataAccess, gson, warningProcessor, client);
             Handler versionHandler = new VersionHandler(dataAccess, gson, warningProcessor);
             Handler envHandler = new EnvHandler(dataAccess, gson, client);
-            Handler manageHandler = new ManageHandler(dataAccess, gson);
             Handler imageHandler = new ImageHandler(dataAccess, gson);
             Handler graphHandler = new GraphHandler(dataAccess, gson);
             Handler redirectHandler = new RedirectHandler();
@@ -348,7 +346,6 @@ public class Main {
             handlers.addHandler(serviceHandler);
             handlers.addHandler(versionHandler);
             handlers.addHandler(envHandler);
-            handlers.addHandler(manageHandler);
             handlers.addHandler(imageHandler);
             handlers.addHandler(graphHandler);
             handlers.addHandler(redirectHandler);

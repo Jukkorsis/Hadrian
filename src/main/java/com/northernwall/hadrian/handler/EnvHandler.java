@@ -18,6 +18,7 @@ package com.northernwall.hadrian.handler;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Env;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
@@ -117,6 +118,7 @@ public class EnvHandler extends SoaAbstractHandler {
         env.name = envData.name;
         env.vip = envData.vip;
         cur.addEnv(env);
+        cur.addAudit(new Audit("User", "Env "+envData.name+" added"));
         dataAccess.save(cur);
     }
 
@@ -147,23 +149,26 @@ public class EnvHandler extends SoaAbstractHandler {
                 return o1.name.compareTo(o2.name);
             }
         });
+        cur.addAudit(new Audit("User", "Env "+envData.name+" updated"));
         dataAccess.save(cur);
     }
 
     private void getImplVersion(HttpServletResponse response, String serviceId, String envId, String hostName) throws IOException {
+        String version;
         response.setContentType("text/plain;charset=utf-8");
-        logger.info("serviceId {} envId {} hostName {}", serviceId, envId, hostName);
         Service service = dataAccess.getService(serviceId);
         Env env = service.findEnv(envId);
         if (env == null) {
-            return;
-        }
-        Host host = env.findHost(hostName);
-        if (host == null) {
-            return;
+            version = "Unknown Service";
+        } else {
+            Host host = env.findHost(hostName);
+            if (host == null) {
+                version = "Unknown Host";
+            } else {
+                version = urlGet(host.name, host.port, service.versionUrl);
+            }
         }
         try (BufferedWriter writer = new BufferedWriter(new java.io.OutputStreamWriter(response.getOutputStream()))) {
-            String version = urlGet(host.name, host.port, service.versionUrl);
             writer.write(version, 0, version.length());
         }
     }
@@ -175,12 +180,12 @@ public class EnvHandler extends SoaAbstractHandler {
             HttpGet request = new HttpGet(versionUrl);
             response = client.execute(host, request);
             if (response.getStatusLine().getStatusCode() >= 300) {
-                return "E" + response.getStatusLine().getStatusCode();
+                return Integer.toString(response.getStatusLine().getStatusCode());
             }
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             String content = reader.readLine();
             if (content == null || content.isEmpty()) {
-                return "NULL";
+                return "Null";
             }
             if (content.length() > 12) {
                 return content.substring(0, 12);

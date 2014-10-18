@@ -28,8 +28,6 @@
             <dd>{{service.tech}}</dd>
             <dt>Version URL</dt>
             <dd>{{service.versionUrl}}</dd>
-            <dt>Uses Manage/Deploy</dt>
-            <dd>{{service.enableManage}}</dd>
         </dl>
     </div>
     <div class="col-md-4">
@@ -119,7 +117,7 @@
 <div ng-repeat="env in service.envs">
     <div class ="row">
         <div class="col-md-12">
-            <h1>Environment {{env.name}} <a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a> <a ng-href="#/manageEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs" ng-show="service.enableManage"><span class="glyphicon glyphicon-cog"></span> Manage Env</a></h1>
+            <h1>Environment {{env.name}} <a ng-href="#/editEnv/{{service._id}}/{{env.name}}" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Edit Env</a></h1>
         </div>
     </div>
     <div class ="row">
@@ -167,3 +165,13 @@
         </ul>
     </div>
 </div>
+
+<h1>Audit</h1>
+<table class="table table-hover">
+    <tr><th>Date</th><th>User</th><th>Change</th></tr>
+    <tr ng-repeat="audit in service.audits">
+        <td>{{audit.changedOn}}</td>
+        <td>{{audit.changedBy}}</td>
+        <td>{{audit.change}}</td>
+    </tr>
+</table>

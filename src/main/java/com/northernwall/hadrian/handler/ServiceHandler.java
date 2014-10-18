@@ -20,11 +20,10 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.WarningProcessor;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Action;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.ConfigItem;
 import com.northernwall.hadrian.domain.Link;
 import com.northernwall.hadrian.domain.ListItem;
-import com.northernwall.hadrian.domain.PackageVersion;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceHeader;
 import com.northernwall.hadrian.domain.Version;
@@ -38,19 +37,10 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -94,15 +84,6 @@ public class ServiceHandler extends SoaAbstractHandler {
                         break;
                     case "POST":
                         updateService(request);
-                        break;
-                }
-                response.setStatus(200);
-                request.setHandled(true);
-            } else if (target.matches("/services/\\w+/packageVersions.json")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "GET":
-                        getPackageVersions(response, target.substring(10, target.length() - 21));
                         break;
                 }
                 response.setStatus(200);
@@ -168,7 +149,7 @@ public class ServiceHandler extends SoaAbstractHandler {
                 String image = "/services/" + service.getId() + "/image/" + name;
                 service.images.add(image);
                 if (service.isImageLogoBlank()) {
-                    service.imageLogo = image;
+                    service.setImageLogo(image);
                 }
             }
         }
@@ -190,17 +171,16 @@ public class ServiceHandler extends SoaAbstractHandler {
         }
         Service service = new Service();
         service.setId(serviceData._id);
-        service.date = System.currentTimeMillis();
-        service.name = serviceData.name;
-        service.team = serviceData.team;
-        service.product = serviceData.product;
-        service.description = serviceData.description;
-        service.state = serviceData.state;
-        service.access = serviceData.access;
-        service.type = serviceData.type;
+        service.setName(serviceData.name);
+        service.setTeam(serviceData.team);
+        service.setProduct(serviceData.product);
+        service.setDescription(serviceData.description);
+        service.setState(serviceData.state);
+        service.setAccess(serviceData.access);
+        service.setType(serviceData.type);
         service.tech = serviceData.tech;
         service.versionUrl = serviceData.versionUrl;
-        service.imageLogo = Service.DEFAULT_IMAGE;
+        service.setImageLogo(Service.DEFAULT_IMAGE);
         Version version = new Version();
         version.api = serviceData.api;
         version.status = serviceData.status;
@@ -216,11 +196,9 @@ public class ServiceHandler extends SoaAbstractHandler {
             ListItem classRating = new ListItem();
             classRating.name = classDimension.code;
             classRating.level = classDimension.subItems.get(classDimension.subItems.size() - 1).code;
-            service.haRatings.add(classRating);
+            service.classRatings.add(classRating);
         }
-        service.enableManage = serviceData.enableManage;
-        service.mavenUrl = serviceData.mavenUrl;
-        service.script = serviceData.script;
+        service.addAudit(new Audit("User", "Service created"));
         dataAccess.save(service);
     }
 
@@ -231,13 +209,13 @@ public class ServiceHandler extends SoaAbstractHandler {
         if (cur == null) {
             return;
         }
-        cur.name = serviceData.name;
-        cur.team = serviceData.team;
-        cur.product = serviceData.product;
-        cur.description = serviceData.description;
-        cur.state = serviceData.state;
-        cur.access = serviceData.access;
-        cur.type = serviceData.type;
+        cur.setName(serviceData.name);
+        cur.setTeam(serviceData.team);
+        cur.setProduct(serviceData.product);
+        cur.setDescription(serviceData.description);
+        cur.setState(serviceData.state);
+        cur.setAccess(serviceData.access);
+        cur.setType(serviceData.type);
         cur.tech = serviceData.tech;
         cur.versionUrl = serviceData.versionUrl;
         cur.links = new LinkedList<>();
@@ -257,68 +235,10 @@ public class ServiceHandler extends SoaAbstractHandler {
         });
         cur.haRatings = serviceData.haRatings;
         cur.classRatings = serviceData.classRatings;
-        cur.enableManage = serviceData.enableManage;
-        cur.script = serviceData.script;
-        cur.mavenUrl = serviceData.mavenUrl;
-        cur.actions = new LinkedList<>();
-        for (Action action : serviceData.actions) {
-            if (action.name != null && !action.name.isEmpty()) {
-                cur.actions.add(action);
-            }
-        }
+        cur.addAudit(new Audit("User", "Service updated"));
         dataAccess.save(cur);
 
         warningProcessor.scanServices();
-    }
-
-    private void getPackageVersions(HttpServletResponse response, String id) throws ParserConfigurationException, IOException, SAXException {
-        Service cur = dataAccess.getService(id);
-        if (cur == null) {
-            return;
-        }
-        CloseableHttpResponse mavenResponse = null;
-        try {
-            HttpGet request = new HttpGet(cur.mavenUrl);
-            mavenResponse = client.execute(request);
-            if (mavenResponse.getStatusLine().getStatusCode() >= 300) {
-                return;
-            }
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(mavenResponse.getEntity().getContent());
-            Element root = doc.getDocumentElement();
-            Node versionsNode = root.getElementsByTagName("versions").item(0);
-            List<PackageVersion> packageVersions = new LinkedList<>();
-            for (int i = 0; i < versionsNode.getChildNodes().getLength(); i++) {
-                Node child = versionsNode.getChildNodes().item(i);
-                if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    PackageVersion packageVersion = new PackageVersion();
-                    packageVersion.name = child.getTextContent();
-                    packageVersions.add(packageVersion);
-                }
-            }
-            Collections.sort(packageVersions, new Comparator<PackageVersion>() {
-                @Override
-                public int compare(PackageVersion o1, PackageVersion o2) {
-                    return o2.name.compareTo(o1.name);
-                }
-            });
-            try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-                jw.beginArray();
-                for (PackageVersion packageVersion : packageVersions) {
-                    gson.toJson(packageVersion, PackageVersion.class, jw);
-                }
-                jw.endArray();
-            }
-        } finally {
-            if (mavenResponse != null) {
-                try {
-                    mavenResponse.close();
-                } catch (IOException ex) {
-                    logger.error("Could not close http version connection");
-                }
-            }
-        }
     }
 
 }

@@ -17,6 +17,9 @@
 package com.northernwall.hadrian.handler;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ import org.slf4j.LoggerFactory;
 public class AvailabilityHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
+    private final static String VERSION = "0.1.1";
 
     public AvailabilityHandler() {
     }
@@ -46,20 +50,50 @@ public class AvailabilityHandler extends AbstractHandler {
             } else if (target.equals("/version")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
-                String version = "0.1.0";
+                String version = VERSION; //getClass().getPackage().getImplementationVersion();
                 response.getOutputStream().write(version.getBytes());
                 request.setHandled(true);
             } else if (target.equals("/health")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
-                String version = "Good";
-                response.getOutputStream().write(version.getBytes());
+                writeln(response, "<html>");
+                writeln(response, "<body>");
+                writeln(response, "Version", VERSION);
+                writeln(response, "JVM Name", ManagementFactory.getRuntimeMXBean().getSpecName());
+                writeln(response, "JVM Version", ManagementFactory.getRuntimeMXBean().getSpecVersion());
+                writeln(response, "JVM Vendor", ManagementFactory.getRuntimeMXBean().getSpecVendor());
+                writeln(response, "JVM Threads", ManagementFactory.getThreadMXBean().getThreadCount());
+                writeln(response, "Current Time", new Date());
+                writeln(response, "Start Time", new Date(ManagementFactory.getRuntimeMXBean().getStartTime()));
+                writeln(response, "</body>");
+                writeln(response, "</html>");
                 request.setHandled(true);
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
         }
+    }
+
+    private void writeln(HttpServletResponse response, String text) throws IOException {
+        response.getOutputStream().write(text.getBytes());
+    }
+
+    private void writeln(HttpServletResponse response, String label, Date value) throws IOException {
+        writeln(response, label, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value));
+    }
+
+    private void writeln(HttpServletResponse response, String label, int value) throws IOException {
+        writeln(response, label, Integer.toString(value));
+    }
+
+    private void writeln(HttpServletResponse response, String label, long value) throws IOException {
+        writeln(response, label, Long.toString(value));
+    }
+
+    private void writeln(HttpServletResponse response, String label, String value) throws IOException {
+        String text = label + ": " + value + "<br/>";
+        response.getOutputStream().write(text.getBytes());
     }
 
 }

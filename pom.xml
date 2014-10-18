@@ -50,11 +50,6 @@
             <artifactId>commons-fileupload</artifactId>
             <version>${fileuploadVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>net.schmizz</groupId>
-            <artifactId>sshj</artifactId>
-            <version>0.10.0</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
