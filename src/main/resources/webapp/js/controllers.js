@@ -24,6 +24,7 @@ soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', '$h
                     responsePromise.success(function(dataFromServer, status, headers, config) {
                         host.implVersion = dataFromServer;
                     });
+                    host.health = '<a ng-href="http://'+host.name+':'+host.port+'/health" target="_blank">link</a>';
                 });
             });
         });

@@ -130,6 +130,7 @@
             </dl>
         </div>
         <div class="col-md-8">
+            <div ui-grid="{ data: env.hosts }" class="hostGrid"/>
             <table class="table table-hover">
                 <tr><th>DC</th><th>Name</th><th>Status</th><th>Version</th><th>Operations</th></tr>
                 <tr ng-repeat="host in env.hosts">
@@ -167,11 +168,4 @@
 </div>
 
 <h1>Audit</h1>
-<table class="table table-hover">
-    <tr><th>Date</th><th>User</th><th>Change</th></tr>
-    <tr ng-repeat="audit in service.audits">
-        <td>{{audit.changedOn}}</td>
-        <td>{{audit.changedBy}}</td>
-        <td>{{audit.change}}</td>
-    </tr>
-</table>
+<div ui-grid="{ data: service.audits }" class="auditGrid"/>

@@ -7,7 +7,8 @@ var soaRepApp = angular.module('SoaRepApp', [
   'soaRepDirectives',
   'soaRepControllers',
   'soaRepFilters',
-  'soaRepServices'
+  'soaRepServices',
+  'ui.grid'
 ]);
 
 soaRepApp.config(['$routeProvider',
