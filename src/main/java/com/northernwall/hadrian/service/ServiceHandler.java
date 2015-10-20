@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.service.dao.GetHostData;
+import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
 import com.northernwall.hadrian.service.dao.GetServiceRefData;
 import com.northernwall.hadrian.service.dao.GetVipData;
@@ -32,6 +33,12 @@ import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Predicate;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,18 +52,22 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class ServiceHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     private final DataAccess dataAccess;
     private final MavenHelper mavenhelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
+    private final ExecutorService es;
 
     public ServiceHandler(DataAccess dataAccess, MavenHelper mavenhelper, InfoHelper infoHelper) {
         this.dataAccess = dataAccess;
         this.mavenhelper = mavenhelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
+
+        es = Executors.newFixedThreadPool(20);
     }
 
     @Override
@@ -65,7 +76,12 @@ public class ServiceHandler extends AbstractHandler {
             if (target.startsWith("/v1/service/")) {
                 switch (request.getMethod()) {
                     case "GET":
-                        if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                        if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            getServiceNotUses(response, target.substring(12, target.length()-8));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             getService(response, target.substring(12, target.length()));
                             response.setStatus(200);
@@ -96,17 +112,18 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         GetServiceData getServiceData = GetServiceData.create(service);
-        
+
         for (Vip vip : dataAccess.getVips(id)) {
             GetVipData getVipData = GetVipData.create(vip);
             getServiceData.vips.add(getVipData);
 
         }
-        
+
+        List<Future> futures = new LinkedList<>();
         for (Host host : dataAccess.getHosts(id)) {
             GetHostData getHostData = GetHostData.create(host);
-            getHostData.version = infoHelper.readVersion(getHostData.hostName, getServiceData.versionUrl);
-            getHostData.availability = infoHelper.readAvailability(getHostData.hostName, getServiceData.availabilityUrl);
+            futures.add(es.submit(new ReadVersionRunnable(getHostData, getServiceData)));
+            futures.add(es.submit(new ReadAvailabilityRunnable(getHostData, getServiceData)));
             for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
                 GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
                 for (GetVipData vip : getServiceData.vips) {
@@ -118,19 +135,20 @@ public class ServiceHandler extends AbstractHandler {
             }
             getServiceData.hosts.add(getHostData);
         }
-        
+        waitForFutures(futures);
+
         for (ServiceRef ref : dataAccess.getServiceRefsByClient(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
             tempRef.serviceName = dataAccess.getService(ref.getServerServiceId()).getServiceName();
             getServiceData.uses.add(tempRef);
         }
-        
+
         for (ServiceRef ref : dataAccess.getServiceRefsByServer(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
             tempRef.serviceName = dataAccess.getService(ref.getClientServiceId()).getServiceName();
             getServiceData.usedBy.add(tempRef);
         }
-        
+
         getServiceData.versions.addAll(mavenhelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
@@ -138,17 +156,101 @@ public class ServiceHandler extends AbstractHandler {
         }
     }
 
+    private void waitForFutures(List<Future> futures) {
+        for (int i=0;i<20;i++) {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException ex) {
+            }
+            futures.removeIf(new Predicate<Future>() {
+                @Override
+                public boolean test(Future t) {
+                    return t.isDone();
+                }
+            });
+            if (futures.isEmpty()) {
+                return;
+            }
+        }
+    }
+
+    class ReadVersionRunnable implements Runnable {
+
+        private final GetHostData getHostData;
+        private final GetServiceData getServiceData;
+
+        public ReadVersionRunnable(GetHostData getHostData, GetServiceData getServiceData) {
+            this.getHostData = getHostData;
+            this.getServiceData = getServiceData;
+        }
+
+        @Override
+        public void run() {
+            try {
+                getHostData.version = infoHelper.readVersion(getHostData.hostName, getServiceData.versionUrl);
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+    class ReadAvailabilityRunnable implements Runnable {
+
+        private final GetHostData getHostData;
+        private final GetServiceData getServiceData;
+
+        public ReadAvailabilityRunnable(GetHostData getHostData, GetServiceData getServiceData) {
+            this.getHostData = getHostData;
+            this.getServiceData = getServiceData;
+        }
+
+        @Override
+        public void run() {
+            try {
+                getHostData.availability = infoHelper.readAvailability(getHostData.hostName, getServiceData.availabilityUrl);
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+    private void getServiceNotUses(HttpServletResponse response, String id) throws IOException {        logger.info("got here {}", id);
+        List<Service> services = dataAccess.getServices();
+        List<ServiceRef> refs = dataAccess.getServiceRefsByClient(id);
+        
+        GetNotUsesData notUses = new GetNotUsesData();
+        for (Service service : services) {
+            if (!service.getServiceId().equals(id)) {
+                boolean found = false;
+                for (ServiceRef ref : refs) {
+                    if (service.getServiceId().equals(ref.getServerServiceId())) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    GetServiceRefData ref = new GetServiceRefData();
+                    ref.clientServiceId = id;
+                    ref.serverServiceId = service.getServiceId();
+                    ref.serviceName = service.getServiceName();
+                    notUses.refs.add(ref);
+                }
+            }
+        }
+
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(notUses, GetNotUsesData.class, jw);
+        }
+    }
+
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
         postServiceData.serviceAbbr = postServiceData.serviceAbbr.toLowerCase();
-        
+
         for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
             if (temp.getServiceAbbr().equals(postServiceData.serviceAbbr)) {
                 logger.warn("A service already exists with that abbreviation, {}", postServiceData.serviceAbbr);
                 return;
             }
         }
-        
+
         Service service = new Service(
                 postServiceData.serviceAbbr,
                 postServiceData.serviceName,
@@ -158,7 +260,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.mavenArtifactId,
                 postServiceData.versionUrl,
                 postServiceData.availabilityUrl);
-        
+
         dataAccess.saveService(service);
     }
 
