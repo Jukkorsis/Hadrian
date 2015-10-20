@@ -16,13 +16,14 @@
 
 package com.northernwall.hadrian.db;
 
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.domain.DataStore;
+import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.domain.VipRef;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceHeader;
-import com.northernwall.hadrian.domain.ServiceRefView;
-import com.northernwall.hadrian.domain.VersionView;
-import java.io.IOException;
-import java.io.InputStream;
+import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.WorkItem;
 import java.util.List;
 
 /**
@@ -31,22 +32,45 @@ import java.util.List;
  */
 public interface DataAccess {
     
-    Config getConfig();
+    List<Team> getTeams();
+    Team getTeam(String teamId);
+    void saveTeam(Team team);
+
+    List<Service> getService();
+    List<Service> getServices(String teamId);
+    Service getService(String serviceId);
+    void saveService(Service service);
+
+    List<Host> getHosts(String serviceId);
+    Host getHost(String hostId);
+    void saveHost(Host host);
+    void updateHost(Host host);
+    void deleteHost(String hostId);
+
+    List<Vip> getVips(String serviceId);
+    Vip getVip(String vipId);
+    void saveVip(Vip vip);
+    void updateVip(Vip vip);
+    void deleteVip(String vipId);
+
+    List<ServiceRef> getServiceRefs();
+    List<ServiceRef> getServiceRefsByClient(String clientServiceId);
+    List<ServiceRef> getServiceRefsByServer(String serverServiceId);
+    void saveServiceRef(ServiceRef serviceRef);
     
-    void save(Config config);
-
-    Service getService(String id);
-
-    List<ServiceHeader> getServiceHeaders();
-
-    List<VersionView> getVersionVeiw();
-
-    List<ServiceRefView> getServiceRefVeiw();
-
-    void save(Service service);
-
-    public void uploadImage(String serviceId, String name, String contentType, InputStream openStream);
+    List<VipRef> getVipRefsByHost(String instanceId);
+    List<VipRef> getVipRefsByVip(String vipId);
+    VipRef getVipRef(String hostId, String vipId);
+    void saveVipRef(VipRef vipRef);
+    void updateVipRef(VipRef vipRef);
+    void deleteVipRef(String hostId, String vipId);
+    void deleteVipRefs(String vipId);
     
-    public InputStream downloadImage(String serviceId, String name) throws IOException;
-    
+    List<DataStore> getDataStores(String teamId);
+    DataStore getDataStore(String dataStoreId);
+    void saveDataStore(DataStore dataStore);
+
+    void saveWorkItem(WorkItem workItem);
+    WorkItem getWorkItem(String id);
+
 }

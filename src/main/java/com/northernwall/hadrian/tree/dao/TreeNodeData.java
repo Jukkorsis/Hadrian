@@ -14,35 +14,39 @@
  * limitations under the License.
  */
 
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.tree.dao;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class ServiceRef {
-    private String clientServiceId;
-    private String serverServiceId;
+public class TreeNodeData {
+    private final static Logger logger = LoggerFactory.getLogger(TreeNodeData.class);
+    private String id;
+    private String type;
 
-    public ServiceRef(String clientServiceId, String serverServiceId) {
-        this.clientServiceId = clientServiceId;
-        this.serverServiceId = serverServiceId;
+    public TreeNodeData(String id, String type) {
+        this.id = id;
+        this.type = type;
     }
 
-    public String getClientServiceId() {
-        return clientServiceId;
+    public String getId() {
+        return id;
     }
 
-    public void setClientServiceId(String clientServiceId) {
-        this.clientServiceId = clientServiceId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getServerServiceId() {
-        return serverServiceId;
+    public String getType() {
+        return type;
     }
 
-    public void setServerServiceId(String serverServiceId) {
-        this.serverServiceId = serverServiceId;
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

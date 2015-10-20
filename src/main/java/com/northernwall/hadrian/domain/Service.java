@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Richard Thurston.
+ * Copyright 2015 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,68 +18,112 @@ package com.northernwall.hadrian.domain;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
  * @author Richard Thurston
  */
-public class Service extends ServiceHeader {
-    public static final String DEFAULT_IMAGE = "/ui/img/serviceLogo.png";
+public class Service implements Comparable<Service>{
+    private String serviceId;
+    private String serviceAbbr;
+    private String serviceName;
+    private String teamId;
+    private String description;
+    private String mavenGroupId;
+    private String mavenArtifactId;
+    private String versionUrl;
+    private String availabilityUrl;
+    private List<String> customFunctions;
 
-    public String tech;
-    public List<Env> envs = new LinkedList<>();
-    public List<Link> links = new LinkedList<>();
-    public String versionUrl;
-    public List<String> images;
-    public List<ListItem> haRatings = new LinkedList<>();
-    public List<ListItem> classRatings = new LinkedList<>();
-    public List<Version> versions = new LinkedList<>();
-    public List<Warning> warnings = new LinkedList<>();
-    public List<Audit> audits = new LinkedList<>();
-
-    public Version findVersion(String api) {
-        if (versions == null || versions.isEmpty()) {
-            return null;
-        }
-        for (Version version : versions) {
-            if (version.api.equals(api)) {
-                return version;
-            }
-        }
-        return null;
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl) {
+        this.serviceId = UUID.randomUUID().toString();
+        this.serviceAbbr = serviceAbbr;
+        this.serviceName = serviceName;
+        this.teamId = teamId;
+        this.description = description;
+        this.mavenGroupId = mavenGroupId;
+        this.mavenArtifactId = mavenArtifactId;
+        this.versionUrl = versionUrl;
+        this.availabilityUrl = availabilityUrl;
+        this.customFunctions = new LinkedList<>();
     }
 
-    public void addVersion(Version version) {
-        if (versions == null) {
-            versions = new LinkedList<>();
-        }
-        versions.add(version);
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public Env findEnv(String name) {
-        if (envs == null || envs.isEmpty()) {
-            return null;
-        }
-        for (Env env : envs) {
-            if (env.name.equals(name)) {
-                return env;
-            }
-        }
-        return null;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
-    public void addEnv(Env env) {
-        if (envs == null) {
-            envs = new LinkedList<>();
-        }
-        envs.add(env);
+    public String getServiceAbbr() {
+        return serviceAbbr;
     }
 
-    public void addAudit(Audit audit) {
-        if (audits == null) {
-            audits = new LinkedList<>();
-        }
-        audits.add(audit);
+    public void setServiceAbbr(String serviceAbbr) {
+        this.serviceAbbr = serviceAbbr;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getMavenGroupId() {
+        return mavenGroupId;
+    }
+
+    public void setMavenGroupId(String mavenGroupId) {
+        this.mavenGroupId = mavenGroupId;
+    }
+
+    public String getMavenArtifactId() {
+        return mavenArtifactId;
+    }
+
+    public void setMavenArtifactId(String mavenArtifactId) {
+        this.mavenArtifactId = mavenArtifactId;
+    }
+
+    public String getVersionUrl() {
+        return versionUrl;
+    }
+
+    public void setVersionUrl(String versionUrl) {
+        this.versionUrl = versionUrl;
+    }
+
+    public String getAvailabilityUrl() {
+        return availabilityUrl;
+    }
+
+    public void setAvailabilityUrl(String availabilityUrl) {
+        this.availabilityUrl = availabilityUrl;
+    }
+
+    public List<String> getCustomFunctions() {
+        return customFunctions;
+    }
+
+    @Override
+    public int compareTo(Service o) {
+        return serviceName.compareTo(o.serviceName);
     }
 
 }

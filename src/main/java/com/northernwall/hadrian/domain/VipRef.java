@@ -20,29 +20,39 @@ package com.northernwall.hadrian.domain;
  *
  * @author Richard Thurston
  */
-public class ServiceRef {
-    private String clientServiceId;
-    private String serverServiceId;
+public class VipRef {
+    private String hostId;
+    private String vipId;
+    private String status;
 
-    public ServiceRef(String clientServiceId, String serverServiceId) {
-        this.clientServiceId = clientServiceId;
-        this.serverServiceId = serverServiceId;
+    public VipRef(String hostId, String vipId, String status) {
+        this.hostId = hostId;
+        this.vipId = vipId;
+        this.status = status;
     }
 
-    public String getClientServiceId() {
-        return clientServiceId;
+    public String getHostId() {
+        return hostId;
     }
 
-    public void setClientServiceId(String clientServiceId) {
-        this.clientServiceId = clientServiceId;
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
     }
 
-    public String getServerServiceId() {
-        return serverServiceId;
+    public String getVipId() {
+        return vipId;
     }
 
-    public void setServerServiceId(String serverServiceId) {
-        this.serverServiceId = serverServiceId;
+    public void setVipId(String vipId) {
+        this.vipId = vipId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

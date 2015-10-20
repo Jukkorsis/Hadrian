@@ -16,33 +16,41 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.UUID;
+
 /**
  *
  * @author Richard Thurston
  */
-public class ServiceRef {
-    private String clientServiceId;
-    private String serverServiceId;
+public class Team implements Comparable<Team>{
+    private String teamId;
+    private String teamName;
 
-    public ServiceRef(String clientServiceId, String serverServiceId) {
-        this.clientServiceId = clientServiceId;
-        this.serverServiceId = serverServiceId;
+    public Team(String teamName) {
+        this.teamId = UUID.randomUUID().toString();
+        this.teamName = teamName;
     }
 
-    public String getClientServiceId() {
-        return clientServiceId;
+    public String getTeamId() {
+        return teamId;
     }
 
-    public void setClientServiceId(String clientServiceId) {
-        this.clientServiceId = clientServiceId;
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
-    public String getServerServiceId() {
-        return serverServiceId;
+    public String getTeamName() {
+        return teamName;
     }
 
-    public void setServerServiceId(String serverServiceId) {
-        this.serverServiceId = serverServiceId;
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
+    @Override
+    public int compareTo(Team o) {
+        return teamName.compareTo(o.teamName);
+    }
+    
+    
 }

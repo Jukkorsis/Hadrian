@@ -4,332 +4,449 @@
 
 var soaRepControllers = angular.module('soaRepControllers', []);
 
-soaRepControllers.controller('ServiceListCtrl', ['$scope', 'Config', 'Service',
-    function($scope, Config, Service) {
-        $scope.config = Config.get();
+soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service', 'DataStore',
+    function ($scope, $http, $location, $uibModal, Tree, Team, Service, DataStore) {
+        //$scope.config = Config.get();
 
-        $scope.services = Service.query();
-    }]);
-
-soaRepControllers.controller('ServiceDetailCtrl', ['$scope', '$routeParams', '$http', 'Config', 'Service',
-    function($scope, $routeParams, $http, Config, Service) {
-        $scope.config = Config.get();
-
-        $scope.service = Service.get({serviceId: $routeParams.serviceId}, function(service) {
-            $scope.mainImageUrl = service.imageLogo;
-            service.envs.forEach(function(env) {
-                env.hosts.forEach(function(host) {
-                    host.implVersion = "Loading...";
-                    var responsePromise = $http.get("/services/" + service._id + "/envs/" + env.name + "/hosts/" + host.name + ".json", {});
-                    responsePromise.success(function(dataFromServer, status, headers, config) {
-                        host.implVersion = dataFromServer;
-                    });
-                    host.health = '<a ng-href="http://'+host.name+':'+host.port+'/health" target="_blank">link</a>';
+        $scope.my_tree_handler = function (branch) {
+            $scope.displayTeam = false;
+            $scope.displayService = false;
+            $scope.displayDataStore = false;
+            $scope.displayLoading = true;
+            if (branch.data.type === "Team") {
+                Team.get({teamId: branch.data.id}, function (team) {
+                    $scope.team = team;
+                    $scope.displayLoading = false;
+                    $scope.displayTeam = true;
                 });
-            });
-        });
-        $scope.setImage = function(imageUrl) {
-            $scope.mainImageUrl = imageUrl;
-        };
-    }]);
-
-soaRepControllers.controller('ServiceCreateCtrl', ['$scope', 'Config', '$http', '$window',
-    function($scope, Config, $http, $window) {
-        $scope.config = Config.get();
-
-        $scope.createForm = {};
-        $scope.createForm.state = "Stateless";
-        $scope.createForm.access = "Internal";
-        $scope.createForm.type = "Service";
-        $scope.createForm.status = "Proposed";
-
-        $scope.submitCreateServiceForm = function(item, event) {
-            if ($scope.createForm._id && $scope.createForm.name && $scope.createForm.team && $scope.createForm.product && $scope.createForm.description && $scope.createForm.api) {
-                var dataObject = {
-                    _id: $scope.createForm._id,
-                    name: $scope.createForm.name,
-                    team: $scope.createForm.team,
-                    product: $scope.createForm.product,
-                    description: $scope.createForm.description,
-                    state: $scope.createForm.state,
-                    access: $scope.createForm.access,
-                    type: $scope.createForm.type,
-                    tech: $scope.createForm.tech,
-                    versionUrl: $scope.createForm.versionUrl,
-                    api: $scope.createForm.api,
-                    status: $scope.createForm.status,
-                    enableManage: $scope.createForm.enableManage,
-                    mavenUrl: $scope.createForm.mavenUrl,
-                    script: $scope.createForm.script
-                };
-
-                var responsePromise = $http.post("/services/services.json", dataObject, {});
-                responsePromise.success(function(dataFromServer, status, headers, config) {
-                    console.log(dataFromServer.title);
-                    $window.location.href = "#/services/" + $scope.createForm._id;
+            } else if (branch.data.type === "Services") {
+                $scope.displayLoading = false;
+            } else if (branch.data.type === "Service") {
+                Service.get({serviceId: branch.data.id}, function (service) {
+                    $scope.labelService = service;
+                    $scope.displayLoading = false;
+                    $scope.displayService = true;
                 });
-                responsePromise.error(function(data, status, headers, config) {
-                    alert("Submitting form failed!");
+            } else if (branch.data.type === "DataStores") {
+                $scope.displayLoading = false;
+            } else if (branch.data.type === "DataStore") {
+                DataStore.get({dataStoreId: branch.data.id}, function (dataStore) {
+                    $scope.labelDataStore = dataStore;
+                    $scope.displayLoading = false;
+                    $scope.displayDataStore = true;
                 });
+            } else {
+                $scope.displayLoading = false;
             }
-        };
-    }]);
-
-soaRepControllers.controller('ServiceEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
-    function($scope, $routeParams, Config, Service, $http, $window) {
-        $scope.config = Config.get();
-
-        $scope.editForm = {};
-        Service.get({serviceId: $routeParams.serviceId}, function(service) {
-            $scope.editForm._id = service._id;
-            $scope.editForm.name = service.name;
-            $scope.editForm.team = service.team;
-            $scope.editForm.product = service.product;
-            $scope.editForm.description = service.description;
-            $scope.editForm.state = service.state;
-            $scope.editForm.access = service.access;
-            $scope.editForm.type = service.type;
-            $scope.editForm.tech = service.tech;
-            $scope.editForm.versionUrl = service.versionUrl;
-            $scope.editForm.links = service.links;
-            $scope.editForm.links.push({name: "", url: ""});
-            $scope.editForm.haRatings = service.haRatings;
-            $scope.editForm.classRatings = service.classRatings;
-            $scope.editForm.enableManage = service.enableManage;
-            $scope.editForm.mavenUrl = service.mavenUrl;
-            $scope.editForm.script = service.script;
-            $scope.editForm.actions = service.actions;
-            $scope.editForm.actions.push({name: ""});
-        });
-
-        $scope.addServiceLink = function(item, event) {
-            $scope.editForm.links.push({name: "", url: ""});
+            $scope.formSelectVip = {};
+            $scope.formSelectHost = {};
         };
 
-        $scope.addServiceAction = function(item, event) {
-            $scope.editForm.actions.push({name: ""});
-        };
+        $scope.my_data = Tree.query();
 
-        $scope.submitEditServiceForm = function(item, event) {
-            var dataObject = {
-                _id: $scope.editForm._id,
-                name: $scope.editForm.name,
-                team: $scope.editForm.team,
-                product: $scope.editForm.product,
-                description: $scope.editForm.description,
-                state: $scope.editForm.state,
-                access: $scope.editForm.access,
-                type: $scope.editForm.type,
-                tech: $scope.editForm.tech,
-                versionUrl: $scope.editForm.versionUrl,
-                endpoints: $scope.editForm.endpoints,
-                links: $scope.editForm.links,
-                dataCenters: $scope.editForm.dataCenters,
-                haRatings: $scope.editForm.haRatings,
-                classRatings: $scope.editForm.classRatings,
-                actions: $scope.editForm.actions,
-                enableManage: $scope.editForm.enableManage,
-                mavenUrl: $scope.editForm.mavenUrl,
-                script: $scope.editForm.script
-            };
+        var tree;
+        $scope.my_tree = tree = {};
 
-            var responsePromise = $http.post("/services/" + $scope.editForm._id + ".json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
-                $window.location.href = "#/services/" + $scope.editForm._id;
-            });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
-            });
-        };
-    }]);
-
-soaRepControllers.controller('ImageAddCtrl', ['$scope', '$routeParams', '$upload', '$http', '$window',
-    function($scope, $routeParams, $upload, $http, $window) {
-        $scope.serviceId = $routeParams.serviceId;
-        $scope.progress = ' ';
-
-        $scope.onFileSelect = function($files) {
-            for (var i = 0; i < $files.length; i++) {
-                var file = $files[i];
-                $scope.upload = $upload.upload({
-                    url: '/services/' + $routeParams.serviceId + '/image.json',
-                    data: {myObj: $routeParams.serviceId},
-                    file: file
-                }).progress(function(evt) {
-                    $scope.progress = 'Upload process: ' + parseInt(100.0 * evt.loaded / evt.total) + '%';
-                }).success(function(data, status, headers, config) {
-                    $window.location.href = "#/services/" + $routeParams.serviceId;
-                });
-            }
-        };
-    }]);
-
-soaRepControllers.controller('VersionCreateCtrl', ['$scope', '$routeParams', '$http', '$window',
-    function($scope, $routeParams, $http, $window) {
-        $scope.createForm = {};
-        $scope.createForm._id = $routeParams.serviceId;
-        $scope.createForm.status = "Proposed";
-
-        $scope.submitCreateVersionForm = function(item, event) {
-            if ($scope.createForm.api) {
-                var dataObject = {
-                    _id: $scope.createForm._id,
-                    api: $scope.createForm.api,
-                    status: $scope.createForm.status
-                };
-
-                var responsePromise = $http.post("/services/" + $scope.createForm._id + "/versions.json", dataObject, {});
-                responsePromise.success(function(dataFromServer, status, headers, config) {
-                    console.log(dataFromServer.title);
-                    $window.location.href = "#/services/" + $scope.createForm._id;
-                });
-                responsePromise.error(function(data, status, headers, config) {
-                    alert("Submitting form failed!");
-                });
-            }
-        };
-    }]);
-
-soaRepControllers.controller('VersionEditCtrl', ['$scope', '$routeParams', 'Service', '$http', '$window',
-    function($scope, $routeParams, Service, $http, $window) {
-        $scope.editForm = {};
-        Service.get({serviceId: $routeParams.serviceId}, function(service) {
-            $scope.editForm._id = service._id;
-            if ("envs" in service) {
-                if (service.envs.length > 0) {
-                    $scope.editForm.envUrl = service.envs[0].vip;
+        $scope.selectTreeNode = function (id) {
+            var n;
+            n = tree.get_first_branch();
+            while (true) {
+                if (n === null) {
+                    return;
                 }
+                if (n.data.id === id) {
+                    tree.select_branch(n);
+                    return;
+                }
+                n = tree.get_next_branch(n);
             }
-            service.versions.forEach(function(version) {
-                if (version.api === $routeParams.versionId) {
-                    $scope.editForm.api = version.api;
-                    $scope.editForm.status = version.status;
-                    $scope.editForm.links = version.links;
-                    $scope.editForm.links.push({name: "", url: ""});
-                    $scope.editForm.operations = version.operations;
-                    $scope.editForm.operations.push({name: "", url: ""});
-                    var responsePromise = $http.get("/services/" + $scope.editForm._id + "/versions/" + $scope.editForm.api + "/uses.json", {});
-                    responsePromise.success(function(dataFromServer, status, headers, config) {
-                        $scope.editForm.uses1 = [];
-                        $scope.editForm.uses2 = [];
-                        $scope.editForm.uses3 = [];
-                        dataFromServer.forEach(function(element, index) {
-                            if (index % 3 === 0) {
-                                $scope.editForm.uses1.push(element);
-                            } else if (index % 3 === 1) {
-                                $scope.editForm.uses2.push(element);
-                            } else if (index % 3 === 2) {
-                                $scope.editForm.uses3.push(element);
-                            }
-                        });
-                    });
+        };
+
+        $scope.refresh = function () {
+            $scope.my_tree_handler(tree.get_selected_branch());
+        };
+
+        $scope.openAddServiceModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addService.html',
+                controller: 'ModalAddServiceCtrl',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    }
                 }
             });
-        });
-
-        $scope.addVersionLink = function(item, event) {
-            $scope.editForm.links.push({name: "", url: ""});
-        };
-
-        $scope.addVersionOperation = function(item, event) {
-            $scope.editForm.operations.push({name: "", url: ""});
-        };
-
-        $scope.submitEditVersionForm = function(item, event) {
-            var dataObject = {
-                _id: $scope.editForm._id,
-                api: $scope.editForm.api,
-                status: $scope.editForm.status,
-                links: $scope.editForm.links,
-                operations: $scope.editForm.operations,
-                uses1: $scope.editForm.uses1,
-                uses2: $scope.editForm.uses2,
-                uses3: $scope.editForm.uses3
-            };
-
-            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/versions/" + $scope.editForm.api + ".json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                console.log(dataFromServer.title);
-                $window.location.href = "#/services/" + $scope.editForm._id;
-            });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
+            modalInstance.result.then(function () {
+                $location.path('/ui/#/tree', true);
+            }, function () {
             });
         };
-    }]);
 
-soaRepControllers.controller('EnvCreateCtrl', ['$scope', '$routeParams', '$http', '$window',
-    function($scope, $routeParams, $http, $window) {
-        $scope.createForm = {};
-        $scope.createForm._id = $routeParams.serviceId;
+        $scope.formSelectVip = {};
+        $scope.formSelectHost = {};
 
-        $scope.submitCreateEnvForm = function(item, event) {
-            if ($scope.createForm.name) {
-                var dataObject = {
-                    _id: $scope.createForm._id,
-                    name: $scope.createForm.name,
-                    vip: $scope.createForm.vip
-                };
-
-                var responsePromise = $http.post("/services/" + $scope.createForm._id + "/envs.json", dataObject, {});
-                responsePromise.success(function(dataFromServer, status, headers, config) {
-                    console.log(dataFromServer.title);
-                    $window.location.href = "#/services/" + $scope.createForm._id;
-                });
-                responsePromise.error(function(data, status, headers, config) {
-                    alert("Submitting form failed!");
-                });
-            }
-        };
-    }]);
-
-soaRepControllers.controller('EnvEditCtrl', ['$scope', '$routeParams', 'Config', 'Service', '$http', '$window',
-    function($scope, $routeParams, Config, Service, $http, $window) {
-        $scope.config = Config.get();
-        $scope.editForm = {};
-        Service.get({serviceId: $routeParams.serviceId}, function(service) {
-            $scope.editForm._id = service._id;
-            service.envs.forEach(function(env) {
-                if (env.name === $routeParams.env) {
-                    $scope.editForm.name = env.name;
-                    $scope.editForm.vip = env.vip;
-                    $scope.editForm.hosts = env.hosts;
-                    $scope.editForm.hosts.push({dataCenter: "", name: "", status: "Active"});
+        $scope.openAddUses = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addUses.html',
+                controller: 'ModalAddUsesCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    }
                 }
             });
-        });
-
-        $scope.addHost = function(item, event) {
-            $scope.editForm.hosts.push({dataCenter: "", name: "", status: "Active"});
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
         };
 
-        $scope.submitEditEnvForm = function(item, event) {
+        $scope.openAddVipModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addVip.html',
+                controller: 'ModalAddVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
+        $scope.openUpdateVipModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateVip.html',
+                controller: 'ModalUpdateVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    },
+                    vips: function () {
+                        return $scope.formSelectVip;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
+        $scope.deleteVip = function (id) {
+            var responsePromise = $http.delete("/v1/vip/" + id, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        };
+
+        $scope.openAddHostModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addHost.html',
+                controller: 'ModalAddHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
+        $scope.openUpdateHostModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateHost.html',
+                controller: 'ModalUpdateHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    },
+                    hosts: function () {
+                        return $scope.formSelectHost;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
+        $scope.restartHost = function () {
             var dataObject = {
-                _id: $scope.editForm._id,
-                name: $scope.editForm.name,
-                vip: $scope.editForm.vip,
-                hosts: $scope.editForm.hosts
+                serviceId: $scope.labelService.serviceId,
+                hosts: $scope.formSelectHost
             };
 
-            var responsePromise = $http.post("/services/" + $scope.editForm._id + "/envs/" + $scope.editForm.name + ".json", dataObject, {});
-            responsePromise.success(function(dataFromServer, status, headers, config) {
-                $window.location.href = "#/services/" + $scope.editForm._id;
+            var responsePromise = $http.put("/v1/host/restart", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
             });
-            responsePromise.error(function(data, status, headers, config) {
-                alert("Submitting form failed!");
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        }
+
+        $scope.deleteHost = function (id) {
+            var responsePromise = $http.delete("/v1/host/" + id, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
             });
         };
+
+        $scope.addHostToVip = function () {
+            var dataObject = {
+                serviceId: $scope.labelService.serviceId,
+                vips: $scope.formSelectVip,
+                hosts: $scope.formSelectHost
+            };
+
+            var responsePromise = $http.post("/v1/host/vips", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        }
+
+        $scope.deleteHostFromVip = function (hostId, vipId) {
+            var responsePromise = $http.delete("/v1/host/" + hostId + "/" + vipId, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        }
     }]);
 
-soaRepControllers.controller('ServiceGraphCtrl', ['$scope', 'Graph',
-    function($scope, Graph) {
+soaRepControllers.controller('ModalAddServiceCtrl',
+        function ($scope, $http, $modalInstance, team) {
+            $scope.team = team;
+
+            $scope.formSaveService = {};
+            $scope.formSaveService.serviceAbbr = "";
+            $scope.formSaveService.serviceName = "";
+            $scope.formSaveService.description = "";
+            $scope.formSaveService.mavenGroupId = "";
+            $scope.formSaveService.mavenArtifactId = "";
+            $scope.formSaveService.versionUrl = ":9090/version";
+            $scope.formSaveService.availabilityUrl = ":9090/availability";
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceAbbr: $scope.formSaveService.serviceAbbr,
+                    serviceName: $scope.formSaveService.serviceName,
+                    teamId: $scope.team.teamId,
+                    description: $scope.formSaveService.description,
+                    mavenGroupId: $scope.formSaveService.mavenGroupId,
+                    mavenArtifactId: $scope.formSaveService.mavenArtifactId,
+                    versionUrl: $scope.formSaveService.versionUrl,
+                    availabilityUrl: $scope.formSaveService.availabilityUrl
+                };
+
+                var responsePromise = $http.post("/v1/service/service", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new service has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddUsesCtrl',
+        function ($scope, $http, $modalInstance, service) {
+            $scope.service = service;
+
+            $scope.save = function () {
+                $modalInstance.close();
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddVipCtrl',
+        function ($scope, $http, $modalInstance, service) {
+            $scope.service = service;
+
+            $scope.formSaveVip = {};
+            $scope.formSaveVip.vipName = "";
+            $scope.formSaveVip.dns = "";
+            $scope.formSaveVip.external = false;
+            $scope.formSaveVip.network = "prd";
+            $scope.formSaveVip.protocol = "HTTP";
+            $scope.formSaveVip.vipPort = 80;
+            $scope.formSaveVip.servicePort = 8080;
+
+            $scope.save = function () {
+                var dataObject = {
+                    vipName: $scope.formSaveVip.vipName,
+                    serviceId: $scope.service.serviceId,
+                    dns: $scope.formSaveVip.dns,
+                    external: $scope.formSaveVip.external,
+                    network: $scope.formSaveVip.network,
+                    protocol: $scope.formSaveVip.protocol,
+                    vipPort: $scope.formSaveVip.vipPort,
+                    servicePort: $scope.formSaveVip.servicePort
+                };
+
+                var responsePromise = $http.post("/v1/vip/vip", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new vip has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalUpdateVipCtrl',
+        function ($scope, $http, $modalInstance, service, vips) {
+            $scope.service = service;
+            $scope.vips = vips;
+
+            $scope.formUpdateVip = {};
+            $scope.formUpdateVip.external = false;
+            $scope.formUpdateVip.servicePort = 8080;
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    external: $scope.formUpdateVip.external,
+                    servicePort: $scope.formUpdateVip.servicePort,
+                    vips: $scope.vips
+                };
+
+                var responsePromise = $http.put("/v1/vip/vip", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update vips has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddHostCtrl',
+        function ($scope, $http, $modalInstance, service) {
+            $scope.service = service;
+
+            $scope.formSaveHost = {};
+            $scope.formSaveHost.dataCenter = "";
+            $scope.formSaveHost.network = "";
+            $scope.formSaveHost.env = "";
+            $scope.formSaveHost.size = "";
+            $scope.formSaveHost.version = "";
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    dataCenter: $scope.formSaveHost.dataCenter,
+                    network: $scope.formSaveHost.network,
+                    env: $scope.formSaveHost.env,
+                    size: $scope.formSaveHost.size,
+                    version: $scope.formSaveHost.version
+                };
+
+                var responsePromise = $http.post("/v1/host/host", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new host has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalUpdateHostCtrl',
+        function ($scope, $http, $modalInstance, service, hosts) {
+            $scope.service = service;
+            $scope.hosts = hosts;
+
+            $scope.formUpdateHost = {};
+            $scope.formUpdateHost.env = "";
+            $scope.formUpdateHost.size = "";
+            $scope.formUpdateHost.version = "";
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    env: $scope.formUpdateHost.env,
+                    size: $scope.formUpdateHost.size,
+                    version: $scope.formUpdateHost.version,
+                    hosts: $scope.hosts
+                };
+
+                var responsePromise = $http.put("/v1/host/host", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update hosts has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
+    function ($scope, Graph) {
         $scope.data = Graph.query();
         $scope.options = {navigation: true, width: '100%', height: '600px'};
     }]);
 
-soaRepControllers.controller('ServiceHelpCtrl', ['$scope', 'Config',
-    function($scope, Config) {
+soaRepControllers.controller('AdminCtrl', ['$scope', 'Config',
+    function ($scope, Config) {
+        $scope.config = Config.get();
+    }]);
+
+soaRepControllers.controller('HelpCtrl', ['$scope', 'Config',
+    function ($scope, Config) {
         $scope.config = Config.get();
     }]);
 
