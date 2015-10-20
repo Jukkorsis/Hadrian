@@ -20,17 +20,8 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import com.northernwall.hadrian.db.InMemoryDataAccess;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
-import com.northernwall.hadrian.db.InMemoryDataAccessFactory;
-import com.northernwall.hadrian.domain.DataStore;
-import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
-import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.domain.ServiceRef;
-import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
 import com.northernwall.hadrian.utilityHandlers.ContentHandler;
 import com.northernwall.hadrian.service.DataStoreHandler;
@@ -51,7 +42,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.BindException;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -142,9 +132,9 @@ public class Main {
     private void startHelpers() {
         try {
             client = new OkHttpClient();
-            client.setConnectTimeout(5, TimeUnit.SECONDS);
-            client.setReadTimeout(5, TimeUnit.SECONDS);
-            client.setWriteTimeout(5, TimeUnit.SECONDS);
+            client.setConnectTimeout(2, TimeUnit.SECONDS);
+            client.setReadTimeout(2, TimeUnit.SECONDS);
+            client.setWriteTimeout(2, TimeUnit.SECONDS);
             client.setFollowSslRedirects(false);
             client.setFollowRedirects(false);
             client.setConnectionPool(new ConnectionPool(5, 60 * 1000));
