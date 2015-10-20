@@ -36,7 +36,7 @@ public interface DataAccess {
     Team getTeam(String teamId);
     void saveTeam(Team team);
 
-    List<Service> getService();
+    List<Service> getServices();
     List<Service> getServices(String teamId);
     Service getService(String serviceId);
     void saveService(Service service);

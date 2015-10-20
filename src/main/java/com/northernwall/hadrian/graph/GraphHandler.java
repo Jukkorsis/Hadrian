@@ -72,7 +72,7 @@ public class GraphHandler extends AbstractHandler {
         List<String> indexes = new LinkedList<>();
         response.setContentType("application/json;charset=utf-8");
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            List<Service> services = dataAccess.getService();
+            List<Service> services = dataAccess.getServices();
             if (services != null && !services.isEmpty()) {
                 for (Service service : services) {
                     Node node = new Node();

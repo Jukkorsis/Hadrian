@@ -78,7 +78,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Service> getService() {
+    public List<Service> getServices() {
         List<Service> temp = services;
         Collections.sort(temp);
         return temp;
