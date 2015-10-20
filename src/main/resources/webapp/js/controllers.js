@@ -86,7 +86,7 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
         $scope.formSelectVip = {};
         $scope.formSelectHost = {};
 
-        $scope.openAddUses = function () {
+        $scope.openAddUsesModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addUses.html',
@@ -284,9 +284,14 @@ soaRepControllers.controller('ModalAddServiceCtrl',
         });
 
 soaRepControllers.controller('ModalAddUsesCtrl',
-        function ($scope, $http, $modalInstance, service) {
+        function ($scope, $http, $modalInstance, ServiceNotUses, service) {
             $scope.service = service;
+            $scope.formSelectUses = {};
 
+            ServiceNotUses.get({serviceId: service.serviceId}, function (notUses) {
+                $scope.notUses = notUses;
+            });
+                
             $scope.save = function () {
                 $modalInstance.close();
             };

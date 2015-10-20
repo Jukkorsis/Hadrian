@@ -22,6 +22,12 @@ soaRepServices.factory('Service', ['$resource', function($resource) {
         });
     }]);
 
+soaRepServices.factory('ServiceNotUses', ['$resource', function($resource) {
+        return $resource('/v1/service/:serviceId/notuses', {}, {
+            query: {method: 'GET', params: {serviceId: 'services'}, isArray: false}
+        });
+    }]);
+
 soaRepServices.factory('DataStore', ['$resource', function($resource) {
         return $resource('/v1/datastore/:dataStoreId', {}, {
             query: {method: 'GET', params: {dataStoreId: 'services'}, isArray: false}

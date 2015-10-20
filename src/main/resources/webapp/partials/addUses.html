@@ -2,7 +2,9 @@
     <h3 class="modal-title">Add Uses</h3>
 </div>
 <div class="modal-body">
-    Add Uses
+    <div ng-repeat="ref in notUses.refs">
+        <input ng-model="formSelectUses[ref.serverServiceId]" type="checkbox"> {{ref.serviceName}}
+    </div>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
