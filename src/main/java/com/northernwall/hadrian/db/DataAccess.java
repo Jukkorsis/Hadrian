@@ -57,6 +57,7 @@ public interface DataAccess {
     List<ServiceRef> getServiceRefsByClient(String clientServiceId);
     List<ServiceRef> getServiceRefsByServer(String serverServiceId);
     void saveServiceRef(ServiceRef serviceRef);
+    void deleteServiceRef(String clientId, String serviceId);
     
     List<VipRef> getVipRefsByHost(String instanceId);
     List<VipRef> getVipRefsByVip(String vipId);
