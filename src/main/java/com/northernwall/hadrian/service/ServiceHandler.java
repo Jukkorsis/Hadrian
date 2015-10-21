@@ -31,10 +31,12 @@ import com.northernwall.hadrian.service.dao.GetServiceRefData;
 import com.northernwall.hadrian.service.dao.GetVipData;
 import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
+import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -92,6 +94,19 @@ public class ServiceHandler extends AbstractHandler {
                         if (target.matches("/v1/service/service")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createService(request);
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/ref")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            createServiceRef(request, target.substring(12, target.length()-4));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        }
+                        break;
+                    case "DELETE":
+                        if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/uses/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            deleteServiceRef(request, target.substring(12, target.length()-42), target.substring(54, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -262,6 +277,20 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.availabilityUrl);
 
         dataAccess.saveService(service);
+    }
+
+    private void createServiceRef(Request request, String id) throws IOException {
+        PostServiceRefData postServiceRefData = Util.fromJson(request, PostServiceRefData.class);
+        for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase("true")) {
+                ServiceRef ref = new ServiceRef(id, entry.getKey());
+                dataAccess.saveServiceRef(ref);
+            }
+        }
+    }
+
+    private void deleteServiceRef(Request request, String clientId, String serviceId) {
+        dataAccess.deleteServiceRef(clientId, serviceId);
     }
 
 }

@@ -44,7 +44,6 @@
                         <dd>
                             <div ng-repeat="sr in labelService.usedBy">
                                 <a ng-click="selectTreeNode(sr.clientServiceId);">{{sr.serviceName}}</a>
-                                <a class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                                 <br/>
                             </div>
                         </dd>
@@ -52,7 +51,7 @@
                         <dd>
                             <div ng-repeat="sr in labelService.uses">
                                 <a ng-click="selectTreeNode(sr.serverServiceId);">{{sr.serviceName}}</a>
-                                <a class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a ng-click="deleteServiceRef(labelService.serviceId, sr.serverServiceId);" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                                 <br/>
                             </div>
                         </dd>
@@ -62,13 +61,13 @@
             <div>
                 <a ng-click="openAddUsesModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Uses Service</a>
                 <a ng-click="openAddVipModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add VIP</a>
-                <a ng-click="openUpdateVipModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Update VIP</a>
+                <a ng-click="openUpdateVipModal();" class="btn btn-info btn-xs" uib-popover="Updates the selected VIPs." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update VIP</a>
                 <a ng-click="openAddHostModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Host</a>
-                <a ng-click="openUpdateHostModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Update Host(s)</a>
+                <a ng-click="openUpdateHostModal();" class="btn btn-info btn-xs" uib-popover="Updates the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update Host(s)</a>
                 <a ng-click="restartHost();" class="btn btn-info btn-xs" uib-popover="Restarts the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Restart Hosts</a>
                 <a ng-click="addHostToVip();" class="btn btn-info btn-xs" uib-popover="Adds the selected Hosts to the selected VIPs." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts to VIPs</a>
                 <span ng-repeat="cf in labelService.customFunctions">
-                    <a class="btn btn-primary btn-xs">{{cf}}</a>
+                    <a ng-click="" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
                 </span>
                 <a ng-click="refresh();" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
             </div>

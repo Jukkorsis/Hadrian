@@ -103,6 +103,17 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
+        $scope.deleteServiceRef = function (clientId, serviceId) {
+            var responsePromise = $http.delete("/v1/service/" + clientId + "/uses/" + serviceId, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        };
+
         $scope.openAddVipModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -293,7 +304,17 @@ soaRepControllers.controller('ModalAddUsesCtrl',
             });
                 
             $scope.save = function () {
-                $modalInstance.close();
+                var dataObject = {
+                    uses: $scope.formSelectUses
+                };
+
+                var responsePromise = $http.post("/v1/service/"+$scope.service.serviceId+"/ref", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new vip has failed!");
+                });
             };
 
             $scope.cancel = function () {
