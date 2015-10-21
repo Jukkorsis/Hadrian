@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ public class GetServiceData {
     public String mavenArtifactId;
     public String versionUrl;
     public String availabilityUrl;
-    public List<String> customFunctions;
+    public List<CustomFunction> customFunctions;
     public List<GetHostData> hosts;
     public List<GetVipData> vips;
     public List<GetServiceRefData> uses;
