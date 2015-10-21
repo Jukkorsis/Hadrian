@@ -34,7 +34,7 @@ public class Service implements Comparable<Service>{
     private String mavenArtifactId;
     private String versionUrl;
     private String availabilityUrl;
-    private List<String> customFunctions;
+    private List<CustomFunction> customFunctions;
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl) {
         this.serviceId = UUID.randomUUID().toString();
@@ -117,7 +117,7 @@ public class Service implements Comparable<Service>{
         this.availabilityUrl = availabilityUrl;
     }
 
-    public List<String> getCustomFunctions() {
+    public List<CustomFunction> getCustomFunctions() {
         return customFunctions;
     }
 
