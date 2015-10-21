@@ -208,6 +208,16 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public void deleteServiceRef(final String clientId, final String serviceId) {
+        serviceRefs.removeIf(new Predicate<ServiceRef>() {
+            @Override
+            public boolean test(ServiceRef t) {
+                return t.getClientServiceId().equals(clientId) && t.getServerServiceId().equals(serviceId);
+            }
+        });
+    }
+
+    @Override
     public List<VipRef> getVipRefsByHost(String hostId) {
         List<VipRef> temp = new LinkedList<>();
         for (VipRef vipRef : vipRefs) {
