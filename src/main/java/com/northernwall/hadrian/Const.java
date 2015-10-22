@@ -28,6 +28,10 @@ public class Const {
 
     public static final String MAVEN_URL = "maven.url";
     public static final String MAVEN_URL_DEFAULT = "127.0.0.1/mvnrepo/internal/";
+    public static final String MAVEN_USERNAME = "maven.username";
+    public static final String MAVEN_USERNAME_DEFAULT = "-";
+    public static final String MAVEN_PASSWORD = "maven.password";
+    public static final String MAVEN_PASSWORD_DEFAULT = "-";
     public static final String MAVEN_MAX_VERSIONS = "maven.maxVersions";
     public static final String MAVEN_MAX_VERSIONS_DEFAULT = "15";
 

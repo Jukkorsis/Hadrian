@@ -4,6 +4,7 @@ import com.northernwall.hadrian.Const;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.Collections;
@@ -26,20 +27,28 @@ public class MavenHelper {
     private final String mavenRepo;
     private final int maxMavenVersions;
     private final OkHttpClient client;
+    private final String mavenUsername;
+    private final String mavenPassword;
 
     public MavenHelper(Properties properties, OkHttpClient client) {
         this.client = client;
         mavenRepo = Const.HTTP + properties.getProperty(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
         maxMavenVersions = Integer.parseInt(properties.getProperty(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT));
+        mavenUsername = properties.getProperty(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
+        mavenPassword = properties.getProperty(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
     }
 
     public List<String> readMavenVersions(String groupId, String artifactId) {
         List<String> versions = new LinkedList<>();
         if (groupId != null && artifactId != null) {
             try {
-                Request request = new Request.Builder()
-                        .url(mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml")
-                        .build();
+                Builder builder = new Request.Builder();
+                builder.url(mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml");
+                if (!mavenUsername.equals(Const.MAVEN_USERNAME_DEFAULT)) {
+                    String credential = Credentials.basic(mavenUsername, mavenPassword);
+                    builder.header("Authorization", credential);
+                }
+                Request request = builder.build();
                 Response response = client.newCall(request).execute();
 
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
