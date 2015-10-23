@@ -12,23 +12,15 @@ import java.util.Properties;
 
 public class InfoHelper {
     private final OkHttpClient client;
-    private final String domain;
 
     public InfoHelper(Properties properties, OkHttpClient client) {
         this.client = client;
-        
-        String temp = properties.getProperty(Const.HOST_DOMAIN, Const.HOST_DOMAIN_DEFAULT);
-        if (temp.startsWith(".")) {
-            domain = temp;
-        } else {
-            domain = "." + temp;
-        }
     }
 
     public int readAvailability(String host, String url) throws IOException {
         try {
             Request request = new Request.Builder()
-                    .url(Const.HTTP + host + domain + url)
+                    .url(Const.HTTP + url.replace(Const.HOST, host))
                     .build();
             Response response = client.newCall(request).execute();
             return response.code();
@@ -40,7 +32,7 @@ public class InfoHelper {
     public String readVersion(String host, String url) throws IOException {
         try {
             Request request = new Request.Builder()
-                    .url(Const.HTTP + host + domain + url)
+                    .url(Const.HTTP + url.replace(Const.HOST, host))
                     .build();
             Response response = client.newCall(request).execute();
             return response.body().string();

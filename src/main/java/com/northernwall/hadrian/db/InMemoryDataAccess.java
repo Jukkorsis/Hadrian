@@ -41,7 +41,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final static Logger logger = LoggerFactory.getLogger(InMemoryDataAccess.class);
     
     private final Map<String, Team> teams;
-    private final List<Service> services;
+    private final Map<String, Service> services;
     private final Map<String, Host> hosts;
     private final Map<String, Vip> vips;
     private final List<ServiceRef> serviceRefs;
@@ -51,7 +51,7 @@ public class InMemoryDataAccess implements DataAccess {
 
     public InMemoryDataAccess() {
         teams = new ConcurrentHashMap<>();
-        services = new LinkedList<>();
+        services = new ConcurrentHashMap<>();
         hosts = new ConcurrentHashMap<>();
         vips = new ConcurrentHashMap<>();
         serviceRefs = new LinkedList<>();
@@ -79,7 +79,10 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public List<Service> getServices() {
-        List<Service> temp = services;
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services.values()) {
+            temp.add(service);
+        }
         Collections.sort(temp);
         return temp;
     }
@@ -87,7 +90,7 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public List<Service> getServices(String teamId) {
         List<Service> temp = new LinkedList<>();
-        for (Service service : services) {
+        for (Service service : services.values()) {
             if (service.getTeamId().equals(teamId)) {
                 temp.add(service);
             }
@@ -98,17 +101,17 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public Service getService(String serviceId) {
-        for (Service service : services) {
-            if (service.getServiceId().equals(serviceId)) {
-                return service;
-            }
-        }
-        return null;
+        return services.get(serviceId);
     }
 
     @Override
     public void saveService(Service service) {
-        services.add(service);
+        services.put(service.getServiceId(), service);
+    }
+
+    @Override
+    public void updateService(Service service) {
+        services.put(service.getServiceId(), service);
     }
 
     @Override

@@ -40,6 +40,7 @@ public interface DataAccess {
     List<Service> getServices(String teamId);
     Service getService(String serviceId);
     void saveService(Service service);
+    void updateService(Service service);
 
     List<Host> getHosts(String serviceId);
     Host getHost(String hostId);

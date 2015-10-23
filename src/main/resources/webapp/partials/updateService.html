@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h3 class="modal-title">Add New Service</h3>
+</div>
+<div class="modal-body">
+    <dl class="dl-horizontal">
+        <dt>Service Abbr:</dt>
+        <dd><input ng-model="formUpdateService.serviceAbbr" type="text"></dd>
+        <dt>Service Name:</dt>
+        <dd><input ng-model="formUpdateService.serviceName" type="text"></dd>
+        <dt>Description:</dt>
+        <dd><input ng-model="formUpdateService.description" type="text"></dd>
+        <dt>Maven Group Id:</dt>
+        <dd><input ng-model="formUpdateService.mavenGroupId" type="text"></dd>
+        <dt>Maven Artifact Id:</dt>
+        <dd><input ng-model="formUpdateService.mavenArtifactId" type="text"></dd>
+        <dt>Version Url:</dt>
+        <dd><input ng-model="formUpdateService.versionUrl" type="text"></dd>
+        <dt>Availability Url:</dt>
+        <dd><input ng-model="formUpdateService.availabilityUrl" type="text"></dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

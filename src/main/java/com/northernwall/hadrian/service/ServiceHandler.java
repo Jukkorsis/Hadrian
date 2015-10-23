@@ -32,6 +32,7 @@ import com.northernwall.hadrian.service.dao.GetVipData;
 import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
 import com.northernwall.hadrian.service.dao.PostServiceRefData;
+import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
@@ -99,6 +100,14 @@ public class ServiceHandler extends AbstractHandler {
                         } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/ref")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createServiceRef(request, target.substring(12, target.length()-4));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        }
+                        break;
+                    case "PUT":
+                        if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            updateService(request, target.substring(12, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -277,6 +286,24 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.availabilityUrl);
 
         dataAccess.saveService(service);
+    }
+
+    private void updateService(Request request, String id) throws IOException {
+        PutServiceData putServiceData = Util.fromJson(request, PutServiceData.class);
+        Service service = dataAccess.getService(id);
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        
+        service.setServiceAbbr(putServiceData.serviceAbbr);
+        service.setServiceName(putServiceData.serviceName);
+        service.setDescription(putServiceData.description);
+        service.setMavenGroupId(putServiceData.mavenGroupId);
+        service.setMavenArtifactId(putServiceData.mavenArtifactId);
+        service.setVersionUrl(putServiceData.versionUrl);
+        service.setAvailabilityUrl(putServiceData.availabilityUrl);
+        
+        dataAccess.updateService(service);
     }
 
     private void createServiceRef(Request request, String id) throws IOException {

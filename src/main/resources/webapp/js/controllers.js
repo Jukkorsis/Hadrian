@@ -83,6 +83,23 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
+        $scope.openUpdateServiceModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateService.html',
+                controller: 'ModalUpdateServiceCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
         $scope.formSelectVip = {};
         $scope.formSelectHost = {};
 
@@ -265,8 +282,8 @@ soaRepControllers.controller('ModalAddServiceCtrl',
             $scope.formSaveService.description = "";
             $scope.formSaveService.mavenGroupId = "";
             $scope.formSaveService.mavenArtifactId = "";
-            $scope.formSaveService.versionUrl = ":9090/version";
-            $scope.formSaveService.availabilityUrl = ":9090/availability";
+            $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
+            $scope.formSaveService.availabilityUrl = "{host}.mydomain:9090/availability";
 
             $scope.save = function () {
                 var dataObject = {
@@ -286,6 +303,44 @@ soaRepControllers.controller('ModalAddServiceCtrl',
                 });
                 responsePromise.error(function (data, status, headers, config) {
                     alert("Request to create new service has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalUpdateServiceCtrl',
+        function ($scope, $http, $modalInstance, service) {
+
+            $scope.formUpdateService = {};
+            $scope.formUpdateService.serviceId = service.serviceId;
+            $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
+            $scope.formUpdateService.serviceName = service.serviceName;
+            $scope.formUpdateService.description = service.description;
+            $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
+            $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
+            $scope.formUpdateService.versionUrl = service.versionUrl;
+            $scope.formUpdateService.availabilityUrl = service.availabilityUrl;
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceAbbr: $scope.formUpdateService.serviceAbbr,
+                    serviceName: $scope.formUpdateService.serviceName,
+                    description: $scope.formUpdateService.description,
+                    mavenGroupId: $scope.formUpdateService.mavenGroupId,
+                    mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
+                    versionUrl: $scope.formUpdateService.versionUrl,
+                    availabilityUrl: $scope.formUpdateService.availabilityUrl
+                };
+
+                var responsePromise = $http.put("/v1/service/"+$scope.formUpdateService.serviceId, dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update service has failed!");
                 });
             };
 

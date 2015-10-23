@@ -33,9 +33,9 @@
                         <dt>Maven Artifact Id:</dt>
                         <dd>{{labelService.mavenArtifactId}}</dd>
                         <dt>Version URL:</dt>
-                        <dd>http://{host}{{labelService.versionUrl}}</dd>
+                        <dd>{{labelService.versionUrl}}</dd>
                         <dt>Availability URL:</dt>
-                        <dd>http://{host}{{labelService.availabilityUrl}}</dd>
+                        <dd>{{labelService.availabilityUrl}}</dd>
                     </dl>
                 </div>
                 <div class="col-md-6">
@@ -59,6 +59,8 @@
                 </div>            
             </div>  
             <div>
+                <a ng-click="openUpdateServiceModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Update Service</a>
+                <a ng-click="" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Manage Custom Functions</a>
                 <a ng-click="openAddUsesModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Uses Service</a>
                 <a ng-click="openAddVipModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add VIP</a>
                 <a ng-click="openUpdateVipModal();" class="btn btn-info btn-xs" uib-popover="Updates the selected VIPs." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update VIP</a>
@@ -112,7 +114,7 @@
                     <th>Host</th>
                     <th>DC</th>
                     <th>Network</th>
-                    <th>EP</th>
+                    <th>VIP</th>
                     <th>Env.</th>
                     <th>Size</th>
                     <th>Ver.</th>
