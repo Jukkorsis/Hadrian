@@ -2,6 +2,7 @@ package com.northernwall.hadrian.db;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;

@@ -9,6 +9,7 @@ public class Const {
     public static final String NO_STATUS = "-";
     
     public static final String HTTP = "http://";
+    public static final String HOST = "{host}";
 
     public static final String JETTY_PORT = "jetty.port";
     public static final String JETTY_PORT_DEFAULT = "9090";
@@ -34,12 +35,10 @@ public class Const {
     public static final String MAVEN_PASSWORD_DEFAULT = "-";
     public static final String MAVEN_MAX_VERSIONS = "maven.maxVersions";
     public static final String MAVEN_MAX_VERSIONS_DEFAULT = "15";
+    public static final String MAVEN_SNAPSHOT = "SNAPSHOT";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
-
-    public static final String HOST_DOMAIN = "hostDomain";
-    public static final String HOST_DOMAIN_DEFAULT = ".northernwall.com";
 
     private Const() {
     }

@@ -58,7 +58,7 @@ public class MavenHelper {
                 Node versionsNode = root.getElementsByTagName("versions").item(0);
                 for (int i = 0; i < versionsNode.getChildNodes().getLength(); i++) {
                     Node child = versionsNode.getChildNodes().item(i);
-                    if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    if (child.getNodeType() == Node.ELEMENT_NODE && child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
                         versions.add(child.getTextContent());
                     }
                 }
