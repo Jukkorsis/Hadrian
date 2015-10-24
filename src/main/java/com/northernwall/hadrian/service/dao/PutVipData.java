@@ -16,9 +16,6 @@
 
 package com.northernwall.hadrian.service.dao;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author Richard Thurston
@@ -27,6 +24,5 @@ public class PutVipData {
     public String serviceId;
     public boolean external;
     public int servicePort;
-    public Map<String, String> vips = new HashMap<>();
 
 }

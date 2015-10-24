@@ -100,7 +100,6 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
-        $scope.formSelectVip = {};
         $scope.formSelectHost = {};
 
         $scope.openAddUsesModal = function () {
@@ -148,7 +147,7 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
-        $scope.openUpdateVipModal = function () {
+        $scope.openUpdateVipModal = function (vipId) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/updateVip.html',
@@ -157,8 +156,8 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                     service: function () {
                         return $scope.labelService;
                     },
-                    vips: function () {
-                        return $scope.formSelectVip;
+                    vipId: function () {
+                        return vipId;
                     }
                 }
             });
@@ -243,20 +242,23 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
-        $scope.addHostToVip = function () {
-            var dataObject = {
-                serviceId: $scope.labelService.serviceId,
-                vips: $scope.formSelectVip,
-                hosts: $scope.formSelectHost
-            };
-
-            var responsePromise = $http.post("/v1/host/vips", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+        $scope.openAddHostToVipModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addHostToVip.html',
+                controller: 'ModalAddHostToVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    },
+                    hosts: function () {
+                        return $scope.formSelectHost;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new host has failed!");
+            modalInstance.result.then(function () {
                 $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
             });
         }
 
@@ -335,7 +337,7 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                     availabilityUrl: $scope.formUpdateService.availabilityUrl
                 };
 
-                var responsePromise = $http.put("/v1/service/"+$scope.formUpdateService.serviceId, dataObject, {});
+                var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });
@@ -357,13 +359,13 @@ soaRepControllers.controller('ModalAddUsesCtrl',
             ServiceNotUses.get({serviceId: service.serviceId}, function (notUses) {
                 $scope.notUses = notUses;
             });
-                
+
             $scope.save = function () {
                 var dataObject = {
                     uses: $scope.formSelectUses
                 };
 
-                var responsePromise = $http.post("/v1/service/"+$scope.service.serviceId+"/ref", dataObject, {});
+                var responsePromise = $http.post("/v1/service/" + $scope.service.serviceId + "/ref", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });
@@ -417,9 +419,9 @@ soaRepControllers.controller('ModalAddVipCtrl',
         });
 
 soaRepControllers.controller('ModalUpdateVipCtrl',
-        function ($scope, $http, $modalInstance, service, vips) {
+        function ($scope, $http, $modalInstance, service, vipId) {
             $scope.service = service;
-            $scope.vips = vips;
+            $scope.vipId = vipId;
 
             $scope.formUpdateVip = {};
             $scope.formUpdateVip.external = false;
@@ -429,16 +431,15 @@ soaRepControllers.controller('ModalUpdateVipCtrl',
                 var dataObject = {
                     serviceId: $scope.service.serviceId,
                     external: $scope.formUpdateVip.external,
-                    servicePort: $scope.formUpdateVip.servicePort,
-                    vips: $scope.vips
+                    servicePort: $scope.formUpdateVip.servicePort
                 };
 
-                var responsePromise = $http.put("/v1/vip/vip", dataObject, {});
+                var responsePromise = $http.put("/v1/vip/" + $scope.vipId, dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });
                 responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update vips has failed!");
+                    alert("Request to update vip has failed!");
                 });
             };
 
@@ -502,6 +503,34 @@ soaRepControllers.controller('ModalUpdateHostCtrl',
                 };
 
                 var responsePromise = $http.put("/v1/host/host", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update hosts has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddHostToVipCtrl',
+        function ($scope, $http, $modalInstance, service, hosts) {
+            $scope.service = service;
+            $scope.hosts = hosts;
+
+            $scope.formSelectVip = {};
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    vips: $scope.formSelectVip,
+                    hosts: $scope.hosts
+                };
+
+                var responsePromise = $http.post("/v1/host/vips", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });

@@ -63,9 +63,9 @@ public class VipHandler extends AbstractHandler {
                         }
                         break;
                     case "PUT":
-                        if (target.matches("/v1/vip/vip")) {
+                        if (target.matches("/v1/vip/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            updateVip(request);
+                            updateVip(request, target.substring(8, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -109,26 +109,20 @@ public class VipHandler extends AbstractHandler {
         webHookHelper.postVip(service, vip);
     }
 
-    private void updateVip(Request request) throws IOException {
+    private void updateVip(Request request, String vipId) throws IOException {
         PutVipData putVipData = Util.fromJson(request, PutVipData.class);
-        Service service = null;
-        for (Map.Entry<String, String> entry : putVipData.vips.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase("true")) {
-                Vip vip = dataAccess.getVip(entry.getKey());
-                vip.setStatus("Updating...");
-                dataAccess.saveVip(vip);
-                if (service == null) {
-                    service = dataAccess.getService(vip.getServiceId());
-                }
-                WorkItem workItem = WorkItem.createUpdateVip(
-                        vip.getVipId(), 
-                        putVipData.external, 
-                        putVipData.servicePort);
-                dataAccess.saveWorkItem(workItem);
-                webHookHelper.putVip(service, vip, workItem);
-            }
-        }
+
+        Vip vip = dataAccess.getVip(vipId);
+        vip.setStatus("Updating...");
+        dataAccess.saveVip(vip);
+        Service service = dataAccess.getService(vip.getServiceId());
         
+        WorkItem workItem = WorkItem.createUpdateVip(
+                vip.getVipId(), 
+                putVipData.external, 
+                putVipData.servicePort);
+        dataAccess.saveWorkItem(workItem);
+        webHookHelper.putVip(service, vip, workItem);
     }
 
     private void deleteVip(String id) throws IOException {
