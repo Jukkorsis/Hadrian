@@ -174,7 +174,7 @@
                 </uib-tab>
                 <uib-tab heading="Custom Functions">
                     <div align="center">
-                        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
+                        <a ng-click="openAddCustomFunctionModal()" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
                     </div>
                     <table class="table table-hover  table-condensed">
                         <tr>
@@ -190,9 +190,9 @@
                                 <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
                                 <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete VIP {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </td>
-                            <td>POST</td>
-                            <td>{host}.openmarket.com:9090/tools/{{cf.name}}</td>
-                            <td>All</td>
+                            <td>{{cf.protocol}}</td>
+                            <td>{{cf.url}}</td>
+                            <td>{{cf.style}}</td>
                             <td>{{cf.helpText}}</td>
                         </tr>
                     </table>

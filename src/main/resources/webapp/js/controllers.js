@@ -272,6 +272,23 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
         }
+        
+        $scope.openAddCustomFunctionModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addCustomFunction.html',
+                controller: 'ModalAddCustomFunctionCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        }
     }]);
 
 soaRepControllers.controller('ModalAddServiceCtrl',
@@ -531,6 +548,36 @@ soaRepControllers.controller('ModalAddHostToVipCtrl',
                 };
 
                 var responsePromise = $http.post("/v1/host/vips", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update hosts has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddCustomFunctionCtrl',
+        function ($scope, $http, $modalInstance, service) {
+            $scope.service = service;
+
+            $scope.formSaveCF = {};
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    name: $scope.formSaveCF.name,
+                    protocol: $scope.formSaveCF.protocol,
+                    url: $scope.formSaveCF.url,
+                    style: $scope.formSaveCF.style,
+                    helpText: $scope.formSaveCF.helpText
+                };
+
+                var responsePromise = $http.post("/v1/cf/cf", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });

@@ -19,11 +19,13 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
@@ -171,6 +173,12 @@ public class ServiceHandler extends AbstractHandler {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
             tempRef.serviceName = dataAccess.getService(ref.getClientServiceId()).getServiceName();
             getServiceData.usedBy.add(tempRef);
+        }
+
+        for (CustomFunction customFunction : dataAccess.getCustomFunctions(id)) {
+            GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
+            getServiceData.customFunctions.add(getCustomFunctionData);
+
         }
 
         getServiceData.versions.addAll(mavenhelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));

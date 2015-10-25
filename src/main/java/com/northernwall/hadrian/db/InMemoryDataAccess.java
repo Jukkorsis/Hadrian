@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
@@ -46,6 +47,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, Vip> vips;
     private final List<ServiceRef> serviceRefs;
     private final List<VipRef> vipRefs;
+    private final Map<String, CustomFunction> customFunctions;
     private final List<DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
 
@@ -56,6 +58,7 @@ public class InMemoryDataAccess implements DataAccess {
         vips = new ConcurrentHashMap<>();
         serviceRefs = new LinkedList<>();
         vipRefs = new LinkedList<>();
+        customFunctions = new ConcurrentHashMap<>();
         dataStores = new LinkedList<>();
         workItems = new ConcurrentHashMap<>();
     }
@@ -292,6 +295,38 @@ public class InMemoryDataAccess implements DataAccess {
         });
     }
 
+    @Override
+    public List<CustomFunction> getCustomFunctions(String serviceId) {
+        List<CustomFunction> temp = new LinkedList<>();
+        for (CustomFunction customFunction : customFunctions.values()) {
+            if (customFunction.getServiceId().equals(serviceId)) {
+                temp.add(customFunction);
+            }
+        }
+        Collections.sort(temp);
+        return temp;
+    }
+    
+    @Override
+    public CustomFunction getCustomFunction(String customFunctionId) {
+        return customFunctions.get(customFunctionId);
+    }
+    
+    @Override
+    public void saveCustomFunction(CustomFunction customFunction) {
+        customFunctions.put(customFunction.getCustomFunctionId(), customFunction);
+    }
+    
+    @Override
+    public void updateCustomFunction(CustomFunction customFunction) {
+        customFunctions.put(customFunction.getCustomFunctionId(), customFunction);
+    }
+    
+    @Override
+    public void deleteCustomFunction(String customFunctionId) {
+        customFunctions.remove(customFunctionId);
+    }
+    
     @Override
     public List<DataStore> getDataStores(String teamId) {
         List<DataStore> temp = new LinkedList<>();

@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
@@ -68,6 +69,12 @@ public interface DataAccess {
     void deleteVipRef(String hostId, String vipId);
     void deleteVipRefs(String vipId);
     
+    List<CustomFunction> getCustomFunctions(String serviceId);
+    CustomFunction getCustomFunction(String customFunctionId);
+    void saveCustomFunction(CustomFunction customFunction);
+    void updateCustomFunction(CustomFunction customFunction);
+    void deleteCustomFunction(String customFunctionId);
+
     List<DataStore> getDataStores(String teamId);
     DataStore getDataStore(String dataStoreId);
     void saveDataStore(DataStore dataStore);

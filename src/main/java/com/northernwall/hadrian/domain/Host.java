@@ -22,7 +22,7 @@ import java.util.UUID;
  *
  * @author Richard Thurston
  */
-public class Host implements Comparable<Host>{
+public class Host implements Comparable<Host> {
     private String hostId;
     private String hostName;
     private String serviceId;

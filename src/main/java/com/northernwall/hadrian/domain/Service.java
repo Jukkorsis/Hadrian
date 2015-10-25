@@ -16,8 +16,6 @@
 
 package com.northernwall.hadrian.domain;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,7 +32,6 @@ public class Service implements Comparable<Service>{
     private String mavenArtifactId;
     private String versionUrl;
     private String availabilityUrl;
-    private List<CustomFunction> customFunctions;
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl) {
         this.serviceId = UUID.randomUUID().toString();
@@ -46,7 +43,6 @@ public class Service implements Comparable<Service>{
         this.mavenArtifactId = mavenArtifactId;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
-        this.customFunctions = new LinkedList<>();
     }
 
     public String getServiceId() {
@@ -115,10 +111,6 @@ public class Service implements Comparable<Service>{
 
     public void setAvailabilityUrl(String availabilityUrl) {
         this.availabilityUrl = availabilityUrl;
-    }
-
-    public List<CustomFunction> getCustomFunctions() {
-        return customFunctions;
     }
 
     @Override
