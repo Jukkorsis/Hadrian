@@ -6,28 +6,25 @@ public class CustomFunction implements Comparable<CustomFunction> {
     private String serviceId;
     private String customFunctionId;
     private String name;
-    private String protocol;
+    private String method;
     private String url;
-    private String style;
     private String helpText;
 
     public CustomFunction() {
         this.customFunctionId = UUID.randomUUID().toString();
         this.serviceId = null;
         this.name = null;
-        this.protocol = null;
+        this.method = null;
         this.url = null;
-        this.style = null;
         this.helpText = null;
     }
 
-    public CustomFunction(String serviceId, String name, String protocol, String url, String style, String helpText) {
+    public CustomFunction(String serviceId, String name, String method, String url, String helpText) {
         this.customFunctionId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.name = name;
-        this.protocol = protocol;
+        this.method = method;
         this.url = url;
-        this.style = style;
         this.helpText = helpText;
     }
 
@@ -55,12 +52,12 @@ public class CustomFunction implements Comparable<CustomFunction> {
         this.name = name;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public String getMethod() {
+        return method;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getUrl() {
@@ -69,14 +66,6 @@ public class CustomFunction implements Comparable<CustomFunction> {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
     }
 
     public String getHelpText() {

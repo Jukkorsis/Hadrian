@@ -15,15 +15,18 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.service.dao.PostCFData;
+import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
+import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
-import java.util.List;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,15 +39,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class CFHandler extends AbstractHandler {
-    private final static Logger logger = LoggerFactory.getLogger(CFHandler.class);
+public class CustomFuntionHandler extends AbstractHandler {
+    private final static Logger logger = LoggerFactory.getLogger(CustomFuntionHandler.class);
     
     private final DataAccess dataAccess;
-    private final WebHookSender webHookHelper;
+    private final OkHttpClient client;
 
-    public CFHandler(DataAccess dataAccess, WebHookSender webHookHelper) {
-        this.webHookHelper = webHookHelper;
+    public CustomFuntionHandler(DataAccess dataAccess, OkHttpClient client) {
         this.dataAccess = dataAccess;
+        this.client = client;
     }
 
     @Override
@@ -52,6 +55,14 @@ public class CFHandler extends AbstractHandler {
         try {
             if (target.startsWith("/v1/cf/")) {
                 switch (request.getMethod()) {
+                    case "GET":
+                        if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            doCF(response, target.substring(7, target.length()-37), target.substring(44, target.length()));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        }
+                        break;
                     case "POST":
                         if (target.matches("/v1/cf/cf")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
@@ -85,16 +96,15 @@ public class CFHandler extends AbstractHandler {
     }
 
     private void createCF(Request request) throws IOException {
-        PostCFData postCFData = Util.fromJson(request, PostCFData.class);
+        PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
         Service service = dataAccess.getService(postCFData.serviceId);
         
         
         CustomFunction customFunction = new CustomFunction( 
                 service.getServiceId(),
                 postCFData.name,
-                postCFData.protocol, 
+                postCFData.method, 
                 postCFData.url, 
-                postCFData.style, 
                 postCFData.helpText);
         dataAccess.saveCustomFunction(customFunction);
     }
@@ -103,6 +113,40 @@ public class CFHandler extends AbstractHandler {
     }
 
     private void deleteCF(String id) throws IOException {
+    }
+    
+    private void doCF(HttpServletResponse response, String customFunctionId, String hostId) throws IOException {
+        CustomFunction customFunction = dataAccess.getCustomFunction(customFunctionId);
+        if (customFunction == null) {
+            throw new RuntimeException("Could not find custom function");
+        }
+        Host host = dataAccess.getHost(hostId);
+        if (host == null) {
+            throw new RuntimeException("Could not find host");
+        }
+        if (!customFunction.getServiceId().equals(host.getServiceId())) {
+            throw new RuntimeException("Custom Function and Host do not belong to the same service");
+        }
+        com.squareup.okhttp.Request.Builder builder = new com.squareup.okhttp.Request.Builder();
+        builder.url(Const.HTTP+customFunction.getUrl().replace(Const.HOST, host.getHostName()));
+        if (customFunction.getMethod().equalsIgnoreCase("POST")) {
+            builder.post(null);
+        }
+        com.squareup.okhttp.Request request = builder.build();
+        try {
+            com.squareup.okhttp.Response resp = client.newCall(request).execute();
+
+            byte[] buffer = new byte[50*1024];
+            int len = resp.body().byteStream().read(buffer);
+            while (len != -1) {
+                response.getOutputStream().write(buffer, 0, len);
+                len = resp.body().byteStream().read(buffer);
+            }
+        } catch (UnknownHostException ex) {
+            response.getOutputStream().print("Error: Unknown host!");
+        } catch (ConnectException | SocketTimeoutException ex) {
+            response.getOutputStream().print("Error: Time out!");
+        }
     }
 
 }

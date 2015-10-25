@@ -27,7 +27,7 @@ import com.northernwall.hadrian.utilityHandlers.ContentHandler;
 import com.northernwall.hadrian.service.DataStoreHandler;
 import com.northernwall.hadrian.service.VipHandler;
 import com.northernwall.hadrian.graph.GraphHandler;
-import com.northernwall.hadrian.service.CFHandler;
+import com.northernwall.hadrian.service.CustomFuntionHandler;
 import com.northernwall.hadrian.service.HostHandler;
 import com.northernwall.hadrian.service.InfoHelper;
 import com.northernwall.hadrian.service.MavenHelper;
@@ -172,7 +172,7 @@ public class Main {
             handlers.addHandler(new ServiceHandler(dataAccess, mavenHelper, infoHelper));
             handlers.addHandler(new VipHandler(dataAccess, webHookSender));
             handlers.addHandler(new HostHandler(dataAccess, webHookSender));
-            handlers.addHandler(new CFHandler(dataAccess, webHookSender));
+            handlers.addHandler(new CustomFuntionHandler(dataAccess, client));
             handlers.addHandler(new DataStoreHandler(dataAccess));
             handlers.addHandler(new WebHookHandler(webHookSender));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));

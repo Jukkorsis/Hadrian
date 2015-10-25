@@ -71,7 +71,7 @@
                         <a ng-click="restartHost();" class="btn btn-info btn-xs" uib-popover="Restarts the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Restart Hosts</a>
                         <a ng-click="openAddHostToVipModal();" class="btn btn-info btn-xs" uib-popover="Adds the selected Hosts to a VIP." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts to VIPs</a>
                         <span ng-repeat="cf in labelService.customFunctions">
-                            <a ng-click="" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
+                            <a ng-click="openDoCustomFunctionModal(cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
                         </span>
                     </div>
                     <table class="table table-hover  table-condensed">
@@ -181,7 +181,6 @@
                             <th>Name</th>
                             <th>Method</th>
                             <th>URL</th>
-                            <th>Style</th>
                             <th>Help Text</th>
                         </tr>
                         <tr ng-repeat="cf in labelService.customFunctions">
@@ -190,9 +189,8 @@
                                 <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
                                 <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete VIP {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </td>
-                            <td>{{cf.protocol}}</td>
+                            <td>{{cf.method}}</td>
                             <td>{{cf.url}}</td>
-                            <td>{{cf.style}}</td>
                             <td>{{cf.helpText}}</td>
                         </tr>
                     </table>

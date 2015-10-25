@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
@@ -44,13 +45,11 @@ import org.slf4j.LoggerFactory;
 public class HostHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(HostHandler.class);
     
-    private static final String NO_STATUS = "-";
-
     private final DataAccess dataAccess;
-    private final WebHookSender webHookHelper;
+    private final WebHookSender webHookSender;
 
-    public HostHandler(DataAccess dataAccess, WebHookSender webHookHelper) {
-        this.webHookHelper = webHookHelper;
+    public HostHandler(DataAccess dataAccess, WebHookSender webHookSender) {
+        this.webHookSender = webHookSender;
         this.dataAccess = dataAccess;
     }
 
@@ -140,7 +139,7 @@ public class HostHandler extends AbstractHandler {
                 postHostData.env, 
                 postHostData.size);
         dataAccess.saveHost(host);
-        webHookHelper.postHost(service, host);
+        webHookSender.postHost(service, host);
     }
 
     private void updateHost(Request request) throws IOException {
@@ -151,7 +150,7 @@ public class HostHandler extends AbstractHandler {
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 Host host = dataAccess.getHost(entry.getKey());
-                if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(NO_STATUS)) {
+                if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(Const.NO_STATUS)) {
                     if (workItem == null) {
                         host.setStatus("Updating...");
                         dataAccess.saveHost(host);
@@ -172,7 +171,7 @@ public class HostHandler extends AbstractHandler {
             dataAccess.saveWorkItem(workItem);
         }
         if (firstWorkItem != null) {
-            webHookHelper.putHost(dataAccess.getService(firstHost.getServiceId()), firstHost, firstWorkItem);
+            webHookSender.putHost(dataAccess.getService(firstHost.getServiceId()), firstHost, firstWorkItem);
         }
     }
 
@@ -188,7 +187,7 @@ public class HostHandler extends AbstractHandler {
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
         Service service = dataAccess.getService(host.getServiceId());
-        webHookHelper.deleteHost(service, host);
+        webHookSender.deleteHost(service, host);
     }
 
     private void addVIPs(Request request) throws IOException {
@@ -210,7 +209,7 @@ public class HostHandler extends AbstractHandler {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            webHookHelper.postHostVip(service, host, vip);
+                                            webHookSender.postHostVip(service, host, vip);
                                         } else {
                                             logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
                                         }
@@ -237,7 +236,7 @@ public class HostHandler extends AbstractHandler {
         Host host = dataAccess.getHost(hostId);
         Vip vip = dataAccess.getVip(vipId);
         Service service = dataAccess.getService(host.getServiceId());
-        webHookHelper.deleteHostVip(service, host, vip);
+        webHookSender.deleteHostVip(service, host, vip);
     }
 
 }

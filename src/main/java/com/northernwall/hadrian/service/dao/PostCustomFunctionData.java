@@ -1,11 +1,10 @@
 package com.northernwall.hadrian.service.dao;
 
-public class PostCFData {
+public class PostCustomFunctionData {
     public String serviceId;
     public String name;
-    public String protocol;
+    public String method;
     public String url;
-    public String style;
     public String helpText;
 
 }

@@ -178,7 +178,6 @@ public class ServiceHandler extends AbstractHandler {
         for (CustomFunction customFunction : dataAccess.getCustomFunctions(id)) {
             GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
             getServiceData.customFunctions.add(getCustomFunctionData);
-
         }
 
         getServiceData.versions.addAll(mavenhelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));

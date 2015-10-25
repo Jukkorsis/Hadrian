@@ -272,7 +272,7 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
         }
-        
+
         $scope.openAddCustomFunctionModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -281,6 +281,30 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                 resolve: {
                     service: function () {
                         return $scope.labelService;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        }
+
+        $scope.openDoCustomFunctionModal = function (cf) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/doCustomFunction.html',
+                controller: 'ModalDoCustomFunctionCtrl',
+                size: 'lg',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    },
+                    cf: function () {
+                        return cf;
+                    },
+                    selectedHosts: function () {
+                        return $scope.formSelectHost;
                     }
                 }
             });
@@ -588,6 +612,32 @@ soaRepControllers.controller('ModalAddCustomFunctionCtrl',
 
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalDoCustomFunctionCtrl',
+        function ($scope, $modalInstance, service, cf, selectedHosts) {
+            $scope.service = service;
+            $scope.cf = cf;
+
+            var hosts = [];
+            for (var key in service.hosts) {
+                var h = service.hosts[key];
+                for (var key2 in selectedHosts) {
+                    if (h.hostId == key2 && selectedHosts[key2]) {
+                        var obj = {
+                            hostName: h.hostName,
+                            url: cf.url.replace("{host}", h.hostName),
+                            realUrl: "/v1/cf/" + cf.customFunctionId + "/" + h.hostId
+                        }
+                        hosts.push(obj);
+                    }
+                }
+            }
+            $scope.hosts = hosts;
+
+            $scope.ok = function () {
+                $modalInstance.close();
             };
         });
 
