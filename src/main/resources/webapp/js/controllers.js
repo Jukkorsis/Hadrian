@@ -147,7 +147,7 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             });
         };
 
-        $scope.openUpdateVipModal = function (vipId) {
+        $scope.openUpdateVipModal = function (vip) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/updateVip.html',
@@ -156,8 +156,8 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                     service: function () {
                         return $scope.labelService;
                     },
-                    vipId: function () {
-                        return vipId;
+                    vip: function () {
+                        return vip;
                     }
                 }
             });
@@ -313,6 +313,37 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             }, function () {
             });
         }
+
+        $scope.openUpdateCustomFunctionModal = function (cf) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateCustomFunction.html',
+                controller: 'ModalUpdateCustomFunctionCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.labelService;
+                    },
+                    cf: function () {
+                        return cf;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
+        $scope.deleteCustomFunction = function (id) {
+            var responsePromise = $http.delete("/v1/cf/" + id, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        };
     }]);
 
 soaRepControllers.controller('ModalAddServiceCtrl',
@@ -460,13 +491,13 @@ soaRepControllers.controller('ModalAddVipCtrl',
         });
 
 soaRepControllers.controller('ModalUpdateVipCtrl',
-        function ($scope, $http, $modalInstance, service, vipId) {
+        function ($scope, $http, $modalInstance, service, vip) {
             $scope.service = service;
-            $scope.vipId = vipId;
+            $scope.vip = vip;
 
             $scope.formUpdateVip = {};
-            $scope.formUpdateVip.external = false;
-            $scope.formUpdateVip.servicePort = 8080;
+            $scope.formUpdateVip.external = vip.external;
+            $scope.formUpdateVip.servicePort = vip.servicePort;
 
             $scope.save = function () {
                 var dataObject = {
@@ -475,7 +506,7 @@ soaRepControllers.controller('ModalUpdateVipCtrl',
                     servicePort: $scope.formUpdateVip.servicePort
                 };
 
-                var responsePromise = $http.put("/v1/vip/" + $scope.vipId, dataObject, {});
+                var responsePromise = $http.put("/v1/vip/" + $scope.vip.vipId, dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });
@@ -595,9 +626,8 @@ soaRepControllers.controller('ModalAddCustomFunctionCtrl',
                 var dataObject = {
                     serviceId: $scope.service.serviceId,
                     name: $scope.formSaveCF.name,
-                    protocol: $scope.formSaveCF.protocol,
+                    method: $scope.formSaveCF.method,
                     url: $scope.formSaveCF.url,
-                    style: $scope.formSaveCF.style,
                     helpText: $scope.formSaveCF.helpText
                 };
 
@@ -638,6 +668,40 @@ soaRepControllers.controller('ModalDoCustomFunctionCtrl',
 
             $scope.ok = function () {
                 $modalInstance.close();
+            };
+        });
+
+soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
+        function ($scope, $http, $modalInstance, service, cf) {
+            $scope.service = service;
+            $scope.cf = cf;
+
+            $scope.formUpdateCF = {};
+            $scope.formUpdateCF.name = cf.name;
+            $scope.formUpdateCF.method = cf.method;
+            $scope.formUpdateCF.url = cf.url;
+            $scope.formUpdateCF.helpText = cf.helpText;
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceId: $scope.service.serviceId,
+                    name: $scope.formUpdateCF.name,
+                    method: $scope.formUpdateCF.method,
+                    url: $scope.formUpdateCF.url,
+                    helpText: $scope.formUpdateCF.helpText
+                };
+
+                var responsePromise = $http.put("/v1/cf/"+$scope.cf.customFunctionId, dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update hosts has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
             };
         });
 

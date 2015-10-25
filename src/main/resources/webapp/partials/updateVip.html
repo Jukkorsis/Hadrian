@@ -3,8 +3,18 @@
 </div>
 <div class="modal-body">
     <dl class="dl-horizontal">
+        <dt>VIP Name:</dt>
+        <dd>{{vip.vipName}}</dd>
+        <dt>DNS:</dt>
+        <dd>{{vip.dns}}</dd>
         <dt>External:</dt>
         <dd><select ng-model="formUpdateVip.external"><option value="false">False</option><option value="true">True</option></select></dd>
+        <dt>Network:</dt>
+        <dd>{{vip.network}}</dd>
+        <dt>Protocol:</dt>
+        <dd>{{vip.protocol}}</dd>
+        <dt>VIP Port:</dt>
+        <dd>{{vip.vipPort}}</dd>
         <dt>Service Port:</dt>
         <dd><input ng-model="formUpdateVip.servicePort" type="number"></dd>
     </dl>

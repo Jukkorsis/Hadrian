@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h3 class="modal-title">Add New Custom Function</h3>
+</div>
+<div class="modal-body">
+    <dl class="dl-horizontal">
+        <dt>Name:</dt>
+        <dd><input ng-model="formUpdateCF.name" type="text"></dd>
+        <dt>Method</dt>
+        <dd><select ng-model="formUpdateCF.method"><option value="GET">GET</option><option value="POST">POST</option></select></dd>
+        <dt>URL:</dt>
+        <dd><input ng-model="formUpdateCF.url" type="text"></dd>
+        <dt>Help Text</dt>
+        <dd><input ng-model="formUpdateCF.helpText" type="text"></dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+

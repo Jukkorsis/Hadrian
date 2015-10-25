@@ -21,7 +21,10 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
+import com.northernwall.hadrian.service.dao.PutVipData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -99,7 +102,6 @@ public class CustomFuntionHandler extends AbstractHandler {
         PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
         Service service = dataAccess.getService(postCFData.serviceId);
         
-        
         CustomFunction customFunction = new CustomFunction( 
                 service.getServiceId(),
                 postCFData.name,
@@ -110,9 +112,19 @@ public class CustomFuntionHandler extends AbstractHandler {
     }
 
     private void updateCF(Request request, String id) throws IOException {
+        PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
+
+        CustomFunction customFunction = dataAccess.getCustomFunction(id);
+        customFunction.setName(postCFData.name);
+        customFunction.setMethod(postCFData.method);
+        customFunction.setUrl(postCFData.url);
+        customFunction.setHelpText(postCFData.helpText);
+        
+        dataAccess.updateCustomFunction(customFunction);
     }
 
     private void deleteCF(String id) throws IOException {
+        dataAccess.deleteCustomFunction(id);
     }
     
     private void doCF(HttpServletResponse response, String customFunctionId, String hostId) throws IOException {

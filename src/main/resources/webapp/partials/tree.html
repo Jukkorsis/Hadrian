@@ -156,7 +156,7 @@
                             <td>
                                 {{ep.vipName}}
                                 <span ng-if="ep.status === '-'">
-                                    <a ng-click="openUpdateVipModal(ep.vipId);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    <a ng-click="openUpdateVipModal(ep);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
                                     <a ng-click="deleteVip(ep.vipId);" class="btn btn-info btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                                 </span>
                                 <span ng-if="ep.status !== '-'">
@@ -186,8 +186,8 @@
                         <tr ng-repeat="cf in labelService.customFunctions">
                             <td>
                                 {{cf.name}}
-                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete VIP {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-info btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </td>
                             <td>{{cf.method}}</td>
                             <td>{{cf.url}}</td>
