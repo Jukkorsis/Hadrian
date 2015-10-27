@@ -21,11 +21,9 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
-import com.northernwall.hadrian.service.dao.PutVipData;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -142,7 +140,8 @@ public class CustomFuntionHandler extends AbstractHandler {
         com.squareup.okhttp.Request.Builder builder = new com.squareup.okhttp.Request.Builder();
         builder.url(Const.HTTP+customFunction.getUrl().replace(Const.HOST, host.getHostName()));
         if (customFunction.getMethod().equalsIgnoreCase("POST")) {
-            builder.post(null);
+            RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, "{}");
+            builder.post(body);
         }
         com.squareup.okhttp.Request request = builder.build();
         try {

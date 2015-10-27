@@ -17,6 +17,7 @@ package com.northernwall.hadrian.graph;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -70,7 +71,7 @@ public class GraphHandler extends AbstractHandler {
     private void getServicesGraph(HttpServletResponse response) throws IOException {
         Network network = new Network();
         List<String> indexes = new LinkedList<>();
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             List<Service> services = dataAccess.getServices();
             if (services != null && !services.isEmpty()) {

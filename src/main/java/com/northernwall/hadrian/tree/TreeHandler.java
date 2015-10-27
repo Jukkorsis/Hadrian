@@ -17,6 +17,7 @@ package com.northernwall.hadrian.tree;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Service;
@@ -69,7 +70,7 @@ public class TreeHandler extends AbstractHandler {
     }
 
     private void listComponents(HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             jw.beginArray();
             for (Team team : dataAccess.getTeams()) {

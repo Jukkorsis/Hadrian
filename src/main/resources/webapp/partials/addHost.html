@@ -6,15 +6,25 @@
         <dt>Host:</dt>
         <dd>{{formSaveHost.dataCenter}}-{{formSaveHost.network}}-{{service.serviceAbbr}}-###</dd>
         <dt>Data Center:</dt>
-        <dd><select ng-model="formSaveHost.dataCenter"><option value="wdc">wdc</option><option value="vdc">vdc</option><option value="ldc">ldc</option><option value="adc">adc</option></select></dd>
+        <dd>
+            <select ng-model="formSaveHost.dataCenter" ng-options="c for c in config.dataCenters"></select>
+        </dd>
         <dt>Network:</dt>
-        <dd><select ng-model="formSaveHost.network"><option value="prd">prd</option><option value="tst">tst</option></select></dd>
+        <dd>
+            <select ng-model="formSaveHost.network" ng-options="c for c in config.networks"></select>
+        </dd>
         <dt>Env:</dt>
-        <dd><select ng-model="formSaveHost.env"><option value="VM-Java7">VM-Java7</option><option value="VM-Java8">VM-Java8</option><option value="D-Java8">D-Java8</option></select></dd>
+        <dd>
+            <select ng-model="formSaveHost.env" ng-options="c for c in config.envs"></select>
+        </dd>
         <dt>Size:</dt>
-        <dd><select ng-model="formSaveHost.size"><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select></dd>
+        <dd>
+            <select ng-model="formSaveHost.size" ng-options="c for c in config.sizes"></select>
+        </dd>
         <dt>Version:</dt>
-        <dd><select ng-model="formSaveHost.version" ng-options="v for v in service.versions" id="team"></select></dd>
+        <dd>
+            <select ng-model="formSaveHost.version" ng-options="v for v in service.versions"></select>
+        </dd>
     </dl>
 </div>
 <div class="modal-footer">

@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 public class WebHookSender {
     private final static Logger logger = LoggerFactory.getLogger(WebHookSender.class);
 
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
     private final String callbackUrl;
     private final String hostUrl;
     private final String vipUrl;
@@ -147,7 +145,7 @@ public class WebHookSender {
     }
 
     public void post(String url, Object data) throws IOException {
-        RequestBody body = RequestBody.create(JSON, gson.toJson(data));
+        RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -156,7 +154,7 @@ public class WebHookSender {
     }
 
     public void put(String url, Object data) throws IOException {
-        RequestBody body = RequestBody.create(JSON, gson.toJson(data));
+        RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
@@ -165,7 +163,7 @@ public class WebHookSender {
     }
 
     public void delete(String url, Object data) throws IOException {
-        RequestBody body = RequestBody.create(JSON, gson.toJson(data));
+        RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
         Request request = new Request.Builder()
                 .url(url)
                 .delete(body)

@@ -20,6 +20,7 @@ import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.DataStore;
+import com.northernwall.hadrian.service.dao.GetConfigData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -34,26 +35,50 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class DataStoreHandler extends AbstractHandler {
+public class ConfigHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(DataStoreHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
 
     private final DataAccess dataAccess;
     private final Gson gson;
+    private final GetConfigData config;
 
-    public DataStoreHandler(DataAccess dataAccess) {
+    public ConfigHandler(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
         this.gson = new Gson();
+        this.config = new GetConfigData();
+        
+        config.dataCenters.add("wdc");
+        config.dataCenters.add("vdc");
+        config.dataCenters.add("ldc");
+        config.dataCenters.add("adc");
+        
+        config.networks.add("prd");
+        config.networks.add("tst");
+        
+        config.envs.add("VM-Java7");
+        config.envs.add("VM-Java8");
+        config.envs.add("D-Java8");
+        config.envs.add("D-NodeJS");
+        
+        config.sizes.add("S");
+        config.sizes.add("M");
+        config.sizes.add("L");
+        config.sizes.add("XL");
+        
+        config.protocols.add("HTTP");
+        config.protocols.add("HTTPS");
+        config.protocols.add("TCP");
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.matches("/v1/datastore/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+            if (target.matches("/v1/config")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 switch (request.getMethod()) {
                     case "GET":
-                        getDataStore(response, target.substring(14, target.length()));
+                        getConfig(response);
                         break;
                 }
                 response.setStatus(200);
@@ -65,15 +90,11 @@ public class DataStoreHandler extends AbstractHandler {
         }
     }
 
-    private void getDataStore(HttpServletResponse response, String id) throws IOException {
+    private void getConfig(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
-        DataStore dataStore = dataAccess.getDataStore(id);
-        if (dataStore == null) {
-            throw new RuntimeException("Could not find dataStore with id '" + id + "'");
-        }
         
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(dataStore, DataStore.class, jw);
+            gson.toJson(config, GetConfigData.class, jw);
         }
     }
 

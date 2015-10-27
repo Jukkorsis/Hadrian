@@ -4,7 +4,10 @@
 <div class="modal-body">
     <uib-tabset type="pills">
         <uib-tab ng-repeat="host in hosts" heading="{{host.hostName}}">
-            {{cf.method}} - {{host.url}}<br/>
+            {{host.url}}
+            <span ng-if="cf.method === 'GET'">
+                - <a href="http://{{host.url}}" target="_blank">Direct Link</a> - <a href="{{host.realUrl}}" target="_blank">Proxy Link</a>
+            </span>
             <iframe src="{{host.realUrl}}" width="100%"></iframe>
         </uib-tab>
     </uib-tabset>

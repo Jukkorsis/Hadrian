@@ -15,8 +15,10 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.maven.MavenHelper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
@@ -131,7 +133,7 @@ public class ServiceHandler extends AbstractHandler {
     }
 
     private void getService(HttpServletResponse response, String id) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(Const.JSON);
         Service service = dataAccess.getService(id);
         if (service == null) {
             throw new RuntimeException("Could not find service with id '" + id + "'");

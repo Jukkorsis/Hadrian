@@ -27,10 +27,12 @@ import com.northernwall.hadrian.utilityHandlers.ContentHandler;
 import com.northernwall.hadrian.service.DataStoreHandler;
 import com.northernwall.hadrian.service.VipHandler;
 import com.northernwall.hadrian.graph.GraphHandler;
+import com.northernwall.hadrian.service.ConfigHandler;
 import com.northernwall.hadrian.service.CustomFuntionHandler;
 import com.northernwall.hadrian.service.HostHandler;
 import com.northernwall.hadrian.service.InfoHelper;
-import com.northernwall.hadrian.service.MavenHelper;
+import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
 import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
@@ -130,7 +132,7 @@ public class Main {
         dataAccess = factory.createDataAccess(properties);
     }
 
-    private void startHelpers() {
+    private void startHelpers() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             client = new OkHttpClient();
             client.setConnectTimeout(2, TimeUnit.SECONDS);
@@ -145,7 +147,11 @@ public class Main {
             throw new IllegalStateException("Error Creating HTTPClient: ", e);
         }
         
-        mavenHelper = new MavenHelper(properties, client);
+        String factoryName = properties.getProperty(Const.MAVEN_HELPER_FACTORY_CLASS_NAME, Const.MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        Class c = Class.forName(factoryName);
+        MavenHelperFactory factory = (MavenHelperFactory)c.newInstance();
+        mavenHelper = factory.create(properties, client);
+        
         webHookSender = new WebHookSender(properties, client);
         infoHelper = new InfoHelper(properties, client);
     }
@@ -176,6 +182,7 @@ public class Main {
             handlers.addHandler(new DataStoreHandler(dataAccess));
             handlers.addHandler(new WebHookHandler(webHookSender));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
+            handlers.addHandler(new ConfigHandler(dataAccess));
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());
             server.setHandler(handlers);
