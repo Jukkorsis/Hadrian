@@ -22,12 +22,14 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
+import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
+import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
@@ -141,12 +143,6 @@ public class ServiceHandler extends AbstractHandler {
 
         GetServiceData getServiceData = GetServiceData.create(service);
 
-        for (Vip vip : dataAccess.getVips(id)) {
-            GetVipData getVipData = GetVipData.create(vip);
-            getServiceData.vips.add(getVipData);
-
-        }
-
         List<Future> futures = new LinkedList<>();
         for (Host host : dataAccess.getHosts(id)) {
             GetHostData getHostData = GetHostData.create(host);
@@ -163,7 +159,18 @@ public class ServiceHandler extends AbstractHandler {
             }
             getServiceData.hosts.add(getHostData);
         }
-        waitForFutures(futures);
+
+        for (Vip vip : dataAccess.getVips(id)) {
+            GetVipData getVipData = GetVipData.create(vip);
+            getServiceData.vips.add(getVipData);
+
+        }
+
+        for (DataStore dataStore : dataAccess.getDataStores(id)) {
+            GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
+            getServiceData.dataStores.add(getDataStoreData);
+
+        }
 
         for (ServiceRef ref : dataAccess.getServiceRefsByClient(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
@@ -182,7 +189,10 @@ public class ServiceHandler extends AbstractHandler {
             getServiceData.customFunctions.add(getCustomFunctionData);
         }
 
+        //TODO: make this a future also
         getServiceData.versions.addAll(mavenhelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));
+
+        waitForFutures(futures);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getServiceData, GetServiceData.class, jw);

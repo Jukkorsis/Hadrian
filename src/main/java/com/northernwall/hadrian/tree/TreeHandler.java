@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.tree.dao.TreeNode;
@@ -74,31 +73,16 @@ public class TreeHandler extends AbstractHandler {
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             jw.beginArray();
             for (Team team : dataAccess.getTeams()) {
-                TreeNode treeNode = new TreeNode();
-                TreeNode treeNode2;
-                treeNode.setLabel(team.getTeamName());
-                treeNode.setData(new TreeNodeData(team.getTeamId(), "Team"));
-                treeNode2 = new TreeNode();
-                treeNode2.setLabel("Services");
-                treeNode2.setData(new TreeNodeData(team.getTeamId(), "Services"));
-                treeNode.getChildren().add(treeNode2);
+                TreeNode teamTreenode = new TreeNode();
+                teamTreenode.setLabel(team.getTeamName());
+                teamTreenode.setData(new TreeNodeData(team.getTeamId(), "Team"));
                 for (Service service : dataAccess.getServices(team.getTeamId())) {
-                    TreeNode treeNode3 = new TreeNode();
-                    treeNode3.setLabel(service.getServiceName());
-                    treeNode3.setData(new TreeNodeData(service.getServiceId(), "Service"));
-                    treeNode2.getChildren().add(treeNode3);
+                    TreeNode serviceTreeNode = new TreeNode();
+                    serviceTreeNode.setLabel(service.getServiceName());
+                    serviceTreeNode.setData(new TreeNodeData(service.getServiceId(), "Service"));
+                    teamTreenode.getChildren().add(serviceTreeNode);
                 }
-                treeNode2 = new TreeNode();
-                treeNode2.setLabel("Data Stores");
-                treeNode2.setData(new TreeNodeData(team.getTeamId(), "DataStores"));
-                treeNode.getChildren().add(treeNode2);
-                for (DataStore dataStore : dataAccess.getDataStores(team.getTeamId())) {
-                    TreeNode treeNode3 = new TreeNode();
-                    treeNode3.setLabel(dataStore.getDataStoreName());
-                    treeNode3.setData(new TreeNodeData(dataStore.getDataStoreId(), "DataStore"));
-                    treeNode2.getChildren().add(treeNode3);
-                }
-                gson.toJson(treeNode, TreeNode.class, jw);
+                gson.toJson(teamTreenode, TreeNode.class, jw);
             }
             jw.endArray();
         }

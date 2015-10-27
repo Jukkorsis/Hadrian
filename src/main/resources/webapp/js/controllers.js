@@ -4,12 +4,11 @@
 
 var soaRepControllers = angular.module('soaRepControllers', []);
 
-soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service', 'DataStore',
-    function ($scope, $http, $location, $uibModal, Tree, Team, Service, DataStore) {
+soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
+    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
         $scope.my_tree_handler = function (branch) {
             $scope.displayTeam = false;
             $scope.displayService = false;
-            $scope.displayDataStore = false;
             $scope.displayLoading = true;
             if (branch.data.type === "Team") {
                 Team.get({teamId: branch.data.id}, function (team) {
@@ -17,21 +16,11 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                     $scope.displayLoading = false;
                     $scope.displayTeam = true;
                 });
-            } else if (branch.data.type === "Services") {
-                $scope.displayLoading = false;
             } else if (branch.data.type === "Service") {
                 Service.get({serviceId: branch.data.id}, function (service) {
                     $scope.labelService = service;
                     $scope.displayLoading = false;
                     $scope.displayService = true;
-                });
-            } else if (branch.data.type === "DataStores") {
-                $scope.displayLoading = false;
-            } else if (branch.data.type === "DataStore") {
-                DataStore.get({dataStoreId: branch.data.id}, function (dataStore) {
-                    $scope.labelDataStore = dataStore;
-                    $scope.displayLoading = false;
-                    $scope.displayDataStore = true;
                 });
             } else {
                 $scope.displayLoading = false;

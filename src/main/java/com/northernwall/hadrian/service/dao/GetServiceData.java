@@ -14,9 +14,10 @@ public class GetServiceData {
     public String mavenArtifactId;
     public String versionUrl;
     public String availabilityUrl;
-    public List<GetCustomFunctionData> customFunctions;
     public List<GetHostData> hosts;
     public List<GetVipData> vips;
+    public List<GetDataStoreData> dataStores;
+    public List<GetCustomFunctionData> customFunctions;
     public List<GetServiceRefData> uses;
     public List<GetServiceRefData> usedBy;
     public List<String> versions;
@@ -32,9 +33,10 @@ public class GetServiceData {
         temp.mavenArtifactId = service.getMavenArtifactId();
         temp.versionUrl = service.getVersionUrl();
         temp.availabilityUrl = service.getAvailabilityUrl();
-        temp.customFunctions = new LinkedList<>();
         temp.hosts = new LinkedList<>();
         temp.vips = new LinkedList<>();
+        temp.dataStores = new LinkedList<>();
+        temp.customFunctions = new LinkedList<>();
         temp.uses = new LinkedList<>();
         temp.usedBy = new LinkedList<>();
         temp.versions = new LinkedList<>();

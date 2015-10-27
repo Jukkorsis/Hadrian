@@ -17,26 +17,25 @@
 package com.northernwall.hadrian.domain;
 
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class DataStore implements Comparable<DataStore>{
-    private final static Logger logger = LoggerFactory.getLogger(DataStore.class);
 
     private String dataStoreId;
-    private String dataStoreName;
-    private String teamId;
+    private String name;
+    private String serviceId;
     private String type;
+    private String network;
 
-    public DataStore(String dataStoreName, String teamId, String type) {
+    public DataStore(String name, String serviceId, String type, String network) {
         this.dataStoreId = UUID.randomUUID().toString();
-        this.dataStoreName = dataStoreName;
-        this.teamId = teamId;
+        this.name = name;
+        this.serviceId = serviceId;
         this.type = type;
+        this.network = network;
     }
 
     public String getDataStoreId() {
@@ -47,16 +46,20 @@ public class DataStore implements Comparable<DataStore>{
         this.dataStoreId = dataStoreId;
     }
 
-    public String getDataStoreName() {
-        return dataStoreName;
+    public String getName() {
+        return name;
     }
 
-    public void setDataStoreName(String dataStoreName) {
-        this.dataStoreName = dataStoreName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTeamId() {
-        return teamId;
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getType() {
@@ -67,9 +70,17 @@ public class DataStore implements Comparable<DataStore>{
         this.type = type;
     }
 
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
+    }
+
     @Override
     public int compareTo(DataStore o) {
-        return dataStoreName.compareTo(o.dataStoreName);
+        return name.compareTo(o.name);
     }
     
 }

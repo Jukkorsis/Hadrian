@@ -75,9 +75,11 @@ public interface DataAccess {
     void updateCustomFunction(CustomFunction customFunction);
     void deleteCustomFunction(String customFunctionId);
 
-    List<DataStore> getDataStores(String teamId);
+    List<DataStore> getDataStores(String serviceId);
     DataStore getDataStore(String dataStoreId);
     void saveDataStore(DataStore dataStore);
+    void updateDataStore(DataStore dataStore);
+    void deleteDataStore(String dataStoreId);
 
     void saveWorkItem(WorkItem workItem);
     WorkItem getWorkItem(String id);

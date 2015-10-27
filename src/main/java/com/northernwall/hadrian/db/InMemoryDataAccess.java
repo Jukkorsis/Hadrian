@@ -48,7 +48,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final List<ServiceRef> serviceRefs;
     private final List<VipRef> vipRefs;
     private final Map<String, CustomFunction> customFunctions;
-    private final List<DataStore> dataStores;
+    private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
 
     public InMemoryDataAccess() {
@@ -59,7 +59,7 @@ public class InMemoryDataAccess implements DataAccess {
         serviceRefs = new LinkedList<>();
         vipRefs = new LinkedList<>();
         customFunctions = new ConcurrentHashMap<>();
-        dataStores = new LinkedList<>();
+        dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
     }
 
@@ -328,10 +328,10 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public List<DataStore> getDataStores(String teamId) {
+    public List<DataStore> getDataStores(String serviceId) {
         List<DataStore> temp = new LinkedList<>();
-        for (DataStore dataStore : dataStores) {
-            if (dataStore.getTeamId().equals(teamId)) {
+        for (DataStore dataStore : dataStores.values()) {
+            if (dataStore.getServiceId().equals(serviceId)) {
                 temp.add(dataStore);
             }
         }
@@ -341,17 +341,22 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public DataStore getDataStore(String dataStoreId) {
-        for (DataStore dataStore : dataStores) {
-            if (dataStore.getDataStoreId().equals(dataStoreId)) {
-                return dataStore;
-            }
-        }
-        return null;
+        return dataStores.get(dataStoreId);
     }
 
     @Override
     public void saveDataStore(DataStore dataStore) {
-        dataStores.add(dataStore);
+        dataStores.put(dataStore.getDataStoreId(), dataStore);
+    }
+
+    @Override
+    public void updateDataStore(DataStore dataStore) {
+        dataStores.put(dataStore.getDataStoreId(), dataStore);
+    }
+
+    @Override
+    public void deleteDataStore(String dataStoreId) {
+        dataStores.remove(dataStoreId);
     }
 
     @Override

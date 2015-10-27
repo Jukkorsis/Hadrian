@@ -172,6 +172,27 @@
                         </tr>
                     </table>
                 </uib-tab>
+                <uib-tab heading="Data Stores">
+                    <div align="center">
+                        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Add a new Data Store to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Data Store</a>
+                    </div>
+                    <table class="table table-hover  table-condensed">
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Network</th>
+                        </tr>
+                        <tr ng-repeat="ds in labelService.dataStores">
+                            <td>
+                                {{ds.name}}
+                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </td>
+                            <td>{{ds.type}}</td>
+                            <td>{{ds.network}}</td>
+                        </tr>
+                    </table>
+                </uib-tab>
                 <uib-tab heading="Custom Functions">
                     <div align="center">
                         <a ng-click="openAddCustomFunctionModal()" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
@@ -196,16 +217,6 @@
                     </table>
                 </uib-tab>
             </uib-tabset>
-        </div>
-        <div ng-show="displayDataStore">
-            <dl class="dl-horizontal">
-                <dt>Data Store Id Id</dt>
-                <dd>{{labelDataStore.dataStoreId}}</dd>
-                <dt>Data Store Name:</dt>
-                <dd>{{labelDataStore.dataStoreName}}</dd>
-                <dt>Type:</dt>
-                <dd>{{labelDataStore.type}}</dd>
-            </dl>
         </div>
         <div ng-show="displayLoading">
             Loading
