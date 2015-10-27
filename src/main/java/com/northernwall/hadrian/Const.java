@@ -45,7 +45,7 @@ public class Const {
     public static final String MAVEN_MAX_VERSIONS_DEFAULT = "15";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
-    public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.mavenb.HttpMavenHelperFactory";
+    public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.HttpMavenHelperFactory";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
