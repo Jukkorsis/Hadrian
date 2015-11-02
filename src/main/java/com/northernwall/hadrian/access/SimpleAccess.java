@@ -15,24 +15,16 @@
  */
 package com.northernwall.hadrian.access;
 
+import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.db.DataAccess;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SimpleAccess extends Access {
-    private final static Logger logger = LoggerFactory.getLogger(SimpleAccess.class);
-
-    private final List<UserSession> sessions;
-
     public SimpleAccess(DataAccess dataAccess) {
         super(dataAccess);
-        sessions = new LinkedList<>();
     }
 
     @Override
@@ -51,7 +43,7 @@ public class SimpleAccess extends Access {
         //check username and password
         if (checkCreds(username, password)) {
             UserSession session = new UserSession(username);
-            sessions.add(session);
+            dataAccess.saveUserSession(session);
             return session.getSessionId();
         } else {
             return null;
@@ -64,12 +56,11 @@ public class SimpleAccess extends Access {
 
     @Override
     public String getUsernameForSession(String sessionId) {
-        for (UserSession session : sessions) {
-            if (session.getSessionId().equals(sessionId)) {
-                return session.getUsername();
-            }
+        UserSession session = dataAccess.getUserSession(sessionId);
+        if (session == null) {
+            return null;
         }
-        return null;
+        return session.getUsername();
     }
 
     @Override

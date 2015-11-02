@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public abstract class Access {
     private final static Logger logger = LoggerFactory.getLogger(Access.class);
     
-    private final DataAccess dataAccess;
+    protected final DataAccess dataAccess;
 
     public Access(DataAccess dataAccess) {
         this.dataAccess = dataAccess;

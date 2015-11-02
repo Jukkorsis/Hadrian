@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -50,6 +51,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, CustomFunction> customFunctions;
     private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
+    private final Map<String, UserSession> userSessions;
 
     public InMemoryDataAccess() {
         teams = new ConcurrentHashMap<>();
@@ -61,6 +63,7 @@ public class InMemoryDataAccess implements DataAccess {
         customFunctions = new ConcurrentHashMap<>();
         dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
+        userSessions = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -367,6 +370,16 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public WorkItem getWorkItem(String id) {
         return workItems.get(id);
+    }
+
+    @Override
+    public UserSession getUserSession(String sessionId) {
+        return userSessions.get(sessionId);
+    }
+
+    @Override
+    public void saveUserSession(UserSession userSession) {
+        userSessions.put(userSession.getSessionId(), userSession);
     }
 
 }

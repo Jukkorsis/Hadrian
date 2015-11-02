@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.List;
 
@@ -84,4 +85,6 @@ public interface DataAccess {
     void saveWorkItem(WorkItem workItem);
     WorkItem getWorkItem(String id);
 
+    UserSession getUserSession(String sessionId);
+    void saveUserSession(UserSession userSession);
 }
