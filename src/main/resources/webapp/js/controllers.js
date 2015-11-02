@@ -622,7 +622,8 @@ soaRepControllers.controller('ModalAddCustomFunctionCtrl',
                     name: $scope.formSaveCF.name,
                     method: $scope.formSaveCF.method,
                     url: $scope.formSaveCF.url,
-                    helpText: $scope.formSaveCF.helpText
+                    helpText: $scope.formSaveCF.helpText,
+                    teamOnly: $scope.formSaveCF.teamOnly
                 };
 
                 var responsePromise = $http.post("/v1/cf/cf", dataObject, {});
@@ -675,6 +676,7 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
             $scope.formUpdateCF.method = cf.method;
             $scope.formUpdateCF.url = cf.url;
             $scope.formUpdateCF.helpText = cf.helpText;
+            $scope.formUpdateCF.teamOnly = cf.teamOnly;
 
             $scope.save = function () {
                 var dataObject = {
@@ -682,7 +684,8 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
                     name: $scope.formUpdateCF.name,
                     method: $scope.formUpdateCF.method,
                     url: $scope.formUpdateCF.url,
-                    helpText: $scope.formUpdateCF.helpText
+                    helpText: $scope.formUpdateCF.helpText,
+                    teamOnly: $scope.formUpdateCF.teamOnly
                 };
 
                 var responsePromise = $http.put("/v1/cf/" + $scope.cf.customFunctionId, dataObject, {});
