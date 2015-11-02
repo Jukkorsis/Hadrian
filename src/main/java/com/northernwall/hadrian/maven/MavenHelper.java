@@ -25,7 +25,7 @@ public abstract class MavenHelper {
 
     public abstract List<String> readMavenVersions(String groupId, String artifactId);
 
-    protected List<String> a(InputStream inputStream) throws Exception {
+    protected List<String> processMavenStream(InputStream inputStream) throws Exception {
         List<String> versions = new LinkedList<>();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
