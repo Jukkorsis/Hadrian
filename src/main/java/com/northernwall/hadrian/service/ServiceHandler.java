@@ -20,6 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -64,13 +66,15 @@ public class ServiceHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
+    private final Access access;
     private final DataAccess dataAccess;
     private final MavenHelper mavenhelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService es;
 
-    public ServiceHandler(DataAccess dataAccess, MavenHelper mavenhelper, InfoHelper infoHelper) {
+    public ServiceHandler(Access access, DataAccess dataAccess, MavenHelper mavenhelper, InfoHelper infoHelper) {
+        this.access = access;
         this.dataAccess = dataAccess;
         this.mavenhelper = mavenhelper;
         this.infoHelper = infoHelper;
@@ -87,12 +91,12 @@ public class ServiceHandler extends AbstractHandler {
                     case "GET":
                         if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            getServiceNotUses(response, target.substring(12, target.length()-8));
+                            getServiceNotUses(response, target.substring(12, target.length() - 8));
                             response.setStatus(200);
                             request.setHandled(true);
                         } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            getService(response, target.substring(12, target.length()));
+                            getService(request, response, target.substring(12, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -105,7 +109,7 @@ public class ServiceHandler extends AbstractHandler {
                             request.setHandled(true);
                         } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/ref")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            createServiceRef(request, target.substring(12, target.length()-4));
+                            createServiceRef(request, target.substring(12, target.length() - 4));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -121,20 +125,25 @@ public class ServiceHandler extends AbstractHandler {
                     case "DELETE":
                         if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/uses/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteServiceRef(request, target.substring(12, target.length()-42), target.substring(54, target.length()));
+                            deleteServiceRef(request, target.substring(12, target.length() - 42), target.substring(54, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
                         break;
                 }
             }
+        } catch (AccessException e) {
+            logger.error("Exception {} while handling request for {}", e.getMessage(), target);
+            response.setStatus(401);
+            request.setHandled(true);
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
+            request.setHandled(true);
         }
     }
 
-    private void getService(HttpServletResponse response, String id) throws IOException {
+    private void getService(Request request, HttpServletResponse response, String id) throws IOException {
         response.setContentType(Const.JSON);
         Service service = dataAccess.getService(id);
         if (service == null) {
@@ -142,6 +151,7 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         GetServiceData getServiceData = GetServiceData.create(service);
+        getServiceData.canModify = access.canUserModify(request, service.getTeamId());
 
         List<Future> futures = new LinkedList<>();
         for (Host host : dataAccess.getHosts(id)) {
@@ -200,7 +210,7 @@ public class ServiceHandler extends AbstractHandler {
     }
 
     private void waitForFutures(List<Future> futures) {
-        for (int i=0;i<20;i++) {
+        for (int i = 0; i < 20; i++) {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException ex) {
@@ -255,10 +265,11 @@ public class ServiceHandler extends AbstractHandler {
         }
     }
 
-    private void getServiceNotUses(HttpServletResponse response, String id) throws IOException {        logger.info("got here {}", id);
+    private void getServiceNotUses(HttpServletResponse response, String id) throws IOException {
+        logger.info("got here {}", id);
         List<Service> services = dataAccess.getServices();
         List<ServiceRef> refs = dataAccess.getServiceRefsByClient(id);
-        
+
         GetNotUsesData notUses = new GetNotUsesData();
         for (Service service : services) {
             if (!service.getServiceId().equals(id)) {
@@ -285,6 +296,7 @@ public class ServiceHandler extends AbstractHandler {
 
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
+        access.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
         postServiceData.serviceAbbr = postServiceData.serviceAbbr.toLowerCase();
 
         for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
@@ -313,7 +325,8 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        
+        access.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
+
         service.setServiceAbbr(putServiceData.serviceAbbr);
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
@@ -321,12 +334,17 @@ public class ServiceHandler extends AbstractHandler {
         service.setMavenArtifactId(putServiceData.mavenArtifactId);
         service.setVersionUrl(putServiceData.versionUrl);
         service.setAvailabilityUrl(putServiceData.availabilityUrl);
-        
+
         dataAccess.updateService(service);
     }
 
     private void createServiceRef(Request request, String id) throws IOException {
         PostServiceRefData postServiceRefData = Util.fromJson(request, PostServiceRefData.class);
+        Service service = dataAccess.getService(id);
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "add a service ref");
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 ServiceRef ref = new ServiceRef(id, entry.getKey());
@@ -336,6 +354,11 @@ public class ServiceHandler extends AbstractHandler {
     }
 
     private void deleteServiceRef(Request request, String clientId, String serviceId) {
+        Service service = dataAccess.getService(clientId);
+        if (service == null) {
+            return;
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "delete a service ref");
         dataAccess.deleteServiceRef(clientId, serviceId);
     }
 

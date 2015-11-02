@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.utilityHandlers;
 
+import com.northernwall.hadrian.Const;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
@@ -40,6 +41,10 @@ public class ContentHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
+            if (!request.getMethod().equals(Const.HTTP_GET)) {
+                request.setHandled(false);
+                return;
+            }
             if (target.equals("/ui/")) {
                 //logger.info("Handling {} request {}", request.getMethod(), target);
                 getContent(response, "/webapp/index.html");

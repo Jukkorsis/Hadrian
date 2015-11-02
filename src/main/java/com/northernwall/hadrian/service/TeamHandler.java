@@ -3,6 +3,7 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetTeamData;
@@ -19,10 +20,12 @@ import org.slf4j.LoggerFactory;
 public class TeamHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(TeamHandler.class);
 
+    private final Access access;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public TeamHandler(DataAccess dataAccess) {
+    public TeamHandler(Access access, DataAccess dataAccess) {
+        this.access = access;
         this.dataAccess = dataAccess;
         gson = new Gson();
     }
@@ -35,7 +38,7 @@ public class TeamHandler extends AbstractHandler {
                     case "GET":
                         if (target.matches("/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            getTeam(response, target.substring(9, target.length()));
+                            getTeam(request, response, target.substring(9, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -48,7 +51,7 @@ public class TeamHandler extends AbstractHandler {
         }
     }
 
-    private void getTeam(HttpServletResponse response, String id) throws IOException {
+    private void getTeam(Request request, HttpServletResponse response, String id) throws IOException {
         response.setContentType(Const.JSON);
         Team team = dataAccess.getTeam(id);
         if (team == null) {
@@ -56,6 +59,7 @@ public class TeamHandler extends AbstractHandler {
         }
 
         GetTeamData getTeamData = GetTeamData.create(team);
+        getTeamData.canModify = access.canUserModify(request, id);
         
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getTeamData, GetTeamData.class, jw);

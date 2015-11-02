@@ -16,6 +16,8 @@
 package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
@@ -41,12 +43,14 @@ public class VipHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(VipHandler.class);
 
+    private final Access access;
     private final DataAccess dataAccess;
     private final WebHookSender webHookHelper;
 
-    public VipHandler(DataAccess dataAccess, WebHookSender urlHelper) {
-        this.webHookHelper = urlHelper;
+    public VipHandler(Access access, DataAccess dataAccess, WebHookSender urlHelper) {
+        this.access = access;
         this.dataAccess = dataAccess;
+        this.webHookHelper = urlHelper;
     }
 
     @Override
@@ -73,22 +77,33 @@ public class VipHandler extends AbstractHandler {
                     case "DELETE":
                         if (target.matches("/v1/vip/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteVip(target.substring(8, target.length()));
+                            deleteVip(request, target.substring(8, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
                         break;
                 }
             }
+        } catch (AccessException e) {
+            logger.error("Exception {} while handling request for {}", e.getMessage(), target);
+            response.setStatus(401);
+            request.setHandled(true);
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
+            request.setHandled(true);
         }
     }
 
     private void createVip(Request request) throws IOException {
         Vip vip = Util.fromJson(request, Vip.class);
         
+        Service service = dataAccess.getService(vip.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
+
         //Check for duplicate VIP
         List<Vip> vips = dataAccess.getVips(vip.getServiceId());
         for (Vip temp : vips) {
@@ -105,7 +120,6 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Creating...");
         dataAccess.saveVip(vip);
 
-        Service service = dataAccess.getService(vip.getServiceId());
         webHookHelper.postVip(service, vip);
     }
 
@@ -113,9 +127,17 @@ public class VipHandler extends AbstractHandler {
         PutVipData putVipData = Util.fromJson(request, PutVipData.class);
 
         Vip vip = dataAccess.getVip(vipId);
+        if (vip == null) {
+            throw new RuntimeException("Could not find vip");
+        }
+        Service service = dataAccess.getService(vip.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
+
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
-        Service service = dataAccess.getService(vip.getServiceId());
         
         WorkItem workItem = WorkItem.createUpdateVip(
                 vip.getVipId(), 
@@ -125,15 +147,21 @@ public class VipHandler extends AbstractHandler {
         webHookHelper.putVip(service, vip, workItem);
     }
 
-    private void deleteVip(String id) throws IOException {
+    private void deleteVip(Request request, String id) throws IOException {
         Vip vip = dataAccess.getVip(id);
         if (vip == null) {
             logger.info("Could not find vip with id {}", id);
             return;
         }
+
+        Service service = dataAccess.getService(vip.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
+
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
-        Service service = dataAccess.getService(vip.getServiceId());
         webHookHelper.deleteVip(service, vip);
     }
 
