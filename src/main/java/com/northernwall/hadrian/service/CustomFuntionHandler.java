@@ -17,6 +17,8 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
@@ -43,10 +45,12 @@ import org.slf4j.LoggerFactory;
 public class CustomFuntionHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(CustomFuntionHandler.class);
     
+    private final Access access;
     private final DataAccess dataAccess;
     private final OkHttpClient client;
 
-    public CustomFuntionHandler(DataAccess dataAccess, OkHttpClient client) {
+    public CustomFuntionHandler(Access access, DataAccess dataAccess, OkHttpClient client) {
+        this.access = access;
         this.dataAccess = dataAccess;
         this.client = client;
     }
@@ -59,7 +63,7 @@ public class CustomFuntionHandler extends AbstractHandler {
                     case "GET":
                         if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            doCF(response, target.substring(7, target.length()-37), target.substring(44, target.length()));
+                            doCF(request, response, target.substring(7, target.length()-37), target.substring(44, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -83,29 +87,39 @@ public class CustomFuntionHandler extends AbstractHandler {
                     case "DELETE":
                         if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteCF(target.substring(7, target.length()));
+                            deleteCF(request, target.substring(7, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
                         break;
                 }
             }
+        } catch (AccessException e) {
+            logger.error("Exception {} while handling request for {}", e.getMessage(), target);
+            response.setStatus(401);
+            request.setHandled(true);
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
+            request.setHandled(true);
         }
     }
 
     private void createCF(Request request) throws IOException {
         PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
         Service service = dataAccess.getService(postCFData.serviceId);
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
         
         CustomFunction customFunction = new CustomFunction( 
                 service.getServiceId(),
                 postCFData.name,
                 postCFData.method, 
                 postCFData.url, 
-                postCFData.helpText);
+                postCFData.helpText,
+                postCFData.teamOnly);
         dataAccess.saveCustomFunction(customFunction);
     }
 
@@ -113,6 +127,15 @@ public class CustomFuntionHandler extends AbstractHandler {
         PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
 
         CustomFunction customFunction = dataAccess.getCustomFunction(id);
+        if (customFunction == null) {
+            throw new RuntimeException("Could not find custom function");
+        }
+        Service service = dataAccess.getService(customFunction.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "modify custom function");
+
         customFunction.setName(postCFData.name);
         customFunction.setMethod(postCFData.method);
         customFunction.setUrl(postCFData.url);
@@ -121,11 +144,21 @@ public class CustomFuntionHandler extends AbstractHandler {
         dataAccess.updateCustomFunction(customFunction);
     }
 
-    private void deleteCF(String id) throws IOException {
+    private void deleteCF(Request request, String id) throws IOException {
+        CustomFunction customFunction = dataAccess.getCustomFunction(id);
+        if (customFunction == null) {
+            throw new RuntimeException("Could not find custom function");
+        }
+        Service service = dataAccess.getService(customFunction.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        access.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
+
         dataAccess.deleteCustomFunction(id);
     }
     
-    private void doCF(HttpServletResponse response, String customFunctionId, String hostId) throws IOException {
+    private void doCF(Request request, HttpServletResponse response, String customFunctionId, String hostId) throws IOException {
         CustomFunction customFunction = dataAccess.getCustomFunction(customFunctionId);
         if (customFunction == null) {
             throw new RuntimeException("Could not find custom function");
@@ -133,6 +166,13 @@ public class CustomFuntionHandler extends AbstractHandler {
         Host host = dataAccess.getHost(hostId);
         if (host == null) {
             throw new RuntimeException("Could not find host");
+        }
+        Service service = dataAccess.getService(customFunction.getServiceId());
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        if (customFunction.isTeamOnly()) {
+            access.checkIfUserCanModify(request, service.getTeamId(), "execute a private custom function");
         }
         if (!customFunction.getServiceId().equals(host.getServiceId())) {
             throw new RuntimeException("Custom Function and Host do not belong to the same service");
@@ -143,9 +183,9 @@ public class CustomFuntionHandler extends AbstractHandler {
             RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, "{}");
             builder.post(body);
         }
-        com.squareup.okhttp.Request request = builder.build();
+        com.squareup.okhttp.Request httpRequest = builder.build();
         try {
-            com.squareup.okhttp.Response resp = client.newCall(request).execute();
+            com.squareup.okhttp.Response resp = client.newCall(httpRequest).execute();
 
             byte[] buffer = new byte[50*1024];
             int len = resp.body().byteStream().read(buffer);

@@ -21,6 +21,7 @@ public class GetServiceData {
     public List<GetServiceRefData> uses;
     public List<GetServiceRefData> usedBy;
     public List<String> versions;
+    public boolean canModify;
 
     public static GetServiceData create(Service service) {
         GetServiceData temp = new GetServiceData();

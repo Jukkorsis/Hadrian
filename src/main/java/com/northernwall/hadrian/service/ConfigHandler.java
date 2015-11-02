@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.service.dao.GetConfigData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -39,12 +38,10 @@ public class ConfigHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
 
-    private final DataAccess dataAccess;
     private final Gson gson;
     private final GetConfigData config;
 
-    public ConfigHandler(DataAccess dataAccess) {
-        this.dataAccess = dataAccess;
+    public ConfigHandler() {
         this.gson = new Gson();
         this.config = new GetConfigData();
         

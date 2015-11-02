@@ -18,6 +18,8 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.DataStore;
 import java.io.IOException;
@@ -38,10 +40,12 @@ public class DataStoreHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(DataStoreHandler.class);
 
+    private final Access access;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public DataStoreHandler(DataAccess dataAccess) {
+    public DataStoreHandler(Access access, DataAccess dataAccess) {
+        this.access = access;
         this.dataAccess = dataAccess;
         this.gson = new Gson();
     }
@@ -59,9 +63,14 @@ public class DataStoreHandler extends AbstractHandler {
                 response.setStatus(200);
                 request.setHandled(true);
             }
+        } catch (AccessException e) {
+            logger.error("Exception {} while handling request for {}", e.getMessage(), target);
+            response.setStatus(401);
+            request.setHandled(true);
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
+            request.setHandled(true);
         }
     }
 
