@@ -20,6 +20,8 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
@@ -37,6 +39,7 @@ import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
 import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.tree.TreeHandler;
+import com.northernwall.hadrian.access.LoginHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
 import com.northernwall.hadrian.webhook.WebHookHandler;
 import com.squareup.okhttp.ConnectionPool;
@@ -67,6 +70,7 @@ public class Main {
     private DataAccess dataAccess;
     private OkHttpClient client;
     private MavenHelper mavenHelper;
+    private Access access;
     private WebHookSender webHookSender;
     private InfoHelper infoHelper;
 
@@ -149,8 +153,13 @@ public class Main {
         
         String factoryName = properties.getProperty(Const.MAVEN_HELPER_FACTORY_CLASS_NAME, Const.MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT);
         Class c = Class.forName(factoryName);
-        MavenHelperFactory factory = (MavenHelperFactory)c.newInstance();
-        mavenHelper = factory.create(properties, client);
+        MavenHelperFactory mavenFactory = (MavenHelperFactory)c.newInstance();
+        mavenHelper = mavenFactory.create(properties, client);
+        
+        factoryName = properties.getProperty(Const.ACCESS_FACTORY_CLASS_NAME, Const.ACCESS_FACTORY_CLASS_NAME_DEFAULT);
+        c = Class.forName(factoryName);
+        AccessFactory accessFactory = (AccessFactory)c.newInstance();
+        access = accessFactory.create(dataAccess);
         
         webHookSender = new WebHookSender(properties, client);
         infoHelper = new InfoHelper(properties, client);
@@ -173,16 +182,17 @@ public class Main {
             HandlerList handlers = new HandlerList();
             handlers.addHandler(new AvailabilityHandler());
             handlers.addHandler(new ContentHandler());
+            handlers.addHandler(new LoginHandler(access));
             handlers.addHandler(new TreeHandler(dataAccess));
-            handlers.addHandler(new TeamHandler(dataAccess));
-            handlers.addHandler(new ServiceHandler(dataAccess, mavenHelper, infoHelper));
-            handlers.addHandler(new VipHandler(dataAccess, webHookSender));
-            handlers.addHandler(new HostHandler(dataAccess, webHookSender));
-            handlers.addHandler(new CustomFuntionHandler(dataAccess, client));
-            handlers.addHandler(new DataStoreHandler(dataAccess));
+            handlers.addHandler(new TeamHandler(access, dataAccess));
+            handlers.addHandler(new ServiceHandler(access, dataAccess, mavenHelper, infoHelper));
+            handlers.addHandler(new VipHandler(access, dataAccess, webHookSender));
+            handlers.addHandler(new HostHandler(access, dataAccess, webHookSender));
+            handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
+            handlers.addHandler(new DataStoreHandler(access, dataAccess));
             handlers.addHandler(new WebHookHandler(webHookSender));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
-            handlers.addHandler(new ConfigHandler(dataAccess));
+            handlers.addHandler(new ConfigHandler());
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());
             server.setHandler(handlers);
