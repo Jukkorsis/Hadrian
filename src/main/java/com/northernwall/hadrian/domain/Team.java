@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -25,10 +27,12 @@ import java.util.UUID;
 public class Team implements Comparable<Team>{
     private String teamId;
     private String teamName;
+    private List<String> usernames;
 
     public Team(String teamName) {
         this.teamId = UUID.randomUUID().toString();
         this.teamName = teamName;
+        this.usernames = new LinkedList<>();
     }
 
     public String getTeamId() {
@@ -45,6 +49,10 @@ public class Team implements Comparable<Team>{
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
+    }
+
+    public List<String> getUsernames() {
+        return usernames;
     }
 
     @Override
