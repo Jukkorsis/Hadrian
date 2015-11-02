@@ -6,6 +6,12 @@ public class Const {
     public static final String NO_STATUS = "-";
     
     public static final String HTTP = "http://";
+    public static final String HTTP_GET = "GET";
+    public static final String HTTP_POST = "POST";
+    public static final String HTTP_PUT = "PUT";
+    public static final String HTTP_DELETE = "DELETE";
+    public static final String HTTP_SESSION = "session";
+    public static final String USERNAME = "username";
     public static final String HOST = "{host}";
 
     public static final String JSON = "application/json; charset=utf-8";
@@ -45,10 +51,15 @@ public class Const {
     public static final String MAVEN_MAX_VERSIONS_DEFAULT = "15";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
+    //public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.SshMavenHelperFactory";
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.HttpMavenHelperFactory";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
+
+    public static final String ACCESS_FACTORY_CLASS_NAME = "access.factoryClassName";
+    //public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SamlAccessFactory";
+    public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SimpleAccessFactory";
 
     private Const() {
     }
