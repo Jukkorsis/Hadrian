@@ -4,54 +4,25 @@
 
 var soaRepControllers = angular.module('soaRepControllers', []);
 
-soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
-    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
+soaRepControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
+    function ($scope, $location, Tree) {
         $scope.my_tree_handler = function (branch) {
-            $scope.displayTeam = false;
-            $scope.displayService = false;
-            $scope.displayLoading = true;
-            if (branch.data.type === "Team") {
-                Team.get({teamId: branch.data.id}, function (team) {
-                    $scope.team = team;
-                    $scope.displayLoading = false;
-                    $scope.displayTeam = true;
-                });
-            } else if (branch.data.type === "Service") {
-                Service.get({serviceId: branch.data.id}, function (service) {
-                    $scope.labelService = service;
-                    $scope.displayLoading = false;
-                    $scope.displayService = true;
-                });
-            } else {
-                $scope.displayLoading = false;
-            }
-            $scope.formSelectVip = {};
-            $scope.formSelectHost = {};
+            $location.path(branch.data.type + '/' + branch.data.id);
         };
-
         $scope.my_data = Tree.query();
-
         var tree;
         $scope.my_tree = tree = {};
+    }]);
 
-        $scope.selectTreeNode = function (id) {
-            var n;
-            n = tree.get_first_branch();
-            while (true) {
-                if (n === null) {
-                    return;
-                }
-                if (n.data.id === id) {
-                    tree.select_branch(n);
-                    return;
-                }
-                n = tree.get_next_branch(n);
-            }
-        };
+soaRepControllers.controller('HomeCtrl', ['$scope',
+    function ($scope) {
+    }]);
 
-        $scope.refresh = function () {
-            $scope.my_tree_handler(tree.get_selected_branch());
-        };
+soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', 'Team',
+    function ($scope, $routeParams, Team) {
+        Team.get({teamId: $routeParams.teamId}, function (team) {
+            $scope.team = team;
+        });
 
         $scope.openAddServiceModal = function () {
             var modalInstance = $uibModal.open({
@@ -69,7 +40,13 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
             }, function () {
             });
         };
+    }]);
 
+soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', 'Service',
+    function ($scope, $routeParams, Service) {
+        Service.get({serviceId: $routeParams.serviceId}, function (service) {
+            $scope.service = service;
+        });
         $scope.openUpdateServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -331,6 +308,57 @@ soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibM
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
         };
+    }]);
+
+soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
+    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
+        $scope.my_tree_handler = function (branch) {
+            $scope.displayTeam = false;
+            $scope.displayService = false;
+            $scope.displayLoading = true;
+            if (branch.data.type === "Team") {
+                Team.get({teamId: branch.data.id}, function (team) {
+                    $scope.team = team;
+                    $scope.displayLoading = false;
+                    $scope.displayTeam = true;
+                });
+            } else if (branch.data.type === "Service") {
+                Service.get({serviceId: branch.data.id}, function (service) {
+                    $scope.labelService = service;
+                    $scope.displayLoading = false;
+                    $scope.displayService = true;
+                });
+            } else {
+                $scope.displayLoading = false;
+            }
+            $scope.formSelectVip = {};
+            $scope.formSelectHost = {};
+        };
+
+        $scope.my_data = Tree.query();
+
+        var tree;
+        $scope.my_tree = tree = {};
+
+        $scope.selectTreeNode = function (id) {
+            var n;
+            n = tree.get_first_branch();
+            while (true) {
+                if (n === null) {
+                    return;
+                }
+                if (n.data.id === id) {
+                    tree.select_branch(n);
+                    return;
+                }
+                n = tree.get_next_branch(n);
+            }
+        };
+
+        $scope.refresh = function () {
+            $scope.my_tree_handler(tree.get_selected_branch());
+        };
+
     }]);
 
 soaRepControllers.controller('ModalAddServiceCtrl',

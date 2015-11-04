@@ -39,18 +39,31 @@ limitations under the License.
         <script src="js/services.js"></script>
     </head>
     <body>
-        <div class="text-left" style="background-color: lightgray; margin: 0px; padding: 0px; font-size: 36px;">
-            DevOps Control Panel
-                <a href="#/tree" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-th-list"></span> Component List</a>
-                <a href="#/graph" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-signal"></span> Graph Services</a>
-                <a href="#/admin" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-signal"></span> Admin</a>
-                <!--
-                <a href="#/help" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
-                -->
+        <div ng-app ng-controller="MenuCtrl">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">DevOps Control Panel</h3>
+                        </div>
+                        <div class="panel-body">
+                            <abn-tree 
+                                tree-data="my_data" 
+                                tree-control="my_tree" 
+                                on-select="my_tree_handler(branch)" 
+                                expand-level="3" >
+                            </abn-tree>
+                            <a href="#/graph" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-signal"></span> Graph Services</a><br/><br/>
+                            <a href="#/admin" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-signal"></span> Admin</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="view-container">
+                        <div ng-view class="view-frame"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="view-container">
-            <div ng-view class="view-frame"></div>
-        </div>
-
     </body>
 </html>

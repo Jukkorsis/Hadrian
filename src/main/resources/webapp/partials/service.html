@@ -1,0 +1,227 @@
+<div class="row">
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>Service Name:</dt>
+            <dd>{{service.serviceAbbr}} - {{service.serviceName}}</dd>
+            <dt>Description:</dt>
+            <dd>{{service.description}}</dd>
+            <dt>Maven Group Id:</dt>
+            <dd>{{service.mavenGroupId}}</dd>
+            <dt>Maven Artifact Id:</dt>
+            <dd>{{service.mavenArtifactId}}</dd>
+            <dt>Version URL:</dt>
+            <dd>{{service.versionUrl}}</dd>
+            <dt>Availability URL:</dt>
+            <dd>{{service.availabilityUrl}}</dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>Used By:</dt>
+            <dd>
+                <div ng-repeat="sr in service.usedBy">
+                    <a href="#/Service/{{sr.clientServiceId}}">{{sr.serviceName}}</a>
+                    <br/>
+                </div>
+            </dd>
+            <dt>Uses:</dt>
+            <dd>
+                <div ng-repeat="sr in service.uses">
+                    <a href="#/Service/{{sr.serverServiceId}}">{{sr.serviceName}}</a>
+                    <span ng-if="service.canModify">
+                        <a ng-click="deleteServiceRef(service.serviceId, sr.serverServiceId);" class="btn btn-info btn-xs" uib-popover="Remove the service relationship." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                    </span>
+                    <br/>
+                </div>
+            </dd>
+        </dl>
+    </div>            
+</div> 
+<div align="center">
+    <span ng-if="service.canModify">
+        <a ng-click="openUpdateServiceModal();" class="btn btn-info btn-xs" uib-popover="Update {{service.serviceName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update Service</a>
+        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Move {{service.serviceName}} to a different team." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Move Service</a>
+        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{service.serviceName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Delete Service</a>
+        <a ng-click="openAddUsesModal();" class="btn btn-info btn-xs" uib-popover="Add services that {{service.serviceName}} uses." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Uses Service</a>
+    </span>
+    <a ng-click="refresh();" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+</div>
+<uib-tabset type="pills">
+    <uib-tab heading="Hosts">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <span ng-if="service.canModify">
+                        <a ng-click="openAddHostModal();" class="btn btn-info btn-xs" uib-popover="Add a new Host to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Host</a>
+                        <a ng-click="openUpdateHostModal();" class="btn btn-info btn-xs" uib-popover="Updates the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update Host(s)</a>
+                        <a ng-click="restartHost();" class="btn btn-info btn-xs" uib-popover="Restarts the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Restart Hosts</a>
+                        <a ng-click="openAddHostToVipModal();" class="btn btn-info btn-xs" uib-popover="Adds the selected Hosts to a VIP." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts to VIPs</a>
+                    </span>
+                    <span ng-repeat="cf in service.customFunctions">
+                        <span ng-if="service.canModify || !cf.teamOnly">
+                            <a ng-click="openDoCustomFunctionModal(cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
+                        </span>
+                    </span>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>Host</th>
+                        <th>DC</th>
+                        <th>Network</th>
+                        <th>VIP</th>
+                        <th>Env.</th>
+                        <th>Size</th>
+                        <th>Ver.</th>
+                        <th>Avail.</th>
+                    </tr>
+                    <tr ng-repeat="i in service.hosts">
+                        <td>
+                            <span ng-if="i.status === '-'">
+                                <input ng-model="formSelectHost[i.hostId]" type="checkbox">
+                            </span>
+                        </td>
+                        <td>
+                            {{i.hostName}}
+                            <span ng-if="i.status === '-' && service.canModify">
+                                <a ng-click="deleteHost(i.hostId);" class="btn btn-info btn-xs" uib-popover="Delete host {{i.hostName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                            <span ng-if="i.status !== '-'">
+                                <span class="label label-warning">{{i.status}}</span>
+                            </span>
+                        </td>
+                        <td>{{i.dataCenter}}</td>
+                        <td>{{i.network}}</td>
+                        <td>
+                            <div ng-repeat="epr in i.vipRefs">
+                                {{epr.vipName}}
+                                <span ng-if="epr.status === '-' && service.canModify">
+                                    <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);" class="btn btn-info btn-xs" uib-popover="Remove host {{i.hostName}} from the VIP." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                </span>
+                                <span ng-if="epr.status !== '-'">
+                                    <span class="label label-warning">{{epr.status}}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>{{i.env}}</td>
+                        <td>{{i.size}}</td>
+                        <td>{{i.version}}</td>
+                        <td>
+                            <span ng-if="i.availability === -1">
+                                <span class="label label-danger">Time Out</span>
+                            </span>
+                            <span ng-if="i.availability < 300 && i.availability > 99">
+                                <span class="label label-success">{{i.availability}}</span>
+                            </span>
+                            <span ng-if="i.availability > 299">
+                                <span class="label label-danger">{{i.availability}}</span>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="VIPs">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <span ng-if="service.canModify">
+                        <a ng-click="openAddVipModal();" class="btn btn-info btn-xs" uib-popover="Add a new VIP to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add VIP</a>
+                    </span>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th>VIP</th>
+                        <th>DNS</th>
+                        <th>External</th>
+                        <th>Network</th>
+                        <th>Protocol</th>
+                        <th>VIP Port</th>
+                        <th>Service Port</th>
+                    </tr>
+                    <tr ng-repeat="ep in service.vips">
+                        <td>
+                            {{ep.vipName}}
+                            <span ng-if="ep.status === '-' && service.canModify">
+                                <a ng-click="openUpdateVipModal(ep);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a ng-click="deleteVip(ep.vipId);" class="btn btn-info btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                            <span ng-if="ep.status !== '-'">
+                                <span class="label label-warning">{{ep.status}}</span>
+                            </span>
+                        </td>
+                        <td>{{ep.dns}}</td>
+                        <td>{{ep.external}}</td>
+                        <td>{{ep.network}}</td>
+                        <td>{{ep.protocol}}</td>
+                        <td>{{ep.vipPort}}</td>
+                        <td>{{ep.servicePort}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Data Stores">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <span ng-if="service.canModify">
+                        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Add a new Data Store to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Data Store</a>
+                    </span>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Network</th>
+                    </tr>
+                    <tr ng-repeat="ds in service.dataStores">
+                        <td>
+                            {{ds.name}}
+                            <span ng-if="service.canModify">
+                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                        </td>
+                        <td>{{ds.type}}</td>
+                        <td>{{ds.network}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Custom Functions">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <span ng-if="service.canModify">
+                        <a ng-click="openAddCustomFunctionModal()" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
+                    </span>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th>Name</th>
+                        <th>Method</th>
+                        <th>URL</th>
+                        <th>Help Text</th>
+                        <th>Team Only</th>
+                    </tr>
+                    <tr ng-repeat="cf in service.customFunctions">
+                        <td>
+                            {{cf.name}}
+                            <span ng-if="service.canModify">
+                                <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-info btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                        </td>
+                        <td>{{cf.method}}</td>
+                        <td>{{cf.url}}</td>
+                        <td>{{cf.helpText}}</td>
+                        <td>{{cf.teamOnly}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+</uib-tabset>
