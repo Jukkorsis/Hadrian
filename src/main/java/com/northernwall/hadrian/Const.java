@@ -34,6 +34,8 @@ public class Const {
     
     public static final String WEB_HOOK_CALLBACK_HOST = "webhook.callbackHost";
     public static final String WEB_HOOK_CALLBACK_HOST_DEFAULT = "127.0.0.1";
+    public static final String WEB_HOOK_SERVICE_URL = "webhook.serviceUrl";
+    public static final String WEB_HOOK_SERVICE_URL_DEFAULT = "127.0.0.1:9090/webhook/service";
     public static final String WEB_HOOK_HOST_URL = "webhook.hostUrl";
     public static final String WEB_HOOK_HOST_URL_DEFAULT = "127.0.0.1:9090/webhook/host";
     public static final String WEB_HOOK_VIP_URL = "webhook.vipUrl";
