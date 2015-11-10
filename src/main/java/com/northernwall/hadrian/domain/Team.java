@@ -24,14 +24,16 @@ import java.util.UUID;
  *
  * @author Richard Thurston
  */
-public class Team implements Comparable<Team>{
+public class Team implements Comparable<Team> {
     private String teamId;
     private String teamName;
+    private String gitPath;
     private List<String> usernames;
 
-    public Team(String teamName) {
+    public Team(String teamName, String gitPath) {
         this.teamId = UUID.randomUUID().toString();
         this.teamName = teamName;
+        this.gitPath = gitPath;
         this.usernames = new LinkedList<>();
     }
 
@@ -51,6 +53,14 @@ public class Team implements Comparable<Team>{
         this.teamName = teamName;
     }
 
+    public String getGitPath() {
+        return gitPath;
+    }
+
+    public void setGitPath(String gitPath) {
+        this.gitPath = gitPath;
+    }
+
     public List<String> getUsernames() {
         return usernames;
     }
@@ -59,6 +69,5 @@ public class Team implements Comparable<Team>{
     public int compareTo(Team o) {
         return teamName.compareTo(o.teamName);
     }
-    
-    
+
 }

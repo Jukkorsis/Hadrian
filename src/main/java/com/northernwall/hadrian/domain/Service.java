@@ -28,21 +28,29 @@ public class Service implements Comparable<Service>{
     private String serviceName;
     private String teamId;
     private String description;
+    private String runAs;
+    private String gitPath;
     private String mavenGroupId;
     private String mavenArtifactId;
     private String versionUrl;
     private String availabilityUrl;
+    private String startCmdLine;
+    private String stopCmdLine;
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
+        this.runAs = runAs;
+        this.gitPath = gitPath;
         this.mavenGroupId = mavenGroupId;
         this.mavenArtifactId = mavenArtifactId;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
+        this.startCmdLine = startCmdLine;
+        this.stopCmdLine = stopCmdLine;
     }
 
     public String getServiceId() {
@@ -81,6 +89,22 @@ public class Service implements Comparable<Service>{
         this.description = description;
     }
 
+    public String getRunAs() {
+        return runAs;
+    }
+
+    public void setRunAs(String runAs) {
+        this.runAs = runAs;
+    }
+
+    public String getGitPath() {
+        return gitPath;
+    }
+
+    public void setGitPath(String gitPath) {
+        this.gitPath = gitPath;
+    }
+
     public String getMavenGroupId() {
         return mavenGroupId;
     }
@@ -111,6 +135,22 @@ public class Service implements Comparable<Service>{
 
     public void setAvailabilityUrl(String availabilityUrl) {
         this.availabilityUrl = availabilityUrl;
+    }
+
+    public String getStartCmdLine() {
+        return startCmdLine;
+    }
+
+    public void setStartCmdLine(String startCmdLine) {
+        this.startCmdLine = startCmdLine;
+    }
+
+    public String getStopCmdLine() {
+        return stopCmdLine;
+    }
+
+    public void setStopCmdLine(String stopCmdLine) {
+        this.stopCmdLine = stopCmdLine;
     }
 
     @Override
