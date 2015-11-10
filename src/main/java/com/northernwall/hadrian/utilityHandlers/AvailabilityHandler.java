@@ -18,6 +18,8 @@ package com.northernwall.hadrian.utilityHandlers;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.servlet.ServletException;
@@ -44,35 +46,42 @@ public class AvailabilityHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
             if (target.equals("/availability")) {
-                //logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
                 request.setHandled(true);
             } else if (target.equals("/version")) {
-                //logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
                 String version = VERSION; //getClass().getPackage().getImplementationVersion();
                 response.getOutputStream().write(version.getBytes());
                 request.setHandled(true);
             } else if (target.equals("/health")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
                 response.setStatus(200);
-                writeln(response, "<html>");
-                writeln(response, "<body>");
-                writeln(response, "Version", VERSION);
-                writeln(response, "JVM Name", ManagementFactory.getRuntimeMXBean().getSpecName());
-                writeln(response, "JVM Version", ManagementFactory.getRuntimeMXBean().getSpecVersion());
-                writeln(response, "JVM Vendor", ManagementFactory.getRuntimeMXBean().getSpecVendor());
-                writeln(response, "JVM Threads", ManagementFactory.getThreadMXBean().getThreadCount());
-                writeln(response, "Current Time", new Date());
-                writeln(response, "Start Time", new Date(ManagementFactory.getRuntimeMXBean().getStartTime()));
-                writeln(response, "</body>");
-                writeln(response, "</html>");
+                showHealth(response);
                 request.setHandled(true);
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
         }
+    }
+
+    private void showHealth(HttpServletResponse response) throws IOException {
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+        
+        writeln(response, "<html>");
+        writeln(response, "<body>");
+        writeln(response, "<table>");
+        writeln(response, "Version", VERSION);
+        writeln(response, "JVM Name", runtimeMXBean.getSpecName());
+        writeln(response, "JVM Version", runtimeMXBean.getSpecVersion());
+        writeln(response, "JVM Vendor", runtimeMXBean.getSpecVendor());
+        writeln(response, "JVM Threads", threadMXBean.getThreadCount());
+        writeln(response, "JVM Peak Threads", threadMXBean.getPeakThreadCount());
+        writeln(response, "Current Time", new Date());
+        writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
+        writeln(response, "</table>");
+        writeln(response, "</body>");
+        writeln(response, "</html>");
     }
 
     private void writeln(HttpServletResponse response, String text) throws IOException {
@@ -87,12 +96,8 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, label, Integer.toString(value));
     }
 
-    private void writeln(HttpServletResponse response, String label, long value) throws IOException {
-        writeln(response, label, Long.toString(value));
-    }
-
     private void writeln(HttpServletResponse response, String label, String value) throws IOException {
-        String text = label + ": " + value + "<br/>";
+        String text = "<tr><td>" + label + "</td><td>" + value + "</td></tr>";
         response.getOutputStream().write(text.getBytes());
     }
 
