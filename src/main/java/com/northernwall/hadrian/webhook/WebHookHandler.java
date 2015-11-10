@@ -17,9 +17,9 @@ package com.northernwall.hadrian.webhook;
 
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.webhook.dao.CallbackResponse;
-import com.northernwall.hadrian.webhook.dao.PostVipContainer;
-import com.northernwall.hadrian.webhook.dao.PutHostContainer;
-import com.northernwall.hadrian.webhook.dao.PostHostVipContainer;
+import com.northernwall.hadrian.webhook.dao.CreateVipContainer;
+import com.northernwall.hadrian.webhook.dao.UpdateHostContainer;
+import com.northernwall.hadrian.webhook.dao.CreateHostVipContainer;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,11 +40,11 @@ public class WebHookHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(WebHookHandler.class);
     private final static int PAUSE = 15;
 
-    private final WebHookSender webHookHelper;
+    private final WebHookSender webHookSender;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public WebHookHandler(WebHookSender webHookHelper) {
-        this.webHookHelper = webHookHelper;
+    public WebHookHandler(WebHookSender webHookSender) {
+        this.webHookSender = webHookSender;
         scheduledExecutorService = Executors.newScheduledThreadPool(5);
     }
 
@@ -111,7 +111,7 @@ public class WebHookHandler extends AbstractHandler {
     }
 
     private void postHost(Request request) throws IOException {
-        PutHostContainer data = Util.fromJson(request, PutHostContainer.class);
+        UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
@@ -120,13 +120,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void putHost(Request request) throws IOException {
-        PutHostContainer data = Util.fromJson(request, PutHostContainer.class);
+        UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
@@ -135,13 +135,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void deleteHost(Request request) throws IOException {
-        PutHostContainer data = Util.fromJson(request, PutHostContainer.class);
+        UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
@@ -150,13 +150,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void postVip(Request request) throws IOException {
-        PostVipContainer data = Util.fromJson(request, PostVipContainer.class);
+        CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
@@ -165,13 +165,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void putVip(Request request) throws IOException {
-        PostVipContainer data = Util.fromJson(request, PostVipContainer.class);
+        CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
@@ -180,13 +180,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void deleteVip(Request request) throws IOException {
-        PostVipContainer data = Util.fromJson(request, PostVipContainer.class);
+        CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
@@ -195,13 +195,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void postHostVip(Request request) throws IOException {
-        PostHostVipContainer data = Util.fromJson(request, PostHostVipContainer.class);
+        CreateHostVipContainer data = Util.fromJson(request, CreateHostVipContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
@@ -211,13 +211,13 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     private void deleteHostVip(Request request) throws IOException {
-        PostHostVipContainer data = Util.fromJson(request, PostHostVipContainer.class);
+        CreateHostVipContainer data = Util.fromJson(request, CreateHostVipContainer.class);
         
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
@@ -227,26 +227,26 @@ public class WebHookHandler extends AbstractHandler {
         response.status = 200;
         
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookHelper), 
+                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
                 PAUSE, 
                 TimeUnit.SECONDS);
     }
     
     public class WebHookRunnable implements Runnable {
-        private final WebHookSender urlHelper;
+        private final WebHookSender webHookSender;
         private final String url;
         private final CallbackResponse response;
 
-        public WebHookRunnable(String url, CallbackResponse response, WebHookSender urlHelper) {
+        public WebHookRunnable(String url, CallbackResponse response, WebHookSender webHookSender) {
             this.url = url;
             this.response = response;
-            this.urlHelper = urlHelper;
+            this.webHookSender = webHookSender;
         }
 
         @Override
         public void run() {
             try {
-                urlHelper.post(url, response);
+                webHookSender.post(url, response);
             } catch (IOException ex) {
                 logger.error(ex.getMessage());
             }

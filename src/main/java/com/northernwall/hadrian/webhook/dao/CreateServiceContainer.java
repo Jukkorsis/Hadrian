@@ -15,19 +15,13 @@
  */
 package com.northernwall.hadrian.webhook.dao;
 
-import com.northernwall.hadrian.domain.Host;
-
 /**
  *
  * @author Richard Thurston
  */
-public class PutHostContainer {
-
+public class CreateServiceContainer {
+    public String operation;
     public String callbackUrl;
     public ServiceData service;
-    public HostData host;
-    public String newEnv;
-    public String newSize;
-    public String newVersion;
 
 }

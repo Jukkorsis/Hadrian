@@ -19,12 +19,7 @@ package com.northernwall.hadrian.webhook.dao;
  *
  * @author Richard Thurston
  */
-public class PutVipContainer {
-
-    public String callbackUrl;
-    public ServiceData service;
-    public VipData vip;
-    public boolean newExternal;
-    public int newServicePort;
+public class CreateHostContainer extends CreateServiceContainer {
+    public HostData host;
 
 }

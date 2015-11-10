@@ -22,14 +22,14 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.webhook.dao.HostData;
-import com.northernwall.hadrian.webhook.dao.PostVipContainer;
-import com.northernwall.hadrian.webhook.dao.PutHostContainer;
-import com.northernwall.hadrian.webhook.dao.PostHostVipContainer;
-import com.northernwall.hadrian.webhook.dao.PostHostContainer;
-import com.northernwall.hadrian.webhook.dao.PutVipContainer;
+import com.northernwall.hadrian.webhook.dao.CreateVipContainer;
+import com.northernwall.hadrian.webhook.dao.UpdateHostContainer;
+import com.northernwall.hadrian.webhook.dao.CreateHostVipContainer;
+import com.northernwall.hadrian.webhook.dao.CreateHostContainer;
+import com.northernwall.hadrian.webhook.dao.CreateServiceContainer;
+import com.northernwall.hadrian.webhook.dao.UpdateVipContainer;
 import com.northernwall.hadrian.webhook.dao.ServiceData;
 import com.northernwall.hadrian.webhook.dao.VipData;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -46,6 +46,7 @@ public class WebHookSender {
     private final static Logger logger = LoggerFactory.getLogger(WebHookSender.class);
 
     private final String callbackUrl;
+    private final String serviceUrl;
     private final String hostUrl;
     private final String vipUrl;
     private final String hostVipUrl;
@@ -60,14 +61,25 @@ public class WebHookSender {
         int port = Integer.parseInt(properties.getProperty(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT));
 
         callbackUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_CALLBACK_HOST, Const.WEB_HOOK_CALLBACK_HOST_DEFAULT) + ":" + port + "/webhook/callback";
+        serviceUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_SERVICE_URL, Const.WEB_HOOK_SERVICE_URL_DEFAULT);
         hostUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_HOST_URL, Const.WEB_HOOK_HOST_URL_DEFAULT);
         vipUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_HOST_VIP_URL, Const.WEB_HOOK_VIP_URL_DEFAULT);
         hostVipUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_HOST_VIP_URL, Const.WEB_HOOK_HOST_VIP_URL_DEFAULT);
     }
 
-    public void postHost(Service service, Host host) throws IOException {
-        PostHostContainer data = new PostHostContainer();
+    public void createService(Service service) throws IOException {
+        CreateServiceContainer data = new CreateServiceContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "create";
+        data.service = ServiceData.create(service);
+
+        post(serviceUrl, data);
+    }
+
+    public void createHost(Service service, Host host) throws IOException {
+        CreateHostContainer data = new CreateHostContainer();
+        data.callbackUrl = callbackUrl;
+        data.operation = "create";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
 
@@ -75,29 +87,32 @@ public class WebHookSender {
     }
 
     public void putHost(Service service, Host host, WorkItem workItem) throws IOException {
-        PutHostContainer data = new PutHostContainer();
+        UpdateHostContainer data = new UpdateHostContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "update";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
         data.newEnv = workItem.getEnv();
         data.newSize = workItem.getSize();
         data.newVersion = workItem.getVersion();
 
-        put(hostUrl, data);
+        post(hostUrl, data);
     }
 
     public void deleteHost(Service service, Host host) throws IOException {
-        PostHostContainer data = new PostHostContainer();
+        CreateHostContainer data = new CreateHostContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "delete";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
 
-        delete(hostUrl, data);
+        post(hostUrl, data);
     }
 
     public void postVip(Service service, Vip vip) throws IOException {
-        PostVipContainer data = new PostVipContainer();
+        CreateVipContainer data = new CreateVipContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "create";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
 
@@ -105,28 +120,31 @@ public class WebHookSender {
     }
 
     public void putVip(Service service, Vip vip, WorkItem workItem) throws IOException {
-        PutVipContainer data = new PutVipContainer();
+        UpdateVipContainer data = new UpdateVipContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "update";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
         data.newExternal = workItem.getExternal();
         data.newServicePort = workItem.getServicePort();
 
-        put(vipUrl, data);
+        post(vipUrl, data);
     }
 
     public void deleteVip(Service service, Vip vip) throws IOException {
-        PostVipContainer data = new PostVipContainer();
+        CreateVipContainer data = new CreateVipContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "delete";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
 
-        delete(vipUrl, data);
+        post(vipUrl, data);
     }
 
     public void postHostVip(Service service, Host host, Vip vip) throws IOException {
-        PostHostVipContainer data = new PostHostVipContainer();
+        CreateHostVipContainer data = new CreateHostVipContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "create";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
         data.vip = VipData.create(vip);
@@ -135,13 +153,14 @@ public class WebHookSender {
     }
 
     public void deleteHostVip(Service service, Host host, Vip vip) throws IOException {
-        PostHostVipContainer data = new PostHostVipContainer();
+        CreateHostVipContainer data = new CreateHostVipContainer();
         data.callbackUrl = callbackUrl;
+        data.operation = "delete";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
         data.vip = VipData.create(vip);
 
-        delete(hostVipUrl, data);
+        post(hostVipUrl, data);
     }
 
     public void post(String url, Object data) throws IOException {
@@ -149,24 +168,6 @@ public class WebHookSender {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .build();
-        client.newCall(request).execute();
-    }
-
-    public void put(String url, Object data) throws IOException {
-        RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
-        Request request = new Request.Builder()
-                .url(url)
-                .put(body)
-                .build();
-        client.newCall(request).execute();
-    }
-
-    public void delete(String url, Object data) throws IOException {
-        RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
-        Request request = new Request.Builder()
-                .url(url)
-                .delete(body)
                 .build();
         client.newCall(request).execute();
     }
