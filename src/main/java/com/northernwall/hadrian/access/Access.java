@@ -18,6 +18,8 @@ package com.northernwall.hadrian.access;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.UserSession;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
@@ -30,8 +32,9 @@ import org.slf4j.LoggerFactory;
  * @author rthursto
  */
 public abstract class Access {
+
     private final static Logger logger = LoggerFactory.getLogger(Access.class);
-    
+
     protected final DataAccess dataAccess;
 
     public Access(DataAccess dataAccess) {
@@ -40,19 +43,34 @@ public abstract class Access {
 
     public abstract String checkAndStartSession(Request request, HttpServletResponse response) throws IOException;
 
-    public abstract String getUsernameForSession(String sessionId);
+    public final User getUserForSession(String sessionId) {
+        UserSession session = dataAccess.getUserSession(sessionId);
+        if (session == null) {
+            logger.warn("Could not find user sesion with ID {}", sessionId);
+            return null;
+        }
+        String username = session.getUsername();
+        User user = dataAccess.getUser(username);
+        if (user == null) {
+            logger.info("User {} not found, creating", username);
+            user = new User(username, username, false, false);
+            dataAccess.saveUser(user);
+        }
+        return user;
+    }
 
     public abstract void redirect(HttpServletResponse response) throws XMLStreamException, IOException;
 
-    public boolean canUserModify(Request request, String teamId) {
+    public final boolean canUserModify(Request request, String teamId) {
         Team team = dataAccess.getTeam(teamId);
-        String username = (String)request.getAttribute(Const.USERNAME);
-        return team.getUsernames().contains(username);
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        return team.getUsernames().contains(user.getUsername());
     }
-    
-    public void checkIfUserCanModify(Request request, String teamId, String action) {
+
+    public final void checkIfUserCanModify(Request request, String teamId, String action) {
         Team team = dataAccess.getTeam(teamId);
-        String username = (String)request.getAttribute(Const.USERNAME);
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        String username = user.getUsername();
         if (!team.getUsernames().contains(username)) {
             throw new AccessException(username + " attempted to " + action + " on team " + team.getTeamName());
         }

@@ -50,17 +50,8 @@ public class SimpleAccess extends Access {
         }
     }
 
-    private boolean checkCreds(String username, String password) {
+    protected boolean checkCreds(String username, String password) {
         return (username != null && password != null);
-    }
-
-    @Override
-    public String getUsernameForSession(String sessionId) {
-        UserSession session = dataAccess.getUserSession(sessionId);
-        if (session == null) {
-            return null;
-        }
-        return session.getUsername();
     }
 
     @Override

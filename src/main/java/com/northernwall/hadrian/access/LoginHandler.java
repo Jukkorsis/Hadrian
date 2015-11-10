@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.access;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -28,23 +29,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LoginHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(LoginHandler.class);
-    
+
     private final Access access;
+    private final int cookieExpiry;
 
     public LoginHandler(Access access) {
         this.access = access;
+        cookieExpiry = 24*60*60*1000;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
+            if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/ui/login.html")) {
+                request.setHandled(false);
+                return;
+            }
+
             if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/login")) {
                 String sessionId = access.checkAndStartSession(request, response);
                 if (sessionId != null) {
-                    String username = access.getUsernameForSession(sessionId);
-                    logger.info("login passed for {}, session {} started", username, sessionId);
-                    response.addCookie(new Cookie(Const.HTTP_SESSION, sessionId));
+                    User user = access.getUserForSession(sessionId);
+                    logger.info("login passed for {}, session {} started", user.getUsername(), sessionId);
+                    Cookie cookie = new Cookie(Const.HTTP_SESSION, sessionId);
+                    cookie.setMaxAge(cookieExpiry);
+                    response.addCookie(cookie);
                     response.setContentType("text/html;charset=utf-8");
                     response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=/ui/\"></head><body></body></html>");
                     request.setHandled(true);
@@ -53,20 +64,22 @@ public class LoginHandler extends AbstractHandler {
                     logger.warn("login failed!");
                 }
             }
-            
+
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
                 for (Cookie cookie : request.getCookies()) {
                     if (cookie.getName().equals(Const.HTTP_SESSION)) {
-                        String username = access.getUsernameForSession(cookie.getValue());
-                        request.setAttribute(Const.USERNAME, username);
-                        //logger.info("found, allowing to continue, user={}", username);
-                        request.setHandled(false);
-                        return;
+                        User user = access.getUserForSession(cookie.getValue());
+                        if (user != null) {
+                            request.setAttribute(Const.ATTR_USER, user);
+                            //logger.info("found, allowing to continue, user={}", username);
+                            request.setHandled(false);
+                            return;
+                        }
                     }
                 }
             }
-            
+
             logger.info("No session found, redirecting to login");
             access.redirect(response);
             request.setHandled(true);
@@ -74,5 +87,5 @@ public class LoginHandler extends AbstractHandler {
             new RuntimeException(ex);
         }
     }
-    
+
 }
