@@ -152,7 +152,7 @@ public class HostHandler extends AbstractHandler {
                 postHostData.env, 
                 postHostData.size);
         dataAccess.saveHost(host);
-        webHookSender.postHost(service, host);
+        webHookSender.createHost(service, host);
     }
 
     private void updateHost(Request request) throws IOException {

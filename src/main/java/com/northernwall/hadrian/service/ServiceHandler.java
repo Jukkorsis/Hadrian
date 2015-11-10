@@ -311,10 +311,14 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.serviceName,
                 postServiceData.teamId,
                 postServiceData.description,
+                postServiceData.runAs,
+                postServiceData.gitPath,
                 postServiceData.mavenGroupId,
                 postServiceData.mavenArtifactId,
                 postServiceData.versionUrl,
-                postServiceData.availabilityUrl);
+                postServiceData.availabilityUrl,
+                postServiceData.startCmdLine,
+                postServiceData.stopCmdLine);
 
         dataAccess.saveService(service);
     }
@@ -330,10 +334,14 @@ public class ServiceHandler extends AbstractHandler {
         service.setServiceAbbr(putServiceData.serviceAbbr);
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
+        service.setRunAs(putServiceData.runAs);
+        service.setGitPath(putServiceData.gitPath);
         service.setMavenGroupId(putServiceData.mavenGroupId);
         service.setMavenArtifactId(putServiceData.mavenArtifactId);
         service.setVersionUrl(putServiceData.versionUrl);
         service.setAvailabilityUrl(putServiceData.availabilityUrl);
+        service.setStartCmdLine(putServiceData.startCmdLine);
+        service.setStopCmdLine(putServiceData.stopCmdLine);
 
         dataAccess.updateService(service);
     }

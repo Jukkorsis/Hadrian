@@ -27,6 +27,7 @@ import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -186,12 +187,13 @@ public class CustomFuntionHandler extends AbstractHandler {
         com.squareup.okhttp.Request httpRequest = builder.build();
         try {
             com.squareup.okhttp.Response resp = client.newCall(httpRequest).execute();
+            InputStream inputStream = resp.body().byteStream();
 
             byte[] buffer = new byte[50*1024];
-            int len = resp.body().byteStream().read(buffer);
+            int len = inputStream.read(buffer);
             while (len != -1) {
                 response.getOutputStream().write(buffer, 0, len);
-                len = resp.body().byteStream().read(buffer);
+                len = inputStream.read(buffer);
             }
         } catch (UnknownHostException ex) {
             response.getOutputStream().print("Error: Unknown host!");

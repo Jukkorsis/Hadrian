@@ -24,9 +24,13 @@ public class PutServiceData {
     public String serviceAbbr;
     public String serviceName;
     public String description;
+    public String runAs;
+    public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;
     public String versionUrl;
     public String availabilityUrl;
+    public String startCmdLine;
+    public String stopCmdLine;
 
 }

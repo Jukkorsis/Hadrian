@@ -6,6 +6,7 @@ import java.util.List;
 public class GetTeamData {
     public String teamId;
     public String teamName;
+    public String gitPath;
     public List<String> usernames;
     public boolean canModify;
 
@@ -13,6 +14,7 @@ public class GetTeamData {
         GetTeamData temp = new GetTeamData();
         temp.teamId = team.getTeamId();
         temp.teamName = team.getTeamName();
+        temp.gitPath = team.getGitPath();
         temp.usernames = team.getUsernames();
         return temp;
     }

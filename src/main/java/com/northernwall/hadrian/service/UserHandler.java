@@ -18,7 +18,12 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.service.dao.GetConfigData;
+import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.service.dao.GetUsersData;
+import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -33,48 +38,36 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class ConfigHandler extends AbstractHandler {
+public class UserHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(UserHandler.class);
 
+    private final DataAccess dataAccess;
     private final Gson gson;
-    private final GetConfigData config;
 
-    public ConfigHandler() {
+    public UserHandler(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
         this.gson = new Gson();
-        this.config = new GetConfigData();
-        
-        config.dataCenters.add("wdc");
-        config.dataCenters.add("vdc");
-        config.dataCenters.add("ldc");
-        config.dataCenters.add("adc");
-        
-        config.networks.add("prd");
-        config.networks.add("tst");
-        
-        config.envs.add("VM-Java7");
-        config.envs.add("VM-Java8");
-        config.envs.add("D-Java8");
-        config.envs.add("D-NodeJS");
-        
-        config.sizes.add("S");
-        config.sizes.add("M");
-        config.sizes.add("L");
-        config.sizes.add("XL");
-        
-        config.protocols.add("HTTP");
-        config.protocols.add("HTTPS");
-        config.protocols.add("TCP");
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.matches("/v1/config")) {
+            if (target.matches("/v1/users")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 switch (request.getMethod()) {
                     case "GET":
-                        getConfig(response);
+                        getUsers(response);
+                        break;
+                }
+                response.setStatus(200);
+                request.setHandled(true);
+            }
+            if (target.startsWith("/v1/user/")) {
+                logger.info("Handling {} request {}", request.getMethod(), target);
+                switch (request.getMethod()) {
+                    case "PUT":
+                        updateUser(request, target.substring(9));
                         break;
                 }
                 response.setStatus(200);
@@ -86,11 +79,25 @@ public class ConfigHandler extends AbstractHandler {
         }
     }
 
-    private void getConfig(HttpServletResponse response) throws IOException {
+    private void getUsers(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
-        
+        GetUsersData users = new GetUsersData();
+        for (User user : dataAccess.getUsers()) {
+            users.users.add(user);
+        }
+
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(config, GetConfigData.class, jw);
+            gson.toJson(users, GetUsersData.class, jw);
+        }
+    }
+
+    private void updateUser(Request request, String username) throws IOException {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user.isAdmin()) {
+            User temp = Util.fromJson(request, User.class);
+            if (!user.getUsername().equals(temp.getUsername())) {
+                dataAccess.updateUser(temp);
+            }
         }
     }
 
