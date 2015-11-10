@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Collections;
@@ -51,6 +52,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, CustomFunction> customFunctions;
     private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
+    private final Map<String, User> users;
     private final Map<String, UserSession> userSessions;
 
     public InMemoryDataAccess() {
@@ -63,6 +65,7 @@ public class InMemoryDataAccess implements DataAccess {
         customFunctions = new ConcurrentHashMap<>();
         dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
+        users = new ConcurrentHashMap<>();
         userSessions = new ConcurrentHashMap<>();
     }
 
@@ -370,6 +373,33 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public WorkItem getWorkItem(String id) {
         return workItems.get(id);
+    }
+
+    @Override
+    public List<User> getUsers() {
+        List<User> temp = new LinkedList<>(users.values());
+        Collections.sort(temp);
+        return temp;
+    }
+
+    @Override
+    public User getUser(String userName) {
+        return users.get(userName);
+    }
+
+    @Override
+    public void saveUser(User user) {
+        users.put(user.getUsername(), user);
+    }
+
+    @Override
+    public void updateUser(User user) {
+        users.put(user.getUsername(), user);
+    }
+
+    @Override
+    public void deleteUser(String userName) {
+        users.remove(userName);
     }
 
     @Override
