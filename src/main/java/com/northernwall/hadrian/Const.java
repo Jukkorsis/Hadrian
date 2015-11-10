@@ -11,8 +11,9 @@ public class Const {
     public static final String HTTP_PUT = "PUT";
     public static final String HTTP_DELETE = "DELETE";
     public static final String HTTP_SESSION = "session";
-    public static final String USERNAME = "username";
     public static final String HOST = "{host}";
+
+    public static final String ATTR_USER = "user";
 
     public static final String JSON = "application/json; charset=utf-8";
     public static final MediaType JSON_MEDIA_TYPE = MediaType.parse(JSON);
