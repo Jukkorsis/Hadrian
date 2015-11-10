@@ -15,7 +15,7 @@ var soaRepApp = angular.module('SoaRepApp', [
 soaRepApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
-                when('/home', {
+                when('/Home', {
                     templateUrl: 'partials/home.html',
                     controller: 'HomeCtrl'
                 }).
@@ -27,19 +27,27 @@ soaRepApp.config(['$routeProvider',
                     templateUrl: 'partials/service.html',
                     controller: 'ServiceCtrl'
                 }).
-                when('/graph', {
+                when('/Graph', {
                     templateUrl: 'partials/graph.html',
                     controller: 'GraphCtrl'
                 }).
-                when('/admin', {
+                when('/Portal', {
+                    templateUrl: 'partials/portal.html',
+                    controller: 'portalCtrl'
+                }).
+                when('/OpsTeam', {
+                    templateUrl: 'partials/opsteam.html',
+                    controller: 'OpsTeamCtrl'
+                }).
+                when('/Admin', {
                     templateUrl: 'partials/admin.html',
                     controller: 'AdminCtrl'
                 }).
-                when('/help', {
+                when('/Help', {
                     templateUrl: 'partials/help.html',
                     controller: 'HelpCtrl'
                 }).
                 otherwise({
-                    redirectTo: '/home'
+                    redirectTo: '/Home'
                 });
     }]);

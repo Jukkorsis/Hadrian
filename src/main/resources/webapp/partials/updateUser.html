@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h3 class="modal-title">Update Hosts</h3>
+</div>
+<div class="modal-body">
+    <dl class="dl-horizontal">
+        <dt>username:</dt>
+        <dd>
+            {{formUpdateUser.username}}
+        </dd>
+        <dt>Full Name:</dt>
+        <dd>
+            <input ng-model="formUpdateUser.fullName" type="text">
+        </dd>
+        <dt>Ops:</dt>
+        <dd>
+            <input ng-model="formUpdateUser.ops" type="checkbox">
+        </dd>
+        <dt>Admin:</dt>
+        <dd>
+            <input ng-model="formUpdateUser.admin" type="checkbox">
+        </dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+

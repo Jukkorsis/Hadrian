@@ -3,18 +3,36 @@
     <head>
         <meta charset="UTF-8">
         <title>DevOps Control Panel</title>
+
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+        <script src="js/ui-bootstrap-tpls-0.14.2.min.js"></script>
     </head>
     <body>
-        <div class="text-left" style="background-color: lightgray; margin: 0px; padding: 0px; font-size: 36px;">
-            DevOps Control Panel
-        </div>
-        <div align="center">
-            <br/><br/>
-            <form name="loginForm" action="/login" method="POST">
-                Username: <input name="username" type="text"/><br/>
-                Password: <input name="password" type="password"/><br/><br/>
-                <input type="submit" value="Login"/>
-            </form>
+        <br/><br/><br/>
+        <div class="row">
+            <div class="col-md-4">&nbsp;</div>
+            <div class="col-md-4">
+                <form name="loginForm" action="/login" method="POST">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">DevOps Control Panel</h3>
+                        </div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                <dt>Username:</dt>
+                                <dd><input name="username" type="text"/></dd>
+                                <dt>Password:</dt>
+                                <dd><input name="password" type="password"/></dd>
+                            </dl>
+                        </div>
+                        <div class="panel-footer">
+                            <input type="submit" value="Login"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">&nbsp;</div>
         </div>
     </body>
 </html>

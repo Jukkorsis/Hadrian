@@ -45,3 +45,9 @@ soaRepServices.factory('Config', ['$resource', function($resource) {
             query: {method: 'GET', isArray: false}
         });
     }]);
+
+soaRepServices.factory('User', ['$resource', function($resource) {
+        return $resource('/v1/users', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);

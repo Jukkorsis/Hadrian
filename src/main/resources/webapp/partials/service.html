@@ -1,18 +1,12 @@
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
-            <dt>Service Name:</dt>
-            <dd>{{service.serviceAbbr}} - {{service.serviceName}}</dd>
+            <dt>Abbreviation:</dt>
+            <dd>{{service.serviceAbbr}}</dd>
+            <dt>Name:</dt>
+            <dd>{{service.serviceName}}</dd>
             <dt>Description:</dt>
             <dd>{{service.description}}</dd>
-            <dt>Maven Group Id:</dt>
-            <dd>{{service.mavenGroupId}}</dd>
-            <dt>Maven Artifact Id:</dt>
-            <dd>{{service.mavenArtifactId}}</dd>
-            <dt>Version URL:</dt>
-            <dd>{{service.versionUrl}}</dd>
-            <dt>Availability URL:</dt>
-            <dd>{{service.availabilityUrl}}</dd>
         </dl>
     </div>
     <div class="col-md-6">
@@ -44,7 +38,6 @@
         <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{service.serviceName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Delete Service</a>
         <a ng-click="openAddUsesModal();" class="btn btn-info btn-xs" uib-popover="Add services that {{service.serviceName}} uses." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Uses Service</a>
     </span>
-    <a ng-click="refresh();" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
 </div>
 <uib-tabset type="pills">
     <uib-tab heading="Hosts">
@@ -221,6 +214,30 @@
                         <td>{{cf.teamOnly}}</td>
                     </tr>
                 </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Service Details">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>Run As User:</dt>
+                    <dd>{{service.runAs}}</dd>
+                    <dt>Git Path:</dt>
+                    <dd>{{service.gitPath}}</dd>
+                    <dt>Maven Group Id:</dt>
+                    <dd>{{service.mavenGroupId}}</dd>
+                    <dt>Maven Artifact Id:</dt>
+                    <dd>{{service.mavenArtifactId}}</dd>
+                    <dt>Version URL:</dt>
+                    <dd>{{service.versionUrl}}</dd>
+                    <dt>Availability URL:</dt>
+                    <dd>{{service.availabilityUrl}}</dd>
+                    <dt>Start Cmd Line:</dt>
+                    <dd>{{service.startCmdLine}}</dd>
+                    <dt>Stop Cmd Line:</dt>
+                    <dd>{{service.stopCmdLine}}</dd>
+                </dl>
             </div>
         </div>
     </uib-tab>

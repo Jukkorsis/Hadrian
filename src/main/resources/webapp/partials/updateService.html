@@ -3,12 +3,16 @@
 </div>
 <div class="modal-body">
     <dl class="dl-horizontal">
-        <dt>Service Abbr:</dt>
+        <dt>Abbreviation::</dt>
         <dd><input ng-model="formUpdateService.serviceAbbr" type="text"></dd>
-        <dt>Service Name:</dt>
+        <dt>Name:</dt>
         <dd><input ng-model="formUpdateService.serviceName" type="text"></dd>
         <dt>Description:</dt>
         <dd><input ng-model="formUpdateService.description" type="text"></dd>
+        <dt>Run As User:</dt>
+        <dd><input ng-model="formUpdateService.runAs" type="text"></dd>
+        <dt>Git Path:</dt>
+        <dd><input ng-model="formUpdateService.gitPath" type="text"></dd>
         <dt>Maven Group Id:</dt>
         <dd><input ng-model="formUpdateService.mavenGroupId" type="text"></dd>
         <dt>Maven Artifact Id:</dt>
@@ -17,6 +21,10 @@
         <dd><input ng-model="formUpdateService.versionUrl" type="text"></dd>
         <dt>Availability Url:</dt>
         <dd><input ng-model="formUpdateService.availabilityUrl" type="text"></dd>
+        <dt>Start Cmd Line:</dt>
+        <dd><input ng-model="formUpdateService.startCmdLine" type="text"></dd>
+        <dt>Stop Cmd Line:</dt>
+        <dd><input ng-model="formUpdateService.stopCmdLine" type="text"></dd>
     </dl>
 </div>
 <div class="modal-footer">
