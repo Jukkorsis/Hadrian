@@ -40,6 +40,9 @@ import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.access.LoginHandler;
+import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.service.PortalHandler;
+import com.northernwall.hadrian.service.UserHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
 import com.northernwall.hadrian.webhook.WebHookHandler;
 import com.squareup.okhttp.ConnectionPool;
@@ -48,6 +51,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.BindException;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -134,6 +138,12 @@ public class Main {
         Class c = Class.forName(factoryName);
         DataAccessFactory factory = (DataAccessFactory)c.newInstance();
         dataAccess = factory.createDataAccess(properties);
+        
+        List<User> users = dataAccess.getUsers();
+        if (users == null || users.isEmpty()) {
+            logger.info("No users found, creating default 'admin' user");
+            dataAccess.saveUser(new User("admin", "Administator", true, true));
+        }
     }
 
     private void startHelpers() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -181,9 +191,11 @@ public class Main {
 
             HandlerList handlers = new HandlerList();
             handlers.addHandler(new AvailabilityHandler());
-            handlers.addHandler(new ContentHandler());
+            handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
             handlers.addHandler(new LoginHandler(access));
+            handlers.addHandler(new ContentHandler());
             handlers.addHandler(new TreeHandler(dataAccess));
+            handlers.addHandler(new UserHandler(dataAccess));
             handlers.addHandler(new TeamHandler(access, dataAccess));
             handlers.addHandler(new ServiceHandler(access, dataAccess, mavenHelper, infoHelper));
             handlers.addHandler(new VipHandler(access, dataAccess, webHookSender));
@@ -191,7 +203,7 @@ public class Main {
             handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
             handlers.addHandler(new DataStoreHandler(access, dataAccess));
             handlers.addHandler(new WebHookHandler(webHookSender));
-            handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
+            handlers.addHandler(new PortalHandler(client));
             handlers.addHandler(new ConfigHandler());
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());
