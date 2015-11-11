@@ -3,10 +3,13 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetTeamData;
+import com.northernwall.hadrian.service.dao.PostHostData;
+import com.northernwall.hadrian.service.dao.PostTeamData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -33,12 +36,19 @@ public class TeamHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/v1/team/")) {
+            if (target.startsWith("/v1/team")) {
                 switch (request.getMethod()) {
-                    case "GET":
+                    case Const.HTTP_GET:
                         if (target.matches("/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             getTeam(request, response, target.substring(9, target.length()));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        }
+                        break;
+                    case Const.HTTP_POST:
+                        if (target.equals("/v1/team")) {
+                            createTeam(request);
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -64,6 +74,32 @@ public class TeamHandler extends AbstractHandler {
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getTeamData, GetTeamData.class, jw);
         }
+    }
+
+    private void createTeam(Request request) throws IOException {
+        PostTeamData postTeamData = Util.fromJson(request, PostTeamData.class);
+        
+        if (postTeamData.user == null) {
+            throw new RuntimeException("Failed to create new team, as user is null");                
+        }
+        if (postTeamData.name == null) {
+            throw new RuntimeException("Failed to create new team, as team name is null");                
+        }
+        postTeamData.name = postTeamData.name.trim();
+        if (postTeamData.name.isEmpty()) {
+            throw new RuntimeException("Failed to create new team, as team name is empty");                
+        }
+        for (Team temp : dataAccess.getTeams()) {
+            if (temp.getTeamName().equals(postTeamData.name)) {
+                throw new RuntimeException("Failed to create new team, as team with name " + postTeamData.name + " already exists");                
+            }
+        }
+        Team team = new Team(postTeamData.name);
+        if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
+            throw new RuntimeException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
+        }
+        team.getUsernames().add(postTeamData.user.getUsername());
+        dataAccess.saveTeam(team);
     }
 
 }

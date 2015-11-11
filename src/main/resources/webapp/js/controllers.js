@@ -767,6 +767,23 @@ soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User', 'Confi
         $scope.users = User.get();
         $scope.config = Config.get();
 
+        $scope.openAddTeamModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addTeam.html',
+                controller: 'ModalAddTeamCtrl',
+                resolve: {
+                    users: function () {
+                        return $scope.users;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
+            });
+        };
+
         $scope.openUpdateUserModal = function (user) {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -784,6 +801,34 @@ soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User', 'Confi
             });
         };
     }]);
+
+soaRepControllers.controller('ModalAddTeamCtrl',
+        function ($scope, $http, $modalInstance, users) {
+            $scope.users = users;
+
+            $scope.formSaveTeam = {};
+            $scope.formSaveTeam.name = "";
+            $scope.formSaveTeam.user = "";            
+
+            $scope.save = function () {
+                var dataObject = {
+                    name: $scope.formSaveTeam.name,
+                    user: $scope.formSaveTeam.user
+                };
+
+                var responsePromise = $http.post("/v1/team", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new team has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
 
 soaRepControllers.controller('ModalUpdateUserCtrl',
         function ($scope, $http, $modalInstance, user) {
