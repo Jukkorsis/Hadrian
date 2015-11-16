@@ -10,9 +10,11 @@ public class Const {
     public static final String HTTP_POST = "POST";
     public static final String HTTP_PUT = "PUT";
     public static final String HTTP_DELETE = "DELETE";
-    public static final String HTTP_SESSION = "session";
+    public static final String COOKIE_SESSION = "session";
+    public static final String COOKIE_PORTAL_NAME = "portalname";
     public static final String HOST = "{host}";
 
+    public static final String ATTR_SESSION = "session";
     public static final String ATTR_USER = "user";
 
     public static final String JSON = "application/json; charset=utf-8";
