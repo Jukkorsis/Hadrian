@@ -125,6 +125,12 @@ public class TreeHandler extends AbstractHandler {
         TreeNode opsTeamTreenode = new TreeNode();
         opsTeamTreenode.setLabel("Ops Team");
         opsTeamTreenode.setData(new TreeNodeData("0", "OpsTeam"));
+        
+        TreeNode optionsTreenode = new TreeNode();
+        optionsTreenode.setLabel("Parameters");
+        optionsTreenode.setData(new TreeNodeData("0", "Parameters"));
+        opsTeamTreenode.getChildren().add(optionsTreenode);
+        
         gson.toJson(opsTeamTreenode, TreeNode.class, jw);
     }
 
