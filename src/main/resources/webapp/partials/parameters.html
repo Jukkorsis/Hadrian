@@ -1,0 +1,47 @@
+<uib-tabset type="pills">
+    <uib-tab heading="Data Centers">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="dc in config.dataCenters">
+                    {{dc}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Networks">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="network in config.networks">
+                    {{network}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Envs">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="env in config.envs">
+                    {{env}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Sizes">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="size in config.sizes">
+                    {{size}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Protocols">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="protocol in config.protocols">
+                    {{protocol}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+</uib-tabset>
