@@ -85,6 +85,11 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveTeam(Team team) {
         teams.put(team.getTeamId(), team);
     }
+    
+    @Override
+    public void updateTeam(Team team) {
+        teams.put(team.getTeamId(), team);
+    }
 
     @Override
     public List<Service> getServices() {

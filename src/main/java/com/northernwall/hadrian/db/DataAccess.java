@@ -38,6 +38,7 @@ public interface DataAccess {
     List<Team> getTeams();
     Team getTeam(String teamId);
     void saveTeam(Team team);
+    void updateTeam(Team team);
 
     List<Service> getServices();
     List<Service> getServices(String teamId);
@@ -94,4 +95,5 @@ public interface DataAccess {
 
     UserSession getUserSession(String sessionId);
     void saveUserSession(UserSession userSession);
+
 }
