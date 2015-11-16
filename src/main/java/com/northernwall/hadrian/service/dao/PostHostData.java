@@ -7,5 +7,6 @@ public class PostHostData {
     public String env;
     public String size;
     public String version;
+    public int count;
 
 }

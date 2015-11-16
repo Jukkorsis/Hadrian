@@ -65,7 +65,7 @@ public class HostHandler extends AbstractHandler {
                     case "POST":
                         if (target.matches("/v1/host/host")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            createHost(request);
+                            createHosts(request);
                             response.setStatus(200);
                             request.setHandled(true);
                         } else if (target.matches("/v1/host/vips")) {
@@ -114,13 +114,20 @@ public class HostHandler extends AbstractHandler {
         }
     }
 
-    private void createHost(Request request) throws IOException {
+    private void createHosts(Request request) throws IOException {
         PostHostData postHostData = Util.fromJson(request, PostHostData.class);
         Service service = dataAccess.getService(postHostData.serviceId);
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
         access.checkIfUserCanModify(request, service.getTeamId(), "add a host");
+        
+        if (postHostData.count < 1) {
+            throw new RuntimeException("count must to at least 1");
+        } else if (postHostData.count > 10) {
+            logger.warn("Reducing count to 10, was {}", postHostData.count);
+            postHostData.count = 10;
+        }
         
         //calc host name
         String prefix = postHostData.dataCenter + "-" + postHostData.network + "-";
@@ -141,18 +148,20 @@ public class HostHandler extends AbstractHandler {
             }
         }
         num++;
-        String numStr = Integer.toString(num);
-        numStr = "000".substring(numStr.length()) + numStr;
-        
-        Host host = new Host(prefix + service.getServiceAbbr() + "-" + numStr, 
-                postHostData.serviceId,
-                "Creating", 
-                postHostData.dataCenter, 
-                postHostData.network, 
-                postHostData.env, 
-                postHostData.size);
-        dataAccess.saveHost(host);
-        webHookSender.createHost(service, host);
+        for (int c=0;c<postHostData.count;c++) {
+            String numStr = Integer.toString(num+c);
+            numStr = "000".substring(numStr.length()) + numStr;
+
+            Host host = new Host(prefix + service.getServiceAbbr() + "-" + numStr, 
+                    postHostData.serviceId,
+                    "Creating", 
+                    postHostData.dataCenter, 
+                    postHostData.network, 
+                    postHostData.env, 
+                    postHostData.size);
+            dataAccess.saveHost(host);
+            webHookSender.createHost(service, host);
+        }
     }
 
     private void updateHost(Request request) throws IOException {
