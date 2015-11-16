@@ -22,11 +22,43 @@ soaRepControllers.controller('HomeCtrl', ['$scope',
     function ($scope) {
     }]);
 
-soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal', 'Team',
-    function ($scope, $routeParams, $uibModal, Team) {
+soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal', '$http', 'User', 'Team',
+    function ($scope, $routeParams, $uibModal, $http, User, Team) {
+        $scope.users = User.get();
+        
         Team.get({teamId: $routeParams.teamId}, function (team) {
             $scope.team = team;
         });
+
+        $scope.openAddUserModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addUserToTeam.html',
+                controller: 'ModalAddUserToTeamCtrl',
+                resolve: {
+                    users: function () {
+                        return $scope.users;
+                    },
+                    team: function () {
+                        return $scope.team;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $location.path('/ui/#/tree', true);
+            }, function () {
+            });
+        };
+
+        $scope.removeUserFromTeam = function (username) {
+                var responsePromise = $http.delete("/v1/team/"+$scope.team.teamId+"/"+username, {}, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new team has failed!");
+                });
+        };
 
         $scope.openAddServiceModal = function () {
             var modalInstance = $uibModal.open({
@@ -45,6 +77,76 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
             });
         };
     }]);
+
+soaRepControllers.controller('ModalAddUserToTeamCtrl',
+        function ($scope, $http, $modalInstance, users, team) {
+            $scope.users = users;
+            $scope.team = team;
+
+            $scope.formAddUserToTeam = {};
+            $scope.formAddUserToTeam.user = "";            
+
+            $scope.save = function () {
+                var responsePromise = $http.put("/v1/team/"+$scope.team.teamId+"/"+$scope.formAddUserToTeam.user.username, {}, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new team has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+
+soaRepControllers.controller('ModalAddServiceCtrl',
+        function ($scope, $http, $modalInstance, team) {
+            $scope.team = team;
+
+            $scope.formSaveService = {};
+            $scope.formSaveService.serviceAbbr = "";
+            $scope.formSaveService.serviceName = "";
+            $scope.formSaveService.description = "";
+            $scope.formSaveService.runAs = "";
+            $scope.formSaveService.gitPath = "";
+            $scope.formSaveService.mavenGroupId = "";
+            $scope.formSaveService.mavenArtifactId = "";
+            $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
+            $scope.formSaveService.availabilityUrl = "{host}.mydomain:9090/availability";
+            $scope.formSaveService.startCmdLine = "start";
+            $scope.formSaveService.stopCmdLine = "stop";
+
+            $scope.save = function () {
+                var dataObject = {
+                    serviceAbbr: $scope.formSaveService.serviceAbbr,
+                    serviceName: $scope.formSaveService.serviceName,
+                    teamId: $scope.team.teamId,
+                    description: $scope.formSaveService.description,
+                    runAs: $scope.formSaveService.runAs,
+                    gitPath: $scope.formSaveService.gitPath,
+                    mavenGroupId: $scope.formSaveService.mavenGroupId,
+                    mavenArtifactId: $scope.formSaveService.mavenArtifactId,
+                    versionUrl: $scope.formSaveService.versionUrl,
+                    availabilityUrl: $scope.formSaveService.availabilityUrl,
+                    startCmdLine: $scope.formSaveService.startCmdLine,
+                    stopCmdLine: $scope.formSaveService.stopCmdLine
+                };
+
+                var responsePromise = $http.post("/v1/service/service", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new service has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
 
 soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModal', 'Service',
     function ($scope, $routeParams, $uibModal, Service) {
@@ -259,27 +361,14 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
         }
 
         $scope.openDoCustomFunctionModal = function (cf) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/doCustomFunction.html',
-                controller: 'ModalDoCustomFunctionCtrl',
-                size: 'lg',
-                resolve: {
-                    service: function () {
-                        return $scope.service;
-                    },
-                    cf: function () {
-                        return cf;
-                    },
-                    selectedHosts: function () {
-                        return $scope.formSelectHost;
+            for (var key in $scope.service.hosts) {
+                var h = $scope.service.hosts[key];
+                for (var key2 in $scope.formSelectHost) {
+                    if (h.hostId == key2 && $scope.formSelectHost[key2]) {
+                        window.open("/v1/cf/" + cf.customFunctionId + "/" + h.hostId,'_blank');
                     }
                 }
-            });
-            modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
-            }, function () {
-            });
+            }
         }
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
@@ -313,100 +402,6 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
             });
         };
     }]);
-
-soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
-    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
-        $scope.my_tree_handler = function (branch) {
-            $scope.displayTeam = false;
-            $scope.displayService = false;
-            $scope.displayLoading = true;
-            if (branch.data.type === "Team") {
-                Team.get({teamId: branch.data.id}, function (team) {
-                    $scope.team = team;
-                    $scope.displayLoading = false;
-                    $scope.displayTeam = true;
-                });
-            } else if (branch.data.type === "Service") {
-                Service.get({serviceId: branch.data.id}, function (service) {
-                    $scope.service = service;
-                    $scope.displayLoading = false;
-                    $scope.displayService = true;
-                });
-            } else {
-                $scope.displayLoading = false;
-            }
-            $scope.formSelectVip = {};
-            $scope.formSelectHost = {};
-        };
-
-        $scope.my_data = Tree.query();
-
-        var tree;
-        $scope.my_tree = tree = {};
-
-        $scope.selectTreeNode = function (id) {
-            var n;
-            n = tree.get_first_branch();
-            while (true) {
-                if (n === null) {
-                    return;
-                }
-                if (n.data.id === id) {
-                    tree.select_branch(n);
-                    return;
-                }
-                n = tree.get_next_branch(n);
-            }
-        };
-
-    }]);
-
-soaRepControllers.controller('ModalAddServiceCtrl',
-        function ($scope, $http, $modalInstance, team) {
-            $scope.team = team;
-
-            $scope.formSaveService = {};
-            $scope.formSaveService.serviceAbbr = "";
-            $scope.formSaveService.serviceName = "";
-            $scope.formSaveService.description = "";
-            $scope.formSaveService.runAs = "";
-            $scope.formSaveService.gitPath = "";
-            $scope.formSaveService.mavenGroupId = "";
-            $scope.formSaveService.mavenArtifactId = "";
-            $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
-            $scope.formSaveService.availabilityUrl = "{host}.mydomain:9090/availability";
-            $scope.formSaveService.startCmdLine = "start";
-            $scope.formSaveService.stopCmdLine = "stop";
-
-            $scope.save = function () {
-                var dataObject = {
-                    serviceAbbr: $scope.formSaveService.serviceAbbr,
-                    serviceName: $scope.formSaveService.serviceName,
-                    teamId: $scope.team.teamId,
-                    description: $scope.formSaveService.description,
-                    runAs: $scope.formSaveService.runAs,
-                    gitPath: $scope.formSaveService.gitPath,
-                    mavenGroupId: $scope.formSaveService.mavenGroupId,
-                    mavenArtifactId: $scope.formSaveService.mavenArtifactId,
-                    versionUrl: $scope.formSaveService.versionUrl,
-                    availabilityUrl: $scope.formSaveService.availabilityUrl,
-                    startCmdLine: $scope.formSaveService.startCmdLine,
-                    stopCmdLine: $scope.formSaveService.stopCmdLine
-                };
-
-                var responsePromise = $http.post("/v1/service/service", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new service has failed!");
-                });
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
 
 soaRepControllers.controller('ModalUpdateServiceCtrl',
         function ($scope, $http, $modalInstance, service) {
@@ -566,6 +561,7 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
             $scope.formSaveHost.env = $scope.config.envs[0];
             $scope.formSaveHost.size = $scope.config.sizes[0];
             $scope.formSaveHost.version = $scope.service.versions[0];
+            $scope.formSaveHost.count = 1;
 
             $scope.save = function () {
                 var dataObject = {
@@ -574,7 +570,8 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
                     network: $scope.formSaveHost.network,
                     env: $scope.formSaveHost.env,
                     size: $scope.formSaveHost.size,
-                    version: $scope.formSaveHost.version
+                    version: $scope.formSaveHost.version,
+                    count: $scope.formSaveHost.count
                 };
 
                 var responsePromise = $http.post("/v1/host/host", dataObject, {});
@@ -684,32 +681,6 @@ soaRepControllers.controller('ModalAddCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('ModalDoCustomFunctionCtrl',
-        function ($scope, $modalInstance, service, cf, selectedHosts) {
-            $scope.service = service;
-            $scope.cf = cf;
-
-            var hosts = [];
-            for (var key in service.hosts) {
-                var h = service.hosts[key];
-                for (var key2 in selectedHosts) {
-                    if (h.hostId == key2 && selectedHosts[key2]) {
-                        var obj = {
-                            hostName: h.hostName,
-                            url: cf.url.replace("{host}", h.hostName),
-                            realUrl: "/v1/cf/" + cf.customFunctionId + "/" + h.hostId
-                        }
-                        hosts.push(obj);
-                    }
-                }
-            }
-            $scope.hosts = hosts;
-
-            $scope.ok = function () {
-                $modalInstance.close();
-            };
-        });
-
 soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
         function ($scope, $http, $modalInstance, service, cf) {
             $scope.service = service;
@@ -746,7 +717,7 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('OpsTeamCtrl', ['$scope', 'Config',
+soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
     function ($scope, Config) {
         $scope.config = Config.get();
     }]);
@@ -757,15 +728,14 @@ soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
         $scope.options = {navigation: true, width: '100%', height: '600px'};
     }]);
 
-soaRepControllers.controller('PortalCtrl', ['$scope', 'Config',
-    function ($scope, Config) {
-        $scope.config = Config.get();
+soaRepControllers.controller('PortalCtrl', ['$scope', 'Portal',
+    function ($scope, Portal) {
+        $scope.portal = Portal.query();
     }]);
 
-soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User', 'Config',
-    function ($scope, $uibModal, User, Config) {
+soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
+    function ($scope, $uibModal, User) {
         $scope.users = User.get();
-        $scope.config = Config.get();
 
         $scope.openAddTeamModal = function () {
             var modalInstance = $uibModal.open({
@@ -865,5 +835,52 @@ soaRepControllers.controller('ModalUpdateUserCtrl',
 soaRepControllers.controller('HelpCtrl', ['$scope', 'Config',
     function ($scope, Config) {
         $scope.config = Config.get();
+    }]);
+
+soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
+    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
+        $scope.my_tree_handler = function (branch) {
+            $scope.displayTeam = false;
+            $scope.displayService = false;
+            $scope.displayLoading = true;
+            if (branch.data.type === "Team") {
+                Team.get({teamId: branch.data.id}, function (team) {
+                    $scope.team = team;
+                    $scope.displayLoading = false;
+                    $scope.displayTeam = true;
+                });
+            } else if (branch.data.type === "Service") {
+                Service.get({serviceId: branch.data.id}, function (service) {
+                    $scope.service = service;
+                    $scope.displayLoading = false;
+                    $scope.displayService = true;
+                });
+            } else {
+                $scope.displayLoading = false;
+            }
+            $scope.formSelectVip = {};
+            $scope.formSelectHost = {};
+        };
+
+        $scope.my_data = Tree.query();
+
+        var tree;
+        $scope.my_tree = tree = {};
+
+        $scope.selectTreeNode = function (id) {
+            var n;
+            n = tree.get_first_branch();
+            while (true) {
+                if (n === null) {
+                    return;
+                }
+                if (n.data.id === id) {
+                    tree.select_branch(n);
+                    return;
+                }
+                n = tree.get_next_branch(n);
+            }
+        };
+
     }]);
 

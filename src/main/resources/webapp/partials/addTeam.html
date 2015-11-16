@@ -9,11 +9,9 @@
         </dd>
         <dt>Initial Team Member:</dt>
         <dd>
-            <select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users"></select>
+            <select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users" ng-init="formSaveTeam.user = config.users[0]"></select>
         </dd>
     </dl>
-    {{users}}<br/>
-    doh!
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="save()">Save</button>

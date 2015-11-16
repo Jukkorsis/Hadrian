@@ -9,13 +9,19 @@
         <dl class="dl-horizontal">
             <dt>Team Members:</dt>
             <dd>
-                <div ng-repeat="username in team.usernames">{{username}}<br/></div>
+                <div ng-repeat="username in team.usernames">
+                    {{username}}                     
+                    <span ng-if="team.canModify">
+                        <a ng-click="removeUserFromTeam(username);" class="btn btn-info btn-xs" uib-popover="Remove the user from the team." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                    </span>
+                    <br/>
+                </div>
             </dd>
     </div>
 </div>
 <div align="center">
     <div ng-if="team.canModify">
         <a ng-click="openAddServiceModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Service</a>
-        <a ng-click="" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Team Member</a>
+        <a ng-click="openAddUserModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Team Member</a>
     </div>
 </div>

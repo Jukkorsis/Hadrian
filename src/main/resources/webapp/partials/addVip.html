@@ -8,14 +8,14 @@
         <dt>DNS:</dt>
         <dd><input ng-model="formSaveVip.dns" type="text"></dd>
         <dt>External:</dt>
-        <dd><select ng-model="formSaveVip.external"><option value="false">False</option><option value="true">True</option></select></dd>
+        <dd><select ng-model="formSaveVip.external"><option value="false" selected="selected">False</option><option value="true">True</option></select></dd>
         <dt>Network:</dt>
         <dd>
-            <select ng-model="formSaveVip.network" ng-options="c for c in config.networks"></select>
+            <select ng-model="formSaveVip.network" ng-options="c for c in config.networks" ng-init="formSaveVip.network = config.networks[0]"></select>
         </dd>
         <dt>Protocol:</dt>
         <dd>
-            <select ng-model="formSaveVip.protocol" ng-options="c for c in config.protocols"></select>
+            <select ng-model="formSaveVip.protocol" ng-options="c for c in config.protocols" ng-init="formSaveVip.protocol = config.protocols[0]"></select>
         </dd>
         <dt>VIP Port:</dt>
         <dd><input ng-model="formSaveVip.vipPort" type="number"></dd>

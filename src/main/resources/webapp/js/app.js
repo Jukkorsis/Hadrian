@@ -33,11 +33,11 @@ soaRepApp.config(['$routeProvider',
                 }).
                 when('/Portal', {
                     templateUrl: 'partials/portal.html',
-                    controller: 'portalCtrl'
+                    controller: 'PortalCtrl'
                 }).
-                when('/OpsTeam', {
-                    templateUrl: 'partials/opsteam.html',
-                    controller: 'OpsTeamCtrl'
+                when('/Parameters', {
+                    templateUrl: 'partials/parameters.html',
+                    controller: 'ParametersCtrl'
                 }).
                 when('/Admin', {
                     templateUrl: 'partials/admin.html',

@@ -1,74 +1,20 @@
-<h3>Admin page</h3><br/><br/>
 <div align="center">
     <a ng-click="openAddTeamModal();" class="btn btn-info btn-xs" uib-popover="Add a new Team." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Team</a>
 </div>
-<uib-tabset type="pills">
-    <uib-tab heading="Users">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <table class="table table-hover table-condensed">
-                    <tr>
-                        <th>User Name</th>
-                        <th>Full Name</th>
-                        <th>Is Ops</th>
-                        <th>Is Admin</th>
-                    </tr>
-                    <tr ng-repeat="u in users.users">
-                        <td>
-                            {{u.username}}
-                            <a ng-click="openUpdateUserModal(u);" class="btn btn-info btn-xs" uib-popover="Update {{u.username}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                        </td>
-                        <td>{{u.fullName}}</td>
-                        <td>{{u.ops}}</td>
-                        <td>{{u.admin}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Data Centers">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="dc in config.dataCenters">
-                    {{dc}}<br/>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Networks">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="network in config.networks">
-                    {{network}}<br/>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Envs">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="env in config.envs">
-                    {{env}}<br/>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Sizes">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="size in config.sizes">
-                    {{size}}<br/>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Protocols">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="protocol in config.protocols">
-                    {{protocol}}<br/>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-</uib-tabset>
+<table class="table table-hover table-condensed">
+    <tr>
+        <th>User Name</th>
+        <th>Full Name</th>
+        <th>Is Ops</th>
+        <th>Is Admin</th>
+    </tr>
+    <tr ng-repeat="u in users.users">
+        <td>
+            {{u.username}}
+            <a ng-click="openUpdateUserModal(u);" class="btn btn-info btn-xs" uib-popover="Update {{u.username}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+        </td>
+        <td>{{u.fullName}}</td>
+        <td>{{u.ops}}</td>
+        <td>{{u.admin}}</td>
+    </tr>
+</table>
