@@ -62,18 +62,41 @@ public abstract class Access {
     public abstract void redirect(HttpServletResponse response) throws XMLStreamException, IOException;
 
     public final boolean canUserModify(Request request, String teamId) {
-        Team team = dataAccess.getTeam(teamId);
         User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new AccessException("unknown user");
+        }
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new AccessException("unknown team");
+        }
         return team.getUsernames().contains(user.getUsername());
     }
 
     public final void checkIfUserCanModify(Request request, String teamId, String action) {
-        Team team = dataAccess.getTeam(teamId);
         User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new AccessException("unknown user attempted to " + action);
+        }
         String username = user.getUsername();
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new AccessException(username + " attempted to " + action + " on team " + teamId + " but could not find team");
+        }
         if (!team.getUsernames().contains(username)) {
             throw new AccessException(username + " attempted to " + action + " on team " + team.getTeamName());
         }
+    }
+    
+    public final User checkIfUserIsAdmin(Request request, String action) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new AccessException("unknown users attempted to " + action + " but is not an admin");
+        }
+        if (!user.isAdmin()) {
+            throw new AccessException(user.getUsername() + " attempted to " + action + " but is not an admin");
+        }
+        return user;
     }
     
 }
