@@ -1,2 +1,7 @@
 <h3>Portal page</h3><br/>
-<a href="/portal/test/health" target="_blank">/portal/test/health</a><br/>
+<div ng-repeat="p in portal">
+    <a href="{{p.url}}">{{p.name}}</a>
+    <br/>
+</div>
+{{portal}}<br/>
+Remember to open in a Private Tab!
