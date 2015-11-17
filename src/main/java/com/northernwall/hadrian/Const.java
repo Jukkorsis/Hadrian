@@ -12,6 +12,7 @@ public class Const {
     public static final String HTTP_DELETE = "DELETE";
     public static final String COOKIE_SESSION = "session";
     public static final String COOKIE_PORTAL_NAME = "portalname";
+    public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
 
     public static final String ATTR_SESSION = "session";

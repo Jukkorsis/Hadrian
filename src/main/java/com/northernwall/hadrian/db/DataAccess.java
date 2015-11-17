@@ -95,5 +95,6 @@ public interface DataAccess {
 
     UserSession getUserSession(String sessionId);
     void saveUserSession(UserSession userSession);
+    void deleteUserSession(String sessionId);
 
 }

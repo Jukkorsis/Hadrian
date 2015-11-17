@@ -417,4 +417,9 @@ public class InMemoryDataAccess implements DataAccess {
         userSessions.put(userSession.getSessionId(), userSession);
     }
 
+    @Override
+    public void deleteUserSession(String sessionId) {
+        userSessions.remove(sessionId);
+    }
+
 }

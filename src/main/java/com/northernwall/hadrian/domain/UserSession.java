@@ -20,10 +20,12 @@ import java.util.UUID;
 public class UserSession {
     private final String sessionId;
     private final String username;
+    private final long endDateTime;
 
-    public UserSession(String username) {
+    public UserSession(String username, long endDateTime) {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
+        this.endDateTime = endDateTime;
     }
 
     public String getSessionId() {
@@ -32,6 +34,10 @@ public class UserSession {
 
     public String getUsername() {
         return username;
+    }
+
+    public long getEndDateTime() {
+        return endDateTime;
     }
 
 }

@@ -49,6 +49,11 @@ public abstract class Access {
             logger.warn("Could not find user sesion with ID {}", sessionId);
             return null;
         }
+        if (session.getEndDateTime() < System.currentTimeMillis()) {
+            logger.warn("Trying to use session {} which has expried", sessionId);
+            dataAccess.deleteUserSession(sessionId);
+            return null;
+        }
         String username = session.getUsername();
         User user = dataAccess.getUser(username);
         if (user == null) {
