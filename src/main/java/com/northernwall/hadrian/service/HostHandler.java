@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
@@ -45,8 +46,9 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class HostHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(HostHandler.class);
-    
+
     private final Access access;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
@@ -96,7 +98,7 @@ public class HostHandler extends AbstractHandler {
                             request.setHandled(true);
                         } else if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteVIP(request, target.substring(9, target.length()-37), target.substring(46, target.length()));
+                            deleteVIP(request, target.substring(9, target.length() - 37), target.substring(46, target.length()));
                             response.setStatus(200);
                             request.setHandled(true);
                         }
@@ -120,15 +122,15 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "add a host");
-        
+        User user = access.checkIfUserCanModify(request, service.getTeamId(), "add a host");
+
         if (postHostData.count < 1) {
             throw new RuntimeException("count must to at least 1");
         } else if (postHostData.count > 10) {
             logger.warn("Reducing count to 10, was {}", postHostData.count);
             postHostData.count = 10;
         }
-        
+
         //calc host name
         String prefix = postHostData.dataCenter + "-" + postHostData.network + "-";
         int num = 0;
@@ -136,7 +138,7 @@ public class HostHandler extends AbstractHandler {
         for (Host existingHost : hosts) {
             String existingHostName = existingHost.getHostName();
             if (existingHostName.startsWith(prefix)) {
-                String numPart = existingHostName.substring(existingHostName.lastIndexOf("-")+1);
+                String numPart = existingHostName.substring(existingHostName.lastIndexOf("-") + 1);
                 try {
                     int temp = Integer.parseInt(numPart);
                     if (temp > num) {
@@ -148,19 +150,19 @@ public class HostHandler extends AbstractHandler {
             }
         }
         num++;
-        for (int c=0;c<postHostData.count;c++) {
-            String numStr = Integer.toString(num+c);
+        for (int c = 0; c < postHostData.count; c++) {
+            String numStr = Integer.toString(num + c);
             numStr = "000".substring(numStr.length()) + numStr;
 
-            Host host = new Host(prefix + service.getServiceAbbr() + "-" + numStr, 
+            Host host = new Host(prefix + service.getServiceAbbr() + "-" + numStr,
                     postHostData.serviceId,
-                    "Creating", 
-                    postHostData.dataCenter, 
-                    postHostData.network, 
-                    postHostData.env, 
+                    "Creating",
+                    postHostData.dataCenter,
+                    postHostData.network,
+                    postHostData.env,
                     postHostData.size);
             dataAccess.saveHost(host);
-            webHookSender.createHost(service, host);
+            webHookSender.createHost(service, host, user);
         }
     }
 
@@ -170,6 +172,7 @@ public class HostHandler extends AbstractHandler {
         Host firstHost = null;
         WorkItem firstWorkItem = null;
         WorkItem workItem = null;
+        User user = null;
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 Host host = dataAccess.getHost(entry.getKey());
@@ -179,18 +182,29 @@ public class HostHandler extends AbstractHandler {
                         if (service == null) {
                             throw new RuntimeException("Could not find service");
                         }
+                        user = access.checkIfUserCanModify(request, service.getTeamId(), "update a host");
                         access.checkIfUserCanModify(request, service.getTeamId(), "modify a host");
                         host.setStatus("Updating...");
                         dataAccess.saveHost(host);
                         firstHost = host;
-                        firstWorkItem = WorkItem.createUpdateHost(host.getHostId(), putHostData.env, putHostData.size, putHostData.version);
+                        firstWorkItem = WorkItem.createUpdateHost(
+                                host.getHostId(), 
+                                putHostData.env, 
+                                putHostData.size, 
+                                putHostData.version,
+                                user.getUsername());
                         workItem = firstWorkItem;
                     } else {
                         workItem.setNextId(host.getHostId());
                         dataAccess.saveWorkItem(workItem);
                         host.setStatus("Update Queued");
                         dataAccess.saveHost(host);
-                        workItem = WorkItem.createUpdateHost(host.getHostId(), putHostData.env, putHostData.size, putHostData.version);
+                        workItem = WorkItem.createUpdateHost(
+                                host.getHostId(), 
+                                putHostData.env, 
+                                putHostData.size, 
+                                putHostData.version,
+                                user.getUsername());
                     }
                 }
             }
@@ -199,7 +213,7 @@ public class HostHandler extends AbstractHandler {
             dataAccess.saveWorkItem(workItem);
         }
         if (firstWorkItem != null) {
-            webHookSender.putHost(service, firstHost, firstWorkItem);
+            webHookSender.updateHost(service, firstHost, firstWorkItem, user);
         }
     }
 
@@ -216,10 +230,10 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
+        User user = access.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        webHookSender.deleteHost(service, host);
+        webHookSender.deleteHost(service, host, user);
     }
 
     private void addVIPs(Request request) throws IOException {
@@ -228,7 +242,7 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
+        User user = access.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
         List<Host> hosts = dataAccess.getHosts(data.serviceId);
         List<Vip> vips = dataAccess.getVips(data.serviceId);
         for (Map.Entry<String, String> entry : data.hosts.entrySet()) {
@@ -245,7 +259,7 @@ public class HostHandler extends AbstractHandler {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            webHookSender.postHostVip(service, host, vip);
+                                            webHookSender.addHostVip(service, host, vip, user);
                                         } else {
                                             logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
                                         }
@@ -279,10 +293,10 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
+        User user = access.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        webHookSender.deleteHostVip(service, host, vip);
+        webHookSender.deleteHostVip(service, host, vip, user);
     }
 
 }

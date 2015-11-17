@@ -205,7 +205,7 @@ public class Main {
             handlers.addHandler(new HostHandler(access, dataAccess, webHookSender));
             handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
             handlers.addHandler(new DataStoreHandler(access, dataAccess));
-            handlers.addHandler(new WebHookHandler(webHookSender));
+            handlers.addHandler(new WebHookHandler(client));
             handlers.addHandler(new ConfigHandler());
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());

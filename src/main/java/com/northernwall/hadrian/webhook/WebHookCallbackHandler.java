@@ -22,6 +22,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.webhook.dao.CallbackResponse;
 import java.io.IOException;
@@ -54,30 +55,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         try {
             if (target.startsWith("/webhook/callback") && request.getMethod().equals("POST")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                CallbackResponse data = Util.fromJson(request, CallbackResponse.class);
-                if (data.type.equalsIgnoreCase("host")) {
-                    if (data.operation.equalsIgnoreCase("POST")) {
-                        postHost(data);
-                    } else if (data.operation.equalsIgnoreCase("PUT")) {
-                        putHost(data);
-                    } else if (data.operation.equalsIgnoreCase("DELETE")) {
-                        deleteHost(data);
-                    }
-                } else if (data.type.equalsIgnoreCase("vip")) {
-                    if (data.operation.equalsIgnoreCase("POST")) {
-                        postVip(data);
-                    } else if (data.operation.equalsIgnoreCase("PUT")) {
-                        putVip(data);
-                    } else if (data.operation.equalsIgnoreCase("DELETE")) {
-                        deleteVip(data);
-                    }
-                } else if (data.type.equalsIgnoreCase("hostvip")) {
-                    if (data.operation.equalsIgnoreCase("POST")) {
-                        postHostVip(data);
-                    } else if (data.operation.equalsIgnoreCase("DELETE")) {
-                        deleteHostVip(data);
-                    }
-                }
+                processCallback(request);
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -87,7 +65,47 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void postHost(CallbackResponse data) throws IOException {
+    private void processCallback(Request request) throws IOException {
+        CallbackResponse data = Util.fromJson(request, CallbackResponse.class);
+        if (data.type.equalsIgnoreCase("service")) {
+            if (data.operation.equalsIgnoreCase("create")) {
+                return;
+            }
+        } else if (data.type.equalsIgnoreCase("host")) {
+            if (data.operation.equalsIgnoreCase("create")) {
+                createHost(data);
+                return;
+            } else if (data.operation.equalsIgnoreCase("update")) {
+                updateHost(data);
+                return;
+            } else if (data.operation.equalsIgnoreCase("delete")) {
+                deleteHost(data);
+                return;
+            }
+        } else if (data.type.equalsIgnoreCase("vip")) {
+            if (data.operation.equalsIgnoreCase("create")) {
+                createVip(data);
+                return;
+            } else if (data.operation.equalsIgnoreCase("update")) {
+                updateVip(data);
+                return;
+            } else if (data.operation.equalsIgnoreCase("delete")) {
+                deleteVip(data);
+                return;
+            }
+        } else if (data.type.equalsIgnoreCase("hostvip")) {
+            if (data.operation.equalsIgnoreCase("add")) {
+                addHostVip(data);
+                return;
+            } else if (data.operation.equalsIgnoreCase("delete")) {
+                deleteHostVip(data);
+                return;
+            }
+        }
+        throw new RuntimeException("Unknown callback, " +data.type + " " + data.operation);
+    }
+
+    private void createHost(CallbackResponse data) throws IOException {
         Host host = dataAccess.getHost(data.hostId);
         if (data.status < 300) {
             host.setStatus(Const.NO_STATUS);
@@ -98,7 +116,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void putHost(CallbackResponse data) throws IOException {
+    private void updateHost(CallbackResponse data) throws IOException {
         Host host = dataAccess.getHost(data.hostId);
         if (data.status < 300) {
             host.setStatus(Const.NO_STATUS);
@@ -127,7 +145,8 @@ public class WebHookCallbackHandler extends AbstractHandler {
 
             WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
             Service service = dataAccess.getService(nextHost.getServiceId());
-            urlHelper.putHost(service, nextHost, nextWorkItem);
+            User user = dataAccess.getUser(nextWorkItem.getUsername());
+            urlHelper.updateHost(service, nextHost, nextWorkItem, user);
         } else {
             logger.info("Callback for {} failed with status {}", data.hostId, data.status);
             //todo, need to find the remaining workitems and cancel them
@@ -147,7 +166,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void postVip(CallbackResponse data) throws IOException {
+    private void createVip(CallbackResponse data) throws IOException {
         Vip vip = dataAccess.getVip(data.vipId);
         if (data.status < 300) {
             vip.setStatus(Const.NO_STATUS);
@@ -158,7 +177,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void putVip(CallbackResponse data) throws IOException {
+    private void updateVip(CallbackResponse data) throws IOException {
         Vip vip = dataAccess.getVip(data.vipId);
         if (data.status < 300) {
             vip.setStatus(Const.NO_STATUS);
@@ -192,7 +211,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void postHostVip(CallbackResponse data) {
+    private void addHostVip(CallbackResponse data) {
         VipRef vipRef = dataAccess.getVipRef(data.hostId, data.vipId);
         if (data.status < 300) {
             vipRef.setStatus(Const.NO_STATUS);

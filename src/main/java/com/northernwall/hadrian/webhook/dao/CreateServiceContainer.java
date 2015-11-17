@@ -22,6 +22,8 @@ package com.northernwall.hadrian.webhook.dao;
 public class CreateServiceContainer {
     public String operation;
     public String callbackUrl;
+    public String username;
+    public String fullname;
     public ServiceData service;
 
 }

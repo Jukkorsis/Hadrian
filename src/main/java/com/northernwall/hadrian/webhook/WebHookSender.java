@@ -20,6 +20,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.webhook.dao.HostData;
 import com.northernwall.hadrian.webhook.dao.CreateVipContainer;
@@ -67,28 +68,25 @@ public class WebHookSender {
         hostVipUrl = Const.HTTP + properties.getProperty(Const.WEB_HOOK_HOST_VIP_URL, Const.WEB_HOOK_HOST_VIP_URL_DEFAULT);
     }
 
-    public void createService(Service service) throws IOException {
+    public void createService(Service service, User user) throws IOException {
         CreateServiceContainer data = new CreateServiceContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "create";
         data.service = ServiceData.create(service);
 
-        post(serviceUrl, data);
+        post(serviceUrl, data, user);
     }
 
-    public void createHost(Service service, Host host) throws IOException {
+    public void createHost(Service service, Host host, User user) throws IOException {
         CreateHostContainer data = new CreateHostContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "create";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
 
-        post(hostUrl, data);
+        post(hostUrl, data, user);
     }
 
-    public void putHost(Service service, Host host, WorkItem workItem) throws IOException {
+    public void updateHost(Service service, Host host, WorkItem workItem, User user) throws IOException {
         UpdateHostContainer data = new UpdateHostContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "update";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
@@ -96,74 +94,71 @@ public class WebHookSender {
         data.newSize = workItem.getSize();
         data.newVersion = workItem.getVersion();
 
-        post(hostUrl, data);
+        post(hostUrl, data, user);
     }
 
-    public void deleteHost(Service service, Host host) throws IOException {
+    public void deleteHost(Service service, Host host, User user) throws IOException {
         CreateHostContainer data = new CreateHostContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "delete";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
 
-        post(hostUrl, data);
+        post(hostUrl, data, user);
     }
 
-    public void postVip(Service service, Vip vip) throws IOException {
+    public void createVip(Service service, Vip vip, User user) throws IOException {
         CreateVipContainer data = new CreateVipContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "create";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
 
-        post(vipUrl, data);
+        post(vipUrl, data, user);
     }
 
-    public void putVip(Service service, Vip vip, WorkItem workItem) throws IOException {
+    public void updateVip(Service service, Vip vip, WorkItem workItem, User user) throws IOException {
         UpdateVipContainer data = new UpdateVipContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "update";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
         data.newExternal = workItem.getExternal();
         data.newServicePort = workItem.getServicePort();
 
-        post(vipUrl, data);
+        post(vipUrl, data, user);
     }
 
-    public void deleteVip(Service service, Vip vip) throws IOException {
+    public void deleteVip(Service service, Vip vip, User user) throws IOException {
         CreateVipContainer data = new CreateVipContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "delete";
         data.service = ServiceData.create(service);
         data.vip = VipData.create(vip);
 
-        post(vipUrl, data);
+        post(vipUrl, data, user);
     }
 
-    public void postHostVip(Service service, Host host, Vip vip) throws IOException {
+    public void addHostVip(Service service, Host host, Vip vip, User user) throws IOException {
         CreateHostVipContainer data = new CreateHostVipContainer();
-        data.callbackUrl = callbackUrl;
-        data.operation = "create";
+        data.operation = "add";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
         data.vip = VipData.create(vip);
 
-        post(hostVipUrl, data);
+        post(hostVipUrl, data, user);
     }
 
-    public void deleteHostVip(Service service, Host host, Vip vip) throws IOException {
+    public void deleteHostVip(Service service, Host host, Vip vip, User user) throws IOException {
         CreateHostVipContainer data = new CreateHostVipContainer();
-        data.callbackUrl = callbackUrl;
         data.operation = "delete";
         data.service = ServiceData.create(service);
         data.host = HostData.create(host);
         data.vip = VipData.create(vip);
 
-        post(hostVipUrl, data);
+        post(hostVipUrl, data, user);
     }
 
-    public void post(String url, Object data) throws IOException {
+    private void post(String url, CreateServiceContainer data, User user) throws IOException {
+        data.callbackUrl = callbackUrl;
+        data.username = user.getUsername();
+        data.fullname = user.getFullName();
         RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(data));
         Request request = new Request.Builder()
                 .url(url)

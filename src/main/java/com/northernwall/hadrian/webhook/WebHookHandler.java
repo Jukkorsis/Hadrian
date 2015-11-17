@@ -15,11 +15,15 @@
  */
 package com.northernwall.hadrian.webhook;
 
+import com.google.gson.Gson;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.webhook.dao.CallbackResponse;
 import com.northernwall.hadrian.webhook.dao.CreateVipContainer;
 import com.northernwall.hadrian.webhook.dao.UpdateHostContainer;
 import com.northernwall.hadrian.webhook.dao.CreateHostVipContainer;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,72 +41,46 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class WebHookHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(WebHookHandler.class);
     private final static int PAUSE = 15;
 
-    private final WebHookSender webHookSender;
+    private final OkHttpClient client;
     private final ScheduledExecutorService scheduledExecutorService;
+    private final Gson gson;
 
-    public WebHookHandler(WebHookSender webHookSender) {
-        this.webHookSender = webHookSender;
+    public WebHookHandler(OkHttpClient client) {
+        this.client = client;
         scheduledExecutorService = Executors.newScheduledThreadPool(5);
+        gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/webhook/")) {
-                switch (request.getMethod()) {
-                    case "POST":
-                        if (target.matches("/webhook/host")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            postHost(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        } else if (target.matches("/webhook/vip")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            postVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        } else if (target.matches("/webhook/hostvip")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            postHostVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        }
+            if (target.startsWith("/webhook/") && request.getMethod().equals(Const.HTTP_POST)) {
+                switch (target) {
+                    case "/webhook/service":
+                        logger.info("Handling {} request {}", request.getMethod(), target);
                         break;
-                    case "PUT":
-                        if (target.matches("/webhook/host")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            putHost(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        } else if (target.matches("/webhook/vip")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            putVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        }
+                    case "/webhook/host":
+                        logger.info("Handling {} request {}", request.getMethod(), target);
+                        processHost(request);
                         break;
-                    case "DELETE":
-                        if (target.matches("/webhook/host")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteHost(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        } else if (target.matches("/webhook/vip")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        } else if (target.matches("/webhook/hostvip")) {
-                            logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteHostVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
-                        }
+                    case "/webhook/vip":
+                        logger.info("Handling {} request {}", request.getMethod(), target);
+                        processVip(request);
                         break;
+                    case "/webhook/hostvip":
+                        logger.info("Handling {} request {}", request.getMethod(), target);
+                        processHostVip(request);
+                        break;
+                    default:
+                        throw new RuntimeException("Unknown webhook " + target);
                 }
+                response.setStatus(200);
+                request.setHandled(true);
+
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
@@ -110,143 +88,182 @@ public class WebHookHandler extends AbstractHandler {
         }
     }
 
-    private void postHost(Request request) throws IOException {
+    private void processHost(Request request) throws IOException {
         UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
-        
+
+        switch (data.operation) {
+            case "create":
+                createHost(data);
+                break;
+            case "update":
+                updateHost(data);
+                break;
+            case "delete":
+                deleteHost(data);
+                break;
+            default:
+                throw new RuntimeException("Unknown webhook host opertion " + data.operation);
+        }
+    }
+
+    private void createHost(UpdateHostContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
-        response.operation = "POST";
+        response.operation = "create";
         response.hostId = data.host.hostId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void putHost(Request request) throws IOException {
-        UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
-        
+
+    private void updateHost(UpdateHostContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
-        response.operation = "PUT";
+        response.operation = "update";
         response.hostId = data.host.hostId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void deleteHost(Request request) throws IOException {
-        UpdateHostContainer data = Util.fromJson(request, UpdateHostContainer.class);
-        
+
+    private void deleteHost(UpdateHostContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
-        response.operation = "DELETE";
+        response.operation = "delete";
         response.hostId = data.host.hostId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void postVip(Request request) throws IOException {
+
+    private void processVip(Request request) throws IOException {
         CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
-        
+
+        switch (data.operation) {
+            case "create":
+                createtVip(data);
+                break;
+            case "update":
+                updateVip(data);
+                break;
+            case "delete":
+                deleteVip(data);
+                break;
+            default:
+                throw new RuntimeException("Unknown webhook vip opertion " + data.operation);
+        }
+    }
+
+    private void createtVip(CreateVipContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
-        response.operation = "POST";
+        response.operation = "create";
         response.vipId = data.vip.vipId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void putVip(Request request) throws IOException {
-        CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
-        
+
+    private void updateVip(CreateVipContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
-        response.operation = "PUT";
+        response.operation = "update";
         response.vipId = data.vip.vipId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void deleteVip(Request request) throws IOException {
-        CreateVipContainer data = Util.fromJson(request, CreateVipContainer.class);
-        
+
+    private void deleteVip(CreateVipContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
-        response.operation = "DELETE";
+        response.operation = "delete";
         response.vipId = data.vip.vipId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void postHostVip(Request request) throws IOException {
+
+    private void processHostVip(Request request) throws IOException {
         CreateHostVipContainer data = Util.fromJson(request, CreateHostVipContainer.class);
-        
+
+        switch (data.operation) {
+            case "add":
+                addHostVip(data);
+                break;
+            case "delete":
+                deleteHostVip(data);
+                break;
+            default:
+                throw new RuntimeException("Unknown webhook host vip opertion " + data.operation);
+        }
+    }
+
+    private void addHostVip(CreateHostVipContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
-        response.operation = "POST";
+        response.operation = "add";
         response.hostId = data.host.hostId;
         response.vipId = data.vip.vipId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
-    private void deleteHostVip(Request request) throws IOException {
-        CreateHostVipContainer data = Util.fromJson(request, CreateHostVipContainer.class);
-        
+
+    private void deleteHostVip(CreateHostVipContainer data) {
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
-        response.operation = "DELETE";
+        response.operation = "delete";
         response.hostId = data.host.hostId;
         response.vipId = data.vip.vipId;
         response.status = 200;
-        
+
         scheduledExecutorService.schedule(
-                new WebHookRunnable(data.callbackUrl, response, webHookSender), 
-                PAUSE, 
+                new WebHookRunnable(data.callbackUrl, response),
+                PAUSE,
                 TimeUnit.SECONDS);
     }
-    
+
     public class WebHookRunnable implements Runnable {
-        private final WebHookSender webHookSender;
+
         private final String url;
         private final CallbackResponse response;
 
-        public WebHookRunnable(String url, CallbackResponse response, WebHookSender webHookSender) {
+        public WebHookRunnable(String url, CallbackResponse response) {
             this.url = url;
             this.response = response;
-            this.webHookSender = webHookSender;
         }
 
         @Override
         public void run() {
             try {
-                webHookSender.post(url, response);
+                RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(response));
+                com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+                client.newCall(request).execute();
             } catch (IOException ex) {
                 logger.error(ex.getMessage());
             }

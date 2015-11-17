@@ -28,10 +28,11 @@ public class WorkItem {
     private String env;
     private String size;
     private String version;
+    private String username;
     private boolean external;
     private int servicePort;
 
-    public static WorkItem createUpdateHost(String id, String env, String size, String version) {
+    public static WorkItem createUpdateHost(String id, String env, String size, String version, String username) {
         WorkItem workItem = new WorkItem();
         workItem.type = "host";
         workItem.id = id;
@@ -39,6 +40,7 @@ public class WorkItem {
         workItem.env = env;
         workItem.size = size;
         workItem.version = version;
+        workItem.version = username;
         return workItem;
     }
 
@@ -101,6 +103,14 @@ public class WorkItem {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean getExternal() {

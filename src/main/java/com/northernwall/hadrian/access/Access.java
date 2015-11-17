@@ -73,7 +73,7 @@ public abstract class Access {
         return team.getUsernames().contains(user.getUsername());
     }
 
-    public final void checkIfUserCanModify(Request request, String teamId, String action) {
+    public final User checkIfUserCanModify(Request request, String teamId, String action) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
             throw new AccessException("unknown user attempted to " + action);
@@ -86,6 +86,7 @@ public abstract class Access {
         if (!team.getUsernames().contains(username)) {
             throw new AccessException(username + " attempted to " + action + " on team " + team.getTeamName());
         }
+        return user;
     }
     
     public final User checkIfUserIsAdmin(Request request, String action) {
