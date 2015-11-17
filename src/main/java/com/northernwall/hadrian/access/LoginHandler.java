@@ -33,16 +33,15 @@ public class LoginHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
     private final Access access;
-    private final int cookieExpiry;
 
     public LoginHandler(Access access) {
         this.access = access;
-        cookieExpiry = 24*60*60*1000;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
+            //TODO: these first two "if" statements should be handled by Access, as the SAML version will have different functionality
             if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/ui/login.html")) {
                 request.setHandled(false);
                 return;
@@ -53,8 +52,8 @@ public class LoginHandler extends AbstractHandler {
                 if (sessionId != null) {
                     User user = access.getUserForSession(sessionId);
                     logger.info("login passed for {}, session {} started", user.getUsername(), sessionId);
-                    Cookie cookie = new Cookie(Const.HTTP_SESSION, sessionId);
-                    cookie.setMaxAge(cookieExpiry);
+                    Cookie cookie = new Cookie(Const.COOKIE_SESSION, sessionId);
+                    cookie.setMaxAge(Const.COOKIE_EXPRIY);
                     response.addCookie(cookie);
                     response.setContentType("text/html;charset=utf-8");
                     response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=/ui/\"></head><body></body></html>");
@@ -68,9 +67,13 @@ public class LoginHandler extends AbstractHandler {
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
                 for (Cookie cookie : request.getCookies()) {
-                    if (cookie.getName().equals(Const.HTTP_SESSION)) {
+                    logger.info("cookie name={} value={} domain={} path={}", cookie.getName(), cookie.getValue(), cookie.getDomain(), cookie.getPath());
+                }
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals(Const.COOKIE_SESSION)) {
                         User user = access.getUserForSession(cookie.getValue());
                         if (user != null) {
+                            request.setAttribute(Const.ATTR_SESSION, cookie.getValue());
                             request.setAttribute(Const.ATTR_USER, user);
                             //logger.info("found, allowing to continue, user={}", username);
                             request.setHandled(false);
