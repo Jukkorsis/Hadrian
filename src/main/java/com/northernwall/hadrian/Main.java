@@ -40,6 +40,7 @@ import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.access.LoginHandler;
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.portal.PostPortalHandler;
 import com.northernwall.hadrian.portal.PrePortalHandler;
@@ -72,6 +73,7 @@ public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
     
     private Properties properties;
+    private Config config;
     private DataAccess dataAccess;
     private OkHttpClient client;
     private MavenHelper mavenHelper;
@@ -87,6 +89,7 @@ public class Main {
             Main main = new Main();
             main.loadProperties(args);
             main.startLogging();
+            main.loadConfig();
             main.startDataAccess();
             main.startHelpers();
             main.startJetty();
@@ -132,6 +135,32 @@ public class Main {
             System.exit(0);
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+    }
+    
+    private void loadConfig() {
+        config = new Config();
+        
+        config.dataCenters.add("wdc");
+        config.dataCenters.add("vdc");
+        config.dataCenters.add("ldc");
+        config.dataCenters.add("adc");
+        
+        config.networks.add("prd");
+        config.networks.add("tst");
+        
+        config.envs.add("VM-Java7");
+        config.envs.add("VM-Java8");
+        config.envs.add("D-Java8");
+        config.envs.add("D-NodeJS");
+        
+        config.sizes.add("S");
+        config.sizes.add("M");
+        config.sizes.add("L");
+        config.sizes.add("XL");
+        
+        config.protocols.add("HTTP");
+        config.protocols.add("HTTPS");
+        config.protocols.add("TCP");
     }
 
     private void startDataAccess() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -203,10 +232,10 @@ public class Main {
             handlers.addHandler(new TeamHandler(access, dataAccess));
             handlers.addHandler(new ServiceHandler(access, dataAccess, mavenHelper, infoHelper));
             handlers.addHandler(new VipHandler(access, dataAccess, webHookSender));
-            handlers.addHandler(new HostHandler(access, dataAccess, webHookSender));
+            handlers.addHandler(new HostHandler(access, config, dataAccess, webHookSender));
             handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
             handlers.addHandler(new DataStoreHandler(access, dataAccess));
-            handlers.addHandler(new ConfigHandler());
+            handlers.addHandler(new ConfigHandler(config));
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());
             server.setHandler(handlers);

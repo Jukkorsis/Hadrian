@@ -1,9 +1,9 @@
-package com.northernwall.hadrian.service.dao;
+package com.northernwall.hadrian.domain;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class GetConfigData {
+public class Config {
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networks = new LinkedList<>();
     public List<String> envs = new LinkedList<>();

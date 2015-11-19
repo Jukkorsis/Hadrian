@@ -21,6 +21,7 @@ import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
@@ -30,7 +31,9 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
 import com.northernwall.hadrian.service.dao.PutHostData;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -50,11 +53,13 @@ public class HostHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(HostHandler.class);
 
     private final Access access;
+    private final Config config;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
 
-    public HostHandler(Access access, DataAccess dataAccess, WebHookSender webHookSender) {
+    public HostHandler(Access access, Config config, DataAccess dataAccess, WebHookSender webHookSender) {
         this.access = access;
+        this.config = config;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
     }
@@ -68,42 +73,41 @@ public class HostHandler extends AbstractHandler {
                         if (target.matches("/v1/host/host")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createHosts(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
                         } else if (target.matches("/v1/host/vips")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             addVIPs(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
+                        } else if (target.matches("/v1/host/backfill")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            backfillHosts(request);
+                        } else {
+                            throw new RuntimeException("Unknown host operation");
                         }
                         break;
                     case "PUT":
                         if (target.matches("/v1/host/host")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             updateHost(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
                         } else if (target.matches("/v1/host/restart")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             restartHost(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
+                        } else {
+                            throw new RuntimeException("Unknown host operation");
                         }
                         break;
                     case "DELETE":
                         if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             deleteHost(request, target.substring(9, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
                         } else if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             deleteVIP(request, target.substring(9, target.length() - 37), target.substring(46, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                        } else {
+                            throw new RuntimeException("Unknown host operation");
                         }
                         break;
                 }
+                response.setStatus(200);
+                request.setHandled(true);
             }
         } catch (AccessException e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target);
@@ -131,14 +135,28 @@ public class HostHandler extends AbstractHandler {
             postHostData.count = 10;
         }
 
+        if (!config.dataCenters.contains(postHostData.dataCenter)) {
+            new RuntimeException("Unknown data center");
+        }
+        if (!config.networks.contains(postHostData.network)) {
+            new RuntimeException("Unknown network");
+        }
+        if (!config.envs.contains(postHostData.env)) {
+            new RuntimeException("Unknown env");
+        }
+        if (!config.sizes.contains(postHostData.size)) {
+            new RuntimeException("Unknown size");
+        }
+
         //calc host name
-        String prefix = postHostData.dataCenter + "-" + postHostData.network + "-";
+        String prefix = postHostData.dataCenter + "-" + postHostData.network + "-" + service.getServiceAbbr() + "-";
+        int len = prefix.length();
         int num = 0;
         List<Host> hosts = dataAccess.getHosts(postHostData.serviceId);
         for (Host existingHost : hosts) {
             String existingHostName = existingHost.getHostName();
-            if (existingHostName.startsWith(prefix)) {
-                String numPart = existingHostName.substring(existingHostName.lastIndexOf("-") + 1);
+            if (existingHostName.startsWith(prefix) && existingHostName.length() > len) {
+                String numPart = existingHostName.substring(len);
                 try {
                     int temp = Integer.parseInt(numPart);
                     if (temp > num) {
@@ -154,7 +172,7 @@ public class HostHandler extends AbstractHandler {
             String numStr = Integer.toString(num + c);
             numStr = "000".substring(numStr.length()) + numStr;
 
-            Host host = new Host(prefix + service.getServiceAbbr() + "-" + numStr,
+            Host host = new Host(prefix + numStr,
                     postHostData.serviceId,
                     "Creating",
                     postHostData.dataCenter,
@@ -173,6 +191,14 @@ public class HostHandler extends AbstractHandler {
         WorkItem firstWorkItem = null;
         WorkItem workItem = null;
         User user = null;
+
+        if (!config.envs.contains(putHostData.env)) {
+            new RuntimeException("Unknown env");
+        }
+        if (!config.sizes.contains(putHostData.size)) {
+            new RuntimeException("Unknown size");
+        }
+
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 Host host = dataAccess.getHost(entry.getKey());
@@ -188,9 +214,9 @@ public class HostHandler extends AbstractHandler {
                         dataAccess.saveHost(host);
                         firstHost = host;
                         firstWorkItem = WorkItem.createUpdateHost(
-                                host.getHostId(), 
-                                putHostData.env, 
-                                putHostData.size, 
+                                host.getHostId(),
+                                putHostData.env,
+                                putHostData.size,
                                 putHostData.version,
                                 user.getUsername());
                         workItem = firstWorkItem;
@@ -200,9 +226,9 @@ public class HostHandler extends AbstractHandler {
                         host.setStatus("Update Queued");
                         dataAccess.saveHost(host);
                         workItem = WorkItem.createUpdateHost(
-                                host.getHostId(), 
-                                putHostData.env, 
-                                putHostData.size, 
+                                host.getHostId(),
+                                putHostData.env,
+                                putHostData.size,
                                 putHostData.version,
                                 user.getUsername());
                     }
@@ -234,6 +260,33 @@ public class HostHandler extends AbstractHandler {
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
         webHookSender.deleteHost(service, host, user);
+    }
+
+    private void backfillHosts(Request request) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String s = reader.readLine();
+        while (s != null && !s.isEmpty()) {
+            String[] parts = s.split(",");
+            if (parts.length == 6
+                    && config.dataCenters.contains(parts[2])
+                    && config.networks.contains(parts[3])
+                    && config.envs.contains(parts[4])
+                    && config.sizes.contains(parts[5])) {
+                for (Service service : dataAccess.getServices()) {
+                    if (service.getServiceAbbr().equalsIgnoreCase(parts[1])) {
+                        Host host = new Host(parts[0],
+                                service.getServiceId(),
+                                Const.NO_STATUS,
+                                parts[2],
+                                parts[3],
+                                parts[4],
+                                parts[5]);
+                        dataAccess.saveHost(host);
+                    }
+                }
+            }
+            s = reader.readLine();
+        }
     }
 
     private void addVIPs(Request request) throws IOException {

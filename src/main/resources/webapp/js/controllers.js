@@ -25,7 +25,7 @@ soaRepControllers.controller('HomeCtrl', ['$scope',
 soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal', '$http', 'User', 'Team',
     function ($scope, $routeParams, $uibModal, $http, User, Team) {
         $scope.users = User.get();
-        
+
         Team.get({teamId: $routeParams.teamId}, function (team) {
             $scope.team = team;
         });
@@ -51,13 +51,13 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
         };
 
         $scope.removeUserFromTeam = function (username) {
-                var responsePromise = $http.delete("/v1/team/"+$scope.team.teamId+"/"+username, {}, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new team has failed!");
-                });
+            var responsePromise = $http.delete("/v1/team/" + $scope.team.teamId + "/" + username, {}, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new team has failed!");
+            });
         };
 
         $scope.openAddServiceModal = function () {
@@ -84,10 +84,10 @@ soaRepControllers.controller('ModalAddUserToTeamCtrl',
             $scope.team = team;
 
             $scope.formAddUserToTeam = {};
-            $scope.formAddUserToTeam.user = "";            
+            $scope.formAddUserToTeam.user = "";
 
             $scope.save = function () {
-                var responsePromise = $http.put("/v1/team/"+$scope.team.teamId+"/"+$scope.formAddUserToTeam.user.username, {}, {});
+                var responsePromise = $http.put("/v1/team/" + $scope.team.teamId + "/" + $scope.formAddUserToTeam.user.username, {}, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                 });
@@ -365,7 +365,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
                 var h = $scope.service.hosts[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId == key2 && $scope.formSelectHost[key2]) {
-                        window.open("/v1/cf/" + cf.customFunctionId + "/" + h.hostId,'_blank');
+                        window.open("/v1/cf/" + cf.customFunctionId + "/" + h.hostId, '_blank');
                     }
                 }
             }
@@ -717,11 +717,6 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
-    function ($scope, Config) {
-        $scope.config = Config.get();
-    }]);
-
 soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
     function ($scope, Graph) {
         $scope.data = Graph.query();
@@ -731,6 +726,33 @@ soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
 soaRepControllers.controller('PortalCtrl', ['$scope', 'Portal',
     function ($scope, Portal) {
         $scope.portal = Portal.query();
+    }]);
+
+soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
+    function ($scope, Config) {
+        $scope.config = Config.get();
+    }]);
+
+soaRepControllers.controller('TasksCtrl', ['$scope',
+    function ($scope) {
+    }]);
+
+soaRepControllers.controller('WebhooksCtrl', ['$scope',
+    function ($scope) {
+    }]);
+
+soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.backfillTextarea;
+        $scope.submitBackfill = function () {
+            var responsePromise = $http.post("/v1/host/backfill", $scope.backfillTextarea, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update hosts has failed!");
+            });
+        };
     }]);
 
 soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
@@ -778,7 +800,7 @@ soaRepControllers.controller('ModalAddTeamCtrl',
 
             $scope.formSaveTeam = {};
             $scope.formSaveTeam.name = "";
-            $scope.formSaveTeam.user = "";            
+            $scope.formSaveTeam.user = "";
 
             $scope.save = function () {
                 var dataObject = {
@@ -832,9 +854,8 @@ soaRepControllers.controller('ModalUpdateUserCtrl',
             };
         });
 
-soaRepControllers.controller('HelpCtrl', ['$scope', 'Config',
-    function ($scope, Config) {
-        $scope.config = Config.get();
+soaRepControllers.controller('HelpCtrl', ['$scope',
+    function ($scope) {
     }]);
 
 soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',

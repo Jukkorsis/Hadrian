@@ -18,7 +18,7 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.service.dao.GetConfigData;
+import com.northernwall.hadrian.domain.Config;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -37,34 +37,12 @@ public class ConfigHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
 
+    private final Config config;
     private final Gson gson;
-    private final GetConfigData config;
 
-    public ConfigHandler() {
+    public ConfigHandler(Config config) {
+        this.config = config;
         this.gson = new Gson();
-        this.config = new GetConfigData();
-        
-        config.dataCenters.add("wdc");
-        config.dataCenters.add("vdc");
-        config.dataCenters.add("ldc");
-        config.dataCenters.add("adc");
-        
-        config.networks.add("prd");
-        config.networks.add("tst");
-        
-        config.envs.add("VM-Java7");
-        config.envs.add("VM-Java8");
-        config.envs.add("D-Java8");
-        config.envs.add("D-NodeJS");
-        
-        config.sizes.add("S");
-        config.sizes.add("M");
-        config.sizes.add("L");
-        config.sizes.add("XL");
-        
-        config.protocols.add("HTTP");
-        config.protocols.add("HTTPS");
-        config.protocols.add("TCP");
     }
 
     @Override
@@ -90,7 +68,7 @@ public class ConfigHandler extends AbstractHandler {
         response.setContentType(Const.JSON);
         
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(config, GetConfigData.class, jw);
+            gson.toJson(config, Config.class, jw);
         }
     }
 

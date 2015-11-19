@@ -39,6 +39,18 @@ soaRepApp.config(['$routeProvider',
                     templateUrl: 'partials/parameters.html',
                     controller: 'ParametersCtrl'
                 }).
+                when('/Tasks', {
+                    templateUrl: 'partials/tasks.html',
+                    controller: 'TasksCtrl'
+                }).
+                when('/Webhooks', {
+                    templateUrl: 'partials/webhooks.html',
+                    controller: 'WebhooksCtrl'
+                }).
+                when('/Backfill', {
+                    templateUrl: 'partials/backfill.html',
+                    controller: 'BackfillCtrl'
+                }).
                 when('/Admin', {
                     templateUrl: 'partials/admin.html',
                     controller: 'AdminCtrl'

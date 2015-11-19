@@ -84,6 +84,7 @@ public class TreeHandler extends AbstractHandler {
             if (user.isAdmin()) {
                 listAdminTeam(jw);
             }
+            listHelp(jw);
             jw.endArray();
         }
     }
@@ -131,6 +132,21 @@ public class TreeHandler extends AbstractHandler {
         optionsTreenode.setData(new TreeNodeData("0", "Parameters"));
         opsTeamTreenode.getChildren().add(optionsTreenode);
         
+        TreeNode tasksTreenode = new TreeNode();
+        tasksTreenode.setLabel("Tasks");
+        tasksTreenode.setData(new TreeNodeData("0", "Tasks"));
+        opsTeamTreenode.getChildren().add(tasksTreenode);
+        
+        TreeNode webhooksTreenode = new TreeNode();
+        webhooksTreenode.setLabel("Webhooks");
+        webhooksTreenode.setData(new TreeNodeData("0", "Webhooks"));
+        opsTeamTreenode.getChildren().add(webhooksTreenode);
+        
+        TreeNode backfillTreenode = new TreeNode();
+        backfillTreenode.setLabel("Backfill");
+        backfillTreenode.setData(new TreeNodeData("0", "Backfill"));
+        opsTeamTreenode.getChildren().add(backfillTreenode);
+        
         gson.toJson(opsTeamTreenode, TreeNode.class, jw);
     }
 
@@ -138,6 +154,13 @@ public class TreeHandler extends AbstractHandler {
         TreeNode adminTreenode = new TreeNode();
         adminTreenode.setLabel("Admin");
         adminTreenode.setData(new TreeNodeData("0", "Admin"));
+        gson.toJson(adminTreenode, TreeNode.class, jw);
+    }
+
+    private void listHelp(final JsonWriter jw) throws JsonIOException {
+        TreeNode adminTreenode = new TreeNode();
+        adminTreenode.setLabel("Help");
+        adminTreenode.setData(new TreeNodeData("0", "Help"));
         gson.toJson(adminTreenode, TreeNode.class, jw);
     }
 
