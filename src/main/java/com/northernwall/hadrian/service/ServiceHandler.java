@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class ServiceHandler extends AbstractHandler {
-
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     private final Access access;
@@ -153,6 +152,12 @@ public class ServiceHandler extends AbstractHandler {
         GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = access.canUserModify(request, service.getTeamId());
 
+        List<Vip> vips = dataAccess.getVips(id);
+        for (Vip vip : vips) {
+            GetVipData getVipData = GetVipData.create(vip);
+            getServiceData.vips.add(getVipData);
+        }
+
         List<Future> futures = new LinkedList<>();
         for (Host host : dataAccess.getHosts(id)) {
             GetHostData getHostData = GetHostData.create(host);
@@ -168,12 +173,6 @@ public class ServiceHandler extends AbstractHandler {
                 getHostData.vipRefs.add(getVipRefData);
             }
             getServiceData.hosts.add(getHostData);
-        }
-
-        for (Vip vip : dataAccess.getVips(id)) {
-            GetVipData getVipData = GetVipData.create(vip);
-            getServiceData.vips.add(getVipData);
-
         }
 
         for (DataStore dataStore : dataAccess.getDataStores(id)) {
