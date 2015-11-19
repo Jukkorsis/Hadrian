@@ -193,6 +193,7 @@ public class Main {
             HandlerList handlers = new HandlerList();
             handlers.addHandler(new AvailabilityHandler());
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
+            handlers.addHandler(new WebHookHandler(client));
             handlers.addHandler(new PrePortalHandler());
             handlers.addHandler(new LoginHandler(access));
             handlers.addHandler(new PostPortalHandler(client));
@@ -205,7 +206,6 @@ public class Main {
             handlers.addHandler(new HostHandler(access, dataAccess, webHookSender));
             handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
             handlers.addHandler(new DataStoreHandler(access, dataAccess));
-            handlers.addHandler(new WebHookHandler(client));
             handlers.addHandler(new ConfigHandler());
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());
