@@ -44,9 +44,15 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE KEYSPACE IF NOT EXISTS "+keyspace+" WITH replication = {'class':'SimpleStrategy', 'replication_factor':"+replicationFactor+"};");
         logger.info("Keyspace created");
         
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (serviceId text, serviceAbbr text, serviceName text, teamId text, description text, runAs text, gitPath text, mavenGroupId text, mavenArtifactId text, versionUrl text, availabilityUrl text, startCmdLine text, stopCmdLine text, PRIMARY KEY (serviceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (teamId text, teamName text, usernames text, PRIMARY KEY (teamId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (username text, fullName text, ops boolean, admin boolean, PRIMARY KEY (username));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".userSession (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".workItem (id text, data text, PRIMARY KEY (id));");
         logger.info("Tables created");
     }
 

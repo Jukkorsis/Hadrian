@@ -20,431 +20,394 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class CassandraDataAccess implements DataAccess {
 
     private final Cluster cluster;
 
-    private final String cqlServiceSelect;
-    private final String cqlServiceSelectBy;
-    private final String cqlServiceInsert;
+    private final String cqlSelectPre;
+    private final String cqlSelectPostAll;
 
-    private final String cqlTeamSelect;
-    private final String cqlTeamSelectBy;
-    private final String cqlTeamInsert;
-
-    private final String cqlUserSelect;
-    private final String cqlUserSelectBy;
-    private final String cqlUserInsert;
+    private final PreparedStatement customFunctionSelect;
+    private final PreparedStatement customFunctionSelect2;
+    private final PreparedStatement customFunctionInsert;
+    private final PreparedStatement customFunctionDelete = null;
+    private final PreparedStatement dataStoreSelect;
+    private final PreparedStatement dataStoreSelect2;
+    private final PreparedStatement dataStoreInsert;
+    private final PreparedStatement dataStoreDelete = null;
+    private final PreparedStatement hostSelect;
+    private final PreparedStatement hostSelect2;
+    private final PreparedStatement hostInsert;
+    private final PreparedStatement hostDelete = null;
+    private final PreparedStatement serviceSelect;
+    private final PreparedStatement serviceInsert;
+    private final PreparedStatement serviceDelete = null;
+    private final PreparedStatement teamSelect;
+    private final PreparedStatement teamInsert;
+    private final PreparedStatement teamDelete = null;
+    private final PreparedStatement userSelect;
+    private final PreparedStatement userInsert;
+    private final PreparedStatement userDelete = null;
+    private final PreparedStatement userSessionSelect;
+    private final PreparedStatement userSessionInsert;
+    private final PreparedStatement userSessionDelete = null;
+    private final PreparedStatement vipSelect;
+    private final PreparedStatement vipSelect2;
+    private final PreparedStatement vipInsert;
+    private final PreparedStatement vipDelete = null;
+    private final PreparedStatement workItemSelect;
+    private final PreparedStatement workItemInsert;
 
     private final Gson gson;
 
     public CassandraDataAccess(Cluster cluster, String keyspace) {
         this.cluster = cluster;
 
-        cqlServiceSelect = "SELECT * FROM " + keyspace + ".servuce;";
-        cqlServiceSelectBy = "SELECT * FROM " + keyspace + ".servuce WHERE servuceId = ?;";
-        cqlServiceInsert = "INSERT INTO " + keyspace + ".servuce (serviceId, serviceAbbr, serviceName, teamId, description, runAs, gitPath, mavenGroupId, mavenArtifactId, versionUrl, availabilityUrl, startCmdLine, stopCmdLine) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-
-        cqlTeamSelect = "SELECT * FROM " + keyspace + ".team;";
-        cqlTeamSelectBy = "SELECT * FROM " + keyspace + ".team WHERE teamId = ?;";
-        cqlTeamInsert = "INSERT INTO " + keyspace + ".team (teamId, teamName, usernames) VALUES (?, ?, ?, ?);";
-
-        cqlUserSelect = "SELECT * FROM " + keyspace + ".user;";
-        cqlUserSelectBy = "SELECT * FROM " + keyspace + ".user WHERE username = ?;";
-        cqlUserInsert = "INSERT INTO " + keyspace + ".user (username, fullName, ops, admin) VALUES (?, ?, ?, ?);";
-
+        cqlSelectPre = "SELECT * FROM " + keyspace + ".";
+        cqlSelectPostAll = ";";
+        
+        Session session = cluster.connect(keyspace);
+        
+        customFunctionSelect = session.prepare("SELECT * FROM " + keyspace + ".customFunction WHERE serviceId = ?;");
+        customFunctionSelect2 = session.prepare("SELECT * FROM " + keyspace + ".customFunction WHERE serviceId = ? AND id = ?;");
+        customFunctionInsert = session.prepare("INSERT INTO " + keyspace + ".customFunction (serviceId, id, data) VALUES (?, ?, ?);");
+        dataStoreSelect = session.prepare("SELECT * FROM " + keyspace + ".dataStore WHERE serviceId = ?;");
+        dataStoreSelect2 = session.prepare("SELECT * FROM " + keyspace + ".dataStore WHERE serviceId = ? AND id = ?;");
+        dataStoreInsert = session.prepare("INSERT INTO " + keyspace + ".dataStore (serviceId, id, data) VALUES (?, ?, ?);");
+        hostSelect = session.prepare("SELECT * FROM " + keyspace + ".host WHERE serviceId = ?;");
+        hostSelect2 = session.prepare("SELECT * FROM " + keyspace + ".host WHERE serviceId = ? AND id = ?;");
+        hostInsert = session.prepare("INSERT INTO " + keyspace + ".host (serviceId, id, data) VALUES (?, ?, ?);");
+        serviceSelect = session.prepare("SELECT * FROM " + keyspace + ".service WHERE id = ?;");
+        serviceInsert = session.prepare("INSERT INTO " + keyspace + ".service (id, data) VALUES (?, ?);");
+        teamSelect = session.prepare("SELECT * FROM " + keyspace + ".team WHERE id = ?;");
+        teamInsert = session.prepare("INSERT INTO " + keyspace + ".team (id, data) VALUES (?, ?);");
+        userSelect = session.prepare("SELECT * FROM " + keyspace + ".user WHERE id = ?;");
+        userInsert = session.prepare("INSERT INTO " + keyspace + ".user (id, data) VALUES (?, ?);");
+        userSessionSelect = session.prepare("SELECT * FROM " + keyspace + ".userSession WHERE id = ?;");
+        userSessionInsert = session.prepare("INSERT INTO " + keyspace + ".userSession (id, data) VALUES (?, ?);");
+        vipSelect = session.prepare("SELECT * FROM " + keyspace + ".vip WHERE serviceId = ?;");
+        vipSelect2 = session.prepare("SELECT * FROM " + keyspace + ".vip WHERE serviceId = ? AND id = ?;");
+        vipInsert = session.prepare("INSERT INTO " + keyspace + ".vip (serviceId, id, data) VALUES (?, ?, ?);");
+        workItemSelect = session.prepare("SELECT * FROM " + keyspace + ".workItem WHERE id = ?;");
+        workItemInsert = session.prepare("INSERT INTO " + keyspace + ".workItem (id, data) VALUES (?, ?);");
+       
         gson = new Gson();
     }
 
     @Override
     public List<Team> getTeams() {
-        Session session = cluster.connect();
-        ResultSet results = session.execute(cqlTeamSelect);
-        List<Team> teams = new LinkedList<>();
-        for (Row row : results) {
-            Team team = new Team(
-                    row.getString("teamId"),
-                    row.getString("teamName"),
-                    gson.fromJson(row.getString("usernames"), List.class));
-            teams.add(team);
-        }
-        return teams;
+        return getData("team", Team.class);
     }
 
     @Override
     public Team getTeam(String teamId) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlTeamSelectBy);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        ResultSet results = session.execute(boundStatement.bind(teamId));
-        for (Row row : results) {
-            return new Team(
-                    row.getString("teamId"),
-                    row.getString("teamName"),
-                    gson.fromJson(row.getString("usernames"), List.class));
-        }
-        return null;
+        return getData(teamId, teamSelect, Team.class);
     }
 
     @Override
     public void saveTeam(Team team) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlTeamInsert);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        session.execute(boundStatement.bind(
-                team.getTeamId(),
-                team.getTeamName(),
-                gson.toJson(team.getUsernames())));
+        saveData(team.getTeamId(), gson.toJson(team), teamInsert);
     }
 
     @Override
     public void updateTeam(Team team) {
-        saveTeam(team);
+        saveData(team.getTeamId(), gson.toJson(team), teamInsert);
     }
 
     @Override
     public List<Service> getServices() {
-        Session session = cluster.connect();
-        ResultSet results = session.execute(cqlServiceSelect);
-        List<Service> services = new LinkedList<>();
-        for (Row row : results) {
-            Service service = new Service(
-                    row.getString("serviceId"),
-                    row.getString("serviceAbbr"),
-                    row.getString("serviceName"),
-                    row.getString("teamId"),
-                    row.getString("description"),
-                    row.getString("runAs"),
-                    row.getString("gitPath"),
-                    row.getString("mavenGroupId"),
-                    row.getString("mavenArtifactId"),
-                    row.getString("versionUrl"),
-                    row.getString("availabilityUrl"),
-                    row.getString("startCmdLine"),
-                    row.getString("stopCmdLine"));
-            services.add(service);
-        }
-        return services;
+        return getData("service", Service.class);
     }
 
     @Override
     public List<Service> getServices(String teamId) {
-        Session session = cluster.connect();
-        ResultSet results = session.execute(cqlServiceSelect);
-        List<Service> services = new LinkedList<>();
-        for (Row row : results) {
-            String temp = row.getString("teamId");
-            if (teamId.equals(temp)) {
-                Service service = new Service(
-                        row.getString("serviceId"),
-                        row.getString("serviceAbbr"),
-                        row.getString("serviceName"),
-                        temp,
-                        row.getString("description"),
-                        row.getString("runAs"),
-                        row.getString("gitPath"),
-                        row.getString("mavenGroupId"),
-                        row.getString("mavenArtifactId"),
-                        row.getString("versionUrl"),
-                        row.getString("availabilityUrl"),
-                        row.getString("startCmdLine"),
-                        row.getString("stopCmdLine"));
-                services.add(service);
+        List<Service> services = getData("service", Service.class);
+        services.removeIf(new Predicate<Service>() {
+            @Override
+            public boolean test(Service service) {
+                return !service.getTeamId().equals(teamId);
             }
-        }
+        });
         return services;
     }
 
     @Override
     public Service getService(String serviceId) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlTeamSelectBy);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        ResultSet results = session.execute(boundStatement.bind(serviceId));
-        for (Row row : results) {
-            return new Service(
-                    row.getString("serviceId"),
-                    row.getString("serviceAbbr"),
-                    row.getString("serviceName"),
-                    row.getString("teamId"),
-                    row.getString("description"),
-                    row.getString("runAs"),
-                    row.getString("gitPath"),
-                    row.getString("mavenGroupId"),
-                    row.getString("mavenArtifactId"),
-                    row.getString("versionUrl"),
-                    row.getString("availabilityUrl"),
-                    row.getString("startCmdLine"),
-                    row.getString("stopCmdLine"));
-        }
-        return null;
+        return getData(serviceId, serviceSelect, Service.class);
     }
 
     @Override
     public void saveService(Service service) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlServiceInsert);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        session.execute(boundStatement.bind(
-                service.getServiceId(),
-                service.getServiceAbbr(),
-                service.getServiceName(),
-                service.getTeamId(),
-                service.getDescription(),
-                service.getRunAs(),
-                service.getGitPath(),
-                service.getMavenGroupId(),
-                service.getMavenArtifactId(),
-                service.getVersionUrl(),
-                service.getAvailabilityUrl(),
-                service.getStartCmdLine(),
-                service.getStopCmdLine()));
+        saveData(service.getServiceId(), gson.toJson(service), serviceInsert);
     }
 
     @Override
     public void updateService(Service service) {
-        saveService(service);
+        saveData(service.getServiceId(), gson.toJson(service), serviceInsert);
     }
 
     @Override
     public List<Host> getHosts(String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getServiceData(serviceId, hostSelect, Host.class);
     }
 
     @Override
-    public Host getHost(String hostId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Host getHost(String serviceId, String hostId) {
+        return getServiceData(serviceId, hostId, hostSelect2, Host.class);
     }
 
     @Override
     public void saveHost(Host host) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        saveServiceData(host.getServiceId(), host.getHostId(), gson.toJson(host), hostInsert);
     }
 
     @Override
     public void updateHost(Host host) {
-        saveHost(host);
+        saveServiceData(host.getServiceId(), host.getHostId(), gson.toJson(host), hostInsert);
     }
 
     @Override
-    public void deleteHost(String hostId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteHost(String serviceId, String hostId) {
+        deleteServiceData(serviceId, hostId, hostDelete);
     }
 
     @Override
     public List<Vip> getVips(String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getServiceData(serviceId, vipSelect, Vip.class);
     }
 
     @Override
-    public Vip getVip(String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Vip getVip(String serviceId, String vipId) {
+        return getServiceData(serviceId, vipId, vipSelect2, Vip.class);
     }
 
     @Override
     public void saveVip(Vip vip) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        saveServiceData(vip.getServiceId(), vip.getVipId(), gson.toJson(vip), vipInsert);
     }
 
     @Override
     public void updateVip(Vip vip) {
-        saveVip(vip);
+        saveServiceData(vip.getServiceId(), vip.getVipId(), gson.toJson(vip), vipInsert);
     }
 
     @Override
-    public void deleteVip(String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteVip(String serviceId, String vipId) {
+        deleteServiceData(serviceId, vipId, vipDelete);
     }
 
     @Override
     public List<ServiceRef> getServiceRefs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new LinkedList<>();
     }
 
     @Override
     public List<ServiceRef> getServiceRefsByClient(String clientServiceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new LinkedList<>();
     }
 
     @Override
     public List<ServiceRef> getServiceRefsByServer(String serverServiceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new LinkedList<>();
     }
 
     @Override
     public void saveServiceRef(ServiceRef serviceRef) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteServiceRef(String clientId, String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<VipRef> getVipRefsByHost(String instanceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<VipRef> getVipRefsByVip(String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<VipRef> getVipRefsByHost(String hostId) {
+        return new LinkedList<>();
     }
 
     @Override
     public VipRef getVipRef(String hostId, String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveVipRef(VipRef vipRef) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateVipRef(VipRef vipRef) {
-        saveVipRef(vipRef);
-    }
-
-    @Override
-    public void deleteVipRef(String hostId, String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteVipRefs(String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CustomFunction> getCustomFunctions(String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public CustomFunction getCustomFunction(String customFunctionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveCustomFunction(CustomFunction customFunction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateCustomFunction(CustomFunction customFunction) {
-        saveCustomFunction(customFunction);
-    }
-
-    @Override
-    public void deleteCustomFunction(String customFunctionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<DataStore> getDataStores(String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public DataStore getDataStore(String dataStoreId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveDataStore(DataStore dataStore) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateDataStore(DataStore dataStore) {
-        saveDataStore(dataStore);
-    }
-
-    @Override
-    public void deleteDataStore(String dataStoreId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<User> getUsers() {
-        Session session = cluster.connect();
-        ResultSet results = session.execute(cqlUserSelect);
-        List<User> users = new LinkedList<>();
-        for (Row row : results) {
-            User user = new User(
-                    row.getString("username"),
-                    row.getString("fullName"),
-                    row.getBool("ops"),
-                    row.getBool("admin"));
-            users.add(user);
-        }
-        return users;
-    }
-
-    @Override
-    public User getUser(String userName) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlUserSelectBy);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        ResultSet results = session.execute(boundStatement.bind(userName));
-        for (Row row : results) {
-            User user = new User(
-                    row.getString("username"),
-                    row.getString("fullName"),
-                    row.getBool("ops"),
-                    row.getBool("admin"));
-            return user;
-        }
         return null;
     }
 
     @Override
+    public void saveVipRef(VipRef vipRef) {
+    }
+
+    @Override
+    public void updateVipRef(VipRef vipRef) {
+    }
+
+    @Override
+    public void deleteVipRef(String hostId, String vipId) {
+    }
+
+    @Override
+    public void deleteVipRefs(String vipId) {
+    }
+
+    @Override
+    public List<CustomFunction> getCustomFunctions(String serviceId) {
+        return getServiceData(serviceId, customFunctionSelect, CustomFunction.class);
+    }
+
+    @Override
+    public CustomFunction getCustomFunction(String serviceId, String customFunctionId) {
+        return getServiceData(serviceId, customFunctionId, customFunctionSelect2, CustomFunction.class);
+    }
+
+    @Override
+    public void saveCustomFunction(CustomFunction customFunction) {
+        saveServiceData(customFunction.getServiceId(), customFunction.getCustomFunctionId(), gson.toJson(customFunction), customFunctionInsert);
+    }
+
+    @Override
+    public void updateCustomFunction(CustomFunction customFunction) {
+        saveServiceData(customFunction.getServiceId(), customFunction.getCustomFunctionId(), gson.toJson(customFunction), customFunctionInsert);
+    }
+
+    @Override
+    public void deleteCustomFunction(String serviceId, String customFunctionId) {
+        deleteServiceData(serviceId, customFunctionId, customFunctionDelete);
+    }
+
+    @Override
+    public List<DataStore> getDataStores(String serviceId) {
+        return getServiceData(serviceId, dataStoreSelect, DataStore.class);
+    }
+
+    @Override
+    public DataStore getDataStore(String serviceId, String dataStoreId) {
+        return getServiceData(serviceId, dataStoreId, dataStoreSelect2, DataStore.class);
+    }
+
+    @Override
+    public void saveDataStore(DataStore dataStore) {
+        saveServiceData(dataStore.getServiceId(), dataStore.getDataStoreId(), gson.toJson(dataStore), dataStoreInsert);
+    }
+
+    @Override
+    public void updateDataStore(DataStore dataStore) {
+        saveServiceData(dataStore.getServiceId(), dataStore.getDataStoreId(), gson.toJson(dataStore), dataStoreInsert);
+    }
+
+    @Override
+    public void deleteDataStore(String serviceId, String dataStoreId) {
+        deleteServiceData(serviceId, dataStoreId, dataStoreDelete);
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return getData("user", User.class);
+    }
+
+    @Override
+    public User getUser(String userName) {
+        return getData(userName, userSelect, User.class);
+    }
+
+    @Override
     public void saveUser(User user) {
-        Session session = cluster.connect();
-        PreparedStatement statement = session.prepare(cqlUserInsert);
-        BoundStatement boundStatement = new BoundStatement(statement);
-        session.execute(boundStatement.bind(
-                user.getUsername(),
-                user.getFullName(),
-                user.isOps(),
-                user.isAdmin()));
+        saveData(user.getUsername(), gson.toJson(user), userInsert);
     }
 
     @Override
     public void updateUser(User user) {
-        saveUser(user);
+        saveData(user.getUsername(), gson.toJson(user), userInsert);
     }
 
     @Override
     public void deleteUser(String userName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveWorkItem(WorkItem workItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        deleteData(userName, userDelete);
     }
 
     @Override
     public WorkItem getWorkItem(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getData(id, workItemSelect, WorkItem.class);
+    }
+
+    @Override
+    public void saveWorkItem(WorkItem workItem) {
+        saveData(workItem.getId(), gson.toJson(workItem), workItemInsert);
     }
 
     @Override
     public UserSession getUserSession(String sessionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getData(sessionId, userSessionSelect, UserSession.class);
     }
 
     @Override
     public void saveUserSession(UserSession userSession) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        saveData(userSession.getSessionId(), gson.toJson(userSession), userSessionInsert);
     }
 
     @Override
     public void deleteUserSession(String sessionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        deleteData(sessionId, userSessionDelete);
+    }
+
+    private <T extends Object> List<T> getData(String tableName, Class<T> classOfT) {
+        Session session = cluster.connect();
+        ResultSet results = session.execute(cqlSelectPre + tableName + cqlSelectPostAll);
+        List<T> listOfData = new LinkedList<>();
+        for (Row row : results) {
+            String data = row.getString("data");
+            listOfData.add(gson.fromJson(data, classOfT));
+        }
+        return listOfData;
+    }
+
+    private <T extends Object> T getData(String id, PreparedStatement statement, Class<T> classOfT) {
+        Session session = cluster.connect();
+        BoundStatement boundStatement = new BoundStatement(statement);
+        ResultSet results = session.execute(boundStatement.bind(id));
+        for (Row row : results) {
+            String data = row.getString("data");
+            return gson.fromJson(data, classOfT);
+        }
+        return null;
+    }
+
+    private void saveData(String id, String data, PreparedStatement statement) {
+        Session session = cluster.connect();
+        BoundStatement boundStatement = new BoundStatement(statement);
+        session.execute(boundStatement.bind(id,data));
+    }
+
+    private void deleteData(String id, PreparedStatement statement) {
+    }
+
+    private <T extends Object> List<T> getServiceData(String serviceId, PreparedStatement statement, Class<T> classOfT) {
+        Session session = cluster.connect();
+        BoundStatement boundStatement = new BoundStatement(statement);
+        ResultSet results = session.execute(boundStatement.bind(serviceId));
+        List<T> listOfData = new LinkedList<>();
+        for (Row row : results) {
+            String data = row.getString("data");
+            listOfData.add(gson.fromJson(data, classOfT));
+        }
+        return listOfData;
+    }
+
+    private <T extends Object> T getServiceData(String serviceId, String id, PreparedStatement statement, Class<T> classOfT) {
+        Session session = cluster.connect();
+        BoundStatement boundStatement = new BoundStatement(statement);
+        ResultSet results = session.execute(boundStatement.bind(serviceId, id));
+        for (Row row : results) {
+            String data = row.getString("data");
+            return gson.fromJson(data, classOfT);
+        }
+        return null;
+    }
+
+    private void saveServiceData(String serviceId, String id, String data, PreparedStatement statement) {
+        Session session = cluster.connect();
+        BoundStatement boundStatement = new BoundStatement(statement);
+        session.execute(boundStatement.bind(serviceId, id, data));
+    }
+
+    private void deleteServiceData(String serviceId, String id, PreparedStatement statement) {
     }
 
 }

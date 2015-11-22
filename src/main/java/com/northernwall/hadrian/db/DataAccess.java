@@ -47,16 +47,16 @@ public interface DataAccess {
     void updateService(Service service);
 
     List<Host> getHosts(String serviceId);
-    Host getHost(String hostId);
+    Host getHost(String serviceId, String hostId);
     void saveHost(Host host);
     void updateHost(Host host);
-    void deleteHost(String hostId);
+    void deleteHost(String serviceId, String hostId);
 
     List<Vip> getVips(String serviceId);
-    Vip getVip(String vipId);
+    Vip getVip(String serviceId, String vipId);
     void saveVip(Vip vip);
     void updateVip(Vip vip);
-    void deleteVip(String vipId);
+    void deleteVip(String serviceId, String vipId);
 
     List<ServiceRef> getServiceRefs();
     List<ServiceRef> getServiceRefsByClient(String clientServiceId);
@@ -64,8 +64,7 @@ public interface DataAccess {
     void saveServiceRef(ServiceRef serviceRef);
     void deleteServiceRef(String clientId, String serviceId);
     
-    List<VipRef> getVipRefsByHost(String instanceId);
-    List<VipRef> getVipRefsByVip(String vipId);
+    List<VipRef> getVipRefsByHost(String hostId);
     VipRef getVipRef(String hostId, String vipId);
     void saveVipRef(VipRef vipRef);
     void updateVipRef(VipRef vipRef);
@@ -73,16 +72,16 @@ public interface DataAccess {
     void deleteVipRefs(String vipId);
     
     List<CustomFunction> getCustomFunctions(String serviceId);
-    CustomFunction getCustomFunction(String customFunctionId);
+    CustomFunction getCustomFunction(String serviceId, String customFunctionId);
     void saveCustomFunction(CustomFunction customFunction);
     void updateCustomFunction(CustomFunction customFunction);
-    void deleteCustomFunction(String customFunctionId);
+    void deleteCustomFunction(String serviceId, String customFunctionId);
 
     List<DataStore> getDataStores(String serviceId);
-    DataStore getDataStore(String dataStoreId);
+    DataStore getDataStore(String serviceId, String dataStoreId);
     void saveDataStore(DataStore dataStore);
     void updateDataStore(DataStore dataStore);
-    void deleteDataStore(String dataStoreId);
+    void deleteDataStore(String serviceId, String dataStoreId);
     
     List<User> getUsers();
     User getUser(String userName);
@@ -90,8 +89,8 @@ public interface DataAccess {
     void updateUser(User user);
     void deleteUser(String userName);
 
-    void saveWorkItem(WorkItem workItem);
     WorkItem getWorkItem(String id);
+    void saveWorkItem(WorkItem workItem);
 
     UserSession getUserSession(String sessionId);
     void saveUserSession(UserSession userSession);

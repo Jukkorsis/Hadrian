@@ -141,7 +141,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Host getHost(String hostId) {
+    public Host getHost(String serviceId, String hostId) {
         return hosts.get(hostId);
     }
 
@@ -156,7 +156,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteHost(String hostId) {
+    public void deleteHost(String serviceId, String hostId) {
         hosts.remove(hostId);
     }
 
@@ -173,7 +173,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Vip getVip(String vipId) {
+    public Vip getVip(String serviceId, String vipId) {
         return vips.get(vipId);
     }
 
@@ -188,7 +188,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteVip(String vipId) {
+    public void deleteVip(String serviceId, String vipId) {
         vips.remove(vipId);
     }
 
@@ -239,17 +239,6 @@ public class InMemoryDataAccess implements DataAccess {
         List<VipRef> temp = new LinkedList<>();
         for (VipRef vipRef : vipRefs) {
             if (vipRef.getHostId().equals(hostId)) {
-                temp.add(vipRef);
-            }            
-        }
-        return temp;
-    }
-
-    @Override
-    public List<VipRef> getVipRefsByVip(String vipId) {
-        List<VipRef> temp = new LinkedList<>();
-        for (VipRef vipRef : vipRefs) {
-            if (vipRef.getVipId().equals(vipId)) {
                 temp.add(vipRef);
             }            
         }
@@ -319,7 +308,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public CustomFunction getCustomFunction(String customFunctionId) {
+    public CustomFunction getCustomFunction(String serviceId, String customFunctionId) {
         return customFunctions.get(customFunctionId);
     }
     
@@ -334,7 +323,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteCustomFunction(String customFunctionId) {
+    public void deleteCustomFunction(String serviceId, String customFunctionId) {
         customFunctions.remove(customFunctionId);
     }
     
@@ -351,7 +340,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public DataStore getDataStore(String dataStoreId) {
+    public DataStore getDataStore(String serviceId, String dataStoreId) {
         return dataStores.get(dataStoreId);
     }
 
@@ -366,7 +355,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteDataStore(String dataStoreId) {
+    public void deleteDataStore(String serviceId, String dataStoreId) {
         dataStores.remove(dataStoreId);
     }
 
