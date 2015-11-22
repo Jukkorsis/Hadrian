@@ -110,6 +110,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
         response.operation = "create";
+        response.serviceId = data.service.serviceId;
         response.hostId = data.host.hostId;
         response.status = 200;
 
@@ -123,6 +124,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
         response.operation = "update";
+        response.serviceId = data.service.serviceId;
         response.hostId = data.host.hostId;
         response.status = 200;
 
@@ -136,6 +138,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "host";
         response.operation = "delete";
+        response.serviceId = data.service.serviceId;
         response.hostId = data.host.hostId;
         response.status = 200;
 
@@ -167,6 +170,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
         response.operation = "create";
+        response.serviceId = data.service.serviceId;
         response.vipId = data.vip.vipId;
         response.status = 200;
 
@@ -180,6 +184,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
         response.operation = "update";
+        response.serviceId = data.service.serviceId;
         response.vipId = data.vip.vipId;
         response.status = 200;
 
@@ -193,6 +198,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "vip";
         response.operation = "delete";
+        response.serviceId = data.service.serviceId;
         response.vipId = data.vip.vipId;
         response.status = 200;
 
@@ -221,6 +227,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
         response.operation = "add";
+        response.serviceId = data.service.serviceId;
         response.hostId = data.host.hostId;
         response.vipId = data.vip.vipId;
         response.status = 200;
@@ -235,6 +242,7 @@ public class WebHookHandler extends AbstractHandler {
         CallbackResponse response = new CallbackResponse();
         response.type = "hostvip";
         response.operation = "delete";
+        response.serviceId = data.service.serviceId;
         response.hostId = data.host.hostId;
         response.vipId = data.vip.vipId;
         response.status = 200;

@@ -23,6 +23,7 @@ package com.northernwall.hadrian.webhook.dao;
 public class CallbackResponse {
     public String type;
     public String operation;
+    public String serviceId;
     public String hostId;
     public String vipId;
     public int status;

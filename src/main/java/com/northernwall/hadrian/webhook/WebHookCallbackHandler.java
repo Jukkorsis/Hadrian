@@ -106,18 +106,18 @@ public class WebHookCallbackHandler extends AbstractHandler {
     }
 
     private void createHost(CallbackResponse data) throws IOException {
-        Host host = dataAccess.getHost(data.hostId);
+        Host host = dataAccess.getHost(data.serviceId, data.hostId);
         if (data.status < 300) {
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
         } else {
             logger.info("Callback for {} failed with status {}", data.hostId, data.status);
-            dataAccess.deleteHost(data.hostId);
+            dataAccess.deleteHost(data.serviceId, data.hostId);
         }
     }
 
     private void updateHost(CallbackResponse data) throws IOException {
-        Host host = dataAccess.getHost(data.hostId);
+        Host host = dataAccess.getHost(data.serviceId, data.hostId);
         if (data.status < 300) {
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
@@ -135,7 +135,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
             if (workItem.getNextId() == null) {
                 return;
             }
-            Host nextHost = dataAccess.getHost(workItem.getNextId());
+            Host nextHost = dataAccess.getHost(data.serviceId, workItem.getNextId());
             if (nextHost == null) {
                 logger.error("Finished updating {}, next work item is {}, but could not find it.", data.hostId, workItem.getNextId());
                 return;
@@ -154,11 +154,11 @@ public class WebHookCallbackHandler extends AbstractHandler {
     }
 
     private void deleteHost(CallbackResponse data) throws IOException {
-        Host host = dataAccess.getHost(data.hostId);
+        Host host = dataAccess.getHost(data.serviceId, data.hostId);
         if (host == null) {
             logger.error("Could not find host {} to delete.", data.hostId);
         } else if (data.status < 300) {
-            dataAccess.deleteHost(data.hostId);
+            dataAccess.deleteHost(data.serviceId, data.hostId);
         } else {
             logger.info("Callback for {} failed with status {}", data.hostId, data.status);
             host.setStatus(Const.NO_STATUS);
@@ -167,18 +167,18 @@ public class WebHookCallbackHandler extends AbstractHandler {
     }
 
     private void createVip(CallbackResponse data) throws IOException {
-        Vip vip = dataAccess.getVip(data.vipId);
+        Vip vip = dataAccess.getVip(data.serviceId, data.vipId);
         if (data.status < 300) {
             vip.setStatus(Const.NO_STATUS);
             dataAccess.updateVip(vip);
         } else {
             logger.info("Callback for {} failed with status {}", data.vipId, data.status);
-            dataAccess.deleteVip(data.vipId);
+            dataAccess.deleteVip(data.serviceId, data.vipId);
         }
     }
 
     private void updateVip(CallbackResponse data) throws IOException {
-        Vip vip = dataAccess.getVip(data.vipId);
+        Vip vip = dataAccess.getVip(data.serviceId, data.vipId);
         if (data.status < 300) {
             vip.setStatus(Const.NO_STATUS);
             
@@ -198,12 +198,12 @@ public class WebHookCallbackHandler extends AbstractHandler {
     }
 
     private void deleteVip(CallbackResponse data) throws IOException {
-        Vip vip = dataAccess.getVip(data.vipId);
+        Vip vip = dataAccess.getVip(data.serviceId, data.vipId);
         if (vip == null) {
             logger.error("Could not find end point {} to delete.", data.vipId);
         } else if (data.status < 300) {
             dataAccess.deleteVipRefs(data.vipId);
-            dataAccess.deleteVip(data.vipId);
+            dataAccess.deleteVip(data.serviceId, data.vipId);
         } else {
             logger.info("Callback for {} failed with status {}", data.vipId, data.status);
             vip.setStatus(Const.NO_STATUS);
@@ -218,7 +218,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
             dataAccess.updateVipRef(vipRef);
         } else {
             logger.info("Callback for {} failed with status {}", data.vipId, data.status);
-            dataAccess.deleteVip(data.vipId);
+            dataAccess.deleteVip(data.serviceId, data.vipId);
         }
     }
 
