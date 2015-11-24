@@ -40,7 +40,7 @@ public class WorkItem {
         workItem.env = env;
         workItem.size = size;
         workItem.version = version;
-        workItem.version = username;
+        workItem.username = username;
         return workItem;
     }
 
