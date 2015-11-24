@@ -28,7 +28,6 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,12 +67,6 @@ public class InMemoryDataAccess implements DataAccess {
         workItems = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
         userSessions = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public Map<String, String> getHealth() {
-        Map<String, String> health = new HashMap<>();
-        return health;
     }
 
     @Override

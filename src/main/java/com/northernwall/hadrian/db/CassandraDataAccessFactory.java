@@ -13,7 +13,6 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     private final static Logger logger = LoggerFactory.getLogger(CassandraDataAccessFactory.class);
 
     private Cluster cluster;
-    private CassandraDataAccess dataAccess;
 
     @Override
     public DataAccess createDataAccess(Properties properties) {
@@ -27,8 +26,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace);
-        return dataAccess;
+        return new CassandraDataAccess(cluster, keyspace);
     }
 
     private void connect(String node) {        
@@ -46,28 +44,20 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE KEYSPACE IF NOT EXISTS "+keyspace+" WITH replication = {'class':'SimpleStrategy', 'replication_factor':"+replicationFactor+"};");
         logger.info("Keyspace created");
         
-        session = cluster.connect();
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefServer (serverServiceId text, clientServiceId text, PRIMARY KEY (serverServiceId, clientServiceId));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (id text, data text, PRIMARY KEY (id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (id text, data text, PRIMARY KEY (id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".userSession (id text, data text, PRIMARY KEY (id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".workItem (id text, data text, PRIMARY KEY (id));");
         logger.info("Tables created");
-
-        session.close();
     }
 
     @Override
     public void run() {
-        dataAccess.close();
         cluster.close();
         logger.info("Connection to cluster closed");
     }

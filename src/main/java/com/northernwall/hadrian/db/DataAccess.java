@@ -28,7 +28,6 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -36,8 +35,6 @@ import java.util.Map;
  */
 public interface DataAccess {
     
-    Map<String, String> getHealth();
-
     List<Team> getTeams();
     Team getTeam(String teamId);
     void saveTeam(Team team);
