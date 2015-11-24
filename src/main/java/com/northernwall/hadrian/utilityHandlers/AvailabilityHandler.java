@@ -16,7 +16,9 @@
 
 package com.northernwall.hadrian.utilityHandlers;
 
+import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.maven.MavenHelper;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -43,10 +45,14 @@ public class AvailabilityHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
     private final static String VERSION = "0.1.1";
 
+    private final Access access;
     private final DataAccess dataAccess;
+    private final MavenHelper mavenHelper;
     
-    public AvailabilityHandler(DataAccess dataAccess) {
+    public AvailabilityHandler(Access access, DataAccess dataAccess, MavenHelper mavenHelper) {
+        this.access = access;
         this.dataAccess = dataAccess;
+        this.mavenHelper = mavenHelper;
     }
 
     @Override
@@ -86,6 +92,9 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, "JVM Peak Threads", threadMXBean.getPeakThreadCount());
         writeln(response, "Current Time", new Date());
         writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
+        writeln(response, "Class - Access", access.getClass().getCanonicalName());
+        writeln(response, "Class - Data Access", dataAccess.getClass().getCanonicalName());
+        writeln(response, "Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
         Map<String, String> healthMap = dataAccess.getHealth();
         Set<String> keys = new TreeSet<>(healthMap.keySet());
         for(String key : keys) {
