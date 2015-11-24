@@ -27,6 +27,8 @@ import com.northernwall.hadrian.tree.dao.TreeNode;
 import com.northernwall.hadrian.tree.dao.TreeNodeData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +62,8 @@ public class TreeHandler extends AbstractHandler {
                     case "GET":
                         listComponents(request, response);
                         break;
+                    default:
+                        throw new RuntimeException("Unknown tree operation");
                 }
                 response.setStatus(200);
                 request.setHandled(true);
@@ -93,11 +97,15 @@ public class TreeHandler extends AbstractHandler {
         TreeNode devTeamsTreenode = new TreeNode();
         devTeamsTreenode.setLabel("Dev Teams");
         devTeamsTreenode.setData(new TreeNodeData("0", "DevTeams"));
-        for (Team team : dataAccess.getTeams()) {
+        List<Team> teams  = dataAccess.getTeams();
+        Collections.sort(teams);
+        for (Team team : teams) {
             TreeNode teamTreenode = new TreeNode();
             teamTreenode.setLabel(team.getTeamName());
             teamTreenode.setData(new TreeNodeData(team.getTeamId(), "Team"));
-            for (Service service : dataAccess.getServices(team.getTeamId())) {
+            List<Service> services = dataAccess.getServices(team.getTeamId());
+            Collections.sort(services);
+            for (Service service : services) {
                 TreeNode serviceTreeNode = new TreeNode();
                 serviceTreeNode.setLabel(service.getServiceName());
                 serviceTreeNode.setData(new TreeNodeData(service.getServiceId(), "Service"));
