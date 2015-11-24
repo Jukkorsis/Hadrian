@@ -16,12 +16,16 @@
 
 package com.northernwall.hadrian.utilityHandlers;
 
+import com.northernwall.hadrian.db.DataAccess;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +43,10 @@ public class AvailabilityHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
     private final static String VERSION = "0.1.1";
 
-    public AvailabilityHandler() {
+    private final DataAccess dataAccess;
+    
+    public AvailabilityHandler(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
     }
 
     @Override
@@ -79,6 +86,11 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, "JVM Peak Threads", threadMXBean.getPeakThreadCount());
         writeln(response, "Current Time", new Date());
         writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
+        Map<String, String> healthMap = dataAccess.getHealth();
+        Set<String> keys = new TreeSet<>(healthMap.keySet());
+        for(String key : keys) {
+            writeln(response, key, healthMap.get(key));
+        }
         writeln(response, "</table>");
         writeln(response, "</body>");
         writeln(response, "</html>");
