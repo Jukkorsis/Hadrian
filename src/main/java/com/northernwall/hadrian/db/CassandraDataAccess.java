@@ -167,15 +167,15 @@ public class CassandraDataAccess implements DataAccess {
     public Map<String, String> getHealth() {
         Map<String, String> health = new HashMap<>();
         Metadata metadata = session.getCluster().getMetadata();
-        health.put("Cass Cluster Name", metadata.getClusterName());
-        health.put("Cass Session Keyspace", session.getLoggedKeyspace());
+        health.put("Cassandra - Cluster Name", metadata.getClusterName());
+        health.put("Cassandra - Session Keyspace", session.getLoggedKeyspace());
         int i = 1;
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
-            health.put("Cass Host" + i + " Data Center:", host.getDatacenter());
-            health.put("Cass Host" + i + " Address:", host.getAddress().getHostAddress());
-            health.put("Cass Host" + i + " Rack:", host.getRack());
-            health.put("Cass Host" + i + " State:", host.getState());
-            health.put("Cass Host" + i + " Version:", host.getCassandraVersion().toString());
+            health.put("Cassandra - Host" + i + " Data Center:", host.getDatacenter());
+            health.put("Cassandra - Host" + i + " Address:", host.getAddress().getHostAddress());
+            health.put("Cassandra - Host" + i + " Rack:", host.getRack());
+            health.put("Cassandra - Host" + i + " State:", host.getState());
+            health.put("Cassandra - Host" + i + " Version:", host.getCassandraVersion().toString());
             i++;
         }
         return health;
