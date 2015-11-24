@@ -238,7 +238,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
         };
 
         $scope.deleteVip = function (id) {
-            var responsePromise = $http.delete("/v1/vip/" + id, {});
+            var responsePromise = $http.delete("/v1/vip/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
@@ -302,7 +302,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
         }
 
         $scope.deleteHost = function (id) {
-            var responsePromise = $http.delete("/v1/host/" + id, {});
+            var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
@@ -333,7 +333,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
         }
 
         $scope.deleteHostFromVip = function (hostId, vipId) {
-            var responsePromise = $http.delete("/v1/host/" + hostId + "/" + vipId, {});
+            var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + hostId + "/" + vipId, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
@@ -365,7 +365,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
                 var h = $scope.service.hosts[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId == key2 && $scope.formSelectHost[key2]) {
-                        window.open("/v1/cf/" + cf.customFunctionId + "/" + h.hostId, '_blank');
+                        window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + h.hostId, '_blank');
                     }
                 }
             }
@@ -392,7 +392,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
         };
 
         $scope.deleteCustomFunction = function (id) {
-            var responsePromise = $http.delete("/v1/cf/" + id, {});
+            var responsePromise = $http.delete("/v1/cf/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
