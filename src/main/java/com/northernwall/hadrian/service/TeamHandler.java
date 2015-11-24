@@ -81,15 +81,15 @@ public class TeamHandler extends AbstractHandler {
         }
     }
 
-    private void getTeam(Request request, HttpServletResponse response, String id) throws IOException {
+    private void getTeam(Request request, HttpServletResponse response, String teamId) throws IOException {
         response.setContentType(Const.JSON);
-        Team team = dataAccess.getTeam(id);
+        Team team = dataAccess.getTeam(teamId);
         if (team == null) {
-            throw new RuntimeException("Could not find team with id '" + id + "'");
+            throw new RuntimeException("Could not find team with id '" + teamId + "'");
         }
 
         GetTeamData getTeamData = GetTeamData.create(team);
-        getTeamData.canModify = access.canUserModify(request, id);
+        getTeamData.canModify = access.canUserModify(request, teamId);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getTeamData, GetTeamData.class, jw);

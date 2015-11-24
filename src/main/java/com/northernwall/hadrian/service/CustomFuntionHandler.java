@@ -62,38 +62,48 @@ public class CustomFuntionHandler extends AbstractHandler {
             if (target.startsWith("/v1/cf/")) {
                 switch (request.getMethod()) {
                     case "GET":
-                        if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                        if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            doCF(request, response, target.substring(7, target.length()-37), target.substring(44, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                            String serviceId = target.substring(7, 43);
+                            String cfId = target.substring(44, 80);
+                            String hostId = target.substring(81);
+                            doCF(request, response, serviceId, cfId, hostId);
+                        } else {
+                            throw new RuntimeException("Unknown custom function operation");
                         }
                         break;
                     case "POST":
                         if (target.matches("/v1/cf/cf")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createCF(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
+                        } else {
+                            throw new RuntimeException("Unknown custom function operation");
                         }
                         break;
                     case "PUT":
                         if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            updateCF(request, target.substring(7, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                            String cfId = target.substring(7, target.length());
+                            updateCF(request, cfId);
+                        } else {
+                            throw new RuntimeException("Unknown custom function operation");
                         }
                         break;
                     case "DELETE":
-                        if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                        if (target.matches("/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteCF(request, target.substring(7, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                            String serviceId = target.substring(7, 43);
+                            String cfId = target.substring(44);
+                            deleteCF(request, serviceId, cfId);
+                        } else {
+                            throw new RuntimeException("Unknown custom function operation");
                         }
                         break;
+                    default:
+                        throw new RuntimeException("Unknown custom function operation");
                 }
+                response.setStatus(200);
+                request.setHandled(true);
             }
         } catch (AccessException e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target);
@@ -124,10 +134,10 @@ public class CustomFuntionHandler extends AbstractHandler {
         dataAccess.saveCustomFunction(customFunction);
     }
 
-    private void updateCF(Request request, String id) throws IOException {
+    private void updateCF(Request request, String customFunctionId) throws IOException {
         PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
 
-        CustomFunction customFunction = dataAccess.getCustomFunction(id);
+        CustomFunction customFunction = dataAccess.getCustomFunction(postCFData.serviceId, customFunctionId);
         if (customFunction == null) {
             throw new RuntimeException("Could not find custom function");
         }
@@ -145,8 +155,8 @@ public class CustomFuntionHandler extends AbstractHandler {
         dataAccess.updateCustomFunction(customFunction);
     }
 
-    private void deleteCF(Request request, String id) throws IOException {
-        CustomFunction customFunction = dataAccess.getCustomFunction(id);
+    private void deleteCF(Request request, String serviceId, String customFunctionId) throws IOException {
+        CustomFunction customFunction = dataAccess.getCustomFunction(serviceId, customFunctionId);
         if (customFunction == null) {
             throw new RuntimeException("Could not find custom function");
         }
@@ -156,15 +166,15 @@ public class CustomFuntionHandler extends AbstractHandler {
         }
         access.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
 
-        dataAccess.deleteCustomFunction(id);
+        dataAccess.deleteCustomFunction(serviceId, customFunctionId);
     }
     
-    private void doCF(Request request, HttpServletResponse response, String customFunctionId, String hostId) throws IOException {
-        CustomFunction customFunction = dataAccess.getCustomFunction(customFunctionId);
+    private void doCF(Request request, HttpServletResponse response, String serviceId, String customFunctionId, String hostId) throws IOException {
+        CustomFunction customFunction = dataAccess.getCustomFunction(serviceId, customFunctionId);
         if (customFunction == null) {
             throw new RuntimeException("Could not find custom function");
         }
-        Host host = dataAccess.getHost(hostId);
+        Host host = dataAccess.getHost(serviceId, hostId);
         if (host == null) {
             throw new RuntimeException("Could not find host");
         }

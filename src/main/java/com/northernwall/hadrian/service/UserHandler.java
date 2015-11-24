@@ -21,12 +21,12 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.GetUsersData;
-import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,13 +84,16 @@ public class UserHandler extends AbstractHandler {
 
     private void getUsers(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
-        GetUsersData users = new GetUsersData();
-        for (User user : dataAccess.getUsers()) {
-            users.users.add(user);
+        GetUsersData getUsersData = new GetUsersData();
+        
+        List<User> users = dataAccess.getUsers();
+        Collections.sort(users);
+        for (User user : users) {
+            getUsersData.users.add(user);
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(users, GetUsersData.class, jw);
+            gson.toJson(getUsersData, GetUsersData.class, jw);
         }
     }
 

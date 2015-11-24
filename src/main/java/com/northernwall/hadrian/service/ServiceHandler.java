@@ -43,6 +43,7 @@ import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -153,13 +154,16 @@ public class ServiceHandler extends AbstractHandler {
         getServiceData.canModify = access.canUserModify(request, service.getTeamId());
 
         List<Vip> vips = dataAccess.getVips(id);
+        Collections.sort(vips);
         for (Vip vip : vips) {
             GetVipData getVipData = GetVipData.create(vip);
             getServiceData.vips.add(getVipData);
         }
 
         List<Future> futures = new LinkedList<>();
-        for (Host host : dataAccess.getHosts(id)) {
+        List<Host> hosts = dataAccess.getHosts(id);
+        Collections.sort(hosts);
+        for (Host host : hosts) {
             GetHostData getHostData = GetHostData.create(host);
             futures.add(es.submit(new ReadVersionRunnable(getHostData, getServiceData)));
             futures.add(es.submit(new ReadAvailabilityRunnable(getHostData, getServiceData)));
@@ -175,10 +179,11 @@ public class ServiceHandler extends AbstractHandler {
             getServiceData.hosts.add(getHostData);
         }
 
-        for (DataStore dataStore : dataAccess.getDataStores(id)) {
+        List<DataStore> dataStores = dataAccess.getDataStores(id);
+        Collections.sort(dataStores);
+        for (DataStore dataStore : dataStores) {
             GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
             getServiceData.dataStores.add(getDataStoreData);
-
         }
 
         for (ServiceRef ref : dataAccess.getServiceRefsByClient(id)) {
@@ -193,7 +198,9 @@ public class ServiceHandler extends AbstractHandler {
             getServiceData.usedBy.add(tempRef);
         }
 
-        for (CustomFunction customFunction : dataAccess.getCustomFunctions(id)) {
+        List<CustomFunction> customFunctions = dataAccess.getCustomFunctions(id);
+        Collections.sort(customFunctions);
+        for (CustomFunction customFunction : customFunctions) {
             GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
             getServiceData.customFunctions.add(getCustomFunctionData);
         }

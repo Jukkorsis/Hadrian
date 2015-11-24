@@ -95,16 +95,23 @@ public class HostHandler extends AbstractHandler {
                         }
                         break;
                     case "DELETE":
-                        if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                        if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteHost(request, target.substring(9, target.length()));
-                        } else if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                            String serviceId = target.substring(9, 45);
+                            String hostId = target.substring(46);
+                            deleteHost(request, serviceId, hostId);
+                        } else if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteVIP(request, target.substring(9, target.length() - 37), target.substring(46, target.length()));
+                            String serviceId = target.substring(9, 45);
+                            String hostId = target.substring(46, 82);
+                            String vipId = target.substring(83);
+                            deleteVIP(request, serviceId, hostId, vipId);
                         } else {
                             throw new RuntimeException("Unknown host operation");
                         }
                         break;
+                    default:
+                        throw new RuntimeException("Unknown host operation");
                 }
                 response.setStatus(200);
                 request.setHandled(true);
@@ -201,7 +208,7 @@ public class HostHandler extends AbstractHandler {
 
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
-                Host host = dataAccess.getHost(entry.getKey());
+                Host host = dataAccess.getHost(putHostData.serviceId, entry.getKey());
                 if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(Const.NO_STATUS)) {
                     if (workItem == null) {
                         service = dataAccess.getService(host.getServiceId());
@@ -246,10 +253,10 @@ public class HostHandler extends AbstractHandler {
     private void restartHost(Request request) throws IOException {
     }
 
-    private void deleteHost(Request request, String id) throws IOException {
-        Host host = dataAccess.getHost(id);
+    private void deleteHost(Request request, String serviceId, String hostId) throws IOException {
+        Host host = dataAccess.getHost(serviceId, hostId);
         if (host == null) {
-            logger.info("Could not find host with id {}", id);
+            logger.info("Could not find host with id {}", hostId);
             return;
         }
         Service service = dataAccess.getService(host.getServiceId());
@@ -332,21 +339,24 @@ public class HostHandler extends AbstractHandler {
         }
     }
 
-    private void deleteVIP(Request request, String hostId, String vipId) throws IOException {
-        VipRef vipRef = dataAccess.getVipRef(hostId, vipId);
-        Host host = dataAccess.getHost(hostId);
-        if (host == null) {
-            throw new RuntimeException("Could not find host");
-        }
-        Vip vip = dataAccess.getVip(vipId);
-        if (vip == null) {
-            throw new RuntimeException("Could not find vip");
-        }
-        Service service = dataAccess.getService(host.getServiceId());
+    private void deleteVIP(Request request, String serviceId, String hostId, String vipId) throws IOException {
+        Service service = dataAccess.getService(serviceId);
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
         User user = access.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
+        VipRef vipRef = dataAccess.getVipRef(hostId, vipId);
+        if (vipRef == null) {
+            return;
+        }
+        Host host = dataAccess.getHost(serviceId, hostId);
+        if (host == null) {
+            throw new RuntimeException("Could not find host");
+        }
+        Vip vip = dataAccess.getVip(serviceId, vipId);
+        if (vip == null) {
+            throw new RuntimeException("Could not find vip");
+        }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
         webHookSender.deleteHostVip(service, host, vip, user);

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
@@ -63,27 +62,34 @@ public class VipHandler extends AbstractHandler {
                         if (target.matches("/v1/vip/vip")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createVip(request);
-                            response.setStatus(200);
-                            request.setHandled(true);
+                        } else {
+                            throw new RuntimeException("Unknown vip operation");
                         }
                         break;
                     case "PUT":
                         if (target.matches("/v1/vip/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            updateVip(request, target.substring(8, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                            String vipId = target.substring(8, target.length());
+                            updateVip(request, vipId);
+                        } else {
+                            throw new RuntimeException("Unknown vip operation");
                         }
                         break;
                     case "DELETE":
-                        if (target.matches("/v1/vip/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                        if (target.matches("/v1/vip/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            deleteVip(request, target.substring(8, target.length()));
-                            response.setStatus(200);
-                            request.setHandled(true);
+                            String serviceId = target.substring(8, 44);
+                            String vipId = target.substring(45);
+                            deleteVip(request, serviceId, vipId);
+                        } else {
+                            throw new RuntimeException("Unknown vip operation");
                         }
                         break;
+                    default:
+                        throw new RuntimeException("Unknown vip operation");
                 }
+                response.setStatus(200);
+                request.setHandled(true);
             }
         } catch (AccessException e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target);
@@ -98,7 +104,7 @@ public class VipHandler extends AbstractHandler {
 
     private void createVip(Request request) throws IOException {
         Vip vip = Util.fromJson(request, Vip.class);
-        
+
         Service service = dataAccess.getService(vip.getServiceId());
         if (service == null) {
             throw new RuntimeException("Could not find service");
@@ -111,9 +117,9 @@ public class VipHandler extends AbstractHandler {
             if (temp.getVipName().equals(vip.getVipName())) {
                 return;
             }
-            if (temp.getNetwork().equals(vip.getNetwork()) &&
-                    temp.getDns().equals(vip.getDns()) &&
-                    temp.getVipPort() == vip.getVipPort()) {
+            if (temp.getNetwork().equals(vip.getNetwork())
+                    && temp.getDns().equals(vip.getDns())
+                    && temp.getVipPort() == vip.getVipPort()) {
                 return;
             }
         }
@@ -127,7 +133,7 @@ public class VipHandler extends AbstractHandler {
     private void updateVip(Request request, String vipId) throws IOException {
         PutVipData putVipData = Util.fromJson(request, PutVipData.class);
 
-        Vip vip = dataAccess.getVip(vipId);
+        Vip vip = dataAccess.getVip(putVipData.serviceId, vipId);
         if (vip == null) {
             throw new RuntimeException("Could not find vip");
         }
@@ -139,27 +145,27 @@ public class VipHandler extends AbstractHandler {
 
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
-        
+
         WorkItem workItem = WorkItem.createUpdateVip(
-                vip.getVipId(), 
-                putVipData.external, 
+                vip.getVipId(),
+                putVipData.external,
                 putVipData.servicePort);
         dataAccess.saveWorkItem(workItem);
         webHookHelper.updateVip(service, vip, workItem, user);
     }
 
-    private void deleteVip(Request request, String id) throws IOException {
-        Vip vip = dataAccess.getVip(id);
-        if (vip == null) {
-            logger.info("Could not find vip with id {}", id);
-            return;
-        }
-
-        Service service = dataAccess.getService(vip.getServiceId());
+    private void deleteVip(Request request, String serviceId, String vipId) throws IOException {
+        Service service = dataAccess.getService(serviceId);
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
         User user = access.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
+
+        Vip vip = dataAccess.getVip(serviceId, vipId);
+        if (vip == null) {
+            logger.info("Could not find vip with id {}", vipId);
+            return;
+        }
 
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);

@@ -16,14 +16,10 @@
 package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.DataStore;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,13 +49,8 @@ public class DataStoreHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.matches("/v1/datastore/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+            if (target.matches("/v1/datastore/")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "GET":
-                        getDataStore(response, target.substring(14, target.length()));
-                        break;
-                }
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -71,18 +62,6 @@ public class DataStoreHandler extends AbstractHandler {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
             request.setHandled(true);
-        }
-    }
-
-    private void getDataStore(HttpServletResponse response, String id) throws IOException {
-        response.setContentType(Const.JSON);
-        DataStore dataStore = dataAccess.getDataStore(id);
-        if (dataStore == null) {
-            throw new RuntimeException("Could not find dataStore with id '" + id + "'");
-        }
-        
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(dataStore, DataStore.class, jw);
         }
     }
 
