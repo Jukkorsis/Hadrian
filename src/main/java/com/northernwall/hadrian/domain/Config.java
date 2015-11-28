@@ -9,5 +9,6 @@ public class Config {
     public List<String> envs = new LinkedList<>();
     public List<String> sizes = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
+    public List<String> domains = new LinkedList<>();
     
 }

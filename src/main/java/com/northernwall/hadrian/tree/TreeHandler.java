@@ -135,11 +135,6 @@ public class TreeHandler extends AbstractHandler {
         opsTeamTreenode.setLabel("Ops Team");
         opsTeamTreenode.setData(new TreeNodeData("0", "OpsTeam"));
         
-        TreeNode optionsTreenode = new TreeNode();
-        optionsTreenode.setLabel("Parameters");
-        optionsTreenode.setData(new TreeNodeData("0", "Parameters"));
-        opsTeamTreenode.getChildren().add(optionsTreenode);
-        
         TreeNode tasksTreenode = new TreeNode();
         tasksTreenode.setLabel("Cross Service");
         tasksTreenode.setData(new TreeNodeData("0", "CrossService"));
@@ -154,6 +149,11 @@ public class TreeHandler extends AbstractHandler {
         backfillTreenode.setLabel("Backfill");
         backfillTreenode.setData(new TreeNodeData("0", "Backfill"));
         opsTeamTreenode.getChildren().add(backfillTreenode);
+        
+        TreeNode optionsTreenode = new TreeNode();
+        optionsTreenode.setLabel("Parameters");
+        optionsTreenode.setData(new TreeNodeData("0", "Parameters"));
+        opsTeamTreenode.getChildren().add(optionsTreenode);
         
         gson.toJson(opsTeamTreenode, TreeNode.class, jw);
     }

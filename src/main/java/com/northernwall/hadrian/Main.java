@@ -137,30 +137,26 @@ public class Main {
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
     }
     
+    private void loadConfig(String key, String defaultValue, List<String> target) {
+        String temp = properties.getProperty(key, defaultValue);
+        String[] parts = temp.split(",");
+        for (String part : parts) {
+            part = part.trim();
+            if (!part.isEmpty()) {
+                target.add(part);
+            }
+        }
+    }
+    
     private void loadConfig() {
         config = new Config();
         
-        config.dataCenters.add("wdc");
-        config.dataCenters.add("vdc");
-        config.dataCenters.add("ldc");
-        config.dataCenters.add("adc");
-        
-        config.networks.add("prd");
-        config.networks.add("tst");
-        
-        config.envs.add("VM-Java7");
-        config.envs.add("VM-Java8");
-        config.envs.add("D-Java8");
-        config.envs.add("D-NodeJS");
-        
-        config.sizes.add("S");
-        config.sizes.add("M");
-        config.sizes.add("L");
-        config.sizes.add("XL");
-        
-        config.protocols.add("HTTP");
-        config.protocols.add("HTTPS");
-        config.protocols.add("TCP");
+        loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, config.dataCenters);
+        loadConfig(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT, config.networks);
+        loadConfig(Const.CONFIG_ENVSS, Const.CONFIG_ENVS_DEFAULT, config.envs);
+        loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, config.sizes);
+        loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
+        loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
     }
 
     private void startDataAccess() throws ClassNotFoundException, InstantiationException, IllegalAccessException {

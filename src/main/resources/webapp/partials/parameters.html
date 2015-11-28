@@ -44,4 +44,13 @@
             </div>
         </div>
     </uib-tab>
+    <uib-tab heading="Domains">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-repeat="domain in config.domains">
+                    {{domain}}<br/>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
 </uib-tabset>

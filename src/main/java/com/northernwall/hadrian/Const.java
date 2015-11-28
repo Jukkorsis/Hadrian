@@ -77,6 +77,19 @@ public class Const {
     public static final String IN_MEMORY_DATA_FILE_NAME = "inMemory.dataFileName";
     public static final String IN_MEMORY_DATA_FILE_NAME_DEFAULT = "data.json";
     
+    public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
+    public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
+    public static final String CONFIG_NETWORKS = "config.networks";
+    public static final String CONFIG_NETWORKS_DEFAULT = "prd, tst";
+    public static final String CONFIG_ENVSS = "config.envs";
+    public static final String CONFIG_ENVS_DEFAULT = "VM-Java7, VM-Java8, D-Java8, D-NodeJS";
+    public static final String CONFIG_SIZES = "config.sizes";
+    public static final String CONFIG_SIZES_DEFAULT = "S, M, L, XL";
+    public static final String CONFIG_PROTOCOLS = "config.protocols";
+    public static final String CONFIG_PROTOCOLS_DEFAULT = "HTTP, HTTPS, TCP";
+    public static final String CONFIG_DOMAINS = "config.domains";
+    public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
+        
     private Const() {
     }
     
