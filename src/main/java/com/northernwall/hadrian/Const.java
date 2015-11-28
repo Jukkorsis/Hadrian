@@ -61,12 +61,23 @@ public class Const {
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.HttpMavenHelperFactory";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
-    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
+    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
+    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.CassandraDataAccessFactory";
 
     public static final String ACCESS_FACTORY_CLASS_NAME = "access.factoryClassName";
     //public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SamlAccessFactory";
     public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SimpleAccessFactory";
 
+    public static final String CASS_NODE = "cassandra.node";
+    public static final String CASS_NODE_DEFAULT = "127.0.0.1";
+    public static final String CASS_KEY_SPACE = "cassandra.keyspace";
+    public static final String CASS_KEY_SPACE_DEFAULT = "devops";
+    public static final String CASS_REPLICATION_FACTOR = "cassandra.replicationFactor";
+    public static final String CASS_REPLICATION_FACTOR_DEFAULT = "1";
+    
+    public static final String IN_MEMORY_DATA_FILE_NAME = "inMemory.dataFileName";
+    public static final String IN_MEMORY_DATA_FILE_NAME_DEFAULT = "data.json";
+    
     private Const() {
     }
     

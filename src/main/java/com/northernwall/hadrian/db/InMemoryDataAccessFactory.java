@@ -18,6 +18,7 @@ package com.northernwall.hadrian.db;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -28,10 +29,13 @@ import org.slf4j.LoggerFactory;
 
 public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     private final static Logger logger = LoggerFactory.getLogger(InMemoryDataAccessFactory.class);
+    
     private InMemoryDataAccess dataAccess;
+    private String dataFileName;
 
     @Override
     public DataAccess createDataAccess(Properties properties) {
+        dataFileName = properties.getProperty(Const.IN_MEMORY_DATA_FILE_NAME, Const.IN_MEMORY_DATA_FILE_NAME_DEFAULT);
         dataAccess = load();
         
         if (dataAccess == null) {
@@ -46,7 +50,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     }
 
     private InMemoryDataAccess load() {
-        File file = new File("data.json");
+        File file = new File(dataFileName);
         if (!file.exists()) {
             return null;
         }
@@ -62,7 +66,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     
     @Override
     public void run() {
-        File file = new File("data.json");
+        File file = new File(dataFileName);
         Gson gson = new Gson();
         try (JsonWriter jw = new JsonWriter(new FileWriter(file))) {
             gson.toJson(dataAccess, InMemoryDataAccess.class, jw);
