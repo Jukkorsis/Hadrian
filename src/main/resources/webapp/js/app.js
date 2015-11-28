@@ -31,21 +31,21 @@ soaRepApp.config(['$routeProvider',
                     templateUrl: 'partials/graph.html',
                     controller: 'GraphCtrl'
                 }).
-                when('/Portal', {
-                    templateUrl: 'partials/portal.html',
-                    controller: 'PortalCtrl'
+                when('/Proxy', {
+                    templateUrl: 'partials/proxy.html',
+                    controller: 'ProxyCtrl'
                 }).
                 when('/Parameters', {
                     templateUrl: 'partials/parameters.html',
                     controller: 'ParametersCtrl'
                 }).
-                when('/Tasks', {
-                    templateUrl: 'partials/tasks.html',
-                    controller: 'TasksCtrl'
+                when('/CrossService', {
+                    templateUrl: 'partials/crossService.html',
+                    controller: 'CrossServiceCtrl'
                 }).
-                when('/Webhooks', {
-                    templateUrl: 'partials/webhooks.html',
-                    controller: 'WebhooksCtrl'
+                when('/WorkItems', {
+                    templateUrl: 'partials/workItems.html',
+                    controller: 'WorkItemsCtrl'
                 }).
                 when('/Backfill', {
                     templateUrl: 'partials/backfill.html',

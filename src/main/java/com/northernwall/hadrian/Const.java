@@ -65,7 +65,6 @@ public class Const {
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.CassandraDataAccessFactory";
 
     public static final String ACCESS_FACTORY_CLASS_NAME = "access.factoryClassName";
-    //public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SamlAccessFactory";
     public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SimpleAccessFactory";
 
     public static final String CASS_NODE = "cassandra.node";

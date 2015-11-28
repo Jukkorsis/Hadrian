@@ -21,6 +21,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.UserSession;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jetty.server.Request;
@@ -41,6 +42,8 @@ public abstract class Access {
         this.dataAccess = dataAccess;
     }
 
+    public abstract boolean checkLoginUI(String target, Request request) throws IOException;
+    public abstract boolean checkLoginCallback(String target, Request request);
     public abstract String checkAndStartSession(Request request, HttpServletResponse response) throws IOException;
 
     public final User getUserForSession(String sessionId) {

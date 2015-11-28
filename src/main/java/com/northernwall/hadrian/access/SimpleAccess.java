@@ -15,16 +15,38 @@
  */
 package com.northernwall.hadrian.access;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimpleAccess extends Access {
+
+    private final static Logger logger = LoggerFactory.getLogger(SimpleAccess.class);
+
     public SimpleAccess(DataAccess dataAccess) {
         super(dataAccess);
+    }
+
+    @Override
+    public boolean checkLoginUI(String target, Request request) throws IOException {
+        if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/ui/login.html")) {
+            request.setHandled(false);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkLoginCallback(String target, Request request) {
+        return request.getMethod().equals(Const.HTTP_POST) && target.equals("/login");
     }
 
     @Override
@@ -42,7 +64,7 @@ public class SimpleAccess extends Access {
         }
         //check username and password
         if (checkCreds(username, password)) {
-            UserSession session = new UserSession(username);
+            UserSession session = new UserSession(username, System.currentTimeMillis() + Const.COOKIE_EXPRIY);
             dataAccess.saveUserSession(session);
             return session.getSessionId();
         } else {

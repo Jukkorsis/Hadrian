@@ -56,19 +56,60 @@
                         </span>
                     </span>
                 </div>
-                <table class="table table-hover  table-condensed">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                            <input type="text" class="form-control" placeholder="Search hosts" ng-model="hostSearch">
+                        </div>      
+                    </div>
+                </form>       
+                <table class="table table-hover table-striped table-condensed">
                     <tr>
                         <th></th>
-                        <th>Host</th>
-                        <th>DC</th>
-                        <th>Network</th>
+                        <th>
+                            <a ng-click="hostSortType = 'hostName';
+                                        hostSortReverse = !hostSortReverse">
+                                Host
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="hostSortType = 'dataCenter';
+                                        hostSortReverse = !hostSortReverse">
+                                DC
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="hostSortType = 'network';
+                                        hostSortReverse = !hostSortReverse">
+                                Network
+                            </a>
+                        </th>
                         <th>VIP</th>
-                        <th>Env.</th>
-                        <th>Size</th>
-                        <th>Ver.</th>
-                        <th>Avail.</th>
+                        <th>
+                            <a ng-click="hostSortType = 'env';
+                                        hostSortReverse = !hostSortReverse">
+                                Env.
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="hostSortType = 'size';
+                                        hostSortReverse = !hostSortReverse">
+                                Size
+                            </a>
+                        </th>
+                        <th><a ng-click="hostSortType = 'version';
+                                    hostSortReverse = !hostSortReverse">
+                                Ver.
+                            </a>
+                        </th>
+                        <th><a ng-click="hostSortType = 'availability';
+                                    hostSortReverse = !hostSortReverse">
+                                Avail.
+                            </a>
+                        </th>
                     </tr>
-                    <tr ng-repeat="i in service.hosts">
+                    <tr ng-repeat="i in service.hosts | orderBy:hostSortType:hostSortReverse | filter:hostSearch">
                         <td>
                             <span ng-if="i.status === '-'">
                                 <input ng-model="formSelectHost[i.hostId]" type="checkbox">

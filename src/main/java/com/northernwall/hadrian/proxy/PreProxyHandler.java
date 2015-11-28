@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.portal;
+package com.northernwall.hadrian.proxy;
 
 import com.northernwall.hadrian.Const;
-import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -31,11 +30,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class PrePortalHandler extends AbstractHandler {
+public class PreProxyHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(PrePortalHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(PreProxyHandler.class);
 
-    public PrePortalHandler() {
+    public PreProxyHandler() {
     }
 
     @Override
@@ -59,11 +58,14 @@ public class PrePortalHandler extends AbstractHandler {
         Cookie cookie;
 
         //TODO: should check to see if the session cookie already exists, if it does then the users did not open in a private tab
-        //cookie = new Cookie(Const.COOKIE_PORTAL_NAME, portalName);
-        //response.addCookie(cookie);
+        cookie = new Cookie("FOO", "BAR");
+        response.addCookie(cookie);
 
-        cookie = new Cookie(Const.COOKIE_SESSION, "doh");//sessionId);
-        cookie.setMaxAge(24*60*60*1000);
+        cookie = new Cookie(Const.COOKIE_PORTAL_NAME, portalName);
+        response.addCookie(cookie);
+
+        cookie = new Cookie(Const.COOKIE_SESSION, sessionId);
+        cookie.setMaxAge(Const.COOKIE_EXPRIY);
         response.addCookie(cookie);
 
         response.setContentType("text/html;charset=utf-8");

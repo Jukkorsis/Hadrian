@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.portal;
+package com.northernwall.hadrian.proxy;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.portal.dao.GetPortalData;
+import com.northernwall.hadrian.proxy.dao.GetProxyData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,14 +40,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class PostPortalHandler extends AbstractHandler {
+public class PostProxyHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(PostPortalHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(PostProxyHandler.class);
 
     private final OkHttpClient client;
     private final Gson gson;
 
-    public PostPortalHandler(OkHttpClient client) {
+    public PostProxyHandler(OkHttpClient client) {
         this.client = client;
         gson = new Gson();
     }
@@ -113,14 +113,14 @@ public class PostPortalHandler extends AbstractHandler {
     private void getPortals(Request request, HttpServletResponse response) throws IOException {
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             jw.beginArray();
-            GetPortalData k = new GetPortalData();
+            GetProxyData k = new GetProxyData();
             k.name = "kibana";
             k.url = "/portal/" + request.getAttribute(Const.ATTR_SESSION) + "/kibana";
-            gson.toJson(k, GetPortalData.class, jw);
-            GetPortalData g = new GetPortalData();
+            gson.toJson(k, GetProxyData.class, jw);
+            GetProxyData g = new GetProxyData();
             g.name = "gitlab";
             g.url = "/portal/" + request.getAttribute(Const.ATTR_SESSION) + "/gitlab";
-            gson.toJson(g, GetPortalData.class, jw);
+            gson.toJson(g, GetProxyData.class, jw);
             jw.endArray();
         }
     }

@@ -141,13 +141,13 @@ public class TreeHandler extends AbstractHandler {
         opsTeamTreenode.getChildren().add(optionsTreenode);
         
         TreeNode tasksTreenode = new TreeNode();
-        tasksTreenode.setLabel("Tasks");
-        tasksTreenode.setData(new TreeNodeData("0", "Tasks"));
+        tasksTreenode.setLabel("Cross Service");
+        tasksTreenode.setData(new TreeNodeData("0", "CrossService"));
         opsTeamTreenode.getChildren().add(tasksTreenode);
         
         TreeNode webhooksTreenode = new TreeNode();
-        webhooksTreenode.setLabel("Webhooks");
-        webhooksTreenode.setData(new TreeNodeData("0", "Webhooks"));
+        webhooksTreenode.setLabel("Work Items");
+        webhooksTreenode.setData(new TreeNodeData("0", "WorkItems"));
         opsTeamTreenode.getChildren().add(webhooksTreenode);
         
         TreeNode backfillTreenode = new TreeNode();

@@ -150,6 +150,10 @@ soaRepControllers.controller('ModalAddServiceCtrl',
 
 soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModal', 'Service',
     function ($scope, $routeParams, $uibModal, Service) {
+        $scope.hostSortType = 'hostName';
+        $scope.hostSortReverse = false;
+        $scope.hostSearch = '';
+
         Service.get({serviceId: $routeParams.serviceId}, function (service) {
             $scope.service = service;
         });
@@ -723,7 +727,7 @@ soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
         $scope.options = {navigation: true, width: '100%', height: '600px'};
     }]);
 
-soaRepControllers.controller('PortalCtrl', ['$scope', 'Portal',
+soaRepControllers.controller('ProxyCtrl', ['$scope', 'Portal',
     function ($scope, Portal) {
         $scope.portal = Portal.query();
     }]);
@@ -733,11 +737,11 @@ soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
         $scope.config = Config.get();
     }]);
 
-soaRepControllers.controller('TasksCtrl', ['$scope',
+soaRepControllers.controller('CrossServiceCtrl', ['$scope',
     function ($scope) {
     }]);
 
-soaRepControllers.controller('WebhooksCtrl', ['$scope',
+soaRepControllers.controller('WorkItemsCtrl', ['$scope',
     function ($scope) {
     }]);
 

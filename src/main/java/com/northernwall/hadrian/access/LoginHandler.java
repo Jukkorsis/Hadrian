@@ -41,13 +41,11 @@ public class LoginHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            //TODO: these first two "if" statements should be handled by Access, as the SAML version will have different functionality
-            if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/ui/login.html")) {
-                request.setHandled(false);
+            if (access.checkLoginUI(target, request)) {
                 return;
             }
 
-            if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/login")) {
+            if (access.checkLoginCallback(target, request)) {
                 String sessionId = access.checkAndStartSession(request, response);
                 if (sessionId != null) {
                     User user = access.getUserForSession(sessionId);
@@ -66,9 +64,9 @@ public class LoginHandler extends AbstractHandler {
 
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
-                for (Cookie cookie : request.getCookies()) {
-                    logger.info("cookie name={} value={} domain={} path={}", cookie.getName(), cookie.getValue(), cookie.getDomain(), cookie.getPath());
-                }
+                //for (Cookie cookie : request.getCookies()) {
+                //    logger.info("cookie name={} value={} domain={} path={}", cookie.getName(), cookie.getValue(), cookie.getDomain(), cookie.getPath());
+                //}
                 for (Cookie cookie : request.getCookies()) {
                     if (cookie.getName().equals(Const.COOKIE_SESSION)) {
                         User user = access.getUserForSession(cookie.getValue());

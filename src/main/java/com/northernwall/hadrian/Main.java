@@ -42,8 +42,8 @@ import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.access.LoginHandler;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.portal.PostPortalHandler;
-import com.northernwall.hadrian.portal.PrePortalHandler;
+import com.northernwall.hadrian.proxy.PostProxyHandler;
+import com.northernwall.hadrian.proxy.PreProxyHandler;
 import com.northernwall.hadrian.service.UserHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
 import com.northernwall.hadrian.webhook.WebHookHandler;
@@ -174,6 +174,8 @@ public class Main {
             logger.info("No users found, creating default 'admin' user");
             dataAccess.saveUser(new User("admin", "Administator", true, true));
         }
+        
+        com.northernwall.hadrian.db.InitData.init(dataAccess);
     }
 
     private void startHelpers() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -220,12 +222,12 @@ public class Main {
             server.addConnector(connector);
 
             HandlerList handlers = new HandlerList();
-            handlers.addHandler(new AvailabilityHandler());
+            handlers.addHandler(new AvailabilityHandler(access, dataAccess, mavenHelper));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
             handlers.addHandler(new WebHookHandler(client));
-            handlers.addHandler(new PrePortalHandler());
+            handlers.addHandler(new PreProxyHandler());
             handlers.addHandler(new LoginHandler(access));
-            handlers.addHandler(new PostPortalHandler(client));
+            handlers.addHandler(new PostProxyHandler(client));
             handlers.addHandler(new ContentHandler());
             handlers.addHandler(new TreeHandler(dataAccess));
             handlers.addHandler(new UserHandler(access, dataAccess));
