@@ -45,12 +45,12 @@ public class VipHandler extends AbstractHandler {
 
     private final Access access;
     private final DataAccess dataAccess;
-    private final WebHookSender webHookHelper;
+    private final WebHookSender webHookSender;
 
-    public VipHandler(Access access, DataAccess dataAccess, WebHookSender urlHelper) {
+    public VipHandler(Access access, DataAccess dataAccess, WebHookSender webHookSender) {
         this.access = access;
         this.dataAccess = dataAccess;
-        this.webHookHelper = urlHelper;
+        this.webHookSender = webHookSender;
     }
 
     @Override
@@ -127,7 +127,10 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Creating...");
         dataAccess.saveVip(vip);
 
-        webHookHelper.createVip(service, vip, user);
+        WorkItem workItem = new WorkItem("Vip", "create", user, service, null, null, null, vip, null);
+        webHookSender.applyCallbackUrl(workItem);
+        dataAccess.saveWorkItem(workItem);
+        webHookSender.sendWorkItem(workItem);
     }
 
     private void updateVip(Request request, String vipId) throws IOException {
@@ -146,12 +149,12 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = WorkItem.createUpdateVip(
-                vip.getVipId(),
-                putVipData.external,
-                putVipData.servicePort);
+        WorkItem workItem = new WorkItem("Vip", "update", user, service, null, null, null, vip, vip);
+        workItem.getNewVip().external = putVipData.external;
+        workItem.getNewVip().servicePort = putVipData.servicePort;
+        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
-        webHookHelper.updateVip(service, vip, workItem, user);
+        webHookSender.sendWorkItem(workItem);
     }
 
     private void deleteVip(Request request, String serviceId, String vipId) throws IOException {
@@ -169,7 +172,11 @@ public class VipHandler extends AbstractHandler {
 
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
-        webHookHelper.deleteVip(service, vip, user);
+        
+        WorkItem workItem = new WorkItem("Vip", "delete", user, service, null, null, null, vip, null);
+        webHookSender.applyCallbackUrl(workItem);
+        dataAccess.saveWorkItem(workItem);
+        webHookSender.sendWorkItem(workItem);
     }
 
 }

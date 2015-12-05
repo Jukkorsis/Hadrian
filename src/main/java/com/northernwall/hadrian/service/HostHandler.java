@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.Access;
@@ -28,14 +30,19 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.service.dao.GetHostDetailsData;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
 import com.northernwall.hadrian.service.dao.PutHostData;
+import com.squareup.okhttp.OkHttpClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,12 +63,16 @@ public class HostHandler extends AbstractHandler {
     private final Config config;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
+    private final HostDetailsHelper hostDetailsHelper;
+    private final Gson gson;
 
-    public HostHandler(Access access, Config config, DataAccess dataAccess, WebHookSender webHookSender) {
+    public HostHandler(Access access, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, Properties properties) {
         this.access = access;
         this.config = config;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
+        this.hostDetailsHelper = new HostDetailsHelper(client, properties);
+        gson = new Gson();
     }
 
     @Override
@@ -69,6 +80,16 @@ public class HostHandler extends AbstractHandler {
         try {
             if (target.startsWith("/v1/host/")) {
                 switch (request.getMethod()) {
+                    case Const.HTTP_GET:
+                        if (target.matches("/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/details")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            String serviceId = target.substring(9, 45);
+                            String hostId = target.substring(46, 82);
+                            getHostDetails(response, serviceId, hostId);
+                        } else {
+                            throw new RuntimeException("Unknown host operation");
+                        }
+                        break;
                     case "POST":
                         if (target.matches("/v1/host/host")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
@@ -127,6 +148,20 @@ public class HostHandler extends AbstractHandler {
         }
     }
 
+    private void getHostDetails(HttpServletResponse response, String serviceId, String hostId) throws IOException {
+        Host host = dataAccess.getHost(serviceId, hostId);
+        if (host == null) {
+            throw new RuntimeException("Could not find host");
+        }
+
+        GetHostDetailsData details = hostDetailsHelper.getDetails(host);
+
+        response.setContentType(Const.JSON);
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(details, GetHostDetailsData.class, jw);
+        }
+    }
+
     private void createHosts(Request request) throws IOException {
         PostHostData postHostData = Util.fromJson(request, PostHostData.class);
         Service service = dataAccess.getService(postHostData.serviceId);
@@ -143,16 +178,16 @@ public class HostHandler extends AbstractHandler {
         }
 
         if (!config.dataCenters.contains(postHostData.dataCenter)) {
-            new RuntimeException("Unknown data center");
+            throw new RuntimeException("Unknown data center");
         }
         if (!config.networks.contains(postHostData.network)) {
-            new RuntimeException("Unknown network");
+            throw new RuntimeException("Unknown network");
         }
         if (!config.envs.contains(postHostData.env)) {
-            new RuntimeException("Unknown env");
+            throw new RuntimeException("Unknown env");
         }
         if (!config.sizes.contains(postHostData.size)) {
-            new RuntimeException("Unknown size");
+            throw new RuntimeException("Unknown size");
         }
 
         //calc host name
@@ -187,66 +222,62 @@ public class HostHandler extends AbstractHandler {
                     postHostData.env,
                     postHostData.size);
             dataAccess.saveHost(host);
-            webHookSender.createHost(service, host, user);
+            WorkItem workItem = new WorkItem("Host", "create", user, service, null, host, null, null, null);
+            webHookSender.applyCallbackUrl(workItem);
+            dataAccess.saveWorkItem(workItem);
+            webHookSender.sendWorkItem(workItem);
         }
     }
 
     private void updateHost(Request request) throws IOException {
         PutHostData putHostData = Util.fromJson(request, PutHostData.class);
         Service service = null;
-        Host firstHost = null;
-        WorkItem firstWorkItem = null;
-        WorkItem workItem = null;
+        List<WorkItem> workItems = new ArrayList<>(putHostData.hosts.size());
         User user = null;
 
         if (!config.envs.contains(putHostData.env)) {
-            new RuntimeException("Unknown env");
+            throw new RuntimeException("Unknown env");
         }
         if (!config.sizes.contains(putHostData.size)) {
-            new RuntimeException("Unknown size");
+            throw new RuntimeException("Unknown size");
         }
 
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 Host host = dataAccess.getHost(putHostData.serviceId, entry.getKey());
                 if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(Const.NO_STATUS)) {
-                    if (workItem == null) {
+                    if (service == null) {
                         service = dataAccess.getService(host.getServiceId());
                         if (service == null) {
                             throw new RuntimeException("Could not find service");
                         }
                         user = access.checkIfUserCanModify(request, service.getTeamId(), "update a host");
-                        access.checkIfUserCanModify(request, service.getTeamId(), "modify a host");
-                        host.setStatus("Updating...");
-                        dataAccess.saveHost(host);
-                        firstHost = host;
-                        firstWorkItem = WorkItem.createUpdateHost(
-                                host.getHostId(),
-                                putHostData.env,
-                                putHostData.size,
-                                putHostData.version,
-                                user.getUsername());
-                        workItem = firstWorkItem;
-                    } else {
-                        workItem.setNextId(host.getHostId());
-                        dataAccess.saveWorkItem(workItem);
-                        host.setStatus("Update Queued");
-                        dataAccess.saveHost(host);
-                        workItem = WorkItem.createUpdateHost(
-                                host.getHostId(),
-                                putHostData.env,
-                                putHostData.size,
-                                putHostData.version,
-                                user.getUsername());
                     }
+                    WorkItem workItem = new WorkItem("Host", "update", user, service, null, host, host, null, null);
+                    workItem.getNewHost().env = putHostData.env;
+                    workItem.getNewHost().size = putHostData.size;
+                    workItem.getNewHost().version = putHostData.version;
+                    if (workItems.isEmpty()) {
+                        host.setStatus("Updating...");
+                    } else {
+                        host.setStatus("Update Queued");
+                    }
+                    dataAccess.updateHost(host);
+                    workItems.add(workItem);
                 }
             }
         }
-        if (workItem != null) {
-            dataAccess.saveWorkItem(workItem);
-        }
-        if (firstWorkItem != null) {
-            webHookSender.updateHost(service, firstHost, firstWorkItem, user);
+        String prevId = null;
+        int size = workItems.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                WorkItem workItem = workItems.get(size - i - 1);
+                workItem.setNextId(prevId);
+                prevId = workItem.getId();
+                webHookSender.applyCallbackUrl(workItem);
+                dataAccess.saveWorkItem(workItem);
+            }
+            webHookSender.sendWorkItem(workItems.get(0));
         }
     }
 
@@ -266,7 +297,10 @@ public class HostHandler extends AbstractHandler {
         User user = access.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        webHookSender.deleteHost(service, host, user);
+        WorkItem workItem = new WorkItem("Host", "delete", user, service, null, host, null, null, null);
+        webHookSender.applyCallbackUrl(workItem);
+        dataAccess.saveWorkItem(workItem);
+        webHookSender.sendWorkItem(workItem);
     }
 
     private void backfillHosts(Request request) throws IOException {
@@ -319,7 +353,10 @@ public class HostHandler extends AbstractHandler {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            webHookSender.addHostVip(service, host, vip, user);
+                                            WorkItem workItem = new WorkItem("HostVip", "add", user, service, null, host, null, vip, null);
+                                            webHookSender.applyCallbackUrl(workItem);
+                                            dataAccess.saveWorkItem(workItem);
+                                            webHookSender.sendWorkItem(workItem);
                                         } else {
                                             logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
                                         }
@@ -359,7 +396,10 @@ public class HostHandler extends AbstractHandler {
         }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        webHookSender.deleteHostVip(service, host, vip, user);
+        WorkItem workItem = new WorkItem("HostVip", "delete", user, service, null, host, null, vip, null);
+        webHookSender.applyCallbackUrl(workItem);
+        dataAccess.saveWorkItem(workItem);
+        webHookSender.sendWorkItem(workItem);
     }
 
 }

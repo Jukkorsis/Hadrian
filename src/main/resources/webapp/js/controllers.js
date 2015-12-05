@@ -4,17 +4,37 @@
 
 var soaRepControllers = angular.module('soaRepControllers', []);
 
+var tree;
+var selectTreeNode = function (id) {
+    var n = tree.get_first_branch();
+    if (n) {
+        while (true) {
+            if (n === null) {
+                return;
+            }
+            if (n.data.id === id) {
+                tree.select_branch(n);
+                return;
+            }
+            n = tree.get_next_branch(n);
+        }
+    } else {
+        window.setTimeout(function () {
+            selectTreeNode(id)
+        }, 100);
+    }
+};
+
 soaRepControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
     function ($scope, $location, Tree) {
         $scope.my_tree_handler = function (branch) {
-            if (branch.data.id == "0") {
+            if (branch.data.id < 0) {
                 $location.path(branch.data.type);
             } else {
                 $location.path(branch.data.type + '/' + branch.data.id);
             }
         };
         $scope.my_data = Tree.query();
-        var tree;
         $scope.my_tree = tree = {};
     }]);
 
@@ -24,6 +44,8 @@ soaRepControllers.controller('HomeCtrl', ['$scope',
 
 soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal', '$http', 'User', 'Team',
     function ($scope, $routeParams, $uibModal, $http, User, Team) {
+        selectTreeNode($routeParams.teamId);
+
         $scope.users = User.get();
 
         Team.get({teamId: $routeParams.teamId}, function (team) {
@@ -148,11 +170,15 @@ soaRepControllers.controller('ModalAddServiceCtrl',
             };
         });
 
-soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModal', 'Service',
-    function ($scope, $routeParams, $uibModal, Service) {
+soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', '$uibModal', 'Service', 'HostDetails',
+    function ($scope, $http, $routeParams, $uibModal, Service, HostDetails) {
+        selectTreeNode($routeParams.serviceId);
+
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
         $scope.hostSearch = '';
+
+        $scope.formSelectHost = {};
 
         Service.get({serviceId: $routeParams.serviceId}, function (service) {
             $scope.service = service;
@@ -173,8 +199,6 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
             }, function () {
             });
         };
-
-        $scope.formSelectHost = {};
 
         $scope.openAddUsesModal = function () {
             var modalInstance = $uibModal.open({
@@ -344,6 +368,15 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$uibModa
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
                 $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        }
+
+        $scope.getHostDetails = function (host) {
+            host.expanded = true;
+
+            HostDetails.get({serviceId: $scope.service.serviceId, hostId: host.hostId}, function (details) {
+                host.left = details.left;
+                host.right = details.right;
             });
         }
 
@@ -723,30 +756,70 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
 
 soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
     function ($scope, Graph) {
+        selectTreeNode("-2");
+
         $scope.data = Graph.query();
         $scope.options = {navigation: true, width: '100%', height: '600px'};
     }]);
 
 soaRepControllers.controller('ProxyCtrl', ['$scope', 'Portal',
     function ($scope, Portal) {
+        selectTreeNode("-3");
+
         $scope.portal = Portal.query();
     }]);
 
 soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
     function ($scope, Config) {
         $scope.config = Config.get();
+        selectTreeNode("-8");
     }]);
 
 soaRepControllers.controller('CrossServiceCtrl', ['$scope',
     function ($scope) {
+        selectTreeNode("-5");
     }]);
 
-soaRepControllers.controller('WorkItemsCtrl', ['$scope',
-    function ($scope) {
+soaRepControllers.controller('WorkItemsCtrl', ['$scope', '$http', 'WorkItem',
+    function ($scope, $http, WorkItem) {
+        selectTreeNode("-6");
+
+        $scope.workItemSortType = 'requestDate';
+        $scope.workItemSortReverse = false;
+        $scope.workItemSearch = '';
+
+        $scope.formSelectWorkItem = {};
+
+        $scope.workItems = WorkItem.get();
+
+        $scope.completeWorkItem = function () {
+            for (var key in $scope.workItems.workItems) {
+                var wi = $scope.workItems.workItems[key];
+                for (var key2 in $scope.formSelectWorkItem) {
+                    if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
+                        $http.post(wi.callbackUrl, "200", {});
+                    }
+                }
+            }
+        };
+
+        $scope.cancelWorkItem = function () {
+            for (var key in $scope.workItems.workItems) {
+                var wi = $scope.workItems.workItems[key];
+                for (var key2 in $scope.formSelectWorkItem) {
+                    if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
+                        $http.post(wi.callbackUrl, "400", {});
+                    }
+                }
+            }
+        };
+
     }]);
 
 soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
     function ($scope, $http) {
+        selectTreeNode("-7");
+
         $scope.backfillTextarea;
         $scope.submitBackfill = function () {
             var responsePromise = $http.post("/v1/host/backfill", $scope.backfillTextarea, {});
@@ -761,6 +834,8 @@ soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
 
 soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
     function ($scope, $uibModal, User) {
+        selectTreeNode("-9");
+
         $scope.users = User.get();
 
         $scope.openAddTeamModal = function () {
@@ -861,51 +936,3 @@ soaRepControllers.controller('ModalUpdateUserCtrl',
 soaRepControllers.controller('HelpCtrl', ['$scope',
     function ($scope) {
     }]);
-
-soaRepControllers.controller('TreeCtrl', ['$scope', '$http', '$location', '$uibModal', 'Tree', 'Team', 'Service',
-    function ($scope, $http, $location, $uibModal, Tree, Team, Service) {
-        $scope.my_tree_handler = function (branch) {
-            $scope.displayTeam = false;
-            $scope.displayService = false;
-            $scope.displayLoading = true;
-            if (branch.data.type === "Team") {
-                Team.get({teamId: branch.data.id}, function (team) {
-                    $scope.team = team;
-                    $scope.displayLoading = false;
-                    $scope.displayTeam = true;
-                });
-            } else if (branch.data.type === "Service") {
-                Service.get({serviceId: branch.data.id}, function (service) {
-                    $scope.service = service;
-                    $scope.displayLoading = false;
-                    $scope.displayService = true;
-                });
-            } else {
-                $scope.displayLoading = false;
-            }
-            $scope.formSelectVip = {};
-            $scope.formSelectHost = {};
-        };
-
-        $scope.my_data = Tree.query();
-
-        var tree;
-        $scope.my_tree = tree = {};
-
-        $scope.selectTreeNode = function (id) {
-            var n;
-            n = tree.get_first_branch();
-            while (true) {
-                if (n === null) {
-                    return;
-                }
-                if (n.data.id === id) {
-                    tree.select_branch(n);
-                    return;
-                }
-                n = tree.get_next_branch(n);
-            }
-        };
-
-    }]);
-

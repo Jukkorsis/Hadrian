@@ -30,6 +30,8 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetHostData;
@@ -41,6 +43,7 @@ import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
 import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import com.northernwall.hadrian.service.dao.PutServiceData;
+import com.northernwall.hadrian.webhook.WebHookSender;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
@@ -68,14 +71,16 @@ public class ServiceHandler extends AbstractHandler {
 
     private final Access access;
     private final DataAccess dataAccess;
+    private final WebHookSender webHookSender;
     private final MavenHelper mavenhelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService es;
 
-    public ServiceHandler(Access access, DataAccess dataAccess, MavenHelper mavenhelper, InfoHelper infoHelper) {
+    public ServiceHandler(Access access, DataAccess dataAccess, WebHookSender webHookSender, MavenHelper mavenhelper, InfoHelper infoHelper) {
         this.access = access;
         this.dataAccess = dataAccess;
+        this.webHookSender = webHookSender;
         this.mavenhelper = mavenhelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
@@ -302,7 +307,7 @@ public class ServiceHandler extends AbstractHandler {
 
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
-        access.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
+        User user = access.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
         postServiceData.serviceAbbr = postServiceData.serviceAbbr.toLowerCase();
 
         for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
@@ -327,6 +332,10 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.stopCmdLine);
 
         dataAccess.saveService(service);
+        WorkItem workItem = new WorkItem("Service", "create", user, service, null, null, null, null, null);
+        webHookSender.applyCallbackUrl(workItem);
+        dataAccess.saveWorkItem(workItem);
+        webHookSender.sendWorkItem(workItem);
     }
 
     private void updateService(Request request, String id) throws IOException {

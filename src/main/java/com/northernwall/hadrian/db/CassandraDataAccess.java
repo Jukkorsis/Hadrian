@@ -102,6 +102,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement vipRefDeleteVip2;
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
+    private final PreparedStatement workItemDelete;
 
     private final Gson gson;
 
@@ -158,6 +159,7 @@ public class CassandraDataAccess implements DataAccess {
         vipRefDeleteVip2 = session.prepare("DELETE FROM vipRefVip WHERE vipId = ? AND hostId = ?;");
         workItemSelect = session.prepare("SELECT * FROM workItem WHERE id = ?;");
         workItemInsert = session.prepare("INSERT INTO workItem (id, data) VALUES (?, ?);");
+        workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         logger.info("Prapared statements created");
 
         gson = new Gson();
@@ -484,6 +486,11 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public List<WorkItem> getWorkItems() {
+        return getData("workItem", WorkItem.class);
+    }
+
+    @Override
     public WorkItem getWorkItem(String id) {
         return getData(id, workItemSelect, WorkItem.class);
     }
@@ -491,6 +498,11 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveWorkItem(WorkItem workItem) {
         saveData(workItem.getId(), gson.toJson(workItem), workItemInsert);
+    }
+
+    @Override
+    public void deleteWorkItem(String id) {
+        deleteData(id, workItemDelete);
     }
 
     @Override

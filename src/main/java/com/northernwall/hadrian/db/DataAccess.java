@@ -92,8 +92,10 @@ public interface DataAccess {
     void updateUser(User user);
     void deleteUser(String userName);
 
+    List<WorkItem> getWorkItems();
     WorkItem getWorkItem(String id);
     void saveWorkItem(WorkItem workItem);
+    void deleteWorkItem(String id);
 
     UserSession getUserSession(String sessionId);
     void saveUserSession(UserSession userSession);

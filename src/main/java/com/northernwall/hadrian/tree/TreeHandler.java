@@ -96,7 +96,7 @@ public class TreeHandler extends AbstractHandler {
     private void listDevTeams(final JsonWriter jw) throws JsonIOException {
         TreeNode devTeamsTreenode = new TreeNode();
         devTeamsTreenode.setLabel("Dev Teams");
-        devTeamsTreenode.setData(new TreeNodeData("0", "DevTeams"));
+        devTeamsTreenode.setData(new TreeNodeData("-1", "DevTeams"));
         List<Team> teams  = dataAccess.getTeams();
         Collections.sort(teams);
         for (Team team : teams) {
@@ -119,40 +119,40 @@ public class TreeHandler extends AbstractHandler {
     private void listGraph(final JsonWriter jw) throws JsonIOException {
         TreeNode graphTreenode = new TreeNode();
         graphTreenode.setLabel("Graph");
-        graphTreenode.setData(new TreeNodeData("0", "Graph"));
+        graphTreenode.setData(new TreeNodeData("-2", "Graph"));
         gson.toJson(graphTreenode, TreeNode.class, jw);
     }
 
     private void listPortal(final JsonWriter jw) throws JsonIOException {
         TreeNode graphTreenode = new TreeNode();
         graphTreenode.setLabel("Portal");
-        graphTreenode.setData(new TreeNodeData("0", "Portal"));
+        graphTreenode.setData(new TreeNodeData("-3", "Portal"));
         gson.toJson(graphTreenode, TreeNode.class, jw);
     }
 
     private void listOpsTeam(final JsonWriter jw) throws JsonIOException {
         TreeNode opsTeamTreenode = new TreeNode();
         opsTeamTreenode.setLabel("Ops Team");
-        opsTeamTreenode.setData(new TreeNodeData("0", "OpsTeam"));
+        opsTeamTreenode.setData(new TreeNodeData("-4", "OpsTeam"));
         
         TreeNode tasksTreenode = new TreeNode();
         tasksTreenode.setLabel("Cross Service");
-        tasksTreenode.setData(new TreeNodeData("0", "CrossService"));
+        tasksTreenode.setData(new TreeNodeData("-5", "CrossService"));
         opsTeamTreenode.getChildren().add(tasksTreenode);
         
         TreeNode webhooksTreenode = new TreeNode();
         webhooksTreenode.setLabel("Work Items");
-        webhooksTreenode.setData(new TreeNodeData("0", "WorkItems"));
+        webhooksTreenode.setData(new TreeNodeData("-6", "WorkItems"));
         opsTeamTreenode.getChildren().add(webhooksTreenode);
         
         TreeNode backfillTreenode = new TreeNode();
         backfillTreenode.setLabel("Backfill");
-        backfillTreenode.setData(new TreeNodeData("0", "Backfill"));
+        backfillTreenode.setData(new TreeNodeData("-7", "Backfill"));
         opsTeamTreenode.getChildren().add(backfillTreenode);
         
         TreeNode optionsTreenode = new TreeNode();
         optionsTreenode.setLabel("Parameters");
-        optionsTreenode.setData(new TreeNodeData("0", "Parameters"));
+        optionsTreenode.setData(new TreeNodeData("-8", "Parameters"));
         opsTeamTreenode.getChildren().add(optionsTreenode);
         
         gson.toJson(opsTeamTreenode, TreeNode.class, jw);
@@ -161,7 +161,7 @@ public class TreeHandler extends AbstractHandler {
     private void listAdminTeam(final JsonWriter jw) throws JsonIOException {
         TreeNode adminTreenode = new TreeNode();
         adminTreenode.setLabel("Admin");
-        adminTreenode.setData(new TreeNodeData("0", "Admin"));
+        adminTreenode.setData(new TreeNodeData("-9", "Admin"));
         gson.toJson(adminTreenode, TreeNode.class, jw);
     }
 

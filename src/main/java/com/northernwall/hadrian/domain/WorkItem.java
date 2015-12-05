@@ -16,53 +16,48 @@
 
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.webhook.dao.HostData;
+import com.northernwall.hadrian.webhook.dao.ServiceData;
+import com.northernwall.hadrian.webhook.dao.VipData;
+import java.util.Date;
+import java.util.UUID;
+
 /**
  *
  * @author Richard Thurston
  */
 public class WorkItem {
 
-    private String type;
     private String id;
+    private String type;
+    private String operation;
     private String nextId;
-    private String env;
-    private String size;
-    private String version;
+    private String callbackUrl;
     private String username;
-    private boolean external;
-    private int servicePort;
+    private String fullname;
+    private Date requestDate;
+    private ServiceData service;
+    private ServiceData newService;
+    private HostData host;
+    private HostData newHost;
+    private VipData vip;
+    private VipData newVip;
 
-    public static WorkItem createUpdateHost(String id, String env, String size, String version, String username) {
-        WorkItem workItem = new WorkItem();
-        workItem.type = "host";
-        workItem.id = id;
-        workItem.nextId = null;
-        workItem.env = env;
-        workItem.size = size;
-        workItem.version = version;
-        workItem.username = username;
-        return workItem;
-    }
-
-    public static WorkItem createUpdateVip(String id, boolean external, int servicePort) {
-        WorkItem workItem = new WorkItem();
-        workItem.type = "vip";
-        workItem.id = id;
-        workItem.nextId = null;
-        workItem.external = external;
-        workItem.servicePort = servicePort;
-        return workItem;
-    }
-
-    private WorkItem() {
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
+    public WorkItem(String type, String operation, User user, Service service, Service newService, Host host, Host newHost, Vip vip, Vip newVip) {
+        this.id = UUID.randomUUID().toString();
         this.type = type;
+        this.operation = operation;
+        this.nextId = null;
+        this.callbackUrl = null;
+        this.username = user.getUsername();
+        this.fullname = user.getFullName();
+        this.requestDate = new Date();
+        this.service = ServiceData.create(service);
+        this.newService = ServiceData.create(newService);
+        this.host = HostData.create(host);
+        this.newHost = HostData.create(newHost);
+        this.vip = VipData.create(vip);
+        this.newVip = VipData.create(newVip);
     }
 
     public String getId() {
@@ -73,6 +68,22 @@ public class WorkItem {
         this.id = id;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
     public String getNextId() {
         return nextId;
     }
@@ -81,28 +92,12 @@ public class WorkItem {
         this.nextId = nextId;
     }
 
-    public String getEnv() {
-        return env;
+    public String getCallbackUrl() {
+        return callbackUrl;
     }
 
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
     }
 
     public String getUsername() {
@@ -113,20 +108,68 @@ public class WorkItem {
         this.username = username;
     }
 
-    public boolean getExternal() {
-        return external;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setExternal(boolean external) {
-        this.external = external;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
-    public int getServicePort() {
-        return servicePort;
+    public Date getRequestDate() {
+        return requestDate;
     }
 
-    public void setServicePort(int servicePort) {
-        this.servicePort = servicePort;
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public ServiceData getService() {
+        return service;
+    }
+
+    public void setService(ServiceData service) {
+        this.service = service;
+    }
+
+    public ServiceData getNewService() {
+        return newService;
+    }
+
+    public void setNewService(ServiceData newService) {
+        this.newService = newService;
+    }
+
+    public HostData getHost() {
+        return host;
+    }
+
+    public void setHost(HostData host) {
+        this.host = host;
+    }
+
+    public HostData getNewHost() {
+        return newHost;
+    }
+
+    public void setNewHost(HostData newHost) {
+        this.newHost = newHost;
+    }
+
+    public VipData getVip() {
+        return vip;
+    }
+
+    public void setVip(VipData vip) {
+        this.vip = vip;
+    }
+
+    public VipData getNewVip() {
+        return newVip;
+    }
+
+    public void setNewVip(VipData newVip) {
+        this.newVip = newVip;
     }
 
 }

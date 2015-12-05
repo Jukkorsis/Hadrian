@@ -17,6 +17,9 @@ public class ServiceData {
     public String stopCmdLine;
 
     public static ServiceData create(Service service) {
+        if (service == null) {
+            return null;
+        }
         ServiceData temp = new ServiceData();
         temp.serviceId = service.getServiceId();
         temp.serviceAbbr = service.getServiceAbbr();

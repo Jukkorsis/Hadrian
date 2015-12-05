@@ -14,6 +14,7 @@ public class Const {
     public static final String COOKIE_PORTAL_NAME = "portalname";
     public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
+    public static final String HOST_DETAILS_URL = "host.detailsUrl";
 
     public static final String ATTR_SESSION = "session";
     public static final String ATTR_USER = "user";
@@ -61,8 +62,8 @@ public class Const {
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.HttpMavenHelperFactory";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
-    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
-    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.CassandraDataAccessFactory";
+    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
+    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.CassandraDataAccessFactory";
 
     public static final String ACCESS_FACTORY_CLASS_NAME = "access.factoryClassName";
     public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SimpleAccessFactory";
@@ -82,7 +83,7 @@ public class Const {
     public static final String CONFIG_NETWORKS = "config.networks";
     public static final String CONFIG_NETWORKS_DEFAULT = "prd, tst";
     public static final String CONFIG_ENVSS = "config.envs";
-    public static final String CONFIG_ENVS_DEFAULT = "VM-Java7, VM-Java8, D-Java8, D-NodeJS";
+    public static final String CONFIG_ENVS_DEFAULT = "Java7, Java8, NodeJS";
     public static final String CONFIG_SIZES = "config.sizes";
     public static final String CONFIG_SIZES_DEFAULT = "S, M, L, XL";
     public static final String CONFIG_PROTOCOLS = "config.protocols";

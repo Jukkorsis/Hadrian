@@ -367,13 +367,25 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public List<WorkItem> getWorkItems() {
+        List<WorkItem> temp = new LinkedList<>(workItems.values());
+        return temp;
+    }
+
+    @Override
+    public WorkItem getWorkItem(String id) {
+        return workItems.get(id);
+    }
+
+    @Override
     public void saveWorkItem(WorkItem workItem) {
         workItems.put(workItem.getId(), workItem);
     }
     
     @Override
-    public WorkItem getWorkItem(String id) {
-        return workItems.get(id);
+    public void deleteWorkItem(String id) {
+        workItems.remove(id);
+        
     }
 
     @Override

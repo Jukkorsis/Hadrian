@@ -28,6 +28,12 @@ soaRepServices.factory('ServiceNotUses', ['$resource', function($resource) {
         });
     }]);
 
+soaRepServices.factory('HostDetails', ['$resource', function($resource) {
+        return $resource('/v1/host/:serviceId/:hostId/details', {}, {
+            query: {method: 'GET', params: {serviceId: 'services', hostId: 'services'}, isArray: false}
+        });
+    }]);
+
 soaRepServices.factory('DataStore', ['$resource', function($resource) {
         return $resource('/v1/datastore/:dataStoreId', {}, {
             query: {method: 'GET', params: {dataStoreId: 'services'}, isArray: false}
@@ -54,6 +60,12 @@ soaRepServices.factory('Config', ['$resource', function($resource) {
 
 soaRepServices.factory('User', ['$resource', function($resource) {
         return $resource('/v1/users', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);
+
+soaRepServices.factory('WorkItem', ['$resource', function($resource) {
+        return $resource('/v1/workitems', {}, {
             query: {method: 'GET', isArray: false}
         });
     }]);

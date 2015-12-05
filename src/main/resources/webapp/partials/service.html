@@ -109,8 +109,10 @@
                             </a>
                         </th>
                     </tr>
-                    <tr ng-repeat="i in service.hosts | orderBy:hostSortType:hostSortReverse | filter:hostSearch">
+                    <tr ng-repeat-start="i in service.hosts | orderBy:hostSortType:hostSortReverse | filter:hostSearch">
                         <td>
+                            <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
+                            <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
                             <span ng-if="i.status === '-'">
                                 <input ng-model="formSelectHost[i.hostId]" type="checkbox">
                             </span>
@@ -150,6 +152,26 @@
                             <span ng-if="i.availability > 299">
                                 <span class="label label-danger">{{i.availability}}</span>
                             </span>
+                        </td>
+                    </tr>
+                    <tr ng-if="i.expanded" ng-repeat-end="">
+                        <td colspan="9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <div ng-repeat="d in i.left">
+                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <div ng-repeat="d in i.right">
+                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </table>

@@ -33,6 +33,9 @@ public class VipData {
     public int servicePort;
 
     public static VipData create(Vip vip) {
+        if (vip == null) {
+            return null;
+        }
         VipData temp = new VipData();
         temp.vipId = vip.getVipId();
         temp.vipName = vip.getVipName();
