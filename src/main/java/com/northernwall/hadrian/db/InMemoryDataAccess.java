@@ -71,6 +71,11 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public boolean getAvailability() {
+        return true;
+    }
+
+    @Override
     public Map<String, String> getHealth() {
         Map<String, String> health = new HashMap<>();
         return health;

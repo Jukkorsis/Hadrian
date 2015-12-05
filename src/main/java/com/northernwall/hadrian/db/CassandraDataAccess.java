@@ -166,6 +166,11 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public boolean getAvailability() {
+        return true;
+    }
+
+    @Override
     public Map<String, String> getHealth() {
         Map<String, String> health = new HashMap<>();
         Metadata metadata = session.getCluster().getMetadata();

@@ -59,7 +59,11 @@ public class AvailabilityHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
             if (target.equals("/availability")) {
+                if (dataAccess.getAvailability()) {
                 response.setStatus(200);
+                } else {
+                    response.setStatus(500);
+                }
                 request.setHandled(true);
             } else if (target.equals("/version")) {
                 response.setStatus(200);

@@ -101,4 +101,6 @@ public interface DataAccess {
     void saveUserSession(UserSession userSession);
     void deleteUserSession(String sessionId);
 
+    public boolean getAvailability();
+
 }
