@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
 import java.io.InputStream;
@@ -188,7 +189,7 @@ public class CustomFuntionHandler extends AbstractHandler {
         if (!customFunction.getServiceId().equals(host.getServiceId())) {
             throw new RuntimeException("Custom Function and Host do not belong to the same service");
         }
-        com.squareup.okhttp.Request.Builder builder = new com.squareup.okhttp.Request.Builder();
+        Builder builder = new Builder();
         builder.url(Const.HTTP+customFunction.getUrl().replace(Const.HOST, host.getHostName()));
         if (customFunction.getMethod().equalsIgnoreCase("POST")) {
             RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, "{}");
