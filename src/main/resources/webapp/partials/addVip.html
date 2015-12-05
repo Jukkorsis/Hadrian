@@ -6,7 +6,10 @@
         <dt>VIP Name:</dt>
         <dd><input ng-model="formSaveVip.vipName" type="text"></dd>
         <dt>DNS:</dt>
-        <dd><input ng-model="formSaveVip.dns" type="text"></dd>
+        <dd>
+            <input ng-model="formSaveVip.dns" type="text">
+            <select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" ng-init="formSaveVip.domain = config.domains[0]"></select>
+        </dd>
         <dt>External:</dt>
         <dd><select ng-model="formSaveVip.external"><option value="false" selected="selected">False</option><option value="true">True</option></select></dd>
         <dt>Network:</dt>

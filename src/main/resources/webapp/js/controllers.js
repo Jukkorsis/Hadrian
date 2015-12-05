@@ -523,6 +523,7 @@ soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInsta
             $scope.formSaveVip = {};
             $scope.formSaveVip.vipName = "";
             $scope.formSaveVip.dns = "";
+            $scope.formSaveVip.domain = $scope.config.domains[0];
             $scope.formSaveVip.external = false;
             $scope.formSaveVip.network = $scope.config.networks[0];
             $scope.formSaveVip.protocol = $scope.config.protocols[0];
@@ -534,6 +535,7 @@ soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInsta
                     vipName: $scope.formSaveVip.vipName,
                     serviceId: $scope.service.serviceId,
                     dns: $scope.formSaveVip.dns,
+                    domain: $scope.formSaveVip.domain,
                     external: $scope.formSaveVip.external,
                     network: $scope.formSaveVip.network,
                     protocol: $scope.formSaveVip.protocol,

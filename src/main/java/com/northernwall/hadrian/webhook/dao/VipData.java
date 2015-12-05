@@ -26,6 +26,7 @@ public class VipData {
     public String vipId;
     public String vipName;
     public String dns;
+    public String domain;
     public boolean external;
     public String network;
     public String protocol;
@@ -40,6 +41,7 @@ public class VipData {
         temp.vipId = vip.getVipId();
         temp.vipName = vip.getVipName();
         temp.dns = vip.getDns();
+        temp.domain = vip.getDomain();
         temp.external = vip.isExternal();
         temp.network = vip.getNetwork();
         temp.protocol = vip.getProtocol();

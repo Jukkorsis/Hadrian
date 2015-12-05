@@ -28,6 +28,7 @@ public class GetVipData {
     public String serviceId;
     public String status;
     public String dns;
+    public String domain;
     public boolean external;
     public String network;
     public String protocol;
@@ -41,6 +42,7 @@ public class GetVipData {
         temp.serviceId = vip.getServiceId();
         temp.status = vip.getStatus();
         temp.dns = vip.getDns();
+        temp.domain = vip.getDomain();
         temp.external = vip.isExternal();
         temp.network = vip.getNetwork();
         temp.protocol = vip.getProtocol();

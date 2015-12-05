@@ -117,8 +117,8 @@ public class VipHandler extends AbstractHandler {
             if (temp.getVipName().equals(vip.getVipName())) {
                 return;
             }
-            if (temp.getNetwork().equals(vip.getNetwork())
-                    && temp.getDns().equals(vip.getDns())
+            if (temp.getDns().equals(vip.getDns())
+                    && temp.getDomain().equals(vip.getDomain())
                     && temp.getVipPort() == vip.getVipPort()) {
                 return;
             }
