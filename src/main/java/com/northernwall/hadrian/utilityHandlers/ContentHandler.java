@@ -66,6 +66,10 @@ public class ContentHandler extends AbstractHandler {
     }
 
     private void getContent(HttpServletResponse response, String resource) throws IOException {
+        if (resource.toLowerCase().endsWith(".html")) {
+            response.addHeader("X-Frame-Options", "DENY");
+            response.setContentType(Const.HTML);
+        }
         byte[] buffer = new byte[50*1024];
         try (InputStream is = this.getClass().getResourceAsStream(resource)) {
             if (is == null) {

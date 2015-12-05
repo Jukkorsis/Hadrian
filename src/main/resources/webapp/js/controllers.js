@@ -756,12 +756,15 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('GraphCtrl', ['$scope', 'Graph',
-    function ($scope, Graph) {
+soaRepControllers.controller('GraphCtrl', ['$scope', '$http',
+    function ($scope, $http) {
         selectTreeNode("-2");
+        $scope.graphStyle = "full";
 
-        $scope.data = Graph.query();
-        $scope.options = {navigation: true, width: '100%', height: '600px'};
+        var responsePromise = $http.get("/v1/graph/all", {});
+        responsePromise.success(function (dot, status, headers, config) {
+            document.getElementById("viz").innerHTML += Viz(dot);
+        });
     }]);
 
 soaRepControllers.controller('ProxyCtrl', ['$scope', 'Portal',

@@ -1,1 +1,10 @@
-<vis-network/>
+Style:
+<select ng-model="graphStyle">
+    <option value="full">Full Service Graph</option>
+    <option value="fanIn">Fan In Graph</option>
+    <option value="fanOut">Fan Out Graph</option>
+</select>
+<br/>
+{{graphStyle}}
+<br/>
+<div id="viz"></div>

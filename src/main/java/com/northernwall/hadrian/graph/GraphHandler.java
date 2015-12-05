@@ -16,16 +16,11 @@
 package com.northernwall.hadrian.graph;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.graph.dao.Color;
-import com.northernwall.hadrian.graph.dao.Edge;
-import com.northernwall.hadrian.graph.dao.Network;
-import com.northernwall.hadrian.graph.dao.Node;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -58,12 +53,7 @@ public class GraphHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.equals("/v1/graph")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                getServicesGraph(response);
-                request.setHandled(true);
-                response.setStatus(200);
-            } else if (target.equals("/v1/graph/all")) {
+            if (target.equals("/v1/graph/all")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 produceAllGraph(response);
                 request.setHandled(true);
@@ -85,57 +75,12 @@ public class GraphHandler extends AbstractHandler {
         }
     }
 
-    private void getServicesGraph(HttpServletResponse response) throws IOException {
-        Network network = new Network();
-        List<String> indexes = new LinkedList<>();
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            List<Service> services = dataAccess.getServices();
-            if (services != null && !services.isEmpty()) {
-                for (Service service : services) {
-                    Node node = new Node();
-                    node.id = indexes.size();
-                    node.label = buildNodeTitle(service);
-                    node.shape = "box"; //"ellipse";
-                    node.title = buildNodeTitle(service);
-                    node.color = new Color();
-                    node.color.background = "white";
-                    node.color.border = "red";
-                    node.borderWidth = 2;
-                    node.mass = 1;
-                    indexes.add(service.getServiceId());
-                    network.getNodes().add(node);
-                }
-            }
-            List<ServiceRef> refs = dataAccess.getServiceRefs();
-            if (refs != null && !refs.isEmpty()) {
-                for (ServiceRef ref : refs) {
-                    int i = indexes.indexOf(ref.getClientServiceId());
-                    int ii = indexes.indexOf(ref.getServerServiceId());
-                    network.getNodes().get(ii).mass++;
-                    if (i >= 0 && ii >= 0) {
-                        Edge edge = new Edge();
-                        edge.from = i;
-                        edge.to = ii;
-                        edge.color = "blue";
-                        edge.width = 2;
-                        network.getEdges().add(edge);
-                    }
-                }
-            }
-            gson.toJson(network, Network.class, jw);
-        }
-        response.setStatus(200);
-    }
-
-    private String buildNodeTitle(Service service) {
-        return service.getServiceName().replace("  ", " ").replace(" ", "\n");
-    }
-
     private void produceAllGraph(HttpServletResponse response) throws IOException {
         List<Team> teams;
         List<Service> services;
         List<ServiceRef> serviceRefs;
+        
+        response.setContentType(Const.TEXT);
 
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
         

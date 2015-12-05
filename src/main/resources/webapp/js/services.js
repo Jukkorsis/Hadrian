@@ -46,12 +46,6 @@ soaRepServices.factory('Portal', ['$resource', function($resource) {
         });
     }]);
 
-soaRepServices.factory('Graph', ['$resource', function($resource) {
-        return $resource('/v1/graph', {}, {
-            query: {method: 'GET', isArray: false}
-        });
-    }]);
-
 soaRepServices.factory('Config', ['$resource', function($resource) {
         return $resource('/v1/config', {}, {
             query: {method: 'GET', isArray: false}

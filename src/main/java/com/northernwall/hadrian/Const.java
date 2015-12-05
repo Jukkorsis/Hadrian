@@ -19,6 +19,8 @@ public class Const {
     public static final String ATTR_SESSION = "session";
     public static final String ATTR_USER = "user";
 
+    public static final String TEXT = "text/plain; charset=utf-8";
+    public static final String HTML = "text/html; charset=utf-8";
     public static final String JSON = "application/json; charset=utf-8";
     public static final MediaType JSON_MEDIA_TYPE = MediaType.parse(JSON);
 
