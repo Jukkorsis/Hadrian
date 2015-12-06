@@ -53,21 +53,25 @@ public class GraphHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.equals("/v1/graph/all")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                produceAllGraph(response);
-                request.setHandled(true);
-                response.setStatus(200);
-            } else if (target.equals("/v1/graph/fanout")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                produceFanOutGraph(response, findId("scs"));
-                request.setHandled(true);
-                response.setStatus(200);
-            } else if (target.equals("/v1/graph/fanin")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                produceFanInGraph(response, findId("ids"));
-                request.setHandled(true);
-                response.setStatus(200);
+            if (request.getMethod().equals(Const.HTTP_GET) && target.startsWith("/v1/graph/")) {
+                if (target.equals("/v1/graph/all")) {
+                    logger.info("Handling {} request {}", request.getMethod(), target);
+                    produceAllGraph(response);
+                    request.setHandled(true);
+                    response.setStatus(200);
+                } else if (target.matches("/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                    logger.info("Handling {} request {}", request.getMethod(), target);
+                    String id = target.substring(17);
+                    produceFanOutGraph(response, id);
+                    request.setHandled(true);
+                    response.setStatus(200);
+                } else if (target.matches("/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                    logger.info("Handling {} request {}", request.getMethod(), target);
+                    String id = target.substring(16);
+                    produceFanInGraph(response, id);
+                    request.setHandled(true);
+                    response.setStatus(200);
+                }
             }
         } catch (Exception e) {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
@@ -79,35 +83,35 @@ public class GraphHandler extends AbstractHandler {
         List<Team> teams;
         List<Service> services;
         List<ServiceRef> serviceRefs;
-        
+
         response.setContentType(Const.TEXT);
 
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-        
-        writer.append("digraph G {"); 
+
+        writer.append("digraph G {");
         writer.newLine();
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
-            int c=0;
+            int c = 0;
             for (Team team : teams) {
-                writer.append(" subgraph cluster_" + c + " {"); 
+                writer.append(" subgraph cluster_" + c + " {");
                 writer.newLine();
-                writer.append("  color=blue;"); 
+                writer.append("  color=blue;");
                 writer.newLine();
-                writer.append("  node [style=filled];"); 
+                writer.append("  node [style=filled];");
                 writer.newLine();
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
                     for (Service service : services) {
-                        writer.append("  " + service.getServiceAbbr() + ";"); 
+                        writer.append("  " + service.getServiceAbbr() + ";");
                         writer.newLine();
                     }
                 }
-                writer.append("  label = \""+team.getTeamName() + "\";"); 
+                writer.append("  label = \"" + team.getTeamName() + "\";");
                 writer.newLine();
-                writer.append(" }"); 
-                writer.newLine(); 
-                writer.newLine(); 
+                writer.append(" }");
+                writer.newLine();
+                writer.newLine();
                 c++;
             }
             for (Team team : teams) {
@@ -118,7 +122,7 @@ public class GraphHandler extends AbstractHandler {
                         if (serviceRefs != null && !serviceRefs.isEmpty()) {
                             for (ServiceRef serviceRef : serviceRefs) {
                                 Service temp = dataAccess.getService(serviceRef.getServerServiceId());
-                                writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr()+ ";"); 
+                                writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr() + ";");
                                 writer.newLine();
                             }
                         }
@@ -131,62 +135,9 @@ public class GraphHandler extends AbstractHandler {
         writer.flush();
     }
 
-    private String findId(String abbr) {
-        List<Team> teams;
-        List<Service> services;
-        teams = dataAccess.getTeams();
-        if (teams != null && !teams.isEmpty()) {
-            for (Team team : teams) {
-                services = dataAccess.getServices(team.getTeamId());
-                if (services != null && !services.isEmpty()) {
-                    for (Service service : services) {
-                        if (service.getServiceAbbr().equals(abbr)) {
-                            return service.getServiceId();
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private void produceFanOutGraph(HttpServletResponse response, String serviceId) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-        writer.append("digraph G {"); 
-        writer.newLine();
-        List<Service> services = new LinkedList<>();
-        List<String> foundIds = new LinkedList<>();
-        Service service = dataAccess.getService(serviceId);
-        services.add(service);
-        foundIds.add(service.getServiceId());
-        while (!services.isEmpty()) {
-            fanOut(services.remove(0), writer, services, foundIds);
-        }
-        writer.newLine();
-        writer.append(service.getServiceAbbr() + " [shape=square];");
-        writer.append("}");
-        writer.flush();
-    }
-
-    private void fanOut(Service service, BufferedWriter writer, List<Service> services, List<String> foundIds) throws IOException {
-        List<ServiceRef> serviceRefs;
-        serviceRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
-        if (serviceRefs != null && !serviceRefs.isEmpty()) {
-            for (ServiceRef serviceRef : serviceRefs) {
-                if (!foundIds.contains(serviceRef.getClientServiceId())) {
-                    Service temp = dataAccess.getService(serviceRef.getClientServiceId());
-                    writer.append(" " + temp.getServiceAbbr() + " -> " + service.getServiceAbbr()+ ";"); 
-                    writer.newLine();
-                    services.add(temp);
-                    foundIds.add(temp.getServiceId());
-                }
-            }
-        }
-    }
-
     private void produceFanInGraph(HttpServletResponse response, String serviceId) throws IOException {
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-        writer.append("digraph G {"); 
+        writer.append("digraph G {");
         writer.newLine();
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
@@ -204,12 +155,46 @@ public class GraphHandler extends AbstractHandler {
 
     private void fanIn(Service service, BufferedWriter writer, List<Service> services, List<String> foundIds) throws IOException {
         List<ServiceRef> serviceRefs;
+        serviceRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
+        if (serviceRefs != null && !serviceRefs.isEmpty()) {
+            for (ServiceRef serviceRef : serviceRefs) {
+                if (!foundIds.contains(serviceRef.getClientServiceId())) {
+                    Service temp = dataAccess.getService(serviceRef.getClientServiceId());
+                    writer.append(" " + temp.getServiceAbbr() + " -> " + service.getServiceAbbr() + ";");
+                    writer.newLine();
+                    services.add(temp);
+                    foundIds.add(temp.getServiceId());
+                }
+            }
+        }
+    }
+
+    private void produceFanOutGraph(HttpServletResponse response, String serviceId) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+        writer.append("digraph G {");
+        writer.newLine();
+        List<Service> services = new LinkedList<>();
+        List<String> foundIds = new LinkedList<>();
+        Service service = dataAccess.getService(serviceId);
+        services.add(service);
+        foundIds.add(service.getServiceId());
+        while (!services.isEmpty()) {
+            fanOut(services.remove(0), writer, services, foundIds);
+        }
+        writer.newLine();
+        writer.append(service.getServiceAbbr() + " [shape=square];");
+        writer.append("}");
+        writer.flush();
+    }
+
+    private void fanOut(Service service, BufferedWriter writer, List<Service> services, List<String> foundIds) throws IOException {
+        List<ServiceRef> serviceRefs;
         serviceRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
         if (serviceRefs != null && !serviceRefs.isEmpty()) {
             for (ServiceRef serviceRef : serviceRefs) {
                 if (!foundIds.contains(serviceRef.getServerServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getServerServiceId());
-                    writer.append(" " + temp.getServiceAbbr() + " -> " + service.getServiceAbbr()+ ";"); 
+                    writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr() + ";");
                     writer.newLine();
                     services.add(temp);
                     foundIds.add(temp.getServiceId());

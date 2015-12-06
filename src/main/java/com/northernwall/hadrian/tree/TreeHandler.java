@@ -168,7 +168,7 @@ public class TreeHandler extends AbstractHandler {
     private void listHelp(final JsonWriter jw) throws JsonIOException {
         TreeNode adminTreenode = new TreeNode();
         adminTreenode.setLabel("Help");
-        adminTreenode.setData(new TreeNodeData("0", "Help"));
+        adminTreenode.setData(new TreeNodeData("-10", "Help"));
         gson.toJson(adminTreenode, TreeNode.class, jw);
     }
 

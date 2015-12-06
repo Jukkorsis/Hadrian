@@ -1,10 +1,18 @@
-Style:
-<select ng-model="graphStyle">
-    <option value="full">Full Service Graph</option>
-    <option value="fanIn">Fan In Graph</option>
-    <option value="fanOut">Fan Out Graph</option>
-</select>
-<br/>
-{{graphStyle}}
+<div class="row">
+    <div class="col-md-6">
+        <select ng-model="formGraph.style" class="form-control">
+            <option value="all">All Services</option>
+            <option value="fanIn">Fan In - All the services that use...</option>
+            <option value="fanOut">Fan Out - All the services that are used by...</option>
+        </select>
+        <span ng-if="formGraph.style == 'fanOut' || formGraph.style == 'fanIn'">
+            <select ng-model="formGraph.service" ng-options="s.serviceName for s in services.services" ng-init="formGraph.service = services.services[0]" class="form-control">
+            </select>
+        </span>
+    </div>
+    <div class="col-md-6">
+        <a ng-click="doGraph()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-refresh"></span> Graph</a>
+    </div>
+</div>
 <br/>
 <div id="viz"></div>

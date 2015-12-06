@@ -38,6 +38,7 @@ import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
 import com.northernwall.hadrian.service.dao.GetServiceRefData;
+import com.northernwall.hadrian.service.dao.GetServicesData;
 import com.northernwall.hadrian.service.dao.GetVipData;
 import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
@@ -91,10 +92,15 @@ public class ServiceHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/v1/service/")) {
+            if (target.startsWith("/v1/service")) {
                 switch (request.getMethod()) {
                     case "GET":
-                        if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses")) {
+                        if (target.matches("/v1/service")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            getServices(response);
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             getServiceNotUses(response, target.substring(12, target.length() - 8));
                             response.setStatus(200);
@@ -145,6 +151,20 @@ public class ServiceHandler extends AbstractHandler {
             logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
             response.setStatus(400);
             request.setHandled(true);
+        }
+    }
+
+    private void getServices(HttpServletResponse response) throws IOException {
+        response.setContentType(Const.JSON);
+        
+        List<Service> services = dataAccess.getServices();
+        GetServicesData getServicesData = new GetServicesData();
+        for (Service service : services) {
+            getServicesData.services.add(GetServiceData.create(service));
+        }
+
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(getServicesData, GetServicesData.class, jw);
         }
     }
 

@@ -756,15 +756,34 @@ soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('GraphCtrl', ['$scope', '$http',
-    function ($scope, $http) {
+soaRepControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
+    function ($scope, $http, Services) {
         selectTreeNode("-2");
-        $scope.graphStyle = "full";
-
-        var responsePromise = $http.get("/v1/graph/all", {});
-        responsePromise.success(function (dot, status, headers, config) {
-            document.getElementById("viz").innerHTML += Viz(dot);
-        });
+        
+        $scope.services = Services.get();
+        
+        $scope.formGraph = {};
+        $scope.formGraph.style = "all";
+        $scope.formGraph.service = null;
+        
+        $scope.doGraph = function() {
+            if ($scope.formGraph.style == "all") {
+                var responsePromise = $http.get("/v1/graph/all", {});
+                responsePromise.success(function (dot, status, headers, config) {
+                    document.getElementById("viz").innerHTML = Viz(dot);
+                });
+            } else if ($scope.formGraph.style == "fanIn") {
+                var responsePromise = $http.get("/v1/graph/fanin/"+$scope.formGraph.service.serviceId, {});
+                responsePromise.success(function (dot, status, headers, config) {
+                    document.getElementById("viz").innerHTML = Viz(dot);
+                });
+            } else if ($scope.formGraph.style == "fanOut") {
+                var responsePromise = $http.get("/v1/graph/fanout/"+$scope.formGraph.service.serviceId, {});
+                responsePromise.success(function (dot, status, headers, config) {
+                    document.getElementById("viz").innerHTML = Viz(dot);
+                });
+            }
+        }
     }]);
 
 soaRepControllers.controller('ProxyCtrl', ['$scope', 'Portal',

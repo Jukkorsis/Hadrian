@@ -4,17 +4,11 @@
 <div class="modal-body">
     <dl class="dl-horizontal">
         <dt>Env:</dt>
-        <dd>
-            <select ng-model="formUpdateHost.env" ng-options="c for c in config.envs"></select>
-        </dd>
+        <dd><select ng-model="formUpdateHost.env" ng-options="c for c in config.envs" class="form-control"></select></dd>
         <dt>Size:</dt>
-        <dd>
-            <select ng-model="formUpdateHost.size" ng-options="c for c in config.sizes"></select>
-        </dd>
+        <dd><select ng-model="formUpdateHost.size" ng-options="c for c in config.sizes" class="form-control"></select></dd>
         <dt>Version:</dt>
-        <dd>
-            <select ng-model="formUpdateHost.version" ng-options="v for v in service.versions"></select>
-        </dd>
+        <dd><select ng-model="formUpdateHost.version" ng-options="v for v in service.versions" class="form-control"></select></dd>
     </dl>
 </div>
 <div class="modal-footer">

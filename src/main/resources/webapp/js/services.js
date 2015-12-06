@@ -16,6 +16,12 @@ soaRepServices.factory('Team', ['$resource', function($resource) {
         });
     }]);
 
+soaRepServices.factory('Services', ['$resource', function($resource) {
+        return $resource('/v1/service', {}, {
+            query: {method: 'GET', isArray: true}
+        });
+    }]);
+
 soaRepServices.factory('Service', ['$resource', function($resource) {
         return $resource('/v1/service/:serviceId', {}, {
             query: {method: 'GET', params: {serviceId: 'services'}, isArray: false}
