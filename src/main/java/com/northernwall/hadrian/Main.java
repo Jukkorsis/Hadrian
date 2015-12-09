@@ -32,7 +32,7 @@ import com.northernwall.hadrian.graph.GraphHandler;
 import com.northernwall.hadrian.service.ConfigHandler;
 import com.northernwall.hadrian.service.CustomFuntionHandler;
 import com.northernwall.hadrian.service.HostHandler;
-import com.northernwall.hadrian.service.InfoHelper;
+import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
@@ -221,7 +221,7 @@ public class Main {
             HandlerList handlers = new HandlerList();
             handlers.addHandler(new AvailabilityHandler(access, dataAccess, mavenHelper));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
-            handlers.addHandler(new WebHookHandler(client));
+            handlers.addHandler(new WebHookHandler(client, properties));
             handlers.addHandler(new PreProxyHandler());
             handlers.addHandler(new LoginHandler(access));
             handlers.addHandler(new PostProxyHandler(client));

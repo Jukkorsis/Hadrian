@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.service;
+package com.northernwall.hadrian.service.helper;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

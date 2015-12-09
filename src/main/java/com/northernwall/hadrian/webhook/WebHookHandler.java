@@ -21,6 +21,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,14 +40,15 @@ import org.slf4j.LoggerFactory;
 public class WebHookHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(WebHookHandler.class);
-    private final static int PAUSE = 1500;
 
     private final OkHttpClient client;
+    private final int pause;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public WebHookHandler(OkHttpClient client) {
+    public WebHookHandler(OkHttpClient client, Properties properties) {
         this.client = client;
-        scheduledExecutorService = Executors.newScheduledThreadPool(5);
+        this.pause = Integer.parseInt(properties.getProperty(Const.WEB_HOOK_DELAY, Const.WEB_HOOK_DELAY_DEFAULT));
+        this.scheduledExecutorService = Executors.newScheduledThreadPool(5);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class WebHookHandler extends AbstractHandler {
 
         scheduledExecutorService.schedule(
                 new WebHookRunnable(workItem.getCallbackUrl(), "200"),
-                PAUSE,
+                pause,
                 TimeUnit.SECONDS);
     }
 

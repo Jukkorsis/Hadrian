@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;

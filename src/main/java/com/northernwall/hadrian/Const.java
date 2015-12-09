@@ -49,6 +49,8 @@ public class Const {
     public static final String WEB_HOOK_VIP_URL_DEFAULT = "127.0.0.1:9090/webhook/vip";
     public static final String WEB_HOOK_HOST_VIP_URL = "webhook.hostVipUrl";
     public static final String WEB_HOOK_HOST_VIP_URL_DEFAULT = "127.0.0.1:9090/webhook/hostvip";
+    public static final String WEB_HOOK_DELAY = "webhook.delay";
+    public static final String WEB_HOOK_DELAY_DEFAULT = "15";
 
     public static final String MAVEN_URL = "maven.url";
     public static final String MAVEN_URL_DEFAULT = "127.0.0.1/mvnrepo/internal/";

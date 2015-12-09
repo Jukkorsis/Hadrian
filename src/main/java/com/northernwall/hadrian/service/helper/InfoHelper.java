@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.service;
+package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.Const;
 import com.squareup.okhttp.OkHttpClient;
@@ -35,7 +35,11 @@ public class InfoHelper {
                     .url(Const.HTTP + url.replace(Const.HOST, host))
                     .build();
             Response response = client.newCall(request).execute();
-            return response.body().string();
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                return "Error: " + response.code();
+            }
         } catch (UnknownHostException ex) {
             return "Unknown Host";
         } catch (ConnectException | SocketTimeoutException ex) {
