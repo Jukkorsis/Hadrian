@@ -273,50 +273,57 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
     }]);
 
 soaRepControllers.controller('ModalUpdateServiceCtrl',
-        function ($scope, $http, $modalInstance, $route, service) {
+        function ($scope, $http, $modalInstance, $route, Config, service) {
+            Config.get({}, function (config) {
+                $scope.config = config;
 
-            $scope.formUpdateService = {};
-            $scope.formUpdateService.serviceId = service.serviceId;
-            $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
-            $scope.formUpdateService.serviceName = service.serviceName;
-            $scope.formUpdateService.description = service.description;
-            $scope.formUpdateService.runAs = service.runAs;
-            $scope.formUpdateService.gitPath = service.gitPath;
-            $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
-            $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
-            $scope.formUpdateService.versionUrl = service.versionUrl;
-            $scope.formUpdateService.availabilityUrl = service.availabilityUrl;
-            $scope.formUpdateService.startCmdLine = service.startCmdLine;
-            $scope.formUpdateService.stopCmdLine = service.stopCmdLine;
+                $scope.formUpdateService = {};
+                $scope.formUpdateService.serviceId = service.serviceId;
+                $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
+                $scope.formUpdateService.serviceName = service.serviceName;
+                $scope.formUpdateService.description = service.description;
+                $scope.formUpdateService.runAs = service.runAs;
+                $scope.formUpdateService.gitPath = service.gitPath;
+                $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
+                $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
+                $scope.formUpdateService.artifactType = service.artifactType;
+                $scope.formUpdateService.artifactSuffix = service.artifactSuffix;
+                $scope.formUpdateService.versionUrl = service.versionUrl;
+                $scope.formUpdateService.availabilityUrl = service.availabilityUrl;
+                $scope.formUpdateService.startCmdLine = service.startCmdLine;
+                $scope.formUpdateService.stopCmdLine = service.stopCmdLine;
 
-            $scope.save = function () {
-                var dataObject = {
-                    serviceAbbr: $scope.formUpdateService.serviceAbbr,
-                    serviceName: $scope.formUpdateService.serviceName,
-                    description: $scope.formUpdateService.description,
-                    runAs: $scope.formUpdateService.runAs,
-                    gitPath: $scope.formUpdateService.gitPath,
-                    mavenGroupId: $scope.formUpdateService.mavenGroupId,
-                    mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
-                    versionUrl: $scope.formUpdateService.versionUrl,
-                    availabilityUrl: $scope.formUpdateService.availabilityUrl,
-                    startCmdLine: $scope.formUpdateService.startCmdLine,
-                    stopCmdLine: $scope.formUpdateService.stopCmdLine
+                $scope.save = function () {
+                    var dataObject = {
+                        serviceAbbr: $scope.formUpdateService.serviceAbbr,
+                        serviceName: $scope.formUpdateService.serviceName,
+                        description: $scope.formUpdateService.description,
+                        runAs: $scope.formUpdateService.runAs,
+                        gitPath: $scope.formUpdateService.gitPath,
+                        mavenGroupId: $scope.formUpdateService.mavenGroupId,
+                        mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
+                        artifactType: $scope.formUpdateService.artifactType,
+                        artifactSuffix: $scope.formUpdateService.artifactSuffix,
+                        versionUrl: $scope.formUpdateService.versionUrl,
+                        availabilityUrl: $scope.formUpdateService.availabilityUrl,
+                        startCmdLine: $scope.formUpdateService.startCmdLine,
+                        stopCmdLine: $scope.formUpdateService.stopCmdLine
+                    };
+
+                    var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
+                    responsePromise.success(function (dataFromServer, status, headers, config) {
+                        $modalInstance.close();
+                        $route.reload();
+                    });
+                    responsePromise.error(function (data, status, headers, config) {
+                        alert("Request to update service has failed!");
+                    });
                 };
 
-                var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update service has failed!");
-                });
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
+                $scope.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            });
         });
 
 soaRepControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',

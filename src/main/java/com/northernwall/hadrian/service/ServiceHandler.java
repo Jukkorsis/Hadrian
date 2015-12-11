@@ -347,6 +347,8 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.gitPath,
                 postServiceData.mavenGroupId,
                 postServiceData.mavenArtifactId,
+                postServiceData.artifactType,
+                postServiceData.artifactSuffix,
                 postServiceData.versionUrl,
                 postServiceData.availabilityUrl,
                 postServiceData.startCmdLine,
@@ -374,6 +376,8 @@ public class ServiceHandler extends AbstractHandler {
         service.setGitPath(putServiceData.gitPath);
         service.setMavenGroupId(putServiceData.mavenGroupId);
         service.setMavenArtifactId(putServiceData.mavenArtifactId);
+        service.setArtifactType(putServiceData.artifactType);
+        service.setArtifactSuffix(putServiceData.artifactSuffix);
         service.setVersionUrl(putServiceData.versionUrl);
         service.setAvailabilityUrl(putServiceData.availabilityUrl);
         service.setStartCmdLine(putServiceData.startCmdLine);

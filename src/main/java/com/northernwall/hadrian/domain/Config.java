@@ -10,5 +10,6 @@ public class Config {
     public List<String> sizes = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
+    public List<String> artifactTypes = new LinkedList<>();
     
 }

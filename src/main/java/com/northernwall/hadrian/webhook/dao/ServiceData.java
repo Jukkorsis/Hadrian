@@ -11,6 +11,8 @@ public class ServiceData {
     public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
     public String versionUrl;
     public String availabilityUrl;
     public String startCmdLine;

@@ -14,6 +14,8 @@ public class GetServiceData {
     public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
     public String versionUrl;
     public String availabilityUrl;
     public String startCmdLine;
@@ -38,6 +40,8 @@ public class GetServiceData {
         temp.gitPath = service.getGitPath();
         temp.mavenGroupId = service.getMavenGroupId();
         temp.mavenArtifactId = service.getMavenArtifactId();
+        temp.artifactType = service.getArtifactType();
+        temp.artifactSuffix = service.getArtifactSuffix();
         temp.versionUrl = service.getVersionUrl();
         temp.availabilityUrl = service.getAvailabilityUrl();
         temp.startCmdLine = service.getStartCmdLine();

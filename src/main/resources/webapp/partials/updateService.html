@@ -17,6 +17,12 @@
         <dd><input ng-model="formUpdateService.mavenGroupId" type="text" class="form-control"></dd>
         <dt>Maven Artifact Id:</dt>
         <dd><input ng-model="formUpdateService.mavenArtifactId" type="text" class="form-control"></dd>
+        <dt>Artifact Type:</dt>
+        <dd>
+            <select ng-model="formUpdateService.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select>
+        </dd>
+        <dt>Artifact Suffix:</dt>
+        <dd><input ng-model="formUpdateService.artifactSuffix" type="text" class="form-control"></dd>
         <dt>Version Url:</dt>
         <dd><input ng-model="formUpdateService.versionUrl" type="text" class="form-control"></dd>
         <dt>Availability Url:</dt>

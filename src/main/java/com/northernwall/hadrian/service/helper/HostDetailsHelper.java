@@ -15,6 +15,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -26,13 +28,25 @@ public class HostDetailsHelper {
     private final OkHttpClient client;
     private final String urlTemplate;
     private final JsonParser parser;
+    private final List<String> attributes;
 
     public HostDetailsHelper(OkHttpClient client, Properties properties) {
         this.client = client;
         this.urlTemplate = properties.getProperty(Const.HOST_DETAILS_URL);
         this.parser = new JsonParser();
+        attributes = new LinkedList<>();
+        String temp = properties.getProperty(Const.HOST_DETAILS_ATTRIBUTES, null);
+        if (temp != null) {
+            String[] parts = temp.split(",");
+            for (String part : parts) {
+                part = part.trim();
+                if (!part.isEmpty()) {
+                    attributes.add(part);
+                }
+            }
+        }
     }
-
+    
     public GetHostDetailsData getDetails(Host host) {
         GetHostDetailsData details = new GetHostDetailsData();
         if (urlTemplate != null) {
@@ -85,11 +99,13 @@ public class HostDetailsHelper {
         if (label == null || label.isEmpty() || value == null || value.isEmpty()) {
             return;
         }
-        label = label.replace("-", " ").replace("_", " ");
-        if (details.left.size() == details.right.size()) {
-            details.left.add(new GetPairData(label, value));
-        } else {
-            details.right.add(new GetPairData(label, value));
+        if (attributes.isEmpty() || attributes.contains(label)) {
+            label = label.replace("-", " ").replace("_", " ");
+            if (details.left.size() == details.right.size()) {
+                details.left.add(new GetPairData(label, value));
+            } else {
+                details.right.add(new GetPairData(label, value));
+            }
         }
     }
 

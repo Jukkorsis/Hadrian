@@ -48,6 +48,7 @@ import com.northernwall.hadrian.service.UserHandler;
 import com.northernwall.hadrian.service.WorkItemHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
 import com.northernwall.hadrian.webhook.WebHookHandler;
+import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.File;
@@ -158,6 +159,7 @@ public class Main {
         loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, config.sizes);
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
+        loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
     }
 
     private void startDataAccess() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -200,7 +202,11 @@ public class Main {
         AccessFactory accessFactory = (AccessFactory)c.newInstance();
         access = accessFactory.create(dataAccess);
         
-        webHookSender = new WebHookSender(properties, client);
+        factoryName = properties.getProperty(Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME, Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT);
+        c = Class.forName(factoryName);
+        WebHookSenderFactory webHookSenderFactory = (WebHookSenderFactory)c.newInstance();
+        webHookSender = webHookSenderFactory.create(properties, client);
+        
         infoHelper = new InfoHelper(properties, client);
     }
 

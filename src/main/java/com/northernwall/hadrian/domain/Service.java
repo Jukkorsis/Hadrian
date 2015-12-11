@@ -32,12 +32,14 @@ public class Service implements Comparable<Service>{
     private String gitPath;
     private String mavenGroupId;
     private String mavenArtifactId;
+    private String artifactType;
+    private String artifactSuffix;
     private String versionUrl;
     private String availabilityUrl;
     private String startCmdLine;
     private String stopCmdLine;
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
@@ -47,6 +49,8 @@ public class Service implements Comparable<Service>{
         this.gitPath = gitPath;
         this.mavenGroupId = mavenGroupId;
         this.mavenArtifactId = mavenArtifactId;
+        this.artifactType = artifactType;
+        this.artifactSuffix = artifactSuffix;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.startCmdLine = startCmdLine;
@@ -119,6 +123,22 @@ public class Service implements Comparable<Service>{
 
     public void setMavenArtifactId(String mavenArtifactId) {
         this.mavenArtifactId = mavenArtifactId;
+    }
+
+    public String getArtifactType() {
+        return artifactType;
+    }
+
+    public void setArtifactType(String artifactType) {
+        this.artifactType = artifactType;
+    }
+
+    public String getArtifactSuffix() {
+        return artifactSuffix;
+    }
+
+    public void setArtifactSuffix(String artifactSuffix) {
+        this.artifactSuffix = artifactSuffix;
     }
 
     public String getVersionUrl() {
