@@ -103,7 +103,7 @@ public class GraphHandler extends AbstractHandler {
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
                     for (Service service : services) {
-                        writer.append("  " + service.getServiceAbbr() + ";");
+                        writer.append("  " + service.getServiceAbbr() + " [URL=\"#/Service/" + service.getServiceId() + "\"];");
                         writer.newLine();
                     }
                 }
@@ -148,7 +148,8 @@ public class GraphHandler extends AbstractHandler {
             fanIn(services.remove(0), writer, services, foundIds);
         }
         writer.newLine();
-        writer.append(service.getServiceAbbr() + " [shape=square];");
+        writer.append(service.getServiceAbbr() + " [shape=square URL=\"#/Service/" + service.getServiceId() + "\"];");
+                    writer.newLine();
         writer.append("}");
         writer.flush();
     }
@@ -161,6 +162,8 @@ public class GraphHandler extends AbstractHandler {
                 if (!foundIds.contains(serviceRef.getClientServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getClientServiceId());
                     writer.append(" " + temp.getServiceAbbr() + " -> " + service.getServiceAbbr() + ";");
+                    writer.newLine();
+                    writer.append(temp.getServiceAbbr() + " [URL=\"#/Service/" + temp.getServiceId() + "\"];");
                     writer.newLine();
                     services.add(temp);
                     foundIds.add(temp.getServiceId());
@@ -182,7 +185,8 @@ public class GraphHandler extends AbstractHandler {
             fanOut(services.remove(0), writer, services, foundIds);
         }
         writer.newLine();
-        writer.append(service.getServiceAbbr() + " [shape=square];");
+        writer.append(service.getServiceAbbr() + " [shape=square URL=\"#/Service/" + service.getServiceId() + "\"];");
+                    writer.newLine();
         writer.append("}");
         writer.flush();
     }
@@ -195,6 +199,8 @@ public class GraphHandler extends AbstractHandler {
                 if (!foundIds.contains(serviceRef.getServerServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getServerServiceId());
                     writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr() + ";");
+                    writer.newLine();
+                    writer.append(temp.getServiceAbbr() + " [URL=\"#/Service/" + temp.getServiceId() + "\"];");
                     writer.newLine();
                     services.add(temp);
                     foundIds.add(temp.getServiceId());
