@@ -47,7 +47,8 @@ import com.northernwall.hadrian.proxy.PreProxyHandler;
 import com.northernwall.hadrian.service.UserHandler;
 import com.northernwall.hadrian.service.WorkItemHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
-import com.northernwall.hadrian.webhook.WebHookHandler;
+import com.northernwall.hadrian.webhook.simple.SimpleWebHookHandler;
+import com.northernwall.hadrian.webhook.simple.SimpleWebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
@@ -227,7 +228,9 @@ public class Main {
             HandlerList handlers = new HandlerList();
             handlers.addHandler(new AvailabilityHandler(access, dataAccess, mavenHelper));
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
-            handlers.addHandler(new WebHookHandler(client, properties));
+            if (webHookSender instanceof SimpleWebHookSender) {
+                handlers.addHandler(new SimpleWebHookHandler(client, properties));
+            }
             handlers.addHandler(new PreProxyHandler());
             handlers.addHandler(new LoginHandler(access));
             handlers.addHandler(new PostProxyHandler(client));

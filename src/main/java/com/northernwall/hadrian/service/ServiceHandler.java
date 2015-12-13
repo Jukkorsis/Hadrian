@@ -95,7 +95,7 @@ public class ServiceHandler extends AbstractHandler {
         try {
             if (target.startsWith("/v1/service")) {
                 switch (request.getMethod()) {
-                    case "GET":
+                    case Const.HTTP_GET:
                         if (target.matches("/v1/service")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             getServices(response);
@@ -113,7 +113,7 @@ public class ServiceHandler extends AbstractHandler {
                             request.setHandled(true);
                         }
                         break;
-                    case "POST":
+                    case Const.HTTP_POST:
                         if (target.matches("/v1/service/service")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createService(request);
@@ -126,7 +126,7 @@ public class ServiceHandler extends AbstractHandler {
                             request.setHandled(true);
                         }
                         break;
-                    case "PUT":
+                    case Const.HTTP_PUT:
                         if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             updateService(request, target.substring(12, target.length()));
@@ -134,7 +134,7 @@ public class ServiceHandler extends AbstractHandler {
                             request.setHandled(true);
                         }
                         break;
-                    case "DELETE":
+                    case Const.HTTP_DELETE:
                         if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/uses/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             deleteServiceRef(request, target.substring(12, target.length() - 42), target.substring(54, target.length()));
@@ -355,7 +355,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.stopCmdLine);
 
         dataAccess.saveService(service);
-        WorkItem workItem = new WorkItem("Service", "create", user, service, null, null, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, service, null, null, null, null, null);
         webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);

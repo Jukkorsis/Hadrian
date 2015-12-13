@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook;
+package com.northernwall.hadrian.webhook.simple;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -37,28 +36,24 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class WebHookHandler extends AbstractHandler {
+public class SimpleWebHookHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(WebHookHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(SimpleWebHookHandler.class);
 
     private final OkHttpClient client;
     private final int pause;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public WebHookHandler(OkHttpClient client, Properties properties) {
+    public SimpleWebHookHandler(OkHttpClient client, Properties properties) {
         this.client = client;
-        this.pause = Integer.parseInt(properties.getProperty(Const.WEB_HOOK_DELAY, Const.WEB_HOOK_DELAY_DEFAULT));
+        this.pause = Integer.parseInt(properties.getProperty(Const.SIMPLE_WEB_HOOK_DELAY, Const.SIMPLE_WEB_HOOK_DELAY_DEFAULT));
         this.scheduledExecutorService = Executors.newScheduledThreadPool(5);
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (request.getMethod().equals(Const.HTTP_POST)
-                    && (target.equals("/webhook/service")
-                    || target.equals("/webhook/host")
-                    || target.equals("/webhook/vip")
-                    || target.equals("/webhook/hostvip"))) {
+            if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/webhook")) {
                 process(request);
                 response.setStatus(200);
                 request.setHandled(true);
@@ -73,7 +68,7 @@ public class WebHookHandler extends AbstractHandler {
         WorkItem workItem = Util.fromJson(request, WorkItem.class);
 
         scheduledExecutorService.schedule(
-                new WebHookRunnable(workItem.getCallbackUrl(), "200"),
+                new WebHookRunnable(workItem.getSuccessCallbackUrl()),
                 pause,
                 TimeUnit.SECONDS);
     }
@@ -81,20 +76,17 @@ public class WebHookHandler extends AbstractHandler {
     public class WebHookRunnable implements Runnable {
 
         private final String url;
-        private final String response;
 
-        public WebHookRunnable(String url, String response) {
+        public WebHookRunnable(String url) {
             this.url = url;
-            this.response = response;
         }
 
         @Override
         public void run() {
             try {
-                RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, response);
                 com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
                         .url(url)
-                        .post(body)
+                        .get()
                         .build();
                 client.newCall(request).execute();
             } catch (IOException ex) {

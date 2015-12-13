@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
@@ -127,7 +128,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Creating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem("Vip", "create", user, service, null, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, service, null, null, null, vip, null);
         webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
@@ -149,7 +150,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem("Vip", "update", user, service, null, null, null, vip, vip);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, service, null, null, null, vip, vip);
         workItem.getNewVip().external = putVipData.external;
         workItem.getNewVip().servicePort = putVipData.servicePort;
         webHookSender.applyCallbackUrl(workItem);
@@ -173,7 +174,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
         
-        WorkItem workItem = new WorkItem("Vip", "delete", user, service, null, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, service, null, null, null, vip, null);
         webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);

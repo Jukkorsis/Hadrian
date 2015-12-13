@@ -15,6 +15,15 @@ public class Const {
     public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
     
+    public static final String OPERATION_CREATE = "create";
+    public static final String OPERATION_UPDATE = "update";
+    public static final String OPERATION_DELETE = "delete";
+    
+    public static final String TYPE_SERVICE = "service";
+    public static final String TYPE_HOST = "host";
+    public static final String TYPE_VIP = "vip";
+    public static final String TYPE_HOST_VIP = "hostvip";
+    
     public static final String HOST_DETAILS_URL = "host.detailsUrl";
     public static final String HOST_DETAILS_ATTRIBUTES = "host.detailsAttrs";
 
@@ -41,18 +50,16 @@ public class Const {
     public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.idleTimeout";
     public static final String JETTY_ACCEPT_QUEUE_SIZE_DEFAULT = "100";
     
+    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME = "webHookSender.factoryClassName";
+    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.webhook.simple.SimpleWebHookSenderFactory";
+
     public static final String WEB_HOOK_CALLBACK_HOST = "webhook.callbackHost";
     public static final String WEB_HOOK_CALLBACK_HOST_DEFAULT = "http://127.0.0.1";
-    public static final String WEB_HOOK_SERVICE_URL = "webhook.serviceUrl";
-    public static final String WEB_HOOK_SERVICE_URL_DEFAULT = "http://127.0.0.1:9090/webhook/service";
-    public static final String WEB_HOOK_HOST_URL = "webhook.hostUrl";
-    public static final String WEB_HOOK_HOST_URL_DEFAULT = "http://127.0.0.1:9090/webhook/host";
-    public static final String WEB_HOOK_VIP_URL = "webhook.vipUrl";
-    public static final String WEB_HOOK_VIP_URL_DEFAULT = "http://127.0.0.1:9090/webhook/vip";
-    public static final String WEB_HOOK_HOST_VIP_URL = "webhook.hostVipUrl";
-    public static final String WEB_HOOK_HOST_VIP_URL_DEFAULT = "http://127.0.0.1:9090/webhook/hostvip";
-    public static final String WEB_HOOK_DELAY = "webhook.delay";
-    public static final String WEB_HOOK_DELAY_DEFAULT = "15";
+    
+    public static final String SIMPLE_WEB_HOOK_URL = "simpleWebhook.url";
+    public static final String SIMPLE_WEB_HOOK_URL_DEFAULT = "http://127.0.0.1:9090/webhook";
+    public static final String SIMPLE_WEB_HOOK_DELAY = "simpleWebhook.delay";
+    public static final String SIMPLE_WEB_HOOK_DELAY_DEFAULT = "15";
 
     public static final String MAVEN_URL = "maven.url";
     public static final String MAVEN_URL_DEFAULT = "http://127.0.0.1/mvnrepo/internal/";
@@ -73,9 +80,6 @@ public class Const {
 
     public static final String ACCESS_FACTORY_CLASS_NAME = "access.factoryClassName";
     public static final String ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.SimpleAccessFactory";
-
-    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME = "webHookSender.factoryClassName";
-    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.webhook.SimpleWebHookSenderFactory";
 
     public static final String CASS_NODE = "cassandra.node";
     public static final String CASS_NODE_DEFAULT = "127.0.0.1";

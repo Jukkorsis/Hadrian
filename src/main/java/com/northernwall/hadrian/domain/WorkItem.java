@@ -32,7 +32,8 @@ public class WorkItem {
     private String type;
     private String operation;
     private String nextId;
-    private String callbackUrl;
+    private String successCallbackUrl;
+    private String failCallbackUrl;
     private String username;
     private String fullname;
     private Date requestDate;
@@ -48,7 +49,8 @@ public class WorkItem {
         this.type = type;
         this.operation = operation;
         this.nextId = null;
-        this.callbackUrl = null;
+        this.successCallbackUrl = null;
+        this.failCallbackUrl = null;
         this.username = user.getUsername();
         this.fullname = user.getFullName();
         this.requestDate = new Date();
@@ -92,12 +94,20 @@ public class WorkItem {
         this.nextId = nextId;
     }
 
-    public String getCallbackUrl() {
-        return callbackUrl;
+    public String getSuccessCallbackUrl() {
+        return successCallbackUrl;
     }
 
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
+    public void setSuccessCallbackUrl(String successCallbackUrl) {
+        this.successCallbackUrl = successCallbackUrl;
+    }
+
+    public String getFailCallbackUrl() {
+        return failCallbackUrl;
+    }
+
+    public void setFailCallbackUrl(String failCallbackUrl) {
+        this.failCallbackUrl = failCallbackUrl;
     }
 
     public String getUsername() {

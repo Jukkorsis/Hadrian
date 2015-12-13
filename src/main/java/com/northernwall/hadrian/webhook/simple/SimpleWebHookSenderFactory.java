@@ -1,5 +1,7 @@
-package com.northernwall.hadrian.webhook;
+package com.northernwall.hadrian.webhook.simple;
 
+import com.northernwall.hadrian.webhook.WebHookSender;
+import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.OkHttpClient;
 import java.util.Properties;
 

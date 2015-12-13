@@ -22,9 +22,7 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.WorkItem;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +36,8 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class WebHookCallbackHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(WebHookCallbackHandler.class);
-    
 
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
@@ -52,9 +50,17 @@ public class WebHookCallbackHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/webhook/callback") && request.getMethod().equals("POST")) {
+            if (target.startsWith("/webhook/callback") && (request.getMethod().equals(Const.HTTP_GET)
+                    || request.getMethod().equals(Const.HTTP_PUT)
+                    || request.getMethod().equals(Const.HTTP_POST))) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                processCallback(target.substring(18), request);
+                String id = request.getParameter("id");
+                String status = request.getParameter("status");
+                if (status.equals("success")) {
+                    processCallback(id, true);
+                } else {
+                    processCallback(id, false);
+                }
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -64,71 +70,70 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void processCallback(String id, Request request) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        int status = Integer.parseInt(reader.readLine());
+    private void processCallback(String id, boolean status) throws IOException {
         WorkItem workItem = dataAccess.getWorkItem(id);
         if (workItem == null) {
             throw new RuntimeException("Could not find work item " + id);
         }
         dataAccess.deleteWorkItem(id);
-        if (workItem.getType().equalsIgnoreCase("service")) {
-            if (workItem.getOperation().equalsIgnoreCase("create")) {
+        if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
+            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                 createService(workItem, status);
                 return;
             }
-        } else if (workItem.getType().equalsIgnoreCase("host")) {
-            if (workItem.getOperation().equalsIgnoreCase("create")) {
+        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
+            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                 createHost(workItem, status);
                 return;
-            } else if (workItem.getOperation().equalsIgnoreCase("update")) {
+            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
                 updateHost(workItem, status);
                 return;
-            } else if (workItem.getOperation().equalsIgnoreCase("delete")) {
+            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                 deleteHost(workItem, status);
                 return;
             }
-        } else if (workItem.getType().equalsIgnoreCase("vip")) {
-            if (workItem.getOperation().equalsIgnoreCase("create")) {
+        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
+            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                 createVip(workItem, status);
                 return;
-            } else if (workItem.getOperation().equalsIgnoreCase("update")) {
+            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
                 updateVip(workItem, status);
                 return;
-            } else if (workItem.getOperation().equalsIgnoreCase("delete")) {
+            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                 deleteVip(workItem, status);
                 return;
             }
-        } else if (workItem.getType().equalsIgnoreCase("hostvip")) {
+        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST_VIP)) {
             if (workItem.getOperation().equalsIgnoreCase("add")) {
                 addHostVip(workItem, status);
                 return;
-            } else if (workItem.getOperation().equalsIgnoreCase("delete")) {
+            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                 deleteHostVip(workItem, status);
                 return;
             }
         }
-        throw new RuntimeException("Unknown callback, " +workItem.getType() + " " + workItem.getOperation());
+        throw new RuntimeException("Unknown callback, " + workItem.getType() + " " + workItem.getOperation());
     }
 
-    private void createService(WorkItem workItem, int status) throws IOException {
+    private void createService(WorkItem workItem, boolean status) throws IOException {
         Service service = dataAccess.getService(workItem.getService().serviceId);
         if (service == null) {
             logger.warn("Could not find service {} being created", workItem.getService().serviceId);
             return;
         }
-        if (status >= 300) {
+        if (status) {
+        } else {
             logger.warn("Callback for {} failed with status {}", service.getServiceId(), status);
         }
     }
 
-    private void createHost(WorkItem workItem, int status) throws IOException {
+    private void createHost(WorkItem workItem, boolean status) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
         } else {
@@ -137,23 +142,23 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void updateHost(WorkItem workItem, int status) throws IOException {
+    private void updateHost(WorkItem workItem, boolean status) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being updated", workItem.getHost().hostId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             host.setStatus(Const.NO_STATUS);
             host.setEnv(workItem.getNewHost().env);
             host.setSize(workItem.getNewHost().size);
             dataAccess.updateHost(host);
-            
+
             if (workItem.getNextId() == null) {
                 //No more hosts to update in the chain
                 return;
             }
-            
+
             WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
             Host nextHost = dataAccess.getHost(nextWorkItem.getService().serviceId, nextWorkItem.getHost().hostId);
             if (nextHost == null) {
@@ -170,13 +175,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void deleteHost(WorkItem workItem, int status) throws IOException {
+    private void deleteHost(WorkItem workItem, boolean status) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} to delete.", workItem.getHost().hostId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
         } else {
             logger.warn("Callback for {} failed with status {}", host.getHostId(), status);
@@ -185,13 +190,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void createVip(WorkItem workItem, int status) throws IOException {
+    private void createVip(WorkItem workItem, boolean status) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being created", workItem.getVip().vipId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             vip.setStatus(Const.NO_STATUS);
             dataAccess.updateVip(vip);
         } else {
@@ -200,13 +205,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void updateVip(WorkItem workItem, int status) throws IOException {
+    private void updateVip(WorkItem workItem, boolean status) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             vip.setStatus(Const.NO_STATUS);
             vip.setExternal(workItem.getNewVip().external);
             vip.setServicePort(workItem.getNewVip().servicePort);
@@ -216,13 +221,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void deleteVip(WorkItem workItem, int status) throws IOException {
+    private void deleteVip(WorkItem workItem, boolean status) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.error("Could not find end point {} to delete.", workItem.getVip().vipId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             dataAccess.deleteVipRefs(vip.getVipId());
             dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         } else {
@@ -232,13 +237,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void addHostVip(WorkItem workItem, int status) {
+    private void addHostVip(WorkItem workItem, boolean status) {
         VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
         if (vipRef == null) {
             logger.error("Could not find end point ref {} {} to create.", workItem.getHost().hostId, workItem.getVip().vipId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             vipRef.setStatus(Const.NO_STATUS);
             dataAccess.updateVipRef(vipRef);
         } else {
@@ -247,13 +252,13 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void deleteHostVip(WorkItem workItem, int status) {
+    private void deleteHostVip(WorkItem workItem, boolean status) {
         VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
         if (vipRef == null) {
             logger.error("Could not find end point ref {} {} to delete.", workItem.getHost().hostId, workItem.getVip().vipId);
             return;
         }
-        if (status < 300) {
+        if (status) {
             dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
         } else {
             logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), status);

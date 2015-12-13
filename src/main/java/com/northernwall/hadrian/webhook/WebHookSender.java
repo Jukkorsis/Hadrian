@@ -30,11 +30,12 @@ public abstract class WebHookSender {
     public WebHookSender(Properties properties) {
         int port = Integer.parseInt(properties.getProperty(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT));
 
-        callbackUrl = properties.getProperty(Const.WEB_HOOK_CALLBACK_HOST, Const.WEB_HOOK_CALLBACK_HOST_DEFAULT) + ":" + port + "/webhook/callback/";
+        callbackUrl = properties.getProperty(Const.WEB_HOOK_CALLBACK_HOST, Const.WEB_HOOK_CALLBACK_HOST_DEFAULT) + ":" + port + "/webhook/callback?id=";
     }
 
     public final void applyCallbackUrl(WorkItem workItem) {
-        workItem.setCallbackUrl(callbackUrl + workItem.getId());
+        workItem.setSuccessCallbackUrl(callbackUrl + workItem.getId() + "&status=success");
+        workItem.setFailCallbackUrl(callbackUrl + workItem.getId() + "&status=fail");
     }
 
     public abstract void sendWorkItem(WorkItem workItem) throws IOException;
