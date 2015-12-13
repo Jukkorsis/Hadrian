@@ -1,6 +1,7 @@
-package com.northernwall.hadrian.maven;
+package com.northernwall.hadrian.maven.http;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.maven.MavenHelper;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -23,14 +24,15 @@ public class HttpMavenHelper extends MavenHelper {
     public HttpMavenHelper(Properties properties, OkHttpClient client) {
         super(properties);
         this.client = client;
-        mavenRepo = Const.HTTP + properties.getProperty(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
+        mavenRepo = properties.getProperty(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
         mavenUsername = properties.getProperty(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
         mavenPassword = properties.getProperty(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
     }
     
     @Override
     public List<String> readMavenVersions(String groupId, String artifactId) {
-        if (groupId != null && artifactId != null) {
+        List<String> versions = new LinkedList<>();
+        if (groupId != null && !groupId.isEmpty() && artifactId != null && !artifactId.isEmpty()) {
             try {
                 Request.Builder builder = new Request.Builder();
                 builder.url(mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml");
@@ -42,12 +44,16 @@ public class HttpMavenHelper extends MavenHelper {
                 Response response = client.newCall(request).execute();
 
                 InputStream inputStream = response.body().byteStream();
-                return processMavenStream(inputStream);
+                versions = processMavenStream(inputStream);
             } catch (Exception ex) {
                 logger.error("Error reading maven version from {} {}, {}", groupId, artifactId, ex.getMessage());
             }
         }
-        return new LinkedList<>();
+        
+        if (versions.isEmpty()) {
+            versions.add("0.0.0");
+        }
+        return versions;
     }
 
 }

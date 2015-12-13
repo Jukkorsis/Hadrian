@@ -8,15 +8,11 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public abstract class MavenHelper {
-    private final static Logger logger = LoggerFactory.getLogger(MavenHelper.class);
-    
     private final int maxMavenVersions;
 
     public MavenHelper(Properties properties) {
@@ -41,13 +37,6 @@ public abstract class MavenHelper {
         Collections.reverse(versions);
         if (versions.size() > maxMavenVersions) {
             return versions.subList(0, maxMavenVersions);
-        }
-        //todo, should remove and replace with a free form edit box
-        if (versions.isEmpty()) {
-            versions.add("4.0");
-            versions.add("3.0");
-            versions.add("2.0");
-            versions.add("1.0");
         }
         return versions;
     }
