@@ -60,6 +60,14 @@ public class Const {
     public static final String SIMPLE_WEB_HOOK_URL_DEFAULT = "http://127.0.0.1:9090/webhook";
     public static final String SIMPLE_WEB_HOOK_DELAY = "simpleWebhook.delay";
     public static final String SIMPLE_WEB_HOOK_DELAY_DEFAULT = "15";
+    
+    public static final String EMAIL_WEB_HOOK_SMTP_HOSTNAME = "emailWebhook.smtp.hostname";
+    public static final String EMAIL_WEB_HOOK_SMTP_POST = "emailWebhook.smtp.port";
+    public static final String EMAIL_WEB_HOOK_SMTP_POST_DEFAULT = "465";
+    public static final String EMAIL_WEB_HOOK_SMTP_USERNAME = "emailWebhook.smtp.username";
+    public static final String EMAIL_WEB_HOOK_SMTP_PASSWORD = "emailWebhook.smtp.password";
+    public static final String EMAIL_WEB_HOOK_EMAIL_TO = "emailWebhook.emailTo";
+    public static final String EMAIL_WEB_HOOK_EMAIL_From = "emailWebhook.emailFrom";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
     //public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.ssh.SshMavenHelperFactory";

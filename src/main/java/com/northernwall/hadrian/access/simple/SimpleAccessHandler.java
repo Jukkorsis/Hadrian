@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SimpleAccessHandler extends AbstractHandler {
-
     private final static Logger logger = LoggerFactory.getLogger(SimpleAccessHandler.class);
 
     private final AccessHelper accessHelper;
@@ -40,7 +39,7 @@ public class SimpleAccessHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(String target, Request request, HttpServletRequest hsr, HttpServletResponse response) throws IOException, ServletException {
+    public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/login")) {
             if (checkAndStartSession(request, response)) {
                 redirect("/ui/", response);

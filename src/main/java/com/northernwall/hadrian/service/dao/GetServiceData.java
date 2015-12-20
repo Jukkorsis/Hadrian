@@ -3,6 +3,7 @@ package com.northernwall.hadrian.service.dao;
 import com.northernwall.hadrian.domain.Service;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class GetServiceData {
     public String serviceId;
@@ -27,6 +28,7 @@ public class GetServiceData {
     public List<GetServiceRefData> uses;
     public List<GetServiceRefData> usedBy;
     public List<String> versions;
+    public List<GetPairData> links;
     public boolean canModify;
 
     public static GetServiceData create(Service service) {
@@ -53,6 +55,10 @@ public class GetServiceData {
         temp.uses = new LinkedList<>();
         temp.usedBy = new LinkedList<>();
         temp.versions = new LinkedList<>();
+        temp.links = new LinkedList<>();
+        for (Map.Entry<String, String> entry : service.getLinks().entrySet()) {
+            temp.links.add(new GetPairData(entry.getKey(), entry.getValue()));
+        }
         return temp;
     }
 

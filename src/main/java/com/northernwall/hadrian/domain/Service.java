@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,6 +40,7 @@ public class Service implements Comparable<Service>{
     private String availabilityUrl;
     private String startCmdLine;
     private String stopCmdLine;
+    private Map<String, String> links;
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
         this.serviceId = UUID.randomUUID().toString();
@@ -55,6 +58,7 @@ public class Service implements Comparable<Service>{
         this.availabilityUrl = availabilityUrl;
         this.startCmdLine = startCmdLine;
         this.stopCmdLine = stopCmdLine;
+        this.links = new HashMap<>();
     }
 
     public String getServiceId() {
@@ -171,6 +175,10 @@ public class Service implements Comparable<Service>{
 
     public void setStopCmdLine(String stopCmdLine) {
         this.stopCmdLine = stopCmdLine;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
     }
 
     @Override
