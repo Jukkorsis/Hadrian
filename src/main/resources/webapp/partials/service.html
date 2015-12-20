@@ -312,9 +312,15 @@
                         <b>Links:</b>
                         <ul>
                             <li  ng-repeat="l in service.links">
-                                <a href="{{l.label}}" target="_blank">{{l.value}}</a>
+                                <a href="{{l.value}}" target="_blank">{{l.label}}</a>
+                                <span ng-if="service.canModify">
+                                    <a ng-click="deleteLink(l.label);" class="btn btn-info btn-xs" uib-popover="Remove this link." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                </span>
                             </li>
                         </ul>
+                        <span ng-if="service.canModify">
+                            <a ng-click="openAddLinkModal();" class="btn btn-info btn-xs" uib-popover="Add a link to service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span>Add Link</a>
+                        </span>
                     </div>
                 </div>
             </div>

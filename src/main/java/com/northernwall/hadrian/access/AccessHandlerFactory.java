@@ -15,13 +15,13 @@
  */
 package com.northernwall.hadrian.access;
 
-import com.northernwall.hadrian.db.DataAccess;
+import org.eclipse.jetty.server.Handler;
 
 /**
  *
  * @author rthursto
  */
-public interface AccessFactory {
-    Access create(DataAccess dataAccess);
+public interface AccessHandlerFactory {
+    Handler create(AccessHelper accessHelper);
     
 }

@@ -16,7 +16,6 @@
 
 package com.northernwall.hadrian.utilityHandlers;
 
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.maven.MavenHelper;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -45,12 +45,12 @@ public class AvailabilityHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
     private final static String VERSION = "0.1.1";
 
-    private final Access access;
+    private final Handler accessHandler;
     private final DataAccess dataAccess;
     private final MavenHelper mavenHelper;
     
-    public AvailabilityHandler(Access access, DataAccess dataAccess, MavenHelper mavenHelper) {
-        this.access = access;
+    public AvailabilityHandler(Handler accessHandler, DataAccess dataAccess, MavenHelper mavenHelper) {
+        this.accessHandler = accessHandler;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
     }
@@ -96,7 +96,7 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, "JVM Peak Threads", threadMXBean.getPeakThreadCount());
         writeln(response, "Current Time", new Date());
         writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
-        writeln(response, "Class - Access", access.getClass().getCanonicalName());
+        writeln(response, "Class - Access Handler", accessHandler.getClass().getCanonicalName());
         writeln(response, "Class - Data Access", dataAccess.getClass().getCanonicalName());
         writeln(response, "Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
         Map<String, String> healthMap = dataAccess.getHealth();

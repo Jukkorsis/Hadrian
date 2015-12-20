@@ -16,8 +16,8 @@
 package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -36,12 +36,12 @@ public class DataStoreHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(DataStoreHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public DataStoreHandler(Access access, DataAccess dataAccess) {
-        this.access = access;
+    public DataStoreHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.gson = new Gson();
     }

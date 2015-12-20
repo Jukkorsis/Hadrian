@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.GetUsersData;
@@ -43,12 +43,12 @@ public class UserHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(UserHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public UserHandler(Access access, DataAccess dataAccess) {
-        this.access = access;
+    public UserHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.gson = new Gson();
     }
@@ -98,7 +98,7 @@ public class UserHandler extends AbstractHandler {
     }
 
     private void updateUser(Request request, String username) throws IOException {
-        User user = access.checkIfUserIsAdmin(request, "update user");
+        User user = accessHelper.checkIfUserIsAdmin(request, "update user");
         
         User temp = Util.fromJson(request, User.class);
         if (!user.getUsername().equals(temp.getUsername())) {

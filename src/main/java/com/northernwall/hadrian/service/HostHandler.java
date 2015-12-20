@@ -20,8 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
@@ -60,15 +60,15 @@ public class HostHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(HostHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final Config config;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
     private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public HostHandler(Access access, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, Properties properties) {
-        this.access = access;
+    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, Properties properties) {
+        this.accessHelper = accessHelper;
         this.config = config;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
@@ -169,7 +169,7 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "add a host");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
 
         if (postHostData.count < 1) {
             throw new RuntimeException("count must to at least 1");
@@ -252,7 +252,7 @@ public class HostHandler extends AbstractHandler {
                         if (service == null) {
                             throw new RuntimeException("Could not find service");
                         }
-                        user = access.checkIfUserCanModify(request, service.getTeamId(), "update a host");
+                        user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update a host");
                     }
                     WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_UPDATE, user, service, null, host, host, null, null);
                     workItem.getNewHost().env = putHostData.env;
@@ -295,7 +295,7 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
         WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, service, null, host, null, null, null);
@@ -337,7 +337,7 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
         List<Host> hosts = dataAccess.getHosts(data.serviceId);
         List<Vip> vips = dataAccess.getVips(data.serviceId);
         for (Map.Entry<String, String> entry : data.hosts.entrySet()) {
@@ -382,7 +382,7 @@ public class HostHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
         VipRef vipRef = dataAccess.getVipRef(hostId, vipId);
         if (vipRef == null) {
             return;

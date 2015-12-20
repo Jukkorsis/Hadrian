@@ -21,8 +21,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
 public class ServiceHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
     private final MavenHelper mavenhelper;
@@ -79,8 +79,8 @@ public class ServiceHandler extends AbstractHandler {
     private final Gson gson;
     private final ExecutorService es;
 
-    public ServiceHandler(Access access, DataAccess dataAccess, WebHookSender webHookSender, MavenHelper mavenhelper, InfoHelper infoHelper) {
-        this.access = access;
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WebHookSender webHookSender, MavenHelper mavenhelper, InfoHelper infoHelper) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
         this.mavenhelper = mavenhelper;
@@ -177,7 +177,7 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         GetServiceData getServiceData = GetServiceData.create(service);
-        getServiceData.canModify = access.canUserModify(request, service.getTeamId());
+        getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         List<Vip> vips = dataAccess.getVips(id);
         Collections.sort(vips);
@@ -328,7 +328,7 @@ public class ServiceHandler extends AbstractHandler {
 
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
-        User user = access.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
+        User user = accessHelper.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
         postServiceData.serviceAbbr = postServiceData.serviceAbbr.toLowerCase();
 
         for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
@@ -367,7 +367,7 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
 
         service.setServiceAbbr(putServiceData.serviceAbbr);
         service.setServiceName(putServiceData.serviceName);
@@ -392,7 +392,7 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "add a service ref");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a service ref");
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 ServiceRef ref = new ServiceRef(id, entry.getKey());
@@ -406,7 +406,7 @@ public class ServiceHandler extends AbstractHandler {
         if (service == null) {
             return;
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "delete a service ref");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a service ref");
         dataAccess.deleteServiceRef(clientId, serviceId);
     }
 

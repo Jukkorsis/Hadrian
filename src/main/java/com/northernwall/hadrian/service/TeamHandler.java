@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetTeamData;
@@ -23,12 +23,12 @@ public class TeamHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(TeamHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public TeamHandler(Access access, DataAccess dataAccess) {
-        this.access = access;
+    public TeamHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         gson = new Gson();
     }
@@ -89,7 +89,7 @@ public class TeamHandler extends AbstractHandler {
         }
 
         GetTeamData getTeamData = GetTeamData.create(team);
-        getTeamData.canModify = access.canUserModify(request, teamId);
+        getTeamData.canModify = accessHelper.canUserModify(request, teamId);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getTeamData, GetTeamData.class, jw);
@@ -97,7 +97,7 @@ public class TeamHandler extends AbstractHandler {
     }
 
     private void createTeam(Request request) throws IOException {
-        access.checkIfUserIsAdmin(request, "create team");
+        accessHelper.checkIfUserIsAdmin(request, "create team");
         
         PostTeamData postTeamData = Util.fromJson(request, PostTeamData.class);
 
@@ -125,7 +125,7 @@ public class TeamHandler extends AbstractHandler {
     }
 
     private void addUserToTeam(Request request, String teamId, String username) {
-        access.checkIfUserCanModify(request, teamId, "add user to team");
+        accessHelper.checkIfUserCanModify(request, teamId, "add user to team");
         if (dataAccess.getUser(username) == null) {
             throw new RuntimeException("Failed to add user " + username + " to team " + teamId + ", could not find user");
         }
@@ -138,7 +138,7 @@ public class TeamHandler extends AbstractHandler {
     }
 
     private void removeUserFromTeam(Request request, String teamId, String username) {
-        access.checkIfUserCanModify(request, teamId, "add user to team");
+        accessHelper.checkIfUserCanModify(request, teamId, "add user to team");
         Team team = dataAccess.getTeam(teamId);
         if (team == null) {
             throw new RuntimeException("Failed to add user " + username + " to team " + teamId + ", could not find team");

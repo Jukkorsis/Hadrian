@@ -17,8 +17,8 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
@@ -44,12 +44,12 @@ public class VipHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(VipHandler.class);
 
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
 
-    public VipHandler(Access access, DataAccess dataAccess, WebHookSender webHookSender) {
-        this.access = access;
+    public VipHandler(AccessHelper accessHelper, DataAccess dataAccess, WebHookSender webHookSender) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
     }
@@ -110,7 +110,7 @@ public class VipHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
 
         //Check for duplicate VIP
         List<Vip> vips = dataAccess.getVips(vip.getServiceId());
@@ -145,7 +145,7 @@ public class VipHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
 
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
@@ -163,7 +163,7 @@ public class VipHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = access.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
 
         Vip vip = dataAccess.getVip(serviceId, vipId);
         if (vip == null) {

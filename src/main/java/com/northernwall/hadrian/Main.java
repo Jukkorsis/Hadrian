@@ -20,8 +20,8 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import com.northernwall.hadrian.access.Access;
-import com.northernwall.hadrian.access.AccessFactory;
+import com.northernwall.hadrian.access.AccessHandlerFactory;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
@@ -39,7 +39,6 @@ import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
 import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.tree.TreeHandler;
-import com.northernwall.hadrian.access.LoginHandler;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.proxy.PostProxyHandler;
@@ -59,6 +58,7 @@ import java.net.BindException;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -80,7 +80,8 @@ public class Main {
     private DataAccess dataAccess;
     private OkHttpClient client;
     private MavenHelper mavenHelper;
-    private Access access;
+    private AccessHelper accessHelper;
+    private Handler accessHandler;
     private WebHookSender webHookSender;
     private InfoHelper infoHelper;
 
@@ -169,12 +170,6 @@ public class Main {
         DataAccessFactory factory = (DataAccessFactory)c.newInstance();
         dataAccess = factory.createDataAccess(properties);
         
-        List<User> users = dataAccess.getUsers();
-        if (users == null || users.isEmpty()) {
-            logger.info("No users found, creating default 'admin' user");
-            dataAccess.saveUser(new User("admin", "Administator", true, true));
-        }
-        
         com.northernwall.hadrian.db.InitData.init(dataAccess);
     }
 
@@ -198,10 +193,12 @@ public class Main {
         MavenHelperFactory mavenFactory = (MavenHelperFactory)c.newInstance();
         mavenHelper = mavenFactory.create(properties, client);
         
-        factoryName = properties.getProperty(Const.ACCESS_FACTORY_CLASS_NAME, Const.ACCESS_FACTORY_CLASS_NAME_DEFAULT);
+        accessHelper = new AccessHelper(dataAccess);
+        
+        factoryName = properties.getProperty(Const.ACCESS_HANDLER_FACTORY_CLASS_NAME, Const.ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT);
         c = Class.forName(factoryName);
-        AccessFactory accessFactory = (AccessFactory)c.newInstance();
-        access = accessFactory.create(dataAccess);
+        AccessHandlerFactory accessHanlderFactory = (AccessHandlerFactory)c.newInstance();
+        accessHandler = accessHanlderFactory.create(accessHelper);
         
         factoryName = properties.getProperty(Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME, Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT);
         c = Class.forName(factoryName);
@@ -226,24 +223,24 @@ public class Main {
             server.addConnector(connector);
 
             HandlerList handlers = new HandlerList();
-            handlers.addHandler(new AvailabilityHandler(access, dataAccess, mavenHelper));
+            handlers.addHandler(new AvailabilityHandler(accessHandler, dataAccess, mavenHelper));
+            handlers.addHandler(new ContentHandler());
             handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender));
             if (webHookSender instanceof SimpleWebHookSender) {
                 handlers.addHandler(new SimpleWebHookHandler(client, properties));
             }
             handlers.addHandler(new PreProxyHandler());
-            handlers.addHandler(new LoginHandler(access));
+            handlers.addHandler(accessHandler);
             handlers.addHandler(new PostProxyHandler(client));
-            handlers.addHandler(new ContentHandler());
             handlers.addHandler(new TreeHandler(dataAccess));
-            handlers.addHandler(new UserHandler(access, dataAccess));
-            handlers.addHandler(new TeamHandler(access, dataAccess));
-            handlers.addHandler(new ServiceHandler(access, dataAccess, webHookSender, mavenHelper, infoHelper));
-            handlers.addHandler(new VipHandler(access, dataAccess, webHookSender));
-            handlers.addHandler(new HostHandler(access, config, dataAccess, webHookSender, client, properties));
-            handlers.addHandler(new CustomFuntionHandler(access, dataAccess, client));
+            handlers.addHandler(new UserHandler(accessHelper, dataAccess));
+            handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
+            handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, webHookSender, mavenHelper, infoHelper));
+            handlers.addHandler(new VipHandler(accessHelper, dataAccess, webHookSender));
+            handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, webHookSender, client, properties));
+            handlers.addHandler(new CustomFuntionHandler(accessHelper, dataAccess, client));
             handlers.addHandler(new WorkItemHandler(dataAccess));
-            handlers.addHandler(new DataStoreHandler(access, dataAccess));
+            handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));
             handlers.addHandler(new ConfigHandler(config));
             handlers.addHandler(new GraphHandler(dataAccess));
             handlers.addHandler(new RedirectHandler());

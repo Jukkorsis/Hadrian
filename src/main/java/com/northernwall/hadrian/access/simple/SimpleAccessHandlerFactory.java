@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.access;
+package com.northernwall.hadrian.access.simple;
 
+import com.northernwall.hadrian.access.AccessHandlerFactory;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import org.eclipse.jetty.server.Handler;
 
-public class SimpleAccessFactory implements AccessFactory {
+public class SimpleAccessHandlerFactory implements AccessHandlerFactory {
 
     @Override
-    public Access create(DataAccess dataAccess) {
-        return new SimpleAccess(dataAccess);
+    public Handler create(AccessHelper accessHelper) {
+        return new SimpleAccessHandler(accessHelper);
     }
 
 }

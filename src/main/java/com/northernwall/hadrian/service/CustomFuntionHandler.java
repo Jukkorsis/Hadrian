@@ -17,8 +17,8 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.Access;
 import com.northernwall.hadrian.access.AccessException;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
@@ -47,12 +47,12 @@ import org.slf4j.LoggerFactory;
 public class CustomFuntionHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(CustomFuntionHandler.class);
     
-    private final Access access;
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final OkHttpClient client;
 
-    public CustomFuntionHandler(Access access, DataAccess dataAccess, OkHttpClient client) {
-        this.access = access;
+    public CustomFuntionHandler(AccessHelper accessHelper, DataAccess dataAccess, OkHttpClient client) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.client = client;
     }
@@ -123,7 +123,7 @@ public class CustomFuntionHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
         
         CustomFunction customFunction = new CustomFunction( 
                 service.getServiceId(),
@@ -146,7 +146,7 @@ public class CustomFuntionHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "modify custom function");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify custom function");
 
         customFunction.setName(postCFData.name);
         customFunction.setMethod(postCFData.method);
@@ -165,7 +165,7 @@ public class CustomFuntionHandler extends AbstractHandler {
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        access.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
 
         dataAccess.deleteCustomFunction(serviceId, customFunctionId);
     }
@@ -184,7 +184,7 @@ public class CustomFuntionHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         if (customFunction.isTeamOnly()) {
-            access.checkIfUserCanModify(request, service.getTeamId(), "execute a private custom function");
+            accessHelper.checkIfUserCanModify(request, service.getTeamId(), "execute a private custom function");
         }
         if (!customFunction.getServiceId().equals(host.getServiceId())) {
             throw new RuntimeException("Custom Function and Host do not belong to the same service");
