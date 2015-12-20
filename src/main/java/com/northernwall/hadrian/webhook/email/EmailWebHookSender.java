@@ -36,6 +36,7 @@ public class EmailWebHookSender extends WebHookSender {
     private final String smtpPassword;
     private final String emailTo;
     private final String emailFrom;
+    protected final String gitPathUrl;
 
     public EmailWebHookSender(Properties properties) {
         super(properties);
@@ -45,6 +46,7 @@ public class EmailWebHookSender extends WebHookSender {
         smtpPassword = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
         emailTo = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
         emailFrom = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_From, emailTo);
+        gitPathUrl = properties.getProperty(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         
         if (emailTo == null) {
             logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);
@@ -73,62 +75,99 @@ public class EmailWebHookSender extends WebHookSender {
 
     protected void sendServiceEmail(WorkItem workItem) {
         logger.info("Processing Service {} with opertion {}", workItem.getService().serviceName, workItem.getOperation());
+        
         String subject = workItem.getOperation() + " service " + workItem.getService().serviceName;
+        
         StringBuffer body = new StringBuffer();
-        addLine("Type", workItem.getType(), body);
-        addLine("Operation", workItem.getOperation(), body);
-        addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
-        addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
+        addEmailHeader(workItem, body);
+        
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendHostEmail(WorkItem workItem) {
         logger.info("Processing Host {} on {} with opertion {}", workItem.getHost().hostName, workItem.getService().serviceName, workItem.getOperation());
+        
         String subject = workItem.getOperation() + " host " + workItem.getHost().hostName;
+        
         StringBuffer body = new StringBuffer();
-        addLine("Type", workItem.getType(), body);
-        addLine("Operation", workItem.getOperation(), body);
-        addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
-        addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
+        addEmailHeader(workItem, body);
+        body.append("\n");
+        addLine("Host Name", workItem.getHost().hostName, body);
+        addLine("Data Center", workItem.getHost().dataCenter, body);
+        addLine("Network", workItem.getHost().network, body);
+        addLine("Environment", workItem.getHost().env, body);
+        addLine("Size", workItem.getHost().size, body);
+        addLine("Version", workItem.getHost().version, body);
+        body.append("\n");
+        addLine("GIT Path", gitPathUrl.replace(Const.GIT_PATH_URL_PATTERN, workItem.getService().gitPath), body);
+        addLine("Maven Group", workItem.getService().mavenGroupId, body);
+        addLine("Maven Artifact ID", workItem.getService().mavenArtifactId, body);
+        addLine("Artifact Type", workItem.getService().artifactType, body);
+        addLine("Artifact Suffix", workItem.getService().artifactSuffix, body);
+        addLine("Run As", workItem.getService().runAs, body);
+        addLine("Start Command", workItem.getService().startCmdLine, body);
+        addLine("Stop Command", workItem.getService().stopCmdLine, body);
+        addLine("Version Url", workItem.getService().versionUrl.replace(Const.HOST, workItem.getHost().hostName), body);
+        addLine("Availability Url", workItem.getService().availabilityUrl.replace(Const.HOST, workItem.getHost().hostName), body);
+        
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendVipEmail(WorkItem workItem) {
         logger.info("Processing Vip {} on {} with opertion {}", workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
+        
         String subject = workItem.getOperation() + " vip " + workItem.getVip().vipName;
+        
         StringBuffer body = new StringBuffer();
-        addLine("Type", workItem.getType(), body);
-        addLine("Operation", workItem.getOperation(), body);
-        addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
-        addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
-        addLine("Name", workItem.getVip().vipName, body);
-        addLine("DNS", workItem.getVip().dns, body);
-        addLine("Domain", workItem.getVip().domain, body);
+        addEmailHeader(workItem, body);
+        body.append("\n");
+        addLine("VIP Name", workItem.getVip().vipName, body);
+        addLine("DNS", workItem.getVip().dns + "." + workItem.getVip().domain, body);
         addLine("Network", workItem.getVip().network, body);
+        addLine("Public", Boolean.toString(workItem.getVip().external), body);
         addLine("Protocol", workItem.getVip().protocol, body);
+        addLine("VIP Port", Integer.toString(workItem.getVip().vipPort), body);
+        addLine("Service Port", Integer.toString(workItem.getVip().servicePort), body);
+        addLine("Availability Url", workItem.getService().availabilityUrl, body);
+        
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendHostVipEmail(WorkItem workItem) {
         logger.info("Processing Host Vip {} {} on {} with opertion {}", workItem.getHost().hostName, workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
+        
         String subject;
         switch (workItem.getOperation()) {
             case Const.OPERATION_CREATE:
-                subject = "add Host to Vip";
+                subject = "Add Host to Vip";
                 break;
             case Const.OPERATION_DELETE:
-                subject = "remove Host from Vip";
+                subject = "Remove Host from Vip";
                 break;
             default:
                 logger.warn("Unknown workItem operation {} for host {}", workItem.getOperation(), workItem.getHost().hostName);
                 return;
         }
+        
         StringBuffer body = new StringBuffer();
+        addEmailHeader(workItem, body);
+        body.append("\n");
+        addLine("Host Name", workItem.getHost().hostName, body);
+        addLine("Data Center", workItem.getHost().dataCenter, body);
+        addLine("Network", workItem.getHost().network, body);
+        body.append("\n");
+        addLine("VIP Name", workItem.getVip().vipName, body);
+        addLine("DNS", workItem.getVip().dns + "." + workItem.getVip().domain, body);
+        
+        emailWorkItem(subject, body.toString());
+    }
+
+    private void addEmailHeader(WorkItem workItem, StringBuffer body) {
         addLine("Type", workItem.getType(), body);
         addLine("Operation", workItem.getOperation(), body);
         addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
+        body.append("\n");
         addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
-        emailWorkItem(subject, body.toString());
     }
 
     private void addLine(String label, String value, StringBuffer body) {

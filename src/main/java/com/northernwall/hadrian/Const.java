@@ -33,6 +33,10 @@ public class Const {
     public static final MediaType JSON_MEDIA_TYPE = MediaType.parse(JSON);
 
     public static final String MAVEN_SNAPSHOT = "SNAPSHOT";
+    
+    public static final String GIT_PATH_URL = "gitPathUrl";
+    public static final String GIT_PATH_URL_DETAULT = "git@github.com:{git}.git";
+    public static final String GIT_PATH_URL_PATTERN = "{git}";
 
     //Properties file constants
     public static final String PROPERTIES_FILENAME = "hadrian.properties";
