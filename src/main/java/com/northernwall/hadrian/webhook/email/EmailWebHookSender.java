@@ -45,6 +45,10 @@ public class EmailWebHookSender extends WebHookSender {
         smtpPassword = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
         emailTo = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
         emailFrom = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_From, emailTo);
+        
+        if (emailTo == null) {
+            logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);
+        }
     }
 
     @Override
@@ -145,6 +149,9 @@ public class EmailWebHookSender extends WebHookSender {
 
     private void emailWorkItem(String subject, String body) {
         try {
+            if (emailTo == null) {
+                return;
+            }
             Email email = new SimpleEmail();
             if (smtpHostname != null) {
                 email.setHostName(smtpHostname);
