@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GetServiceData {
+
     public String serviceId;
     public String serviceAbbr;
     public String serviceName;
@@ -56,8 +57,10 @@ public class GetServiceData {
         temp.usedBy = new LinkedList<>();
         temp.versions = new LinkedList<>();
         temp.links = new LinkedList<>();
-        for (Map.Entry<String, String> entry : service.getLinks().entrySet()) {
-            temp.links.add(new GetPairData(entry.getKey(), entry.getValue()));
+        if (service.getLinks() != null && !service.getLinks().isEmpty()) {
+            for (Map.Entry<String, String> entry : service.getLinks().entrySet()) {
+                temp.links.add(new GetPairData(entry.getKey(), entry.getValue()));
+            }
         }
         return temp;
     }

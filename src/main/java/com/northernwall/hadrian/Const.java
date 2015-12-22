@@ -102,7 +102,7 @@ public class Const {
     public static final String IN_MEMORY_DATA_FILE_NAME_DEFAULT = "data.json";
     
     public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME = "accessHandler.factoryClassName";
-    public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.simple.SimpleAccessHanlderFactory";
+    public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.simple.SimpleAccessHandlerFactory";
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
