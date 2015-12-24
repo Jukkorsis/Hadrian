@@ -356,7 +356,6 @@ public class ServiceHandler extends AbstractHandler {
 
         dataAccess.saveService(service);
         WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, service, null, null, null, null, null);
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }

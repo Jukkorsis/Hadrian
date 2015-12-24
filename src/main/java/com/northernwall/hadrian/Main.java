@@ -40,7 +40,6 @@ import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.proxy.PostProxyHandler;
 import com.northernwall.hadrian.proxy.PreProxyHandler;
 import com.northernwall.hadrian.service.UserHandler;

@@ -16,12 +16,14 @@
 package com.northernwall.hadrian.webhook;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.webhook.dao.CallbackData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,17 +52,9 @@ public class WebHookCallbackHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/webhook/callback") && (request.getMethod().equals(Const.HTTP_GET)
-                    || request.getMethod().equals(Const.HTTP_PUT)
-                    || request.getMethod().equals(Const.HTTP_POST))) {
+            if (target.startsWith("/webhook/callback") && request.getMethod().equals(Const.HTTP_POST)) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                String id = request.getParameter("id");
-                String status = request.getParameter("status");
-                if (status.equals("success")) {
-                    processCallback(id, true);
-                } else {
-                    processCallback(id, false);
-                }
+                processCallback(request);
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -70,12 +64,14 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void processCallback(String id, boolean status) throws IOException {
-        WorkItem workItem = dataAccess.getWorkItem(id);
+    private void processCallback(Request request) throws IOException {
+        CallbackData callbackData = Util.fromJson(request, CallbackData.class);
+        WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
         if (workItem == null) {
-            throw new RuntimeException("Could not find work item " + id);
+            throw new RuntimeException("Could not find work item " + callbackData.requestId);
         }
-        dataAccess.deleteWorkItem(id);
+        dataAccess.deleteWorkItem(callbackData.requestId);
+        boolean status = callbackData.status.equalsIgnoreCase(Const.WEB_HOOK_STATUS_SUCCESS);
         if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
             if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                 createService(workItem, status);

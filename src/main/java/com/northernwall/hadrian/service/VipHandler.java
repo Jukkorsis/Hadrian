@@ -129,7 +129,6 @@ public class VipHandler extends AbstractHandler {
         dataAccess.saveVip(vip);
 
         WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, service, null, null, null, vip, null);
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
@@ -153,7 +152,6 @@ public class VipHandler extends AbstractHandler {
         WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, service, null, null, null, vip, vip);
         workItem.getNewVip().external = putVipData.external;
         workItem.getNewVip().servicePort = putVipData.servicePort;
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
@@ -175,7 +173,6 @@ public class VipHandler extends AbstractHandler {
         dataAccess.updateVip(vip);
         
         WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, service, null, null, null, vip, null);
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }

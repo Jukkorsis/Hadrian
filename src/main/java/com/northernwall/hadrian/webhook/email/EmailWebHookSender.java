@@ -26,12 +26,13 @@ import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailWebHookSender extends WebHookSender {
+public class EmailWebHookSender implements WebHookSender {
 
     private final static Logger logger = LoggerFactory.getLogger(EmailWebHookSender.class);
 
     private final String smtpHostname;
     private final int smtpPort;
+    private final boolean smtpSsl;
     private final String smtpUsername;
     private final String smtpPassword;
     private final String emailTo;
@@ -39,9 +40,9 @@ public class EmailWebHookSender extends WebHookSender {
     protected final String gitPathUrl;
 
     public EmailWebHookSender(Properties properties) {
-        super(properties);
         smtpHostname = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
         smtpPort = Integer.parseInt(properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_POST, Const.EMAIL_WEB_HOOK_SMTP_POST_DEFAULT));
+        smtpSsl = Boolean.parseBoolean(properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT));
         smtpUsername = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
         smtpPassword = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
         emailTo = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
@@ -199,7 +200,7 @@ public class EmailWebHookSender extends WebHookSender {
             if (smtpUsername != null && smtpPassword != null) {
                 email.setAuthenticator(new DefaultAuthenticator(smtpUsername, smtpPassword));
             }
-            email.setSSLOnConnect(true);
+            email.setSSLOnConnect(smtpSsl);
             email.setFrom(emailFrom);
             email.setSubject(subject);
             email.setMsg(body);

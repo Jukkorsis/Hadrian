@@ -29,15 +29,13 @@ import java.util.Properties;
  *
  * @author Richard Thurston
  */
-public class SimpleWebHookSender extends WebHookSender {
+public class SimpleWebHookSender implements WebHookSender {
     private final String url;
 
     private final Gson gson;
     private final OkHttpClient client;
 
-    public SimpleWebHookSender(Properties properties, OkHttpClient client) {
-        super(properties);
-        
+    public SimpleWebHookSender(Properties properties, OkHttpClient client) {        
         this.client = client;
         gson = new Gson();
 
@@ -49,6 +47,7 @@ public class SimpleWebHookSender extends WebHookSender {
         RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(workItem));
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("X-Request-Id", workItem.getId())
                 .post(body)
                 .build();
         client.newCall(request).execute();

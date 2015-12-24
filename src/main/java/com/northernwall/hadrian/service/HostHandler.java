@@ -224,7 +224,6 @@ public class HostHandler extends AbstractHandler {
                     postHostData.size);
             dataAccess.saveHost(host);
             WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, service, null, host, null, null, null);
-            webHookSender.applyCallbackUrl(workItem);
             dataAccess.saveWorkItem(workItem);
             webHookSender.sendWorkItem(workItem);
         }
@@ -275,7 +274,6 @@ public class HostHandler extends AbstractHandler {
                 WorkItem workItem = workItems.get(size - i - 1);
                 workItem.setNextId(prevId);
                 prevId = workItem.getId();
-                webHookSender.applyCallbackUrl(workItem);
                 dataAccess.saveWorkItem(workItem);
             }
             webHookSender.sendWorkItem(workItems.get(0));
@@ -299,7 +297,6 @@ public class HostHandler extends AbstractHandler {
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
         WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, service, null, host, null, null, null);
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
@@ -355,7 +352,6 @@ public class HostHandler extends AbstractHandler {
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
                                             WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, service, null, host, null, vip, null);
-                                            webHookSender.applyCallbackUrl(workItem);
                                             dataAccess.saveWorkItem(workItem);
                                             webHookSender.sendWorkItem(workItem);
                                         } else {
@@ -398,7 +394,6 @@ public class HostHandler extends AbstractHandler {
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
         WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, service, null, host, null, vip, null);
-        webHookSender.applyCallbackUrl(workItem);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }

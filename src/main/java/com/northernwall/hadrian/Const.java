@@ -57,17 +57,20 @@ public class Const {
     public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME = "webHookSender.factoryClassName";
     public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.webhook.simple.SimpleWebHookSenderFactory";
 
-    public static final String WEB_HOOK_CALLBACK_HOST = "webhook.callbackHost";
-    public static final String WEB_HOOK_CALLBACK_HOST_DEFAULT = "http://127.0.0.1";
+    public static final String WEB_HOOK_STATUS_SUCCESS = "success";
     
     public static final String SIMPLE_WEB_HOOK_URL = "simpleWebhook.url";
-    public static final String SIMPLE_WEB_HOOK_URL_DEFAULT = "http://127.0.0.1:9090/webhook";
+    public static final String SIMPLE_WEB_HOOK_URL_DEFAULT = "http://127.0.0.1:9090/webhook/simple";
     public static final String SIMPLE_WEB_HOOK_DELAY = "simpleWebhook.delay";
     public static final String SIMPLE_WEB_HOOK_DELAY_DEFAULT = "15";
-    
+    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL = "webhook.callbackHost";
+    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT = "http://127.0.0.1";
+
     public static final String EMAIL_WEB_HOOK_SMTP_HOSTNAME = "emailWebhook.smtp.hostname";
     public static final String EMAIL_WEB_HOOK_SMTP_POST = "emailWebhook.smtp.port";
     public static final String EMAIL_WEB_HOOK_SMTP_POST_DEFAULT = "465";
+    public static final String EMAIL_WEB_HOOK_SMTP_SSL = "emailWebhook.smtp.ssl";
+    public static final String EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT = "false";
     public static final String EMAIL_WEB_HOOK_SMTP_USERNAME = "emailWebhook.smtp.username";
     public static final String EMAIL_WEB_HOOK_SMTP_PASSWORD = "emailWebhook.smtp.password";
     public static final String EMAIL_WEB_HOOK_EMAIL_TO = "emailWebhook.emailTo";
@@ -118,7 +121,7 @@ public class Const {
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
     public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = ".jar, .war, .targz";
-        
+    
     private Const() {
     }
     

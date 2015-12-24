@@ -15,10 +15,13 @@
  */
 package com.northernwall.hadrian.webhook.simple;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.webhook.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -41,19 +44,23 @@ public class SimpleWebHookHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(SimpleWebHookHandler.class);
 
     private final OkHttpClient client;
+    private final Gson gson;
     private final int pause;
     private final ScheduledExecutorService scheduledExecutorService;
+    private final String url;
 
     public SimpleWebHookHandler(OkHttpClient client, Properties properties) {
         this.client = client;
+        this.gson = new Gson();
         this.pause = Integer.parseInt(properties.getProperty(Const.SIMPLE_WEB_HOOK_DELAY, Const.SIMPLE_WEB_HOOK_DELAY_DEFAULT));
         this.scheduledExecutorService = Executors.newScheduledThreadPool(5);
+        this.url = properties.getProperty(Const.SIMPLE_WEB_HOOK_CALLBACK_URL, Const.SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT) + "/webhook/callback";
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/webhook")) {
+            if (request.getMethod().equals(Const.HTTP_POST) && target.equals("/webhook/simple")) {
                 process(request);
                 response.setStatus(200);
                 request.setHandled(true);
@@ -66,27 +73,35 @@ public class SimpleWebHookHandler extends AbstractHandler {
 
     private void process(Request request) throws IOException {
         WorkItem workItem = Util.fromJson(request, WorkItem.class);
+        
+        CallbackData callbackData = new CallbackData();
+        callbackData.status = Const.WEB_HOOK_STATUS_SUCCESS;
+        callbackData.errorCode = 0;
+        callbackData.errorDescription = " ";
+        callbackData.output = "No output";
+        callbackData.requestId = request.getHeader("X-Request-Id");
 
         scheduledExecutorService.schedule(
-                new WebHookRunnable(workItem.getSuccessCallbackUrl()),
+                new WebHookRunnable(callbackData),
                 pause,
                 TimeUnit.SECONDS);
     }
 
     public class WebHookRunnable implements Runnable {
 
-        private final String url;
+        private final CallbackData callbackData;
 
-        public WebHookRunnable(String url) {
-            this.url = url;
+        public WebHookRunnable(CallbackData callbackData) {
+            this.callbackData = callbackData;
         }
 
         @Override
         public void run() {
             try {
+                RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(callbackData));
                 com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
                         .url(url)
-                        .get()
+                        .post(body)
                         .build();
                 client.newCall(request).execute();
             } catch (IOException ex) {
