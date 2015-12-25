@@ -46,12 +46,12 @@ public class ContentHandler extends AbstractHandler {
                 return;
             }
             if (target.equals("/ui/")) {
-                //logger.info("Handling {} request {}", request.getMethod(), target);
+                logger.info("Handling {} request {}", request.getMethod(), target);
                 getContent(response, "/webapp/index.html");
                 response.setStatus(200);
                 request.setHandled(true);
             } else if (target.startsWith("/ui/")) {
-                //logger.info("Handling {} request {}", request.getMethod(), target);
+                logger.debug("Handling {} request {}", request.getMethod(), target);
                 getContent(response, "/webapp" + target.substring(3));
                 response.setStatus(200);
                 request.setHandled(true);

@@ -54,7 +54,7 @@ public class SimpleWebHookHandler extends AbstractHandler {
         this.gson = new Gson();
         this.pause = Integer.parseInt(properties.getProperty(Const.SIMPLE_WEB_HOOK_DELAY, Const.SIMPLE_WEB_HOOK_DELAY_DEFAULT));
         this.scheduledExecutorService = Executors.newScheduledThreadPool(5);
-        this.url = properties.getProperty(Const.SIMPLE_WEB_HOOK_CALLBACK_URL, Const.SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT) + "/webhook/callback";
+        this.url = properties.getProperty(Const.SIMPLE_WEB_HOOK_CALLBACK_URL, Const.SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT);
     }
 
     @Override

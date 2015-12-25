@@ -64,7 +64,7 @@ public class Const {
     public static final String SIMPLE_WEB_HOOK_DELAY = "simpleWebhook.delay";
     public static final String SIMPLE_WEB_HOOK_DELAY_DEFAULT = "15";
     public static final String SIMPLE_WEB_HOOK_CALLBACK_URL = "webhook.callbackHost";
-    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT = "http://127.0.0.1";
+    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT = "http://127.0.0.1:9090/webhook/callback";
 
     public static final String EMAIL_WEB_HOOK_SMTP_HOSTNAME = "emailWebhook.smtp.hostname";
     public static final String EMAIL_WEB_HOOK_SMTP_POST = "emailWebhook.smtp.port";
