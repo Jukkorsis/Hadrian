@@ -17,8 +17,8 @@ package com.northernwall.hadrian.webhook.email;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.WebHookSender;
-import java.util.Properties;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -39,15 +39,15 @@ public class EmailWebHookSender implements WebHookSender {
     private final String emailFrom;
     protected final String gitPathUrl;
 
-    public EmailWebHookSender(Properties properties) {
-        smtpHostname = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
-        smtpPort = Integer.parseInt(properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_POST, Const.EMAIL_WEB_HOOK_SMTP_POST_DEFAULT));
-        smtpSsl = Boolean.parseBoolean(properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT));
-        smtpUsername = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
-        smtpPassword = properties.getProperty(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
-        emailTo = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
-        emailFrom = properties.getProperty(Const.EMAIL_WEB_HOOK_EMAIL_From, emailTo);
-        gitPathUrl = properties.getProperty(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
+    public EmailWebHookSender(Parameters parameters) {
+        smtpHostname = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
+        smtpPort = parameters.getInt(Const.EMAIL_WEB_HOOK_SMTP_POST, Const.EMAIL_WEB_HOOK_SMTP_POST_DEFAULT);
+        smtpSsl = parameters.getBoolean(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT);
+        smtpUsername = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
+        smtpPassword = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
+        emailTo = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
+        emailFrom = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_From, emailTo);
+        gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         
         if (emailTo == null) {
             logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);

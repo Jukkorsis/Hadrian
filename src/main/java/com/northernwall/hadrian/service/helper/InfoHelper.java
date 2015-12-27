@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Properties;
 
 public class InfoHelper {
     private final OkHttpClient client;
 
-    public InfoHelper(Properties properties, OkHttpClient client) {
+    public InfoHelper(OkHttpClient client) {
         this.client = client;
     }
 

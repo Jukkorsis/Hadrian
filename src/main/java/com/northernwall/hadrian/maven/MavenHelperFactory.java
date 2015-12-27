@@ -1,13 +1,13 @@
 package com.northernwall.hadrian.maven;
 
+import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
-import java.util.Properties;
 
 /**
  *
  * @author rthursto
  */
 public interface MavenHelperFactory {
-    public MavenHelper create(Properties properties, OkHttpClient client);
+    public MavenHelper create(Parameters parameters, OkHttpClient client);
     
 }

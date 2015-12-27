@@ -6,10 +6,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +20,14 @@ public class SshMavenHelper extends MavenHelper {
     private final String url;
     private final JSch jsch;
     
-    public SshMavenHelper(Properties properties) {
-        super(properties);
+    public SshMavenHelper(Parameters parameters) {
+        super(parameters);
         
-        userName = properties.getProperty("maven.ssh.userName");
-        url = properties.getProperty("maven.ssh.url");
+        userName = parameters.getString("maven.ssh.userName", null);
+        url = parameters.getString("maven.ssh.url", null);
 
         jsch = new JSch();
-        String keyFile = properties.getProperty("maven.ssh.keyFile");
+        String keyFile = parameters.getString("maven.ssh.keyFile", null);
         if (keyFile != null) {
             try {
                 jsch.addIdentity(keyFile);

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.service.dao.GetHostDetailsData;
 import com.northernwall.hadrian.service.dao.GetPairData;
 import com.squareup.okhttp.OkHttpClient;
@@ -18,7 +19,6 @@ import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +30,12 @@ public class HostDetailsHelper {
     private final JsonParser parser;
     private final List<String> attributes;
 
-    public HostDetailsHelper(OkHttpClient client, Properties properties) {
+    public HostDetailsHelper(OkHttpClient client, Parameters parameters) {
         this.client = client;
-        this.urlTemplate = properties.getProperty(Const.HOST_DETAILS_URL);
+        this.urlTemplate = parameters.getString(Const.HOST_DETAILS_URL, null);
         this.parser = new JsonParser();
         attributes = new LinkedList<>();
-        String temp = properties.getProperty(Const.HOST_DETAILS_ATTRIBUTES, null);
+        String temp = parameters.getString(Const.HOST_DETAILS_ATTRIBUTES, null);
         if (temp != null) {
             String[] parts = temp.split(",");
             for (String part : parts) {

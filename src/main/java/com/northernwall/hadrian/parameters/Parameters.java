@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.db;
-
-import com.northernwall.hadrian.parameters.Parameters;
+package com.northernwall.hadrian.parameters;
 
 /**
  *
  * @author rthursto
  */
-public interface DataAccessFactory {
-    DataAccess createDataAccess(Parameters parameters);
+public interface Parameters {
+    String getString(String key, String value);
+    int getInt(String key, String value);
+    boolean getBoolean(String key, String value);
     
 }

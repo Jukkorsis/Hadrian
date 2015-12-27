@@ -15,16 +15,16 @@
  */
 package com.northernwall.hadrian.webhook.email;
 
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.OkHttpClient;
-import java.util.Properties;
 
 public class EmailWebHookSenderFactory implements WebHookSenderFactory {
 
     @Override
-    public WebHookSender create(Properties properties, OkHttpClient client) {
-        return new EmailWebHookSender(properties);
+    public WebHookSender create(Parameters parameters, OkHttpClient client) {
+        return new EmailWebHookSender(parameters);
     }
 
 }

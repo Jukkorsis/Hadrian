@@ -19,11 +19,11 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,12 +49,12 @@ public class SimpleWebHookHandler extends AbstractHandler {
     private final ScheduledExecutorService scheduledExecutorService;
     private final String url;
 
-    public SimpleWebHookHandler(OkHttpClient client, Properties properties) {
+    public SimpleWebHookHandler(OkHttpClient client, Parameters paramerters) {
         this.client = client;
         this.gson = new Gson();
-        this.pause = Integer.parseInt(properties.getProperty(Const.SIMPLE_WEB_HOOK_DELAY, Const.SIMPLE_WEB_HOOK_DELAY_DEFAULT));
+        this.pause = paramerters.getInt(Const.SIMPLE_WEB_HOOK_DELAY, Const.SIMPLE_WEB_HOOK_DELAY_DEFAULT);
         this.scheduledExecutorService = Executors.newScheduledThreadPool(5);
-        this.url = properties.getProperty(Const.SIMPLE_WEB_HOOK_CALLBACK_URL, Const.SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT);
+        this.url = paramerters.getString(Const.SIMPLE_WEB_HOOK_CALLBACK_URL, Const.SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT);
     }
 
     @Override

@@ -18,12 +18,12 @@ package com.northernwall.hadrian.webhook.simple;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  *
@@ -35,11 +35,11 @@ public class SimpleWebHookSender implements WebHookSender {
     private final Gson gson;
     private final OkHttpClient client;
 
-    public SimpleWebHookSender(Properties properties, OkHttpClient client) {        
+    public SimpleWebHookSender(Parameters parameters, OkHttpClient client) {        
         this.client = client;
         gson = new Gson();
 
-        url = properties.getProperty(Const.SIMPLE_WEB_HOOK_URL, Const.SIMPLE_WEB_HOOK_URL_DEFAULT);
+        url = parameters.getString(Const.SIMPLE_WEB_HOOK_URL, Const.SIMPLE_WEB_HOOK_URL_DEFAULT);
     }
     
     @Override

@@ -21,7 +21,7 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import com.northernwall.hadrian.Const;
-import java.util.Properties;
+import com.northernwall.hadrian.parameters.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +32,10 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     private CassandraDataAccess dataAccess;
 
     @Override
-    public DataAccess createDataAccess(Properties properties) {
-        String node = properties.getProperty(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
-        String keyspace = properties.getProperty(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
-        String replicationFactor = properties.getProperty(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
+    public DataAccess createDataAccess(Parameters parameters) {
+        String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
+        String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
+        String replicationFactor = parameters.getString(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
 
         connect(node);
         setup(keyspace, replicationFactor);

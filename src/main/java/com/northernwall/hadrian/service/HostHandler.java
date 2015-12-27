@@ -43,7 +43,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,12 +66,12 @@ public class HostHandler extends AbstractHandler {
     private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, Properties properties) {
+    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, HostDetailsHelper hostDetailsHelper) {
         this.accessHelper = accessHelper;
         this.config = config;
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
-        this.hostDetailsHelper = new HostDetailsHelper(client, properties);
+        this.hostDetailsHelper = hostDetailsHelper;
         gson = new Gson();
     }
 

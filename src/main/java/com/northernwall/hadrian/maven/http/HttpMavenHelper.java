@@ -2,6 +2,7 @@ package com.northernwall.hadrian.maven.http;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -9,7 +10,6 @@ import com.squareup.okhttp.Response;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +21,12 @@ public class HttpMavenHelper extends MavenHelper {
     private final String mavenUsername;
     private final String mavenPassword;
 
-    public HttpMavenHelper(Properties properties, OkHttpClient client) {
-        super(properties);
+    public HttpMavenHelper(Parameters parameters, OkHttpClient client) {
+        super(parameters);
         this.client = client;
-        mavenRepo = properties.getProperty(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
-        mavenUsername = properties.getProperty(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
-        mavenPassword = properties.getProperty(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
+        mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
+        mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
+        mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
     }
     
     @Override

@@ -1,11 +1,11 @@
 package com.northernwall.hadrian.maven;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -15,8 +15,8 @@ import org.w3c.dom.Node;
 public abstract class MavenHelper {
     private final int maxMavenVersions;
 
-    public MavenHelper(Properties properties) {
-        this.maxMavenVersions = Integer.parseInt(properties.getProperty(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT));
+    public MavenHelper(Parameters parameters) {
+        this.maxMavenVersions = parameters.getInt(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT);
     }
 
     public abstract List<String> readMavenVersions(String groupId, String artifactId);

@@ -19,11 +19,11 @@ package com.northernwall.hadrian.db;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,8 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     private String dataFileName;
 
     @Override
-    public DataAccess createDataAccess(Properties properties) {
-        dataFileName = properties.getProperty(Const.IN_MEMORY_DATA_FILE_NAME, Const.IN_MEMORY_DATA_FILE_NAME_DEFAULT);
+    public DataAccess createDataAccess(Parameters parameters) {
+        dataFileName = parameters.getString(Const.IN_MEMORY_DATA_FILE_NAME, Const.IN_MEMORY_DATA_FILE_NAME_DEFAULT);
         dataAccess = load();
         
         if (dataAccess == null) {
