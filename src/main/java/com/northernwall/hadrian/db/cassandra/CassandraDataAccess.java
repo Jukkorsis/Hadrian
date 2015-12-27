@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.northernwall.hadrian.db;
+package com.northernwall.hadrian.db.cassandra;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
@@ -25,6 +25,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Host;

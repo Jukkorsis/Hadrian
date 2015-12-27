@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.northernwall.hadrian.db;
+package com.northernwall.hadrian.db.inMemory;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.io.File;
 import java.io.FileNotFoundException;

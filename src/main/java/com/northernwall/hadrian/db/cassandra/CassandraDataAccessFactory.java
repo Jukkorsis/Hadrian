@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.northernwall.hadrian.db;
+package com.northernwall.hadrian.db.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

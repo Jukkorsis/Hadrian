@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.northernwall.hadrian.db;
+package com.northernwall.hadrian.db.inMemory;
 
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;

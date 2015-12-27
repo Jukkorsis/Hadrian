@@ -91,8 +91,8 @@ public class Const {
     public static final String MAVEN_PASSWORD_DEFAULT = "-";
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
-    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.InMemoryDataAccessFactory";
-    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.CassandraDataAccessFactory";
+    public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.inMemory.InMemoryDataAccessFactory";
+    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.cassandra.CassandraDataAccessFactory";
 
     public static final String CASS_NODE = "dataAccess.cassandra.node";
     public static final String CASS_NODE_DEFAULT = "127.0.0.1";
