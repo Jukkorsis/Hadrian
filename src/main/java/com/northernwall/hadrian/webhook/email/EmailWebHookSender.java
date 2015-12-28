@@ -207,7 +207,7 @@ public class EmailWebHookSender implements WebHookSender {
             email.addTo(emailTo);
             email.send();
 
-            logger.info("Emailing work item to {}  with {} -> {}", emailTo, subject, body);
+            logger.info("Emailing work item to {} with subject {}", emailTo, subject);
         } catch (EmailException ex) {
             throw new RuntimeException("Failure emailing work item, {}", ex);
         }
