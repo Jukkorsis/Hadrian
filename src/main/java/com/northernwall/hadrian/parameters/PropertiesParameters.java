@@ -15,13 +15,21 @@ public class PropertiesParameters implements Parameters {
     }
 
     @Override
-    public int getInt(String key, String value) {
-        return Integer.parseInt(properties.getProperty(key, value));
+    public int getInt(String key, int value) {
+        String temp = properties.getProperty(key);
+        if (temp == null) {
+            return value;
+        }
+        return Integer.parseInt(temp);
     }
 
     @Override
-    public boolean getBoolean(String key, String value) {
-        return Boolean.parseBoolean(properties.getProperty(key, value));
+    public boolean getBoolean(String key, boolean value) {
+        String temp = properties.getProperty(key);
+        if (temp == null) {
+            return value;
+        }
+        return Boolean.parseBoolean(temp);
     }
 
 }

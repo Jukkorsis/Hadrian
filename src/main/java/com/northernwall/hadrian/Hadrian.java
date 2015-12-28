@@ -169,7 +169,7 @@ public class Hadrian {
     }
 
     private void setupJetty() {
-        port = Integer.parseInt(parameters.getString(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT));
+        port = parameters.getInt(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT);
 
         server = new Server(new QueuedThreadPool(10, 5));
 
@@ -178,8 +178,8 @@ public class Hadrian {
         HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
         ServerConnector connector = new ServerConnector(server, httpFactory);
         connector.setPort(port);
-        connector.setIdleTimeout(Integer.parseInt(parameters.getString(Const.JETTY_IDLE_TIMEOUT, Const.JETTY_IDLE_TIMEOUT_DEFAULT)));
-        connector.setAcceptQueueSize(Integer.parseInt(parameters.getString(Const.JETTY_ACCEPT_QUEUE_SIZE, Const.JETTY_ACCEPT_QUEUE_SIZE_DEFAULT)));
+        connector.setIdleTimeout(parameters.getInt(Const.JETTY_IDLE_TIMEOUT, Const.JETTY_IDLE_TIMEOUT_DEFAULT));
+        connector.setAcceptQueueSize(parameters.getInt(Const.JETTY_ACCEPT_QUEUE_SIZE, Const.JETTY_ACCEPT_QUEUE_SIZE_DEFAULT));
         server.addConnector(connector);
 
         HandlerList handlers = new HandlerList();

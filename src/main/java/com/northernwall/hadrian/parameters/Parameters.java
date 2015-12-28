@@ -21,7 +21,7 @@ package com.northernwall.hadrian.parameters;
  */
 public interface Parameters {
     String getString(String key, String value);
-    int getInt(String key, String value);
-    boolean getBoolean(String key, String value);
+    int getInt(String key, int value);
+    boolean getBoolean(String key, boolean value);
     
 }

@@ -37,7 +37,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     public DataAccess createDataAccess(Parameters parameters) {
         String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
-        String replicationFactor = parameters.getString(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
+        int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
 
         connect(node);
         setup(keyspace, replicationFactor);
@@ -58,7 +58,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         }
     }
 
-    private void setup(String keyspace, String replicationFactor) {
+    private void setup(String keyspace, int replicationFactor) {
         Session session = cluster.connect();
 
         session.execute("CREATE KEYSPACE IF NOT EXISTS "+keyspace+" WITH replication = {'class':'SimpleStrategy', 'replication_factor':"+replicationFactor+"};");
