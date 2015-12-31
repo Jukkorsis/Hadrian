@@ -16,7 +16,7 @@
     </issueManagement>
 
     <scm>
-        <url>https://github.com/giJukkorsis/Hadrian</url>
+        <url>https://github.com/Jukkorsis/Hadrian</url>
         <connection>scm:git:git://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
   </scm>
@@ -129,7 +129,6 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -141,7 +140,6 @@
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
-            -->
         </plugins>
     </build>
 </project>
