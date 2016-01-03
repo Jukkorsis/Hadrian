@@ -29,7 +29,7 @@
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         <tag>Hadrian-1.3.0</tag>
         -->
-  </scm>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
