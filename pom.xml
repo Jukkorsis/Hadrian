@@ -17,8 +17,8 @@
 
     <scm>
         <url>https://github.com/Jukkorsis/Hadrian</url>
-        <!--
         <connection>https://github.com/Jukkorsis/Hadrian.git</connection>
+        <!--
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         <connection>scm:git:git://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
