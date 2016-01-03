@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.northernwall</groupId>
     <artifactId>Hadrian</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <organization>
@@ -28,7 +28,6 @@
         <connection>https://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         -->
-    <tag>Hadrian-1.3.1</tag>
   </scm>
 
     <distributionManagement>
