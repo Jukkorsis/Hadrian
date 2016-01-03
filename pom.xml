@@ -16,11 +16,16 @@
     </issueManagement>
 
     <scm>
-        <url>https://github.com/Jukkorsis/Hadrian</url>
-        <connection>https://github.com/Jukkorsis/Hadrian.git</connection>
-        <!--
+        <connection>scm:git:git@github.com:Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
+        <url>scm:git:git@github.com/Jukkorsis/Hadrian</url>
+        
+        <!--
         <connection>scm:git:git://github.com/Jukkorsis/Hadrian.git</connection>
+        <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
+        <url>https://github.com/Jukkorsis/Hadrian</url>
+
+        <connection>https://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         <tag>Hadrian-1.3.0</tag>
         -->
