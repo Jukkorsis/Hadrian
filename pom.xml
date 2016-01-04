@@ -5,7 +5,10 @@
     <artifactId>Hadrian</artifactId>
     <version>1.3.5-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+    <name>Hadrian</name>
+    <url>https://github.com/Jukkorsis/Hadrian</url>
+    <description>Hadrian is a DevOps UI, Inventory, and Auditing system that plugs into other tools to execute actions.</description>
+      
     <organization>
         <name>Richard Thurston</name>
     </organization>
@@ -19,17 +22,8 @@
         <connection>scm:git:git@github.com:Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         <url>scm:git:git@github.com/Jukkorsis/Hadrian</url>
-        
-        <!--
-        <connection>scm:git:git://github.com/Jukkorsis/Hadrian.git</connection>
-        <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
-        <url>https://github.com/Jukkorsis/Hadrian</url>
-
-        <connection>https://github.com/Jukkorsis/Hadrian.git</connection>
-        <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
-        -->
-    <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -115,6 +109,32 @@
                         <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.0.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
