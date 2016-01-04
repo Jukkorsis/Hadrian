@@ -13,6 +13,22 @@
         <name>Richard Thurston</name>
     </organization>
     
+    <developers>
+        <developer>
+            <name>Richard Thurston</name>
+            <email>richard@northernwall.com</email>
+            <organization>Richard Thurston</organization>
+            <organizationUrl>https://github.com/Jukkorsis/Hadrian</organizationUrl>
+        </developer>
+    </developers>
+  
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <issueManagement>
         <url>https://github.com/Jukkorsis/Hadrian/issues</url>
         <system>GitHub</system>
@@ -135,6 +151,20 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
