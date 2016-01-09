@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.db;
 
+import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.parameters.Parameters;
 
 /**
@@ -22,6 +23,6 @@ import com.northernwall.hadrian.parameters.Parameters;
  * @author rthursto
  */
 public interface DataAccessFactory {
-    DataAccess createDataAccess(Parameters parameters);
+    DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry);
     
 }

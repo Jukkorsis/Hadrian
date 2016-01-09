@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db.cassandra;
 
+import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
@@ -34,7 +35,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     private CassandraDataAccess dataAccess;
 
     @Override
-    public DataAccess createDataAccess(Parameters parameters) {
+    public DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry) {
         String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
         int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
@@ -45,7 +46,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace);
+        dataAccess = new CassandraDataAccess(cluster, keyspace, metricRegistry);
         return dataAccess;
     }
 

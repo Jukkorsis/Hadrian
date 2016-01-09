@@ -23,6 +23,7 @@ import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
 import com.northernwall.hadrian.utilityHandlers.ContentHandler;
+import com.northernwall.hadrian.utilityHandlers.MetricHandler;
 import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
 import com.northernwall.hadrian.webhook.WebHookSender;
@@ -54,8 +55,8 @@ public class Hadrian {
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
     private final WebHookSender webHookSender;
-    private InfoHelper infoHelper;
-    private HostDetailsHelper hostDetailsHelper;
+    private final InfoHelper infoHelper;
+    private final HostDetailsHelper hostDetailsHelper;
     private int port;
     private Server server;
 
@@ -136,7 +137,10 @@ public class Hadrian {
         handlers.addHandler(new ConfigHandler(config));
         handlers.addHandler(new GraphHandler(dataAccess));
         handlers.addHandler(new RedirectHandler());
-        server.setHandler(handlers);
+        
+        MetricHandler metricHandler = new MetricHandler(handlers, metricRegistry);
+        
+        server.setHandler(metricHandler);
     }
 
     public void start() {

@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db.cassandra;
 
+import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -108,7 +109,7 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, MetricRegistry metricRegistry) {
         session = cluster.connect(keyspace);
 
         customFunctionSelect = session.prepare("SELECT * FROM customFunction WHERE serviceId = ?;");

@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db.inMemory;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
@@ -36,7 +37,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     private String dataFileName;
 
     @Override
-    public DataAccess createDataAccess(Parameters parameters) {
+    public DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry) {
         dataFileName = parameters.getString(Const.IN_MEMORY_DATA_FILE_NAME, Const.IN_MEMORY_DATA_FILE_NAME_DEFAULT);
         dataAccess = load();
         

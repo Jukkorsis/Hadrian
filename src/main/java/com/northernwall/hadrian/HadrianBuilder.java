@@ -74,6 +74,10 @@ public class HadrianBuilder {
             throw new RuntimeException("Error Creating HTTPClient: ", e);
         }
 
+        if (metricRegistry == null) {
+            metricRegistry = new MetricRegistry();
+        }
+        
         if (dataAccess == null) {
             String factoryName = parameters.getString(Const.DATA_ACCESS_FACTORY_CLASS_NAME, Const.DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -90,7 +94,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
             }
-            dataAccess = factory.createDataAccess(parameters);
+            dataAccess = factory.createDataAccess(parameters, metricRegistry);
         }
         
         if (mavenHelper == null) {
@@ -152,10 +156,6 @@ public class HadrianBuilder {
             webHookSender = webHookSenderFactory.create(parameters, client);
         }
 
-        if (metricRegistry == null) {
-            metricRegistry = new MetricRegistry();
-        }
-        
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, webHookSender, metricRegistry);
     }
 
