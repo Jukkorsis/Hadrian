@@ -41,6 +41,7 @@ public class Const {
     //Properties file constants
     public static final String PROPERTIES_FILENAME = "hadrian.properties";
 
+    public static final String LOGBACK_CONFIG = "logback.config";
     public static final String LOGBACK_FILENAME = "logback.filename";
     public static final String LOGBACK_FILENAME_DEFAULT = "logback.xml";
     

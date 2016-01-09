@@ -15,11 +15,17 @@
  */
 package com.northernwall.hadrian;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.parameters.PropertiesParameters;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,9 +37,9 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            Hadrian hadrian = new Hadrian(loadParameters(args));
-            hadrian.setup();
-            hadrian.start();
+            Parameters parameters = loadParameters(args);
+            startLogging(parameters);
+            HadrianBuilder.create(parameters).builder().start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,6 +61,40 @@ public class Main {
             properties = new Properties();
         }
         return new PropertiesParameters(properties);
+    }
+    
+    private static void startLogging(Parameters parameters) {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+        context.reset();
+
+        try {
+            String config = parameters.getString(Const.LOGBACK_CONFIG, null);
+            if (config != null && !config.isEmpty()) {
+                System.out.println("Loading logback config from parameter value");
+                configurator.doConfigure(config);
+                StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+                return;
+            }
+
+            String filename = parameters.getString(Const.LOGBACK_FILENAME, Const.LOGBACK_FILENAME_DEFAULT);
+            File file = new File(filename);
+            if (file.exists()) {
+                System.out.println("Loading logback config from file, " + filename);
+                configurator.doConfigure(file);
+                StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+                return;
+            }
+
+            System.out.println("Can not load logback config from parameter value or file, using defaults");
+            configurator.doConfigure(Main.class.getResourceAsStream("/" + Const.LOGBACK_FILENAME_DEFAULT));
+        } catch (JoranException je) {
+            System.out.println("Could not find/load logback config file, exiting");
+            System.out.println("Joran exception is " + je.getMessage());
+            System.exit(0);
+        }
     }
 
 }
