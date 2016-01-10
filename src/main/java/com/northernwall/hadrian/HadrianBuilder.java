@@ -1,7 +1,10 @@
 package com.northernwall.hadrian;
 
 import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.graphite.Graphite;
+import com.codahale.metrics.graphite.GraphiteReporter;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -13,10 +16,16 @@ import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.server.Handler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HadrianBuilder {
+
+    private final static Logger logger = LoggerFactory.getLogger(HadrianBuilder.class);
 
     private final Parameters parameters;
     private OkHttpClient client;
@@ -77,12 +86,24 @@ public class HadrianBuilder {
 
         if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
-            if (parameters.getBoolean("metrics.console", true)) {
+            if (parameters.getBoolean("metrics.console", false)) {
                 ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
                         .convertRatesTo(TimeUnit.SECONDS)
                         .convertDurationsTo(TimeUnit.MILLISECONDS)
                         .build();
                 reporter.start(1, TimeUnit.MINUTES);
+            }
+            String graphiteUrl = parameters.getString("metrics.graphite.url", null);
+            int graphitePort = parameters.getInt("metrics.graphite.port", -1);
+            if (graphiteUrl != null && graphitePort > -1) {
+                Graphite graphite = new Graphite(new InetSocketAddress(graphiteUrl, graphitePort));
+                GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry)
+                        .prefixedWith("hadrian."+getHostname())
+                        .convertRatesTo(TimeUnit.SECONDS)
+                        .convertDurationsTo(TimeUnit.MILLISECONDS)
+                        .filter(MetricFilter.ALL)
+                        .build(graphite);
+                reporter.start(parameters.getInt("metrics.graphite.poll", 20), TimeUnit.SECONDS);
             }
         }
 
@@ -165,6 +186,16 @@ public class HadrianBuilder {
         }
 
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, webHookSender, metricRegistry);
+    }
+    
+    private String getHostname() {
+        try {
+            String hostname = InetAddress.getLocalHost().getHostName();
+            logger.info("Hostname is {}", hostname);
+            return hostname;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find hostname", e);
+        }
     }
 
 }
