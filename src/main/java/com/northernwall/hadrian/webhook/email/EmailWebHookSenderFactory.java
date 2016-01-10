@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.webhook.email;
 
+import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
@@ -23,8 +24,8 @@ import com.squareup.okhttp.OkHttpClient;
 public class EmailWebHookSenderFactory implements WebHookSenderFactory {
 
     @Override
-    public WebHookSender create(Parameters parameters, OkHttpClient client) {
-        return new EmailWebHookSender(parameters);
+    public WebHookSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+        return new EmailWebHookSender(parameters, metricRegistry);
     }
 
 }

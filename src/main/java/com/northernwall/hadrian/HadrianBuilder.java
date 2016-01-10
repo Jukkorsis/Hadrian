@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Richard Thurston.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.northernwall.hadrian;
 
 import com.codahale.metrics.ConsoleReporter;
@@ -163,7 +178,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
             }
-            accessHandler = accessHanlderFactory.create(accessHelper);
+            accessHandler = accessHanlderFactory.create(accessHelper, metricRegistry);
         }
 
         if (webHookSender == null) {
@@ -182,7 +197,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
             }
-            webHookSender = webHookSenderFactory.create(parameters, client);
+            webHookSender = webHookSenderFactory.create(parameters, client, metricRegistry);
         }
 
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, webHookSender, metricRegistry);

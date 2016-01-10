@@ -15,6 +15,9 @@
  */
 package com.northernwall.hadrian.webhook.email;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.codahale.metrics.Timer.Context;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -38,8 +41,9 @@ public class EmailWebHookSender implements WebHookSender {
     private final String emailTo;
     private final String emailFrom;
     protected final String gitPathUrl;
+    private final Timer timerSendEmail;
 
-    public EmailWebHookSender(Parameters parameters) {
+    public EmailWebHookSender(Parameters parameters, MetricRegistry metricRegistry) {
         smtpHostname = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
         smtpPort = parameters.getInt(Const.EMAIL_WEB_HOOK_SMTP_POST, Const.EMAIL_WEB_HOOK_SMTP_POST_DEFAULT);
         smtpSsl = parameters.getBoolean(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT);
@@ -52,25 +56,32 @@ public class EmailWebHookSender implements WebHookSender {
         if (emailTo == null) {
             logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);
         }
+        
+        timerSendEmail = metricRegistry.timer("webhook.sendEmail");
     }
 
     @Override
     public void sendWorkItem(WorkItem workItem) {
-        switch (workItem.getType()) {
-            case Const.TYPE_SERVICE:
-                sendServiceEmail(workItem);
-                break;
-            case Const.TYPE_HOST:
-                sendHostEmail(workItem);
-                break;
-            case Const.TYPE_VIP:
-                sendVipEmail(workItem);
-                break;
-            case Const.TYPE_HOST_VIP:
-                sendHostVipEmail(workItem);
-                break;
-            default:
-                logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
+        Context context =timerSendEmail.time();
+        try {
+            switch (workItem.getType()) {
+                case Const.TYPE_SERVICE:
+                    sendServiceEmail(workItem);
+                    break;
+                case Const.TYPE_HOST:
+                    sendHostEmail(workItem);
+                    break;
+                case Const.TYPE_VIP:
+                    sendVipEmail(workItem);
+                    break;
+                case Const.TYPE_HOST_VIP:
+                    sendHostVipEmail(workItem);
+                    break;
+                default:
+                    logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
+            }
+        } finally {
+            context.stop();
         }
     }
 

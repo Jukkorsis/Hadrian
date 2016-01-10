@@ -15,6 +15,10 @@
  */
 package com.northernwall.hadrian.webhook;
 
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.codahale.metrics.Timer.Context;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
@@ -43,10 +47,17 @@ public class WebHookCallbackHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
     private final WebHookSender webHookSender;
+    private final Timer timerProcess;
+    private final Meter meterSuccess;
+    private final Meter meterFail;
 
-    public WebHookCallbackHandler(DataAccess dataAccess, WebHookSender webHookSender) {
+    public WebHookCallbackHandler(DataAccess dataAccess, WebHookSender webHookSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
+        
+        timerProcess = metricRegistry.timer("webhook.callback.process");
+        meterSuccess = metricRegistry.meter("webhook.callback.success");
+        meterFail = metricRegistry.meter("webhook.callback.fail");
     }
 
     @Override
@@ -65,50 +76,62 @@ public class WebHookCallbackHandler extends AbstractHandler {
     }
 
     private void processCallback(Request request) throws IOException {
-        CallbackData callbackData = Util.fromJson(request, CallbackData.class);
-        WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
-        if (workItem == null) {
-            throw new RuntimeException("Could not find work item " + callbackData.requestId);
+        Context context = timerProcess.time();
+        try {
+            CallbackData callbackData = Util.fromJson(request, CallbackData.class);
+            WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
+            if (workItem == null) {
+                throw new RuntimeException("Could not find work item " + callbackData.requestId);
+            }
+            dataAccess.deleteWorkItem(callbackData.requestId);
+            
+            boolean status = callbackData.status.equalsIgnoreCase(Const.WEB_HOOK_STATUS_SUCCESS);
+            if (status) {
+                meterSuccess.mark();
+            } else {
+                meterFail.mark();
+            }
+            
+            if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
+                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
+                    createService(workItem, status);
+                    return;
+                }
+            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
+                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
+                    createHost(workItem, status);
+                    return;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
+                    updateHost(workItem, status);
+                    return;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
+                    deleteHost(workItem, status);
+                    return;
+                }
+            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
+                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
+                    createVip(workItem, status);
+                    return;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
+                    updateVip(workItem, status);
+                    return;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
+                    deleteVip(workItem, status);
+                    return;
+                }
+            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST_VIP)) {
+                if (workItem.getOperation().equalsIgnoreCase("add")) {
+                    addHostVip(workItem, status);
+                    return;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
+                    deleteHostVip(workItem, status);
+                    return;
+                }
+            }
+            throw new RuntimeException("Unknown callback, " + workItem.getType() + " " + workItem.getOperation());
+        } finally {
+            context.stop();
         }
-        dataAccess.deleteWorkItem(callbackData.requestId);
-        boolean status = callbackData.status.equalsIgnoreCase(Const.WEB_HOOK_STATUS_SUCCESS);
-        if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
-            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                createService(workItem, status);
-                return;
-            }
-        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
-            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                createHost(workItem, status);
-                return;
-            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
-                updateHost(workItem, status);
-                return;
-            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                deleteHost(workItem, status);
-                return;
-            }
-        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
-            if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                createVip(workItem, status);
-                return;
-            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
-                updateVip(workItem, status);
-                return;
-            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                deleteVip(workItem, status);
-                return;
-            }
-        } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST_VIP)) {
-            if (workItem.getOperation().equalsIgnoreCase("add")) {
-                addHostVip(workItem, status);
-                return;
-            } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                deleteHostVip(workItem, status);
-                return;
-            }
-        }
-        throw new RuntimeException("Unknown callback, " + workItem.getType() + " " + workItem.getOperation());
     }
 
     private void createService(WorkItem workItem, boolean status) throws IOException {

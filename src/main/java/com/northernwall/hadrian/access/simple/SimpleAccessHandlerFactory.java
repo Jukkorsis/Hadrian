@@ -15,15 +15,15 @@
  */
 package com.northernwall.hadrian.access.simple;
 
+import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.db.DataAccess;
 import org.eclipse.jetty.server.Handler;
 
 public class SimpleAccessHandlerFactory implements AccessHandlerFactory {
 
     @Override
-    public Handler create(AccessHelper accessHelper) {
+    public Handler create(AccessHelper accessHelper, MetricRegistry metricRegistry) {
         return new SimpleAccessHandler(accessHelper);
     }
 
