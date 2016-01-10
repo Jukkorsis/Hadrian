@@ -1,5 +1,6 @@
 package com.northernwall.hadrian;
 
+import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -76,8 +77,15 @@ public class HadrianBuilder {
 
         if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
+            if (parameters.getBoolean("metrics.console", true)) {
+                ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
+                        .convertRatesTo(TimeUnit.SECONDS)
+                        .convertDurationsTo(TimeUnit.MILLISECONDS)
+                        .build();
+                reporter.start(1, TimeUnit.MINUTES);
+            }
         }
-        
+
         if (dataAccess == null) {
             String factoryName = parameters.getString(Const.DATA_ACCESS_FACTORY_CLASS_NAME, Const.DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -96,7 +104,7 @@ public class HadrianBuilder {
             }
             dataAccess = factory.createDataAccess(parameters, metricRegistry);
         }
-        
+
         if (mavenHelper == null) {
             String factoryName = parameters.getString(Const.MAVEN_HELPER_FACTORY_CLASS_NAME, Const.MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;

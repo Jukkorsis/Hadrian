@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.slf4j.Logger;
@@ -71,6 +72,24 @@ public class MetricHandler extends AbstractHandler {
                 context.stop();
             }
         }
+    }
+
+    @Override
+    public void setServer(Server server) {
+        super.setServer(server);
+        handlers.setServer(server);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        handlers.stop();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        handlers.start();
     }
 
 }
