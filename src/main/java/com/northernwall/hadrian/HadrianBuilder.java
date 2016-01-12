@@ -16,6 +16,7 @@
 package com.northernwall.hadrian;
 
 import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.graphite.Graphite;
@@ -31,6 +32,8 @@ import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
+import com.sun.management.OperatingSystemMXBean;
+import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -101,6 +104,21 @@ public class HadrianBuilder {
 
         if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
+            
+            final OperatingSystemMXBean osBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+            metricRegistry.register("jvm.processCpuLoad", new Gauge<Double>(){
+                @Override
+                public Double getValue() {
+                    return osBean.getProcessCpuLoad();
+                }
+            });
+            metricRegistry.register("jvm.systemCpuLoad", new Gauge<Double>(){
+                @Override
+                public Double getValue() {
+                    return osBean.getSystemCpuLoad();
+                }
+            });
+            
             if (parameters.getBoolean("metrics.console", false)) {
                 ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
                         .convertRatesTo(TimeUnit.SECONDS)
@@ -108,6 +126,7 @@ public class HadrianBuilder {
                         .build();
                 reporter.start(1, TimeUnit.MINUTES);
             }
+            
             String graphiteUrl = parameters.getString("metrics.graphite.url", null);
             int graphitePort = parameters.getInt("metrics.graphite.port", -1);
             if (graphiteUrl != null && graphitePort > -1) {
