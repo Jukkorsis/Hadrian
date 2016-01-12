@@ -22,6 +22,8 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.webhook.WebHookSender;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -38,7 +40,7 @@ public class EmailWebHookSender implements WebHookSender {
     private final boolean smtpSsl;
     private final String smtpUsername;
     private final String smtpPassword;
-    private final String emailTo;
+    private final List<String> emailTos;
     private final String emailFrom;
     protected final String gitPathUrl;
     private final Timer timerSendEmail;
@@ -49,13 +51,26 @@ public class EmailWebHookSender implements WebHookSender {
         smtpSsl = parameters.getBoolean(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT);
         smtpUsername = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
         smtpPassword = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
-        emailTo = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
-        emailFrom = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_From, emailTo);
-        gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         
-        if (emailTo == null) {
+        String temp = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
+        emailTos = new LinkedList<>();
+        if (temp == null) {
             logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);
+        } else {
+            String[] parts = temp.split(",");
+            for (String part : parts) {
+                if (part != null && !part.isEmpty()) {
+                    emailTos.add(part.trim());
+                }
+            }
         }
+        
+        String fromDefault = null;
+        if (!emailTos.isEmpty()) {
+            fromDefault = emailTos.get(0);
+        }
+        emailFrom = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_From, fromDefault);
+        gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         
         timerSendEmail = metricRegistry.timer("webhook.sendEmail");
     }
@@ -200,7 +215,7 @@ public class EmailWebHookSender implements WebHookSender {
 
     private void emailWorkItem(String subject, String body) {
         try {
-            if (emailTo == null) {
+            if (emailTos.isEmpty()) {
                 return;
             }
             Email email = new SimpleEmail();
@@ -215,10 +230,16 @@ public class EmailWebHookSender implements WebHookSender {
             email.setFrom(emailFrom);
             email.setSubject(subject);
             email.setMsg(body);
-            email.addTo(emailTo);
+            for (String emailTo : emailTos) {
+                email.addTo(emailTo);
+            }
             email.send();
 
-            logger.info("Emailing work item to {} with subject {}", emailTo, subject);
+            if (emailTos.size() == 1) {
+                logger.info("Emailing work item to {} with subject {}", emailTos.get(0), subject);
+            } else {
+                logger.info("Emailing work item to {} and {} other email addresses with subject {}", emailTos.get(0), (emailTos.size()-1), subject);
+            }
         } catch (EmailException ex) {
             throw new RuntimeException("Failure emailing work item, {}", ex);
         }
