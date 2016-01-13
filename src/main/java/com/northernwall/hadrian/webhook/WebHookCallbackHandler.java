@@ -101,8 +101,8 @@ public class WebHookCallbackHandler extends AbstractHandler {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createHost(workItem, status);
                     return;
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
-                    updateHost(workItem, status);
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
+                    deployHost(workItem, status);
                     return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteHost(workItem, status);
@@ -153,15 +153,32 @@ public class WebHookCallbackHandler extends AbstractHandler {
             return;
         }
         if (status) {
-            host.setStatus(Const.NO_STATUS);
-            dataAccess.updateHost(host);
+            if (workItem.getNextId() != null) {
+                WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
+                if (nextWorkItem != null) {
+                    host.setStatus("Deploying...");
+                    dataAccess.updateHost(host);
+                    webHookSender.sendWorkItem(nextWorkItem);
+                } else {
+                    logger.warn("Odd, the deploy work item {} for create host {} could not be found", workItem.getNextId(), host.getHostName());
+                    host.setStatus(Const.NO_STATUS);
+                    dataAccess.updateHost(host);
+                }
+            } else {
+                logger.warn("Odd, create host {} work item has no deploy work item id", host.getHostName());
+            }
         } else {
             logger.warn("Callback for {} failed with status {}", host.getHostId(), status);
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
+            if (workItem.getNextId() != null) {
+                dataAccess.deleteWorkItem(workItem.getNextId());
+            } else {
+                logger.warn("Odd, the failed create host {} work item has no deploy work item id", host.getHostName());
+            }
         }
     }
 
-    private void updateHost(WorkItem workItem, boolean status) throws IOException {
+    private void deployHost(WorkItem workItem, boolean status) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being updated", workItem.getHost().hostId);
@@ -184,7 +201,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
                 logger.error("Finished updating {}, next work item is {}, but could not find it.", workItem.getHost().hostId, nextWorkItem.getHost().hostId);
                 return;
             }
-            nextHost.setStatus("Updating...");
+            nextHost.setStatus("Deploying...");
             dataAccess.saveHost(nextHost);
 
             webHookSender.sendWorkItem(nextWorkItem);

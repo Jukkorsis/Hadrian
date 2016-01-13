@@ -19,12 +19,11 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.GetWorkItemData;
-import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +66,18 @@ public class WorkItemHandler extends AbstractHandler {
     private void getWorkItems(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
         GetWorkItemData getWorkItemData = new GetWorkItemData();
-        getWorkItemData.workItems = dataAccess.getWorkItems();
+        List<WorkItem> workItems = dataAccess.getWorkItems();
+        for (WorkItem workItem : workItems) {
+            boolean found = false;
+            for (WorkItem workItem2 : workItems) {
+                if (workItem.getId().equals(workItem2.getNextId())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                getWorkItemData.workItems.add(workItem);
+            }
+        }
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getWorkItemData, GetWorkItemData.class, jw);
         }

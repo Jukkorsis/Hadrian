@@ -16,6 +16,7 @@ public class Const {
     public static final String HOST = "{host}";
     
     public static final String OPERATION_CREATE = "create";
+    public static final String OPERATION_DEPLOY = "deploy";
     public static final String OPERATION_UPDATE = "update";
     public static final String OPERATION_DELETE = "delete";
     
@@ -78,7 +79,6 @@ public class Const {
     public static final String EMAIL_WEB_HOOK_EMAIL_From = "emailWebhook.emailFrom";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
-    //public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.ssh.SshMavenHelperFactory";
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.http.HttpMavenHelperFactory";
 
     public static final String MAVEN_MAX_VERSIONS = "maven.maxVersions";

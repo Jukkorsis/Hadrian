@@ -107,7 +107,14 @@ soaRepControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wor
                 var wi = $scope.workItems.workItems[key];
                 for (var key2 in $scope.formSelectWorkItem) {
                     if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
-                        $http.post(wi.callbackUrl, "200", {});
+                        var dataObject = {
+                            requestId: wi.id,
+                            status: "SUCCESS",
+                            errorCode: 0,
+                            errorDescription: " ",
+                            output: "Manually performed"
+                        };
+                        $http.post("/webhook/callback", dataObject, {});
                     }
                 }
             }
@@ -119,7 +126,14 @@ soaRepControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wor
                 var wi = $scope.workItems.workItems[key];
                 for (var key2 in $scope.formSelectWorkItem) {
                     if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
-                        $http.post(wi.callbackUrl, "400", {});
+                        var dataObject = {
+                            requestId: wi.id,
+                            status: "FAILURE",
+                            errorCode: 0,
+                            errorDescription: " ",
+                            output: "Manually performed"
+                        };
+                        $http.post("/webhook/callback", dataObject, {});
                     }
                 }
             }

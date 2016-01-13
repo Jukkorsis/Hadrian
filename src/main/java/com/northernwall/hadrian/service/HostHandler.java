@@ -216,15 +216,22 @@ public class HostHandler extends AbstractHandler {
 
             Host host = new Host(prefix + numStr,
                     postHostData.serviceId,
-                    "Creating",
+                    "Creating...",
                     postHostData.dataCenter,
                     postHostData.network,
                     postHostData.env,
                     postHostData.size);
             dataAccess.saveHost(host);
-            WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, service, null, host, null, null, null);
-            dataAccess.saveWorkItem(workItem);
-            webHookSender.sendWorkItem(workItem);
+            
+            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, service, null, host, null, null, null);
+            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, service, null, host, host, null, null);
+            
+            workItemCreate.setNextId(workItemDeploy.getId());
+            
+            dataAccess.saveWorkItem(workItemCreate);
+            dataAccess.saveWorkItem(workItemDeploy);
+            
+            webHookSender.sendWorkItem(workItemCreate);
         }
     }
 
@@ -252,14 +259,14 @@ public class HostHandler extends AbstractHandler {
                         }
                         user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update a host");
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_UPDATE, user, service, null, host, host, null, null);
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, service, null, host, host, null, null);
                     workItem.getNewHost().env = putHostData.env;
                     workItem.getNewHost().size = putHostData.size;
                     workItem.getNewHost().version = putHostData.version;
                     if (workItems.isEmpty()) {
-                        host.setStatus("Updating...");
+                        host.setStatus("Deploying...");
                     } else {
-                        host.setStatus("Update Queued");
+                        host.setStatus("Deploy Queued");
                     }
                     dataAccess.updateHost(host);
                     workItems.add(workItem);
