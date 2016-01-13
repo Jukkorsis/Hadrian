@@ -104,19 +104,19 @@ public class TeamHandler extends AbstractHandler {
         if (postTeamData.user == null) {
             throw new RuntimeException("Failed to create new team, as user is null");
         }
-        if (postTeamData.name == null) {
+        if (postTeamData.teamName == null) {
             throw new RuntimeException("Failed to create new team, as team name is null");
         }
-        postTeamData.name = postTeamData.name.trim();
-        if (postTeamData.name.isEmpty()) {
+        postTeamData.teamName = postTeamData.teamName.trim();
+        if (postTeamData.teamName.isEmpty()) {
             throw new RuntimeException("Failed to create new team, as team name is empty");
         }
         for (Team temp : dataAccess.getTeams()) {
-            if (temp.getTeamName().equals(postTeamData.name)) {
-                throw new RuntimeException("Failed to create new team, as team with name " + postTeamData.name + " already exists");
+            if (temp.getTeamName().equals(postTeamData.teamName)) {
+                throw new RuntimeException("Failed to create new team, as team with name " + postTeamData.teamName + " already exists");
             }
         }
-        Team team = new Team(postTeamData.name);
+        Team team = new Team(postTeamData.teamAbbr, postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc);
         if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
             throw new RuntimeException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
         }

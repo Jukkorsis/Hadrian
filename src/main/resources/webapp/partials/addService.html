@@ -12,7 +12,12 @@
         <dt>Run As User:</dt>
         <dd><input ng-model="formSaveService.runAs" type="text" class="form-control"></dd>
         <dt>Git Path:</dt>
-        <dd><input ng-model="formSaveService.gitPath" type="text" class="form-control"></dd>
+        <dd>
+            <div class="input-group">
+                <div class="input-group-addon">{{team.teamAbbr}} / </div>
+                <input ng-model="formSaveService.gitPath" type="text" class="form-control">
+            </div>
+        </dd>
         <dt>Maven Group Id:</dt>
         <dd><input ng-model="formSaveService.mavenGroupId" type="text" class="form-control"></dd>
         <dt>Maven Artifact Id:</dt>

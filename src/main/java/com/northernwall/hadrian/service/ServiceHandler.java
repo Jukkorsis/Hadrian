@@ -31,6 +31,7 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
@@ -337,6 +338,8 @@ public class ServiceHandler extends AbstractHandler {
                 return;
             }
         }
+        
+        Team team = dataAccess.getTeam(postServiceData.teamId);
 
         Service service = new Service(
                 postServiceData.serviceAbbr,
@@ -344,7 +347,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.teamId,
                 postServiceData.description,
                 postServiceData.runAs,
-                postServiceData.gitPath,
+                team.getTeamAbbr() + "/" + postServiceData.gitPath,
                 postServiceData.mavenGroupId,
                 postServiceData.mavenArtifactId,
                 postServiceData.artifactType,
@@ -372,7 +375,6 @@ public class ServiceHandler extends AbstractHandler {
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
         service.setRunAs(putServiceData.runAs);
-        service.setGitPath(putServiceData.gitPath);
         service.setMavenGroupId(putServiceData.mavenGroupId);
         service.setMavenArtifactId(putServiceData.mavenArtifactId);
         service.setArtifactType(putServiceData.artifactType);

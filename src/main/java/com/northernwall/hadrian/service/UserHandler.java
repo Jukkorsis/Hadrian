@@ -98,12 +98,10 @@ public class UserHandler extends AbstractHandler {
     }
 
     private void updateUser(Request request, String username) throws IOException {
-        User user = accessHelper.checkIfUserIsAdmin(request, "update user");
+        accessHelper.checkIfUserIsAdmin(request, "update user");
         
         User temp = Util.fromJson(request, User.class);
-        if (!user.getUsername().equals(temp.getUsername())) {
-            dataAccess.updateUser(temp);
-        }
+        dataAccess.updateUser(temp);
     }
 
 }

@@ -3,14 +3,16 @@
 </div>
 <div class="modal-body">
     <dl class="dl-horizontal">
+        <dt>Abbr:</dt>
+        <dd><input ng-model="formSaveTeam.abbr" type="text" class="form-control"></dd>
         <dt>Name:</dt>
-        <dd>
-            <input ng-model="formSaveTeam.name" type="text" class="form-control">
-        </dd>
+        <dd><input ng-model="formSaveTeam.name" type="text" class="form-control"></dd>
+        <dt>Email:</dt>
+        <dd><input ng-model="formSaveTeam.email" type="text" class="form-control"></dd>
+        <dt>IRC:</dt>
+        <dd><input ng-model="formSaveTeam.irc" type="text" class="form-control"></dd>
         <dt>Initial Team Member:</dt>
-        <dd>
-            <select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users" ng-init="formSaveTeam.user = config.users[0]" class="form-control"></select>
-        </dd>
+        <dd><select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users" ng-init="formSaveTeam.user = config.users[0]" class="form-control"></select></dd>
     </dl>
 </div>
 <div class="modal-footer">

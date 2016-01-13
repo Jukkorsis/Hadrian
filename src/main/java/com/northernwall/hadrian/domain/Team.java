@@ -26,12 +26,18 @@ import java.util.UUID;
  */
 public class Team implements Comparable<Team> {
     private String teamId;
+    private String teamAbbr;
     private String teamName;
+    private String teamEmail;
+    private String teamIrc;
     private List<String> usernames;
 
-    public Team(String teamName) {
+    public Team(String teamAbbr, String teamName, String teamEmail, String teamIrc) {
         this.teamId = UUID.randomUUID().toString();
+        this.teamAbbr = teamAbbr;
         this.teamName = teamName;
+        this.teamEmail = teamEmail;
+        this.teamIrc = teamIrc;
         this.usernames = new LinkedList<>();
     }
 
@@ -43,12 +49,36 @@ public class Team implements Comparable<Team> {
         this.teamId = teamId;
     }
 
+    public String getTeamAbbr() {
+        return teamAbbr;
+    }
+
+    public void setTeamAbbr(String teamAbbr) {
+        this.teamAbbr = teamAbbr;
+    }
+
     public String getTeamName() {
         return teamName;
     }
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
+    }
+
+    public String getTeamEmail() {
+        return teamEmail;
+    }
+
+    public void setTeamEmail(String teamEmail) {
+        this.teamEmail = teamEmail;
+    }
+
+    public String getTeamIrc() {
+        return teamIrc;
+    }
+
+    public void setTeamIrc(String teamIrc) {
+        this.teamIrc = teamIrc;
     }
 
     public List<String> getUsernames() {

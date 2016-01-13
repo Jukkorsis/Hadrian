@@ -283,7 +283,6 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                 $scope.formUpdateService.serviceName = service.serviceName;
                 $scope.formUpdateService.description = service.description;
                 $scope.formUpdateService.runAs = service.runAs;
-                $scope.formUpdateService.gitPath = service.gitPath;
                 $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
                 $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
                 $scope.formUpdateService.artifactType = service.artifactType;
@@ -299,7 +298,6 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                         serviceName: $scope.formUpdateService.serviceName,
                         description: $scope.formUpdateService.description,
                         runAs: $scope.formUpdateService.runAs,
-                        gitPath: $scope.formUpdateService.gitPath,
                         mavenGroupId: $scope.formUpdateService.mavenGroupId,
                         mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
                         artifactType: $scope.formUpdateService.artifactType,

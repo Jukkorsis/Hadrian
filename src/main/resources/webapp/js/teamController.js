@@ -84,58 +84,59 @@ soaRepControllers.controller('ModalAddUserToTeamCtrl',
             };
         });
 
-soaRepControllers.controller('ModalAddServiceCtrl',
-        function ($scope, $http, $modalInstance, $window, Config, team) {
-            Config.get({}, function (config) {
-                $scope.config = config;
+soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
+    function ($scope, $http, $modalInstance, $window, Config, team) {
+        $scope.team = team;
+        Config.get({}, function (config) {
+            $scope.config = config;
 
-                $scope.team = team;
+            $scope.team = team;
 
-                $scope.formSaveService = {};
-                $scope.formSaveService.serviceAbbr = "";
-                $scope.formSaveService.serviceName = "";
-                $scope.formSaveService.description = "";
-                $scope.formSaveService.runAs = "";
-                $scope.formSaveService.gitPath = "";
-                $scope.formSaveService.mavenGroupId = "";
-                $scope.formSaveService.mavenArtifactId = "";
-                $scope.formSaveService.artifactType = "";
-                $scope.formSaveService.artifactSuffix = "";
-                $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
-                $scope.formSaveService.availabilityUrl = "{host}.mydomain.com:9090/availability";
-                $scope.formSaveService.startCmdLine = "start";
-                $scope.formSaveService.stopCmdLine = "stop";
+            $scope.formSaveService = {};
+            $scope.formSaveService.serviceAbbr = "";
+            $scope.formSaveService.serviceName = "";
+            $scope.formSaveService.description = "";
+            $scope.formSaveService.runAs = "";
+            $scope.formSaveService.gitPath = "";
+            $scope.formSaveService.mavenGroupId = "";
+            $scope.formSaveService.mavenArtifactId = "";
+            $scope.formSaveService.artifactType = "";
+            $scope.formSaveService.artifactSuffix = "";
+            $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
+            $scope.formSaveService.availabilityUrl = "{host}.mydomain.com:9090/availability";
+            $scope.formSaveService.startCmdLine = "start";
+            $scope.formSaveService.stopCmdLine = "stop";
 
-                $scope.save = function () {
-                    var dataObject = {
-                        serviceAbbr: $scope.formSaveService.serviceAbbr,
-                        serviceName: $scope.formSaveService.serviceName,
-                        teamId: $scope.team.teamId,
-                        description: $scope.formSaveService.description,
-                        runAs: $scope.formSaveService.runAs,
-                        gitPath: $scope.formSaveService.gitPath,
-                        mavenGroupId: $scope.formSaveService.mavenGroupId,
-                        mavenArtifactId: $scope.formSaveService.mavenArtifactId,
-                        artifactType: $scope.formSaveService.artifactType,
-                        artifactSuffix: $scope.formSaveService.artifactSuffix,
-                        versionUrl: $scope.formSaveService.versionUrl,
-                        availabilityUrl: $scope.formSaveService.availabilityUrl,
-                        startCmdLine: $scope.formSaveService.startCmdLine,
-                        stopCmdLine: $scope.formSaveService.stopCmdLine
-                    };
-
-                    var responsePromise = $http.post("/v1/service/service", dataObject, {});
-                    responsePromise.success(function (dataFromServer, status, headers, config) {
-                        $modalInstance.close();
-                        $window.location.reload();
-                    });
-                    responsePromise.error(function (data, status, headers, config) {
-                        alert("Request to create new service has failed!");
-                    });
+            $scope.save = function () {
+                var dataObject = {
+                    serviceAbbr: $scope.formSaveService.serviceAbbr,
+                    serviceName: $scope.formSaveService.serviceName,
+                    teamId: $scope.team.teamId,
+                    description: $scope.formSaveService.description,
+                    runAs: $scope.formSaveService.runAs,
+                    gitPath: $scope.formSaveService.gitPath,
+                    mavenGroupId: $scope.formSaveService.mavenGroupId,
+                    mavenArtifactId: $scope.formSaveService.mavenArtifactId,
+                    artifactType: $scope.formSaveService.artifactType,
+                    artifactSuffix: $scope.formSaveService.artifactSuffix,
+                    versionUrl: $scope.formSaveService.versionUrl,
+                    availabilityUrl: $scope.formSaveService.availabilityUrl,
+                    startCmdLine: $scope.formSaveService.startCmdLine,
+                    stopCmdLine: $scope.formSaveService.stopCmdLine
                 };
 
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            });
+                var responsePromise = $http.post("/v1/service/service", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                    $window.location.reload();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new service has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
         });
+    }]);
