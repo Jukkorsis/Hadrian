@@ -25,8 +25,6 @@ import java.util.Map;
  */
 public class PutHostData {
     public String serviceId;
-    public String env;
-    public String size;
     public String version;
     public Map<String, String> hosts = new HashMap<>();
 

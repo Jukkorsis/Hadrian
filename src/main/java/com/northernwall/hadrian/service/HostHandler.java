@@ -29,6 +29,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.GetHostDetailsData;
@@ -169,6 +170,7 @@ public class HostHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
+        Team team = dataAccess.getTeam(service.getTeamId());
 
         if (postHostData.count < 1) {
             throw new RuntimeException("count must to at least 1");
@@ -223,10 +225,12 @@ public class HostHandler extends AbstractHandler {
                     postHostData.size);
             dataAccess.saveHost(host);
             
-            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, service, null, host, null, null, null);
-            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, service, null, host, host, null, null);
+            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, host, null, null);
+            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, host, null, null);
             
+            workItemCreate.getHost().version = postHostData.version;
             workItemCreate.setNextId(workItemDeploy.getId());
+            workItemDeploy.getHost().version = postHostData.version;
             
             dataAccess.saveWorkItem(workItemCreate);
             dataAccess.saveWorkItem(workItemDeploy);
@@ -241,12 +245,7 @@ public class HostHandler extends AbstractHandler {
         List<WorkItem> workItems = new ArrayList<>(putHostData.hosts.size());
         User user = null;
 
-        if (!config.envs.contains(putHostData.env)) {
-            throw new RuntimeException("Unknown env");
-        }
-        if (!config.sizes.contains(putHostData.size)) {
-            throw new RuntimeException("Unknown size");
-        }
+        Team team = null;
 
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
@@ -258,11 +257,10 @@ public class HostHandler extends AbstractHandler {
                             throw new RuntimeException("Could not find service");
                         }
                         user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update a host");
+                        team = dataAccess.getTeam(service.getTeamId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, service, null, host, host, null, null);
-                    workItem.getNewHost().env = putHostData.env;
-                    workItem.getNewHost().size = putHostData.size;
-                    workItem.getNewHost().version = putHostData.version;
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, host, null, null);
+                    workItem.getHost().version = putHostData.version;
                     if (workItems.isEmpty()) {
                         host.setStatus("Deploying...");
                     } else {
@@ -300,9 +298,10 @@ public class HostHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
+        Team team = dataAccess.getTeam(service.getTeamId());
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, service, null, host, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, host, null, null);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
@@ -341,6 +340,7 @@ public class HostHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
+        Team team = dataAccess.getTeam(service.getTeamId());
         List<Host> hosts = dataAccess.getHosts(data.serviceId);
         List<Vip> vips = dataAccess.getVips(data.serviceId);
         for (Map.Entry<String, String> entry : data.hosts.entrySet()) {
@@ -357,7 +357,7 @@ public class HostHandler extends AbstractHandler {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, service, null, host, null, vip, null);
+                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, host, vip, null);
                                             dataAccess.saveWorkItem(workItem);
                                             webHookSender.sendWorkItem(workItem);
                                         } else {
@@ -385,6 +385,7 @@ public class HostHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
+        Team team = dataAccess.getTeam(service.getTeamId());
         VipRef vipRef = dataAccess.getVipRef(hostId, vipId);
         if (vipRef == null) {
             return;
@@ -399,7 +400,7 @@ public class HostHandler extends AbstractHandler {
         }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, service, null, host, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, host, vip, null);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }

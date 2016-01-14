@@ -225,6 +225,10 @@ public class HadrianBuilder {
     private String getHostname() {
         try {
             String hostname = InetAddress.getLocalHost().getHostName();
+            int i = hostname.indexOf(".");
+            if (i > 0) {
+                hostname = hostname.substring(0, i);
+            }
             logger.info("Hostname is {}", hostname);
             return hostname;
         } catch (Exception e) {

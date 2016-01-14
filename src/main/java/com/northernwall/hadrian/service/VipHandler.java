@@ -23,6 +23,7 @@ import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PutVipData;
@@ -111,6 +112,7 @@ public class VipHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
+        Team team = dataAccess.getTeam(service.getTeamId());
 
         //Check for duplicate VIP
         List<Vip> vips = dataAccess.getVips(vip.getServiceId());
@@ -128,7 +130,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Creating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, service, null, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, null, vip, null);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
@@ -145,11 +147,12 @@ public class VipHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
+        Team team = dataAccess.getTeam(service.getTeamId());
 
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, service, null, null, null, vip, vip);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, team, service, null, vip, vip);
         workItem.getNewVip().external = putVipData.external;
         workItem.getNewVip().servicePort = putVipData.servicePort;
         dataAccess.saveWorkItem(workItem);
@@ -162,6 +165,7 @@ public class VipHandler extends AbstractHandler {
             throw new RuntimeException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
+        Team team = dataAccess.getTeam(service.getTeamId());
 
         Vip vip = dataAccess.getVip(serviceId, vipId);
         if (vip == null) {
@@ -172,7 +176,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
         
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, service, null, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, team, service, null, vip, null);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }

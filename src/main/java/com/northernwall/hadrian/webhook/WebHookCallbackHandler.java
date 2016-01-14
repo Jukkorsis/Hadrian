@@ -102,7 +102,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
                     createHost(workItem, status);
                     return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
-                    deployHost(workItem, status);
+                    deploySoftware(workItem, status);
                     return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteHost(workItem, status);
@@ -178,7 +178,7 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
     }
 
-    private void deployHost(WorkItem workItem, boolean status) throws IOException {
+    private void deploySoftware(WorkItem workItem, boolean status) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being updated", workItem.getHost().hostId);
@@ -186,8 +186,6 @@ public class WebHookCallbackHandler extends AbstractHandler {
         }
         if (status) {
             host.setStatus(Const.NO_STATUS);
-            host.setEnv(workItem.getNewHost().env);
-            host.setSize(workItem.getNewHost().size);
             dataAccess.updateHost(host);
 
             if (workItem.getNextId() == null) {

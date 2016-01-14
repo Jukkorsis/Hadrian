@@ -193,6 +193,7 @@ public class EmailWebHookSender implements WebHookSender {
         addLine("Type", workItem.getType(), body);
         addLine("Operation", workItem.getOperation(), body);
         addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
+        addLine("Team", workItem.getTeam().teamAbbr, workItem.getTeam().teamName, body);
         body.append("\n");
         addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
     }

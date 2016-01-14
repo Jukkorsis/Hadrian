@@ -477,15 +477,11 @@ soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalI
         $scope.hosts = hosts;
 
         $scope.formUpdateHost = {};
-        $scope.formUpdateHost.env = "";
-        $scope.formUpdateHost.size = "";
         $scope.formUpdateHost.version = "";
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                env: $scope.formUpdateHost.env,
-                size: $scope.formUpdateHost.size,
                 version: $scope.formUpdateHost.version,
                 hosts: $scope.hosts
             };
@@ -496,7 +492,7 @@ soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update hosts has failed!");
+                alert("Request to deploy software to hosts has failed!");
             });
         };
 

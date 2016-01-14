@@ -18,6 +18,7 @@ package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.webhook.dao.HostData;
 import com.northernwall.hadrian.webhook.dao.ServiceData;
+import com.northernwall.hadrian.webhook.dao.TeamData;
 import com.northernwall.hadrian.webhook.dao.VipData;
 import java.util.Date;
 import java.util.UUID;
@@ -35,14 +36,13 @@ public class WorkItem {
     private String username;
     private String fullname;
     private Date requestDate;
+    private TeamData team;
     private ServiceData service;
-    private ServiceData newService;
     private HostData host;
-    private HostData newHost;
     private VipData vip;
     private VipData newVip;
 
-    public WorkItem(String type, String operation, User user, Service service, Service newService, Host host, Host newHost, Vip vip, Vip newVip) {
+    public WorkItem(String type, String operation, User user, Team team, Service service, Host host, Vip vip, Vip newVip) {
         this.id = UUID.randomUUID().toString();
         this.type = type;
         this.operation = operation;
@@ -50,10 +50,9 @@ public class WorkItem {
         this.username = user.getUsername();
         this.fullname = user.getFullName();
         this.requestDate = new Date();
+        this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
-        this.newService = ServiceData.create(newService);
         this.host = HostData.create(host);
-        this.newHost = HostData.create(newHost);
         this.vip = VipData.create(vip);
         this.newVip = VipData.create(newVip);
     }
@@ -114,6 +113,14 @@ public class WorkItem {
         this.requestDate = requestDate;
     }
 
+    public TeamData getTeam() {
+        return team;
+    }
+
+    public void setTeam(TeamData team) {
+        this.team = team;
+    }
+
     public ServiceData getService() {
         return service;
     }
@@ -122,28 +129,12 @@ public class WorkItem {
         this.service = service;
     }
 
-    public ServiceData getNewService() {
-        return newService;
-    }
-
-    public void setNewService(ServiceData newService) {
-        this.newService = newService;
-    }
-
     public HostData getHost() {
         return host;
     }
 
     public void setHost(HostData host) {
         this.host = host;
-    }
-
-    public HostData getNewHost() {
-        return newHost;
-    }
-
-    public void setNewHost(HostData newHost) {
-        this.newHost = newHost;
     }
 
     public VipData getVip() {

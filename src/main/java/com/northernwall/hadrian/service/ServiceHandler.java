@@ -358,7 +358,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.stopCmdLine);
 
         dataAccess.saveService(service);
-        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, service, null, null, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null);
         dataAccess.saveWorkItem(workItem);
         webHookSender.sendWorkItem(workItem);
     }
