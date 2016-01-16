@@ -9,8 +9,8 @@
         <dd><input ng-model="formSaveService.serviceName" type="text" class="form-control"></dd>
         <dt>Description:</dt>
         <dd><input ng-model="formSaveService.description" type="text" class="form-control"></dd>
-        <dt>Run As User:</dt>
-        <dd><input ng-model="formSaveService.runAs" type="text" class="form-control"></dd>
+        <dt>Project Template:</dt>
+        <dd><select ng-model="formSaveService.template" ng-options="c for c in config.templates" class="form-control"></select></dd>
         <dt>Git Path:</dt>
         <dd>
             <div class="input-group">
@@ -24,15 +24,15 @@
         <dt>Maven Artifact Id:</dt>
         <dd><input ng-model="formSaveService.mavenArtifactId" type="text" class="form-control"></dd>
         <dt>Artifact Type:</dt>
-        <dd>
-            <select ng-model="formSaveService.artifactType" ng-options="c for c in config.artifactTypes" ng-init="formSaveService.artifactType = config.artifactTypes[0]" class="form-control"></select>
-        </dd>
+        <dd><select ng-model="formSaveService.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
         <dt>Artifact Suffix:</dt>
         <dd><input ng-model="formSaveService.artifactSuffix" type="text" class="form-control"></dd>
         <dt>Version Url:</dt>
         <dd><input ng-model="formSaveService.versionUrl" type="text" class="form-control"></dd>
         <dt>Availability Url:</dt>
         <dd><input ng-model="formSaveService.availabilityUrl" type="text" class="form-control"></dd>
+        <dt>Run As User:</dt>
+        <dd><input ng-model="formSaveService.runAs" type="text" class="form-control"></dd>
         <dt>Start Cmd Line:</dt>
         <dd><input ng-model="formSaveService.startCmdLine" type="text" class="form-control"></dd>
         <dt>Stop Cmd Line:</dt>

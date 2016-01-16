@@ -28,6 +28,7 @@ import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.process.WorkItemProcessor;
 import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.WebHookSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
@@ -218,8 +219,10 @@ public class HadrianBuilder {
             }
             webHookSender = webHookSenderFactory.create(parameters, client, metricRegistry);
         }
+        
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, webHookSender, metricRegistry);
 
-        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, webHookSender, metricRegistry);
+        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, workItemProcessor, metricRegistry);
     }
     
     private String getHostname() {

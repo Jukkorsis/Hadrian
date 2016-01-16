@@ -208,7 +208,7 @@ soaRepControllers.controller('ModalAddTeamCtrl',
             $scope.formSaveTeam.name = "";
             $scope.formSaveTeam.email = "";
             $scope.formSaveTeam.irc = "";
-            $scope.formSaveTeam.user = "";
+            $scope.formSaveTeam.user = users.users[0];
 
             $scope.save = function () {
                 var dataObject = {

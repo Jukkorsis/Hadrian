@@ -121,7 +121,9 @@ public class Const {
     public static final String CONFIG_DOMAINS = "config.domains";
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
-    public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = ".jar, .war, .targz";
+    public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = "jar, war, targz";
+    public static final String CONFIG_TEMPLATES = "config.templates";
+    public static final String CONFIG_TEMPLATES_DEFAULT = "No template, Java template";
     
     private Const() {
     }

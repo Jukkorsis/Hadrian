@@ -7,7 +7,7 @@ public class ServiceData {
     public String serviceAbbr;
     public String serviceName;
     public String teamId;
-    public String runAs;
+    public String template;
     public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;
@@ -15,6 +15,7 @@ public class ServiceData {
     public String artifactSuffix;
     public String versionUrl;
     public String availabilityUrl;
+    public String runAs;
     public String startCmdLine;
     public String stopCmdLine;
 

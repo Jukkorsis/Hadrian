@@ -22,7 +22,6 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Vip;
@@ -32,6 +31,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.process.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.GetHostDetailsData;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
@@ -63,15 +63,15 @@ public class HostHandler extends AbstractHandler {
     private final AccessHelper accessHelper;
     private final Config config;
     private final DataAccess dataAccess;
-    private final WebHookSender webHookSender;
+    private final WorkItemProcessor workItemProcess;
     private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WebHookSender webHookSender, OkHttpClient client, HostDetailsHelper hostDetailsHelper) {
+    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WorkItemProcessor workItemProcess, OkHttpClient client, HostDetailsHelper hostDetailsHelper) {
         this.accessHelper = accessHelper;
         this.config = config;
         this.dataAccess = dataAccess;
-        this.webHookSender = webHookSender;
+        this.workItemProcess = workItemProcess;
         this.hostDetailsHelper = hostDetailsHelper;
         gson = new Gson();
     }
@@ -235,7 +235,7 @@ public class HostHandler extends AbstractHandler {
             dataAccess.saveWorkItem(workItemCreate);
             dataAccess.saveWorkItem(workItemDeploy);
             
-            webHookSender.sendWorkItem(workItemCreate);
+            workItemProcess.sendWorkItem(workItemCreate);
         }
     }
 
@@ -280,7 +280,7 @@ public class HostHandler extends AbstractHandler {
                 prevId = workItem.getId();
                 dataAccess.saveWorkItem(workItem);
             }
-            webHookSender.sendWorkItem(workItems.get(0));
+            workItemProcess.sendWorkItem(workItems.get(0));
         }
     }
 
@@ -303,7 +303,7 @@ public class HostHandler extends AbstractHandler {
         dataAccess.updateHost(host);
         WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, host, null, null);
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
     private void backfillHosts(Request request) throws IOException {
@@ -359,7 +359,7 @@ public class HostHandler extends AbstractHandler {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
                                             WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, host, vip, null);
                                             dataAccess.saveWorkItem(workItem);
-                                            webHookSender.sendWorkItem(workItem);
+                                            workItemProcess.sendWorkItem(workItem);
                                         } else {
                                             logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
                                         }
@@ -402,7 +402,7 @@ public class HostHandler extends AbstractHandler {
         dataAccess.updateVipRef(vipRef);
         WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, host, vip, null);
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
 }

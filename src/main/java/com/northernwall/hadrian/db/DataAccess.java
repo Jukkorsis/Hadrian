@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
@@ -100,6 +101,9 @@ public interface DataAccess {
     UserSession getUserSession(String sessionId);
     void saveUserSession(UserSession userSession);
     void deleteUserSession(String sessionId);
+    
+    void saveAudit(Audit audit, String output);
+    List<Audit> getAudit(String serviceId);
 
     public boolean getAvailability();
 

@@ -7,23 +7,23 @@
         <dd>{{formSaveHost.dataCenter}}-{{formSaveHost.network}}-{{service.serviceAbbr}}-###</dd>
         <dt>Data Center:</dt>
         <dd>
-            <select ng-model="formSaveHost.dataCenter" ng-options="c for c in config.dataCenters" ng-init="formSaveHost.dataCenter = config.dataCenters[0]" class="form-control"></select>
+            <select ng-model="formSaveHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select>
         </dd>
         <dt>Network:</dt>
         <dd>
-            <select ng-model="formSaveHost.network" ng-options="c for c in config.networks" ng-init="formSaveHost.network = config.networks[0]" class="form-control"></select>
+            <select ng-model="formSaveHost.network" ng-options="c for c in config.networks" class="form-control"></select>
         </dd>
         <dt>Env:</dt>
         <dd>
-            <select ng-model="formSaveHost.env" ng-options="c for c in config.envs" ng-init="formSaveHost.env = config.envs[0]" class="form-control"></select>
+            <select ng-model="formSaveHost.env" ng-options="c for c in config.envs" class="form-control"></select>
         </dd>
         <dt>Size:</dt>
         <dd>
-            <select ng-model="formSaveHost.size" ng-options="c for c in config.sizes" ng-init="formSaveHost.size = config.sizes[0]" class="form-control"></select>
+            <select ng-model="formSaveHost.size" ng-options="c for c in config.sizes" class="form-control"></select>
         </dd>
         <dt>Version:</dt>
         <dd>
-            <select ng-model="formSaveHost.version" ng-options="v for v in service.versions" ng-init="formSaveHost.version = config.versions[0]" class="form-control"></select>
+            <select ng-model="formSaveHost.version" ng-options="v for v in service.versions" class="form-control"></select>
         </dd>
         <dt>Count:</dt>
         <dd><input ng-model="formSaveHost.count" type="number" class="form-control"></dd>

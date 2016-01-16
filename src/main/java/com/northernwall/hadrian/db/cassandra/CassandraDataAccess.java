@@ -27,6 +27,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Host;
@@ -106,6 +107,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
     private final PreparedStatement workItemDelete;
+    private final PreparedStatement auditInsert;
 
     private final Gson gson;
 
@@ -215,6 +217,8 @@ public class CassandraDataAccess implements DataAccess {
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         logger.info("Prapared statements created");
+        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?);");
+        auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         gson = new Gson();
     }
@@ -577,6 +581,21 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteUserSession(String sessionId) {
         deleteData(sessionId, userSessionDelete);
+    }
+
+    @Override
+    public void saveAudit(Audit audit, String output) {
+        BoundStatement boundStatement = new BoundStatement(auditInsert);
+        session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit), output));
+    }
+
+    @Override
+    public List<Audit> getAudit(String serviceId) {
+        //SELECT * 
+        //FROM myTable 
+        //WHERE t > maxTimeuuid('2013-01-01 00:05+0000') 
+        //AND t < minTimeuuid('2013-02-02 10:00+0000')
+        return new LinkedList<>();
     }
 
     private <T extends Object> List<T> getData(String tableName, Class<T> classOfT) {

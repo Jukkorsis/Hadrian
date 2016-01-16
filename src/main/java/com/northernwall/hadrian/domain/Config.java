@@ -11,5 +11,6 @@ public class Config {
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
+    public List<String> templates = new LinkedList<>();
     
 }

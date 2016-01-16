@@ -43,7 +43,6 @@ public class EmailWebHookSender implements WebHookSender {
     private final List<String> emailTos;
     private final String emailFrom;
     protected final String gitPathUrl;
-    private final Timer timerSendEmail;
 
     public EmailWebHookSender(Parameters parameters, MetricRegistry metricRegistry) {
         smtpHostname = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
@@ -51,7 +50,7 @@ public class EmailWebHookSender implements WebHookSender {
         smtpSsl = parameters.getBoolean(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT);
         smtpUsername = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
         smtpPassword = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
-        
+
         String temp = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
         emailTos = new LinkedList<>();
         if (temp == null) {
@@ -64,58 +63,52 @@ public class EmailWebHookSender implements WebHookSender {
                 }
             }
         }
-        
+
         String fromDefault = null;
         if (!emailTos.isEmpty()) {
             fromDefault = emailTos.get(0);
         }
         emailFrom = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_From, fromDefault);
         gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
-        
-        timerSendEmail = metricRegistry.timer("webhook.sendEmail");
     }
 
     @Override
-    public void sendWorkItem(WorkItem workItem) {
-        Context context =timerSendEmail.time();
-        try {
-            switch (workItem.getType()) {
-                case Const.TYPE_SERVICE:
-                    sendServiceEmail(workItem);
-                    break;
-                case Const.TYPE_HOST:
-                    sendHostEmail(workItem);
-                    break;
-                case Const.TYPE_VIP:
-                    sendVipEmail(workItem);
-                    break;
-                case Const.TYPE_HOST_VIP:
-                    sendHostVipEmail(workItem);
-                    break;
-                default:
-                    logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
-            }
-        } finally {
-            context.stop();
+    public boolean sendWorkItem(WorkItem workItem) {
+        switch (workItem.getType()) {
+            case Const.TYPE_SERVICE:
+                sendServiceEmail(workItem);
+                break;
+            case Const.TYPE_HOST:
+                sendHostEmail(workItem);
+                break;
+            case Const.TYPE_VIP:
+                sendVipEmail(workItem);
+                break;
+            case Const.TYPE_HOST_VIP:
+                sendHostVipEmail(workItem);
+                break;
+            default:
+                logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
         }
+        return false;
     }
 
     protected void sendServiceEmail(WorkItem workItem) {
         logger.info("Processing Service {} with opertion {}", workItem.getService().serviceName, workItem.getOperation());
-        
+
         String subject = workItem.getOperation() + " service " + workItem.getService().serviceName;
-        
+
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
-        
+
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendHostEmail(WorkItem workItem) {
         logger.info("Processing Host {} on {} with opertion {}", workItem.getHost().hostName, workItem.getService().serviceName, workItem.getOperation());
-        
+
         String subject = workItem.getOperation() + " host " + workItem.getHost().hostName;
-        
+
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
         body.append("\n");
@@ -136,15 +129,15 @@ public class EmailWebHookSender implements WebHookSender {
         addLine("Stop Command", workItem.getService().stopCmdLine, body);
         addLine("Version Url", workItem.getService().versionUrl.replace(Const.HOST, workItem.getHost().hostName), body);
         addLine("Availability Url", workItem.getService().availabilityUrl.replace(Const.HOST, workItem.getHost().hostName), body);
-        
+
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendVipEmail(WorkItem workItem) {
         logger.info("Processing Vip {} on {} with opertion {}", workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
-        
+
         String subject = workItem.getOperation() + " vip " + workItem.getVip().vipName;
-        
+
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
         body.append("\n");
@@ -156,13 +149,13 @@ public class EmailWebHookSender implements WebHookSender {
         addLine("VIP Port", Integer.toString(workItem.getVip().vipPort), body);
         addLine("Service Port", Integer.toString(workItem.getVip().servicePort), body);
         addLine("Availability Url", workItem.getService().availabilityUrl, body);
-        
+
         emailWorkItem(subject, body.toString());
     }
 
     protected void sendHostVipEmail(WorkItem workItem) {
         logger.info("Processing Host Vip {} {} on {} with opertion {}", workItem.getHost().hostName, workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
-        
+
         String subject;
         switch (workItem.getOperation()) {
             case Const.OPERATION_CREATE:
@@ -175,7 +168,7 @@ public class EmailWebHookSender implements WebHookSender {
                 logger.warn("Unknown workItem operation {} for host {}", workItem.getOperation(), workItem.getHost().hostName);
                 return;
         }
-        
+
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
         body.append("\n");
@@ -185,7 +178,7 @@ public class EmailWebHookSender implements WebHookSender {
         body.append("\n");
         addLine("VIP Name", workItem.getVip().vipName, body);
         addLine("DNS", workItem.getVip().dns + "." + workItem.getVip().domain, body);
-        
+
         emailWorkItem(subject, body.toString());
     }
 
@@ -239,7 +232,7 @@ public class EmailWebHookSender implements WebHookSender {
             if (emailTos.size() == 1) {
                 logger.info("Emailing work item to {} with subject {}", emailTos.get(0), subject);
             } else {
-                logger.info("Emailing work item to {} and {} other email addresses with subject {}", emailTos.get(0), (emailTos.size()-1), subject);
+                logger.info("Emailing work item to {} and {} other email addresses with subject {}", emailTos.get(0), (emailTos.size() - 1), subject);
             }
         } catch (EmailException ex) {
             throw new RuntimeException("Failure emailing work item, {}", ex);

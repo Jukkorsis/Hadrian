@@ -24,6 +24,6 @@ import java.io.IOException;
  */
 public interface WebHookSender {
 
-    void sendWorkItem(WorkItem workItem) throws IOException;
+    boolean sendWorkItem(WorkItem workItem) throws IOException;
 
 }

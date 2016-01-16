@@ -25,7 +25,7 @@ public class PostServiceData {
     public String serviceName;
     public String teamId;
     public String description;
-    public String runAs;
+    public String template;
     public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;
@@ -33,6 +33,7 @@ public class PostServiceData {
     public String artifactSuffix;
     public String versionUrl;
     public String availabilityUrl;
+    public String runAs;
     public String startCmdLine;
     public String stopCmdLine;
 

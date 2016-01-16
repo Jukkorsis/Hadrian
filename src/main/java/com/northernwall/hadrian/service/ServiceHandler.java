@@ -34,6 +34,7 @@ import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.process.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetHostData;
@@ -46,7 +47,6 @@ import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
 import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import com.northernwall.hadrian.service.dao.PutServiceData;
-import com.northernwall.hadrian.webhook.WebHookSender;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
@@ -74,16 +74,16 @@ public class ServiceHandler extends AbstractHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
-    private final WebHookSender webHookSender;
+    private final WorkItemProcessor workItemProcess;
     private final MavenHelper mavenhelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService es;
 
-    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WebHookSender webHookSender, MavenHelper mavenhelper, InfoHelper infoHelper) {
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenhelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
-        this.webHookSender = webHookSender;
+        this.workItemProcess = workItemProcess;
         this.mavenhelper = mavenhelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
@@ -359,8 +359,9 @@ public class ServiceHandler extends AbstractHandler {
 
         dataAccess.saveService(service);
         WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null);
+        workItem.getService().template = postServiceData.template;
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
     private void updateService(Request request, String id) throws IOException {

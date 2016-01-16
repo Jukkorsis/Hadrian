@@ -66,7 +66,7 @@ soaRepControllers.controller('ModalAddUserToTeamCtrl',
             $scope.team = team;
 
             $scope.formAddUserToTeam = {};
-            $scope.formAddUserToTeam.user = "";
+            $scope.formAddUserToTeam.user = users.users[0];
 
             $scope.save = function () {
                 var responsePromise = $http.put("/v1/team/" + $scope.team.teamId + "/" + $scope.formAddUserToTeam.user.username, {}, {});
@@ -96,14 +96,15 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.serviceAbbr = "";
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
-            $scope.formSaveService.runAs = "";
+            $scope.formSaveService.template = $scope.config.templates[0];
             $scope.formSaveService.gitPath = "";
             $scope.formSaveService.mavenGroupId = "";
             $scope.formSaveService.mavenArtifactId = "";
-            $scope.formSaveService.artifactType = "";
+            $scope.formSaveService.artifactType = $scope.config.artifactTypes[0];
             $scope.formSaveService.artifactSuffix = "";
             $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
             $scope.formSaveService.availabilityUrl = "{host}.mydomain.com:9090/availability";
+            $scope.formSaveService.runAs = "";
             $scope.formSaveService.startCmdLine = "start";
             $scope.formSaveService.stopCmdLine = "stop";
 
@@ -113,7 +114,7 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
                     serviceName: $scope.formSaveService.serviceName,
                     teamId: $scope.team.teamId,
                     description: $scope.formSaveService.description,
-                    runAs: $scope.formSaveService.runAs,
+                    template: $scope.formSaveService.template,
                     gitPath: $scope.formSaveService.gitPath,
                     mavenGroupId: $scope.formSaveService.mavenGroupId,
                     mavenArtifactId: $scope.formSaveService.mavenArtifactId,
@@ -121,6 +122,7 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
                     artifactSuffix: $scope.formSaveService.artifactSuffix,
                     versionUrl: $scope.formSaveService.versionUrl,
                     availabilityUrl: $scope.formSaveService.availabilityUrl,
+                    runAs: $scope.formSaveService.runAs,
                     startCmdLine: $scope.formSaveService.startCmdLine,
                     stopCmdLine: $scope.formSaveService.stopCmdLine
                 };

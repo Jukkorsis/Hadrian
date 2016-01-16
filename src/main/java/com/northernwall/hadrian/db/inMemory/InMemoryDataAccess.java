@@ -17,6 +17,7 @@
 package com.northernwall.hadrian.db.inMemory;
 
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
@@ -434,6 +435,15 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteUserSession(String sessionId) {
         userSessions.remove(sessionId);
+    }
+
+    @Override
+    public void saveAudit(Audit audit, String output) {
+    }
+
+    @Override
+    public List<Audit> getAudit(String serviceId) {
+        return new LinkedList<>();
     }
 
 }

@@ -50,7 +50,8 @@ public class HttpMavenHelper extends MavenHelper {
         if (groupId != null && !groupId.isEmpty() && artifactId != null && !artifactId.isEmpty()) {
             try {
                 Request.Builder builder = new Request.Builder();
-                builder.url(mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml");
+                String url = mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml"; 
+                builder.url(url);
                 if (!mavenUsername.equals(Const.MAVEN_USERNAME_DEFAULT)) {
                     String credential = Credentials.basic(mavenUsername, mavenPassword);
                     builder.header("Authorization", credential);

@@ -19,13 +19,13 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.process.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutVipData;
 import java.io.IOException;
 import java.util.List;
@@ -47,12 +47,12 @@ public class VipHandler extends AbstractHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
-    private final WebHookSender webHookSender;
+    private final WorkItemProcessor workItemProcess;
 
-    public VipHandler(AccessHelper accessHelper, DataAccess dataAccess, WebHookSender webHookSender) {
+    public VipHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
-        this.webHookSender = webHookSender;
+        this.workItemProcess = workItemProcess;
     }
 
     @Override
@@ -132,7 +132,7 @@ public class VipHandler extends AbstractHandler {
 
         WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, null, vip, null);
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
     private void updateVip(Request request, String vipId) throws IOException {
@@ -156,7 +156,7 @@ public class VipHandler extends AbstractHandler {
         workItem.getNewVip().external = putVipData.external;
         workItem.getNewVip().servicePort = putVipData.servicePort;
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
     private void deleteVip(Request request, String serviceId, String vipId) throws IOException {
@@ -178,7 +178,7 @@ public class VipHandler extends AbstractHandler {
         
         WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, team, service, null, vip, null);
         dataAccess.saveWorkItem(workItem);
-        webHookSender.sendWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
     }
 
 }

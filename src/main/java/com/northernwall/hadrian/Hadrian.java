@@ -22,6 +22,7 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.graph.GraphHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.process.WorkItemProcessor;
 import com.northernwall.hadrian.proxy.PostProxyHandler;
 import com.northernwall.hadrian.proxy.PreProxyHandler;
 import com.northernwall.hadrian.service.ConfigHandler;
@@ -41,9 +42,7 @@ import com.northernwall.hadrian.utilityHandlers.ContentHandler;
 import com.northernwall.hadrian.utilityHandlers.MetricHandler;
 import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
 import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
-import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.simple.SimpleWebHookHandler;
-import com.northernwall.hadrian.webhook.simple.SimpleWebHookSender;
 import com.squareup.okhttp.OkHttpClient;
 import org.slf4j.LoggerFactory;
 import java.net.BindException;
@@ -69,20 +68,20 @@ public class Hadrian {
     private final MavenHelper mavenHelper;
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
-    private final WebHookSender webHookSender;
+    private final WorkItemProcessor workItemProcess;
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, MavenHelper mavenHelper, AccessHelper accessHelper, Handler accessHandler, WebHookSender webHookSender, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, MavenHelper mavenHelper, AccessHelper accessHelper, Handler accessHandler, WorkItemProcessor workItemProcess, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
         this.accessHelper = accessHelper;
         this.accessHandler = accessHandler;
-        this.webHookSender = webHookSender;
+        this.workItemProcess = workItemProcess;
         this.metricRegistry = metricRegistry;
 
         loadConfig();
@@ -114,12 +113,14 @@ public class Hadrian {
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
+        loadConfig(Const.CONFIG_TEMPLATES, Const.CONFIG_TEMPLATES_DEFAULT, config.templates);
     }
 
     private void setupJetty() {
         port = parameters.getInt(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT);
 
         server = new Server(new QueuedThreadPool(10, 5));
+        server.setStopAtShutdown(true);
 
         HttpConfiguration httpConfig = new HttpConfiguration();
         httpConfig.setSendServerVersion(false);
@@ -133,8 +134,8 @@ public class Hadrian {
         HandlerList handlers = new HandlerList();
         handlers.addHandler(new AvailabilityHandler(accessHandler, dataAccess, mavenHelper));
         handlers.addHandler(new ContentHandler());
-        handlers.addHandler(new WebHookCallbackHandler(dataAccess, webHookSender, metricRegistry));
-        if (webHookSender instanceof SimpleWebHookSender) {
+        handlers.addHandler(new WebHookCallbackHandler(workItemProcess));
+        if (workItemProcess.isSimple()) {
             handlers.addHandler(new SimpleWebHookHandler(client, parameters));
         }
         handlers.addHandler(new PreProxyHandler());
@@ -143,9 +144,9 @@ public class Hadrian {
         handlers.addHandler(new TreeHandler(dataAccess));
         handlers.addHandler(new UserHandler(accessHelper, dataAccess));
         handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
-        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, webHookSender, mavenHelper, infoHelper));
-        handlers.addHandler(new VipHandler(accessHelper, dataAccess, webHookSender));
-        handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, webHookSender, client, hostDetailsHelper));
+        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, mavenHelper, infoHelper));
+        handlers.addHandler(new VipHandler(accessHelper, dataAccess, workItemProcess));
+        handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, workItemProcess, client, hostDetailsHelper));
         handlers.addHandler(new CustomFuntionHandler(accessHelper, dataAccess, client));
         handlers.addHandler(new WorkItemHandler(dataAccess));
         handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));
