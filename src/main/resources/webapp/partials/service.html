@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-                            <input type="text" class="form-control" placeholder="Search hosts" ng-model="hostSearch">
+                            <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
                         </div>      
                     </div>
                 </form>       
@@ -109,7 +109,7 @@
                             </a>
                         </th>
                     </tr>
-                    <tr ng-repeat-start="i in service.hosts | orderBy:hostSortType:hostSortReverse | filter:hostSearch">
+                    <tr ng-repeat-start="i in service.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
                         <td>
                             <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
                             <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
@@ -332,23 +332,73 @@
                 <div align="center">
                     <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
                     <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
-                    <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a>
+                    <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
                 </div>
-                <table class="table table-hover  table-condensed">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                            <input type="text" class="form-control" placeholder="Filter audit records" ng-model="auditFilter">
+                        </div>      
+                    </div>
+                </form>       
+                <table class="table table-hover table-striped table-condensed">
                     <tr>
-                        <th>Time</th>
-                        <th>Type</th>
-                        <th>Operation</th>
-                        <th>Requestor</th>
-                        <th>Host</th>
-                        <th>VIP</th>
-                        <th>Notes</th>
+                        <th>
+                            <a ng-click="auditSortType = 'requestor';
+                                auditSortReverse = !auditSortReverse">
+                                Requestor
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'timeRequested';
+                                auditSortReverse = !auditSortReverse">
+                                Requested
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'timePerformed';
+                                auditSortReverse = !auditSortReverse">
+                                Performed
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'type';
+                                auditSortReverse = !auditSortReverse">
+                                Type
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'operation';
+                                auditSortReverse = !auditSortReverse">
+                                Operation
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'hostName';
+                                auditSortReverse = !auditSortReverse">
+                                Host
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'vipName';
+                                auditSortReverse = !auditSortReverse">
+                                VIP
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="auditSortType = 'notes';
+                                auditSortReverse = !auditSortReverse">
+                                Notes
+                            </a>
+                        </th>
                     </tr>
-                    <tr ng-repeat="a in audits">
-                        <td>{{a.time}}</td>
+                    <tr ng-repeat="a in audits | orderBy:auditSortType:auditSortReverse | filter:auditFilter">
+                        <td>{{a.requestor}}</td>
+                        <td>{{a.timeRequested}}</td>
+                        <td>{{a.timePerformed}}</td>
                         <td>{{a.type}}</td>
                         <td>{{a.operation}}</td>
-                        <td>{{a.requestor}}</td>
                         <td>{{a.hostName}}</td>
                         <td>{{a.vipName}}</td>
                         <td>{{a.notes}}</td>

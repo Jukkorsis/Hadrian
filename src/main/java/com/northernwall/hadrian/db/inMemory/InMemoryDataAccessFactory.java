@@ -18,6 +18,7 @@ package com.northernwall.hadrian.db.inMemory;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
@@ -70,7 +71,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     @Override
     public void run() {
         File file = new File(dataFileName);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (JsonWriter jw = new JsonWriter(new FileWriter(file))) {
             gson.toJson(dataAccess, InMemoryDataAccess.class, jw);
             logger.info("In Memory store saved to disk, {}", file.getName());

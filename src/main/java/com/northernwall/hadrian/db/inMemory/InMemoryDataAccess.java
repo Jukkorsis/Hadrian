@@ -58,6 +58,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, WorkItem> workItems;
     private final Map<String, User> users;
     private final Map<String, UserSession> userSessions;
+    private final List<Audit> audits;
 
     public InMemoryDataAccess() {
         teams = new ConcurrentHashMap<>();
@@ -71,6 +72,7 @@ public class InMemoryDataAccess implements DataAccess {
         workItems = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
         userSessions = new ConcurrentHashMap<>();
+        audits = new LinkedList<>();
     }
 
     @Override
@@ -440,11 +442,23 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public void saveAudit(Audit audit, String output) {
+        synchronized (audits) {
+            audits.add(audit);
+            if (audits.size() > 100) {
+                audits.remove(0);
+            }
+        }
     }
 
     @Override
     public List<Audit> getAudit(String serviceId, Date start, Date end) {
-        return new LinkedList<>();
+        List<Audit> temp = new LinkedList<>();
+        for (Audit audit : audits) {
+            if (audit.serviceId.equals(serviceId)) {
+                temp.add(audit);
+            }
+        }
+        return temp;
     }
 
 }

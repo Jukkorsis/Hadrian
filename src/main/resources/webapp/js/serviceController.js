@@ -8,7 +8,11 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
 
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
-        $scope.hostSearch = '';
+        $scope.hostFilter = '';
+
+        $scope.auditSortType = 'timePerformed';
+        $scope.auditSortReverse = false;
+        $scope.auditFilter = '';
 
         $scope.formSelectHost = {};
 

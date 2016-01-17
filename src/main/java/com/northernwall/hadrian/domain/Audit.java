@@ -4,7 +4,8 @@ import java.util.Date;
 
 public class Audit {
     public String serviceId;
-    public Date time;
+    public Date timePerformed;
+    public Date timeRequested;
     public String requestor;
     public String type;
     public String operation;

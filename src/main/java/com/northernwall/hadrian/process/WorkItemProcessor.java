@@ -124,7 +124,8 @@ public class WorkItemProcessor {
             if (status) {
                 Audit audit = new Audit();
                 audit.serviceId = workItem.getService().serviceId;
-                audit.time = new Date();
+                audit.timePerformed = new Date();
+                audit.timeRequested = workItem.getRequestDate();
                 audit.requestor = workItem.getUsername();
                 audit.type = workItem.getType();
                 audit.operation = workItem.getOperation();
