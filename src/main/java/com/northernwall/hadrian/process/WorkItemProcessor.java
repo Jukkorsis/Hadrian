@@ -5,6 +5,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
@@ -14,10 +15,12 @@ import com.northernwall.hadrian.webhook.WebHookSender;
 import com.northernwall.hadrian.webhook.dao.CallbackData;
 import com.northernwall.hadrian.webhook.simple.SimpleWebHookSender;
 import java.io.IOException;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WorkItemProcessor {
+
     private final static Logger logger = LoggerFactory.getLogger(WorkItemProcessor.class);
 
     private final DataAccess dataAccess;
@@ -30,17 +33,17 @@ public class WorkItemProcessor {
     public WorkItemProcessor(DataAccess dataAccess, WebHookSender webHookSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
-        
+
         timerProcess = metricRegistry.timer("webhook.sendWorkItem");
         timerCalback = metricRegistry.timer("webhook.callback.process");
         meterSuccess = metricRegistry.meter("webhook.callback.success");
         meterFail = metricRegistry.meter("webhook.callback.fail");
     }
-    
+
     public boolean isSimple() {
         return webHookSender instanceof SimpleWebHookSender;
     }
-    
+
     public void sendWorkItem(WorkItem workItem) throws IOException {
         boolean done = false;
         Timer.Context context = timerProcess.time();
@@ -60,7 +63,7 @@ public class WorkItemProcessor {
             processCallback(callbackData);
         }
     }
-    
+
     public void processCallback(CallbackData callbackData) throws IOException {
         Timer.Context context = timerCalback.time();
         try {
@@ -69,51 +72,71 @@ public class WorkItemProcessor {
                 throw new RuntimeException("Could not find work item " + callbackData.requestId);
             }
             dataAccess.deleteWorkItem(callbackData.requestId);
-            
+
             boolean status = callbackData.status.equalsIgnoreCase(Const.WEB_HOOK_STATUS_SUCCESS);
             if (status) {
                 meterSuccess.mark();
             } else {
                 meterFail.mark();
             }
-            
+
+            String notes = " ";
             if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createService(workItem, status);
-                    return;
+                    notes = "template=" + workItem.getService().template;
+                } else {
+                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createHost(workItem, status);
-                    return;
+                    notes = "env=" + workItem.getHost().env + " size=" + workItem.getHost().size;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
                     deploySoftware(workItem, status);
-                    return;
+                    notes = "version=" + workItem.getHost().version;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteHost(workItem, status);
-                    return;
+                } else {
+                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createVip(workItem, status);
-                    return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
                     updateVip(workItem, status);
-                    return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteVip(workItem, status);
-                    return;
+                } else {
+                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST_VIP)) {
                 if (workItem.getOperation().equalsIgnoreCase("add")) {
                     addHostVip(workItem, status);
-                    return;
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteHostVip(workItem, status);
-                    return;
+                } else {
+                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
+            } else {
+                throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
             }
-            throw new RuntimeException("Unknown callback, " + workItem.getType() + " " + workItem.getOperation());
+            if (status) {
+                Audit audit = new Audit();
+                audit.serviceId = workItem.getService().serviceId;
+                audit.time = new Date();
+                audit.requestor = workItem.getUsername();
+                audit.type = workItem.getType();
+                audit.operation = workItem.getOperation();
+                if (workItem.getHost() != null) {
+                    audit.hostname = workItem.getHost().hostName;
+                }
+                if (workItem.getVip() != null) {
+                    audit.vipname = workItem.getVip().vipName;
+                }
+                audit.notes = notes;
+                dataAccess.saveAudit(audit, callbackData.output);
+            }
         } finally {
             context.stop();
         }

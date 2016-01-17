@@ -35,6 +35,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.process.WorkItemProcessor;
+import com.northernwall.hadrian.service.dao.GetAuditData;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetHostData;
@@ -49,7 +50,12 @@ import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -70,6 +76,7 @@ import org.slf4j.LoggerFactory;
  * @author Richard Thurston
  */
 public class ServiceHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     private final AccessHelper accessHelper;
@@ -79,6 +86,8 @@ public class ServiceHandler extends AbstractHandler {
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService es;
+    private final DateFormat format;
+
 
     public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenhelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
@@ -89,6 +98,8 @@ public class ServiceHandler extends AbstractHandler {
         gson = new Gson();
 
         es = Executors.newFixedThreadPool(20);
+        
+        format = new SimpleDateFormat("MM/dd/yyyy");
     }
 
     @Override
@@ -105,6 +116,13 @@ public class ServiceHandler extends AbstractHandler {
                         } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             getServiceNotUses(response, target.substring(12, target.length() - 8));
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/audit")) {
+                            String start = request.getParameter("start");
+                            String end = request.getParameter("end");
+                            logger.info("Handling {} request {} start {} end {}", request.getMethod(), target, start, end);
+                            getServiceAudit(response, target.substring(12, target.length() - 6), start, end);
                             response.setStatus(200);
                             request.setHandled(true);
                         } else if (target.matches("/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+")) {
@@ -158,7 +176,7 @@ public class ServiceHandler extends AbstractHandler {
 
     private void getServices(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
-        
+
         List<Service> services = dataAccess.getServices();
         GetServicesData getServicesData = new GetServicesData();
         for (Service service : services) {
@@ -327,6 +345,33 @@ public class ServiceHandler extends AbstractHandler {
         }
     }
 
+    private void getServiceAudit(HttpServletResponse response, String id, String start, String end) throws IOException {
+        GetAuditData auditData = new GetAuditData();
+
+        Date startDate = null;
+        try {
+            startDate = format.parse(start);
+        } catch (ParseException ex) {
+            Calendar now = Calendar.getInstance();
+            now.add(Calendar.YEAR, -2);
+            now.add(Calendar.DATE, -1);
+            startDate = now.getTime();
+        }
+        Date endDate = null;
+        try {
+            endDate = format.parse(end);
+        } catch (ParseException ex) {
+            Calendar now = Calendar.getInstance();
+            now.add(Calendar.DATE, 1);
+            endDate = now.getTime();
+        }
+        auditData.audits = dataAccess.getAudit(id, startDate, endDate);
+
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(auditData, GetAuditData.class, jw);
+        }
+    }
+
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
         User user = accessHelper.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
@@ -338,7 +383,7 @@ public class ServiceHandler extends AbstractHandler {
                 return;
             }
         }
-        
+
         Team team = dataAccess.getTeam(postServiceData.teamId);
 
         Service service = new Service(

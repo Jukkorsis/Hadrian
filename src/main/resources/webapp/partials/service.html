@@ -326,4 +326,35 @@
             </div>
         </div>
     </uib-tab>
+    <uib-tab heading="Audit">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
+                    <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
+                    <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Operation</th>
+                        <th>Requestor</th>
+                        <th>Host</th>
+                        <th>VIP</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr ng-repeat="a in audits">
+                        <td>{{a.time}}</td>
+                        <td>{{a.type}}</td>
+                        <td>{{a.operation}}</td>
+                        <td>{{a.requestor}}</td>
+                        <td>{{a.hostName}}</td>
+                        <td>{{a.vipName}}</td>
+                        <td>{{a.notes}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
 </uib-tabset>

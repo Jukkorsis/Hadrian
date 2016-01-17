@@ -30,6 +30,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -442,7 +443,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Audit> getAudit(String serviceId) {
+    public List<Audit> getAudit(String serviceId, Date start, Date end) {
         return new LinkedList<>();
     }
 

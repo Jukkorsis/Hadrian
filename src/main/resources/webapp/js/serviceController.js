@@ -270,6 +270,18 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
         };
+        
+        $scope.search = {};
+        $scope.searchAudit = function () {
+            var responsePromise = $http.get("/v1/service/" + $scope.service.serviceId + "/audit?start="+$scope.search.start+"&end="+$scope.search.end, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $scope.audits = dataFromServer.audits;
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        };
     }]);
 
 soaRepControllers.controller('ModalUpdateServiceCtrl',

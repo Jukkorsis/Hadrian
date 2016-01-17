@@ -39,6 +39,7 @@ import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -107,6 +108,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
     private final PreparedStatement workItemDelete;
+    private final PreparedStatement auditSelect;
     private final PreparedStatement auditInsert;
 
     private final Gson gson;
@@ -216,9 +218,10 @@ public class CassandraDataAccess implements DataAccess {
         workItemInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        logger.info("Prapared statements created");
+        auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
         auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?);");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        logger.info("Prapared statements created");
 
         gson = new Gson();
     }
@@ -590,12 +593,16 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Audit> getAudit(String serviceId) {
-        //SELECT * 
-        //FROM myTable 
-        //WHERE t > maxTimeuuid('2013-01-01 00:05+0000') 
-        //AND t < minTimeuuid('2013-02-02 10:00+0000')
-        return new LinkedList<>();
+    public List<Audit> getAudit(String serviceId, Date start, Date end) {
+        BoundStatement boundStatement = new BoundStatement(auditSelect);
+        ResultSet results = session.execute(boundStatement.bind(serviceId, start, end));
+        List<Audit> audits = new LinkedList<>();
+        for (Row row : results) {
+            String data = row.getString("data");
+            audits.add(gson.fromJson(data, Audit.class));
+        }
+        logger.info("Got {} audit record for {} between {} and {}", audits.size(), serviceId, start, end);
+        return audits;
     }
 
     private <T extends Object> List<T> getData(String tableName, Class<T> classOfT) {
