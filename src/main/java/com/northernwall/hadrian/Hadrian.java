@@ -22,7 +22,7 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.graph.GraphHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.process.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.proxy.PostProxyHandler;
 import com.northernwall.hadrian.proxy.PreProxyHandler;
 import com.northernwall.hadrian.service.ConfigHandler;
@@ -41,8 +41,7 @@ import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
 import com.northernwall.hadrian.utilityHandlers.ContentHandler;
 import com.northernwall.hadrian.utilityHandlers.MetricHandler;
 import com.northernwall.hadrian.utilityHandlers.RedirectHandler;
-import com.northernwall.hadrian.webhook.WebHookCallbackHandler;
-import com.northernwall.hadrian.webhook.simple.SimpleWebHookHandler;
+import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.squareup.okhttp.OkHttpClient;
 import org.slf4j.LoggerFactory;
 import java.net.BindException;
@@ -134,10 +133,7 @@ public class Hadrian {
         HandlerList handlers = new HandlerList();
         handlers.addHandler(new AvailabilityHandler(accessHandler, dataAccess, mavenHelper));
         handlers.addHandler(new ContentHandler());
-        handlers.addHandler(new WebHookCallbackHandler(workItemProcess));
-        if (workItemProcess.isSimple()) {
-            handlers.addHandler(new SimpleWebHookHandler(client, parameters));
-        }
+        handlers.addHandler(new WorkItemCallbackHandler(workItemProcess));
         handlers.addHandler(new PreProxyHandler());
         handlers.addHandler(accessHandler);
         handlers.addHandler(new PostProxyHandler(client));

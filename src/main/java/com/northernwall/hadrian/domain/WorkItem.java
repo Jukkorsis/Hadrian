@@ -16,10 +16,10 @@
 
 package com.northernwall.hadrian.domain;
 
-import com.northernwall.hadrian.webhook.dao.HostData;
-import com.northernwall.hadrian.webhook.dao.ServiceData;
-import com.northernwall.hadrian.webhook.dao.TeamData;
-import com.northernwall.hadrian.webhook.dao.VipData;
+import com.northernwall.hadrian.workItem.dao.HostData;
+import com.northernwall.hadrian.workItem.dao.ServiceData;
+import com.northernwall.hadrian.workItem.dao.TeamData;
+import com.northernwall.hadrian.workItem.dao.VipData;
 import java.util.Date;
 import java.util.UUID;
 

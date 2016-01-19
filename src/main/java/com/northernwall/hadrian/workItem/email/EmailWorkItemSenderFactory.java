@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook;
+package com.northernwall.hadrian.workItem.email;
 
-import com.northernwall.hadrian.domain.WorkItem;
-import java.io.IOException;
+import com.codahale.metrics.MetricRegistry;
+import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.WorkItemSender;
+import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
+import com.squareup.okhttp.OkHttpClient;
 
-/**
- *
- * @author Richard Thurston
- */
-public interface WebHookSender {
+public class EmailWorkItemSenderFactory implements WorkItemSenderFactory {
 
-    boolean sendWorkItem(WorkItem workItem) throws IOException;
+    @Override
+    public WorkItemSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+        return new EmailWorkItemSender(parameters, metricRegistry);
+    }
 
 }

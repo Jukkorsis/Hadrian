@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook;
+package com.northernwall.hadrian.workItem;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.process.WorkItemProcessor;
-import com.northernwall.hadrian.webhook.dao.CallbackData;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,12 +31,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class WebHookCallbackHandler extends AbstractHandler {
-    private final static Logger logger = LoggerFactory.getLogger(WebHookCallbackHandler.class);
+public class WorkItemCallbackHandler extends AbstractHandler {
+    private final static Logger logger = LoggerFactory.getLogger(WorkItemCallbackHandler.class);
 
     private final WorkItemProcessor workItemProcess;
 
-    public WebHookCallbackHandler(WorkItemProcessor workItemProcess) {
+    public WorkItemCallbackHandler(WorkItemProcessor workItemProcess) {
         this.workItemProcess = workItemProcess;
     }
 

@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook.email;
+package com.northernwall.hadrian.workItem.email;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.codahale.metrics.Timer.Context;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.webhook.WebHookSender;
+import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -31,9 +29,9 @@ import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailWebHookSender implements WebHookSender {
+public class EmailWorkItemSender implements WorkItemSender {
 
-    private final static Logger logger = LoggerFactory.getLogger(EmailWebHookSender.class);
+    private final static Logger logger = LoggerFactory.getLogger(EmailWorkItemSender.class);
 
     private final String smtpHostname;
     private final int smtpPort;
@@ -44,17 +42,17 @@ public class EmailWebHookSender implements WebHookSender {
     private final String emailFrom;
     protected final String gitPathUrl;
 
-    public EmailWebHookSender(Parameters parameters, MetricRegistry metricRegistry) {
-        smtpHostname = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_HOSTNAME, null);
-        smtpPort = parameters.getInt(Const.EMAIL_WEB_HOOK_SMTP_POST, Const.EMAIL_WEB_HOOK_SMTP_POST_DEFAULT);
-        smtpSsl = parameters.getBoolean(Const.EMAIL_WEB_HOOK_SMTP_SSL, Const.EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT);
-        smtpUsername = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_USERNAME, null);
-        smtpPassword = parameters.getString(Const.EMAIL_WEB_HOOK_SMTP_PASSWORD, null);
+    public EmailWorkItemSender(Parameters parameters, MetricRegistry metricRegistry) {
+        smtpHostname = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_HOSTNAME, null);
+        smtpPort = parameters.getInt(Const.EMAIL_WORK_ITEM_SMTP_POST, Const.EMAIL_WORK_ITEM_SMTP_POST_DEFAULT);
+        smtpSsl = parameters.getBoolean(Const.EMAIL_WORK_ITEM_SMTP_SSL, Const.EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT);
+        smtpUsername = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_USERNAME, null);
+        smtpPassword = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_PASSWORD, null);
 
-        String temp = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_TO, null);
+        String temp = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_TO, null);
         emailTos = new LinkedList<>();
         if (temp == null) {
-            logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WEB_HOOK_EMAIL_TO);
+            logger.warn("Property '{}' not set, so no emails will be sent", Const.EMAIL_WORK_ITEM_EMAIL_TO);
         } else {
             String[] parts = temp.split(",");
             for (String part : parts) {
@@ -68,7 +66,7 @@ public class EmailWebHookSender implements WebHookSender {
         if (!emailTos.isEmpty()) {
             fromDefault = emailTos.get(0);
         }
-        emailFrom = parameters.getString(Const.EMAIL_WEB_HOOK_EMAIL_From, fromDefault);
+        emailFrom = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_From, fromDefault);
         gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
     }
 

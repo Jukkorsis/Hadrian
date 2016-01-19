@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook.simple;
+package com.northernwall.hadrian.workItem.simple;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -22,8 +22,8 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.process.WorkItemProcessor;
-import com.northernwall.hadrian.webhook.WebHookSender;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -36,19 +36,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class SimpleWebHookSender implements WebHookSender {
-    private final static Logger logger = LoggerFactory.getLogger(SimpleWebHookSender.class);
+public class SimpleWorkItemSender implements WorkItemSender {
+    private final static Logger logger = LoggerFactory.getLogger(SimpleWorkItemSender.class);
 
     private final String url;
 
     private final Gson gson;
     private final OkHttpClient client;
 
-    public SimpleWebHookSender(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+    public SimpleWorkItemSender(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
         this.client = client;
         gson = new Gson();
 
-        url = parameters.getString(Const.SIMPLE_WEB_HOOK_URL, Const.SIMPLE_WEB_HOOK_URL_DEFAULT);
+        url = parameters.getString(Const.SIMPLE_WORK_ITEM_URL, Const.SIMPLE_WORK_ITEM_URL_DEFAULT);
     }
 
     @Override

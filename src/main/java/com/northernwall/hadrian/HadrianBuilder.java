@@ -28,9 +28,9 @@ import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.process.WorkItemProcessor;
-import com.northernwall.hadrian.webhook.WebHookSender;
-import com.northernwall.hadrian.webhook.WebHookSenderFactory;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.WorkItemSender;
+import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import com.sun.management.OperatingSystemMXBean;
@@ -52,7 +52,7 @@ public class HadrianBuilder {
     private MavenHelper mavenHelper;
     private AccessHelper accessHelper;
     private Handler accessHandler;
-    private WebHookSender webHookSender;
+    private WorkItemSender webHookSender;
     private MetricRegistry metricRegistry;
 
     public static HadrianBuilder create(Parameters parameters) {
@@ -78,7 +78,7 @@ public class HadrianBuilder {
         return this;
     }
 
-    public HadrianBuilder setWebHookSender(WebHookSender webHookSender) {
+    public HadrianBuilder setWebHookSender(WorkItemSender webHookSender) {
         this.webHookSender = webHookSender;
         return this;
     }
@@ -202,16 +202,16 @@ public class HadrianBuilder {
         }
 
         if (webHookSender == null) {
-            String factoryName = parameters.getString(Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME, Const.WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT);
+            String factoryName = parameters.getString(Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME, Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not find Data Access class " + factoryName);
             }
-            WebHookSenderFactory webHookSenderFactory;
+            WorkItemSenderFactory webHookSenderFactory;
             try {
-                webHookSenderFactory = (WebHookSenderFactory) c.newInstance();
+                webHookSenderFactory = (WorkItemSenderFactory) c.newInstance();
             } catch (InstantiationException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not instantiation Data Access class " + factoryName);
             } catch (IllegalAccessException ex) {

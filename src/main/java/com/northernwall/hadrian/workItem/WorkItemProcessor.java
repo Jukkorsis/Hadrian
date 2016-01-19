@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.process;
+package com.northernwall.hadrian.workItem;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
@@ -11,9 +11,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.webhook.WebHookSender;
-import com.northernwall.hadrian.webhook.dao.CallbackData;
-import com.northernwall.hadrian.webhook.simple.SimpleWebHookSender;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import java.util.Date;
 import org.slf4j.Logger;
@@ -24,24 +22,20 @@ public class WorkItemProcessor {
     private final static Logger logger = LoggerFactory.getLogger(WorkItemProcessor.class);
 
     private final DataAccess dataAccess;
-    private final WebHookSender webHookSender;
+    private final WorkItemSender webHookSender;
     private final Timer timerProcess;
     private final Timer timerCalback;
     private final Meter meterSuccess;
     private final Meter meterFail;
 
-    public WorkItemProcessor(DataAccess dataAccess, WebHookSender webHookSender, MetricRegistry metricRegistry) {
+    public WorkItemProcessor(DataAccess dataAccess, WorkItemSender webHookSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
         this.webHookSender = webHookSender;
 
-        timerProcess = metricRegistry.timer("webhook.sendWorkItem");
-        timerCalback = metricRegistry.timer("webhook.callback.process");
-        meterSuccess = metricRegistry.meter("webhook.callback.success");
-        meterFail = metricRegistry.meter("webhook.callback.fail");
-    }
-
-    public boolean isSimple() {
-        return webHookSender instanceof SimpleWebHookSender;
+        timerProcess = metricRegistry.timer("workItem.sendWorkItem");
+        timerCalback = metricRegistry.timer("workItem.callback.process");
+        meterSuccess = metricRegistry.meter("workItem.callback.success");
+        meterFail = metricRegistry.meter("workItem.callback.fail");
     }
 
     public void sendWorkItem(WorkItem workItem) throws IOException {
@@ -58,7 +52,7 @@ public class WorkItemProcessor {
             callbackData.requestId = workItem.getId();
             callbackData.errorCode = 0;
             callbackData.errorDescription = " ";
-            callbackData.status = Const.WEB_HOOK_STATUS_SUCCESS;
+            callbackData.status = Const.WORK_ITEM_STATUS_SUCCESS;
             callbackData.output = "no output";
             processCallback(callbackData);
         }
@@ -73,7 +67,7 @@ public class WorkItemProcessor {
             }
             dataAccess.deleteWorkItem(callbackData.requestId);
 
-            boolean status = callbackData.status.equalsIgnoreCase(Const.WEB_HOOK_STATUS_SUCCESS);
+            boolean status = callbackData.status.equalsIgnoreCase(Const.WORK_ITEM_STATUS_SUCCESS);
             if (status) {
                 meterSuccess.mark();
             } else {

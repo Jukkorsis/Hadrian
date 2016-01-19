@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.webhook.dao;
+package com.northernwall.hadrian.workItem.dao;
 
 public class CallbackData {
 

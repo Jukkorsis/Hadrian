@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.webhook.dao;
+package com.northernwall.hadrian.workItem.dao;
 
 import com.northernwall.hadrian.domain.Team;
 

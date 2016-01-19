@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.webhook.simple;
+package com.northernwall.hadrian.workItem.simple;
 
 import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.webhook.WebHookSender;
-import com.northernwall.hadrian.webhook.WebHookSenderFactory;
+import com.northernwall.hadrian.workItem.WorkItemSender;
+import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
 import com.squareup.okhttp.OkHttpClient;
 
-public class SimpleWebHookSenderFactory implements WebHookSenderFactory {
+public class SimpleWorkItemSenderFactory implements WorkItemSenderFactory {
 
     @Override
-    public WebHookSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
-        return new SimpleWebHookSender(parameters, client, metricRegistry);
+    public WorkItemSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+        return new SimpleWorkItemSender(parameters, client, metricRegistry);
     }
 
 }

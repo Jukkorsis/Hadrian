@@ -56,27 +56,23 @@ public class Const {
     public static final String HOST_DETAILS_URL = "host.detailsUrl";
     public static final String HOST_DETAILS_ATTRIBUTES = "host.detailsAttrs";
 
-    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME = "webHookSender.factoryClassName";
-    public static final String WEB_HOOK_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.webhook.simple.SimpleWebHookSenderFactory";
+    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
+    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWebHookSenderFactory";
 
-    public static final String WEB_HOOK_STATUS_SUCCESS = "success";
+    public static final String WORK_ITEM_STATUS_SUCCESS = "success";
     
-    public static final String SIMPLE_WEB_HOOK_URL = "simpleWebhook.url";
-    public static final String SIMPLE_WEB_HOOK_URL_DEFAULT = "http://127.0.0.1:9090/webhook/simple";
-    public static final String SIMPLE_WEB_HOOK_DELAY = "simpleWebhook.delay";
-    public static final int SIMPLE_WEB_HOOK_DELAY_DEFAULT = 15;
-    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL = "webhook.callbackHost";
-    public static final String SIMPLE_WEB_HOOK_CALLBACK_URL_DEFAULT = "http://127.0.0.1:9090/webhook/callback";
+    public static final String SIMPLE_WORK_ITEM_URL = "simpleWorkItem.url";
+    public static final String SIMPLE_WORK_ITEM_URL_DEFAULT = "http://127.0.0.1:9090/webhook/simple";
 
-    public static final String EMAIL_WEB_HOOK_SMTP_HOSTNAME = "emailWebhook.smtp.hostname";
-    public static final String EMAIL_WEB_HOOK_SMTP_POST = "emailWebhook.smtp.port";
-    public static final int EMAIL_WEB_HOOK_SMTP_POST_DEFAULT = 25; //465;
-    public static final String EMAIL_WEB_HOOK_SMTP_SSL = "emailWebhook.smtp.ssl";
-    public static final boolean EMAIL_WEB_HOOK_SMTP_SSL_DEFAULT = false;
-    public static final String EMAIL_WEB_HOOK_SMTP_USERNAME = "emailWebhook.smtp.username";
-    public static final String EMAIL_WEB_HOOK_SMTP_PASSWORD = "emailWebhook.smtp.password";
-    public static final String EMAIL_WEB_HOOK_EMAIL_TO = "emailWebhook.emailTo";
-    public static final String EMAIL_WEB_HOOK_EMAIL_From = "emailWebhook.emailFrom";
+    public static final String EMAIL_WORK_ITEM_SMTP_HOSTNAME = "emailWorkItem.smtp.hostname";
+    public static final String EMAIL_WORK_ITEM_SMTP_POST = "emailWorkItem.smtp.port";
+    public static final int EMAIL_WORK_ITEM_SMTP_POST_DEFAULT = 25; //465;
+    public static final String EMAIL_WORK_ITEM_SMTP_SSL = "emailWorkItem.smtp.ssl";
+    public static final boolean EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT = false;
+    public static final String EMAIL_WORK_ITEM_SMTP_USERNAME = "emailWorkItem.smtp.username";
+    public static final String EMAIL_WORK_ITEM_SMTP_PASSWORD = "emailWorkItem.smtp.password";
+    public static final String EMAIL_WORK_ITEM_EMAIL_TO = "emailWorkItem.emailTo";
+    public static final String EMAIL_WORK_ITEM_EMAIL_From = "emailWorkItem.emailFrom";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.http.HttpMavenHelperFactory";
