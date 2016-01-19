@@ -9,8 +9,8 @@ public class Audit {
     public String requestor;
     public String type;
     public String operation;
-    public String hostname;
-    public String vipname;
+    public String hostName;
+    public String vipName;
     public String notes;
 
 }

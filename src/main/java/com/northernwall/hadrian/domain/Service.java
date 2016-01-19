@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class Service implements Comparable<Service>{
     private String availabilityUrl;
     private String startCmdLine;
     private String stopCmdLine;
+    private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
@@ -58,6 +60,7 @@ public class Service implements Comparable<Service>{
         this.availabilityUrl = availabilityUrl;
         this.startCmdLine = startCmdLine;
         this.stopCmdLine = stopCmdLine;
+        this.creationDate = new Date();
     }
 
     public String getServiceId() {
@@ -174,6 +177,14 @@ public class Service implements Comparable<Service>{
 
     public void setStopCmdLine(String stopCmdLine) {
         this.stopCmdLine = stopCmdLine;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Map<String, String> getLinks() {

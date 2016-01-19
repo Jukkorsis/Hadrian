@@ -124,10 +124,10 @@ public class WorkItemProcessor {
                 audit.type = workItem.getType();
                 audit.operation = workItem.getOperation();
                 if (workItem.getHost() != null) {
-                    audit.hostname = workItem.getHost().hostName;
+                    audit.hostName = workItem.getHost().hostName;
                 }
                 if (workItem.getVip() != null) {
-                    audit.vipname = workItem.getVip().vipName;
+                    audit.vipName = workItem.getVip().vipName;
                 }
                 audit.notes = notes;
                 dataAccess.saveAudit(audit, callbackData.output);

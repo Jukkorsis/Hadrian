@@ -1,6 +1,7 @@
 package com.northernwall.hadrian.service.dao;
 
 import com.northernwall.hadrian.domain.Service;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class GetServiceData {
     public String availabilityUrl;
     public String startCmdLine;
     public String stopCmdLine;
+    public Date creationDate;
     public List<GetHostData> hosts;
     public List<GetVipData> vips;
     public List<GetDataStoreData> dataStores;
@@ -49,6 +51,7 @@ public class GetServiceData {
         temp.availabilityUrl = service.getAvailabilityUrl();
         temp.startCmdLine = service.getStartCmdLine();
         temp.stopCmdLine = service.getStopCmdLine();
+        temp.creationDate = service.getCreationDate();
         temp.hosts = new LinkedList<>();
         temp.vips = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
