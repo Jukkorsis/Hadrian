@@ -57,7 +57,7 @@ public class Const {
     public static final String HOST_DETAILS_ATTRIBUTES = "host.detailsAttrs";
 
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
-    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWebHookSenderFactory";
+    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWorkItemSenderFactory";
 
     public static final String WORK_ITEM_STATUS_SUCCESS = "success";
     
@@ -103,6 +103,15 @@ public class Const {
     
     public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME = "accessHandler.factoryClassName";
     public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.simple.SimpleAccessHandlerFactory";
+
+    public static final String CONFIG_VERSION_URL = "config.versionUrl";
+    public static final String CONFIG_VERSION_URL_DEFAULT = "{host}.mydomain.com:9090/version";
+    public static final String CONFIG_AVAILABILITY_URL = "config.availabilityUrl";
+    public static final String CONFIG_AVAILABILITY_URL_DEFAULT = "{host}.mydomain.com:9090/availability";
+    public static final String CONFIG_START_CMD = "config.startCmd";
+    public static final String CONFIG_START_CMD_DEFAULT = "screen -d -m java -jar serviceAbbr.jar";
+    public static final String CONFIG_STOP_CMD = "config.stopCmd";
+    public static final String CONFIG_STOP_CMD_DEFAULT = "pkill -f serviceAbbr.jar";
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";

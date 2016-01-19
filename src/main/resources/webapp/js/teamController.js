@@ -102,11 +102,11 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.mavenArtifactId = "";
             $scope.formSaveService.artifactType = $scope.config.artifactTypes[0];
             $scope.formSaveService.artifactSuffix = "";
-            $scope.formSaveService.versionUrl = "{host}.mydomain.com:9090/version";
-            $scope.formSaveService.availabilityUrl = "{host}.mydomain.com:9090/availability";
+            $scope.formSaveService.versionUrl = $scope.config.versionUrl;
+            $scope.formSaveService.availabilityUrl = $scope.config.availabilityUrl;
             $scope.formSaveService.runAs = "";
-            $scope.formSaveService.startCmdLine = "start";
-            $scope.formSaveService.stopCmdLine = "stop";
+            $scope.formSaveService.startCmdLine = $scope.config.startCmd;
+            $scope.formSaveService.stopCmdLine = $scope.config.stopCmd;
 
             $scope.save = function () {
                 var dataObject = {

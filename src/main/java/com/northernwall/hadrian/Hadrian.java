@@ -105,6 +105,11 @@ public class Hadrian {
     private void loadConfig() {
         config = new Config();
 
+        config.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
+        config.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
+        config.startCmd = parameters.getString(Const.CONFIG_START_CMD, Const.CONFIG_START_CMD_DEFAULT);
+        config.stopCmd = parameters.getString(Const.CONFIG_STOP_CMD, Const.CONFIG_STOP_CMD_DEFAULT);
+
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, config.dataCenters);
         loadConfig(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT, config.networks);
         loadConfig(Const.CONFIG_ENVSS, Const.CONFIG_ENVS_DEFAULT, config.envs);
