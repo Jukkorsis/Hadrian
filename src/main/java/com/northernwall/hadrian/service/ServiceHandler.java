@@ -24,6 +24,7 @@ import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
@@ -85,7 +86,7 @@ public class ServiceHandler extends AbstractHandler {
     private final MavenHelper mavenhelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
-    private final ExecutorService es;
+    private final ExecutorService executorService;
     private final DateFormat format;
 
 
@@ -97,7 +98,7 @@ public class ServiceHandler extends AbstractHandler {
         this.infoHelper = infoHelper;
         gson = new Gson();
 
-        es = Executors.newFixedThreadPool(20);
+        executorService = Executors.newFixedThreadPool(20);
         
         format = new SimpleDateFormat("MM/dd/yyyy");
     }
@@ -210,8 +211,8 @@ public class ServiceHandler extends AbstractHandler {
         Collections.sort(hosts);
         for (Host host : hosts) {
             GetHostData getHostData = GetHostData.create(host);
-            futures.add(es.submit(new ReadVersionRunnable(getHostData, getServiceData)));
-            futures.add(es.submit(new ReadAvailabilityRunnable(getHostData, getServiceData)));
+            futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getServiceData)));
+            futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getServiceData)));
             for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
                 GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
                 for (GetVipData vip : getServiceData.vips) {
@@ -433,28 +434,52 @@ public class ServiceHandler extends AbstractHandler {
         dataAccess.updateService(service);
     }
 
-    private void createServiceRef(Request request, String id) throws IOException {
+    private void createServiceRef(Request request, String clientId) throws IOException {
         PostServiceRefData postServiceRefData = Util.fromJson(request, PostServiceRefData.class);
-        Service service = dataAccess.getService(id);
-        if (service == null) {
+        Service clientService = dataAccess.getService(clientId);
+        if (clientService == null) {
             throw new RuntimeException("Could not find service");
         }
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a service ref");
+        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
-                ServiceRef ref = new ServiceRef(id, entry.getKey());
-                dataAccess.saveServiceRef(ref);
+                String serverId = entry.getKey();
+                Service serverService = dataAccess.getService(serverId);
+                if (serverService != null) {
+                    ServiceRef ref = new ServiceRef(clientId, serverId);
+                    dataAccess.saveServiceRef(ref);
+                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, "uses="+serverService.getServiceAbbr());
+                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, "use by="+clientService.getServiceAbbr());
+                }
             }
         }
     }
 
-    private void deleteServiceRef(Request request, String clientId, String serviceId) {
-        Service service = dataAccess.getService(clientId);
-        if (service == null) {
+    private void deleteServiceRef(Request request, String clientId, String serverId) {
+        Service clientService = dataAccess.getService(clientId);
+        if (clientService == null) {
             return;
         }
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a service ref");
-        dataAccess.deleteServiceRef(clientId, serviceId);
+        Service serverService = dataAccess.getService(serverId);
+        if (serverService == null) {
+            return;
+        }
+        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
+        dataAccess.deleteServiceRef(clientId, serverId);
+        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, "uses="+serverService.getServiceAbbr());
+        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, "use by="+clientService.getServiceAbbr());
+    }
+    
+    private void createAudit(String serviceId, String requestor, String operation, String notes) {
+        Audit audit = new Audit();
+        audit.serviceId = serviceId;
+        audit.timePerformed = new Date();
+        audit.timeRequested = new Date();
+        audit.requestor = requestor;
+        audit.type = Const.TYPE_SERVICE_REF;
+        audit.operation = operation;
+        audit.notes = notes;
+        dataAccess.saveAudit(audit, " ");
     }
 
 }
