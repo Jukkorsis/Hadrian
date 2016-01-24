@@ -392,6 +392,8 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.serviceName,
                 postServiceData.teamId,
                 postServiceData.description,
+                postServiceData.businessImpact,
+                postServiceData.piiUsage,
                 postServiceData.runAs,
                 team.getTeamAbbr() + "/" + postServiceData.gitPath,
                 postServiceData.mavenGroupId,
@@ -421,6 +423,8 @@ public class ServiceHandler extends AbstractHandler {
         service.setServiceAbbr(putServiceData.serviceAbbr);
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
+        service.setBusinessImpact(putServiceData.businessImpact);
+        service.setPiiUsage(putServiceData.piiUsage);
         service.setRunAs(putServiceData.runAs);
         service.setMavenGroupId(putServiceData.mavenGroupId);
         service.setMavenArtifactId(putServiceData.mavenArtifactId);

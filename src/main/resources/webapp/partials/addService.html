@@ -11,6 +11,10 @@
         <dd><input ng-model="formSaveService.description" type="text" class="form-control"></dd>
         <dt>Project Template:</dt>
         <dd><select ng-model="formSaveService.template" ng-options="c for c in config.templates" class="form-control"></select></dd>
+        <dt>Business Impact:</dt>
+        <dd><select ng-model="formSaveService.businessImpact" ng-options="c for c in config.businessImpacts" class="form-control"></select></dd>
+        <dt>PII Usage:</dt>
+        <dd><select ng-model="formSaveService.piiUsage" ng-options="c for c in config.piiUsages" class="form-control"></select></dd>
         <dt>Git Path:</dt>
         <dd>
             <div class="input-group">

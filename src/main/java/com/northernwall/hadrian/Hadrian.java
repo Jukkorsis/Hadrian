@@ -118,6 +118,8 @@ public class Hadrian {
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
         loadConfig(Const.CONFIG_TEMPLATES, Const.CONFIG_TEMPLATES_DEFAULT, config.templates);
+        loadConfig(Const.CONFIG_BUSINESS_IMPACTS, Const.CONFIG_BUSINESS_IMPACTS_DEFAULT, config.businessImpacts);
+        loadConfig(Const.CONFIG_PII_USAGES, Const.CONFIG_PII_USAGES_DEFAULT, config.piiUsages);
     }
 
     private void setupJetty() {

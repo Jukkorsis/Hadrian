@@ -97,6 +97,8 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
             $scope.formSaveService.template = $scope.config.templates[0];
+            $scope.formSaveService.businessImpact = $scope.config.businessImpacts[0];
+            $scope.formSaveService.piiUsage = $scope.config.piiUsages[0];
             $scope.formSaveService.gitPath = "";
             $scope.formSaveService.mavenGroupId = "";
             $scope.formSaveService.mavenArtifactId = "";
@@ -115,6 +117,8 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
                     teamId: $scope.team.teamId,
                     description: $scope.formSaveService.description,
                     template: $scope.formSaveService.template,
+                    businessImpact: $scope.formSaveService.businessImpact,
+                    piiUsage: $scope.formSaveService.piiUsage,
                     gitPath: $scope.formSaveService.gitPath,
                     mavenGroupId: $scope.formSaveService.mavenGroupId,
                     mavenArtifactId: $scope.formSaveService.mavenArtifactId,

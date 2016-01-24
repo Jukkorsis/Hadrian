@@ -13,6 +13,8 @@ public class GetServiceData {
     public String serviceName;
     public String teamId;
     public String description;
+    public String businessImpact;
+    public String piiUsage;
     public String runAs;
     public String gitPath;
     public String mavenGroupId;
@@ -41,6 +43,8 @@ public class GetServiceData {
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
         temp.description = service.getDescription();
+        temp.businessImpact = service.getBusinessImpact();
+        temp.piiUsage = service.getPiiUsage();
         temp.runAs = service.getRunAs();
         temp.gitPath = service.getGitPath();
         temp.mavenGroupId = service.getMavenGroupId();

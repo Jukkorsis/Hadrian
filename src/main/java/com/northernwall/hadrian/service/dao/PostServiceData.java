@@ -26,6 +26,8 @@ public class PostServiceData {
     public String teamId;
     public String description;
     public String template;
+    public String businessImpact;
+    public String piiUsage;
     public String gitPath;
     public String mavenGroupId;
     public String mavenArtifactId;

@@ -24,6 +24,8 @@ public class PutServiceData {
     public String serviceAbbr;
     public String serviceName;
     public String description;
+    public String businessImpact;
+    public String piiUsage;
     public String runAs;
     public String mavenGroupId;
     public String mavenArtifactId;

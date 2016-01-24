@@ -31,6 +31,8 @@ public class Service implements Comparable<Service>{
     private String serviceName;
     private String teamId;
     private String description;
+    private String businessImpact;
+    private String piiUsage;
     private String runAs;
     private String gitPath;
     private String mavenGroupId;
@@ -44,12 +46,14 @@ public class Service implements Comparable<Service>{
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String businessImpact, String piiUsage, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
+        this.businessImpact = businessImpact;
+        this.piiUsage = piiUsage;
         this.runAs = runAs;
         this.gitPath = gitPath;
         this.mavenGroupId = mavenGroupId;
@@ -97,6 +101,22 @@ public class Service implements Comparable<Service>{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getBusinessImpact() {
+        return businessImpact;
+    }
+
+    public void setBusinessImpact(String businessImpact) {
+        this.businessImpact = businessImpact;
+    }
+
+    public String getPiiUsage() {
+        return piiUsage;
+    }
+
+    public void setPiiUsage(String piiUsage) {
+        this.piiUsage = piiUsage;
     }
 
     public String getRunAs() {

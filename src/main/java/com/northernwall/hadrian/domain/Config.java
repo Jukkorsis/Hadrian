@@ -16,5 +16,7 @@ public class Config {
     public List<String> domains = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> templates = new LinkedList<>();
+    public List<String> businessImpacts = new LinkedList<>();
+    public List<String> piiUsages = new LinkedList<>();
     
 }

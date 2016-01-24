@@ -28,18 +28,29 @@ import java.util.Properties;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The Main class is intended to do four things 1) get the parameters that
+ * Hadrian will use, 2) start the logging sub-system, 3) build an instance of
+ * Hadrian, and lastly 4) start Hadrian.
+ *
+ * You do not need to use this Main class to start Hadrian. You can write you
+ * our class that does these four steps.
  *
  * @author Richard Thurston
  */
 public class Main {
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
             Parameters parameters = loadParameters(args);
+
             startLogging(parameters);
-            HadrianBuilder.create(parameters).builder().start();
+
+            HadrianBuilder.create(parameters)
+                    .builder()
+                    .start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,7 +73,7 @@ public class Main {
         }
         return new PropertiesParameters(properties);
     }
-    
+
     private static void startLogging(Parameters parameters) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 

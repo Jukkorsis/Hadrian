@@ -298,6 +298,8 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                 $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
                 $scope.formUpdateService.serviceName = service.serviceName;
                 $scope.formUpdateService.description = service.description;
+                $scope.formUpdateService.businessImpact = service.businessImpact;
+                $scope.formUpdateService.piiUsage = service.piiUsage;
                 $scope.formUpdateService.runAs = service.runAs;
                 $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
                 $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
@@ -313,6 +315,8 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                         serviceAbbr: $scope.formUpdateService.serviceAbbr,
                         serviceName: $scope.formUpdateService.serviceName,
                         description: $scope.formUpdateService.description,
+                        businessImpact: $scope.formUpdateService.businessImpact,
+                        piiUsage: $scope.formUpdateService.piiUsage,
                         runAs: $scope.formUpdateService.runAs,
                         mavenGroupId: $scope.formUpdateService.mavenGroupId,
                         mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
