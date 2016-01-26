@@ -21,9 +21,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -83,35 +81,21 @@ public class GraphHandler extends AbstractHandler {
         List<Team> teams;
         List<Service> services;
         List<ServiceRef> serviceRefs;
+        
+        Graph graph = new Graph(response, false);
 
-        response.setContentType(Const.TEXT);
-
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-
-        writer.append("digraph G {");
-        writer.newLine();
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
             int c = 0;
             for (Team team : teams) {
-                writer.append(" subgraph cluster_" + c + " {");
-                writer.newLine();
-                writer.append("  color=blue;");
-                writer.newLine();
-                writer.append("  node [style=filled];");
-                writer.newLine();
+                graph.startSubGraph(c);
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
                     for (Service service : services) {
-                        writer.append("  " + service.getServiceAbbr() + " [URL=\"#/Service/" + service.getServiceId() + "\"];");
-                        writer.newLine();
+                        graph.writeService(service, "ellipse");
                     }
                 }
-                writer.append("  label = \"" + team.getTeamName() + "\";");
-                writer.newLine();
-                writer.append(" }");
-                writer.newLine();
-                writer.newLine();
+                graph.finishSubGraph(team.getTeamName());
                 c++;
             }
             for (Team team : teams) {
@@ -122,49 +106,42 @@ public class GraphHandler extends AbstractHandler {
                         if (serviceRefs != null && !serviceRefs.isEmpty()) {
                             for (ServiceRef serviceRef : serviceRefs) {
                                 Service temp = dataAccess.getService(serviceRef.getServerServiceId());
-                                writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr() + ";");
-                                writer.newLine();
+                                graph.writeLink(service.getServiceAbbr(), temp.getServiceAbbr());
                             }
                         }
                     }
-                    writer.newLine();
+                    graph.newLine();
                 }
             }
         }
-        writer.append("}");
-        writer.flush();
+        graph.close();
     }
 
     private void produceFanInGraph(HttpServletResponse response, String serviceId) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-        writer.append("digraph G {");
-        writer.newLine();
+        Graph graph = new Graph(response, true);
+
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
         Service service = dataAccess.getService(serviceId);
         services.add(service);
         foundIds.add(service.getServiceId());
         while (!services.isEmpty()) {
-            fanIn(services.remove(0), writer, services, foundIds);
+            fanIn(services.remove(0), graph, services, foundIds);
         }
-        writer.newLine();
-        writer.append(service.getServiceAbbr() + " [shape=square URL=\"#/Service/" + service.getServiceId() + "\"];");
-                    writer.newLine();
-        writer.append("}");
-        writer.flush();
+        graph.newLine();
+        graph.writeService(service, "square");
+        graph.close();
     }
 
-    private void fanIn(Service service, BufferedWriter writer, List<Service> services, List<String> foundIds) throws IOException {
+    private void fanIn(Service service, Graph graph, List<Service> services, List<String> foundIds) throws IOException {
         List<ServiceRef> serviceRefs;
         serviceRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
         if (serviceRefs != null && !serviceRefs.isEmpty()) {
             for (ServiceRef serviceRef : serviceRefs) {
                 if (!foundIds.contains(serviceRef.getClientServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getClientServiceId());
-                    writer.append(" " + temp.getServiceAbbr() + " -> " + service.getServiceAbbr() + ";");
-                    writer.newLine();
-                    writer.append(temp.getServiceAbbr() + " [URL=\"#/Service/" + temp.getServiceId() + "\"];");
-                    writer.newLine();
+                    graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
+                    graph.writeService(temp, "ellipse");
                     services.add(temp);
                     foundIds.add(temp.getServiceId());
                 }
@@ -173,40 +150,35 @@ public class GraphHandler extends AbstractHandler {
     }
 
     private void produceFanOutGraph(HttpServletResponse response, String serviceId) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-        writer.append("digraph G {");
-        writer.newLine();
+        Graph graph = new Graph(response, true);
+
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
         Service service = dataAccess.getService(serviceId);
         services.add(service);
         foundIds.add(service.getServiceId());
         while (!services.isEmpty()) {
-            fanOut(services.remove(0), writer, services, foundIds);
+            fanOut(services.remove(0), graph, services, foundIds);
         }
-        writer.newLine();
-        writer.append(service.getServiceAbbr() + " [shape=square URL=\"#/Service/" + service.getServiceId() + "\"];");
-                    writer.newLine();
-        writer.append("}");
-        writer.flush();
+        graph.newLine();
+        graph.writeService(service, "square");
+        graph.close();
     }
 
-    private void fanOut(Service service, BufferedWriter writer, List<Service> services, List<String> foundIds) throws IOException {
+    private void fanOut(Service service, Graph graph, List<Service> services, List<String> foundIds) throws IOException {
         List<ServiceRef> serviceRefs;
         serviceRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
         if (serviceRefs != null && !serviceRefs.isEmpty()) {
             for (ServiceRef serviceRef : serviceRefs) {
                 if (!foundIds.contains(serviceRef.getServerServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getServerServiceId());
-                    writer.append(" " + service.getServiceAbbr() + " -> " + temp.getServiceAbbr() + ";");
-                    writer.newLine();
-                    writer.append(temp.getServiceAbbr() + " [URL=\"#/Service/" + temp.getServiceId() + "\"];");
-                    writer.newLine();
+                    graph.writeLink(service.getServiceAbbr(), temp.getServiceAbbr());
+                    graph.writeService(temp, "ellipse");
                     services.add(temp);
                     foundIds.add(temp.getServiceId());
                 }
             }
         }
     }
-
+    
 }
