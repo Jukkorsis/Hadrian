@@ -113,7 +113,7 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace, MetricRegistry metricRegistry) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, int auditTimeToLive, MetricRegistry metricRegistry) {
         session = cluster.connect(keyspace);
 
         customFunctionSelect = session.prepare("SELECT * FROM customFunction WHERE serviceId = ?;");
@@ -218,9 +218,12 @@ public class CassandraDataAccess implements DataAccess {
         workItemInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
+        logger.info("Audit TTL {}", auditTimeToLive);
         auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
-        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?);");
+        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?) USING TTL " + auditTimeToLive + ";");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         logger.info("Prapared statements created");
 
         gson = new Gson();

@@ -39,6 +39,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
         int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
+        int auditTimeToLive = parameters.getInt(Const.CASS_AUDIT_TTL_DAYS, Const.CASS_AUDIT_TTL_DAYS_DEFAULT) * 86_400;
 
         connect(node);
         setup(keyspace, replicationFactor);
@@ -46,7 +47,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace, metricRegistry);
+        dataAccess = new CassandraDataAccess(cluster, keyspace, auditTimeToLive, metricRegistry);
         return dataAccess;
     }
 

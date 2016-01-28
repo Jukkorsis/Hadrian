@@ -113,6 +113,8 @@ public class Const {
     public static final String CASS_KEY_SPACE_DEFAULT = "devops";
     public static final String CASS_REPLICATION_FACTOR = "dataAccess.cassandra.replicationFactor";
     public static final int CASS_REPLICATION_FACTOR_DEFAULT = 1;
+    public static final String CASS_AUDIT_TTL_DAYS = "dataAccess.cassandra.auditTtlDays";
+    public static final int CASS_AUDIT_TTL_DAYS_DEFAULT = 732;
     
     public static final String IN_MEMORY_DATA_FILE_NAME = "dataAccess.inMemory.dataFileName";
     public static final String IN_MEMORY_DATA_FILE_NAME_DEFAULT = "data.json";
