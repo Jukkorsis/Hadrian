@@ -82,7 +82,7 @@ public class GraphHandler extends AbstractHandler {
         List<Service> services;
         List<ServiceRef> serviceRefs;
         
-        Graph graph = new Graph(response, false);
+        Graph graph = new Graph(response, true);
 
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
@@ -118,7 +118,7 @@ public class GraphHandler extends AbstractHandler {
     }
 
     private void produceFanInGraph(HttpServletResponse response, String serviceId) throws IOException {
-        Graph graph = new Graph(response, true);
+        Graph graph = new Graph(response, false);
 
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
@@ -150,7 +150,7 @@ public class GraphHandler extends AbstractHandler {
     }
 
     private void produceFanOutGraph(HttpServletResponse response, String serviceId) throws IOException {
-        Graph graph = new Graph(response, true);
+        Graph graph = new Graph(response, false);
 
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
