@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.access;
 
 import com.codahale.metrics.MetricRegistry;
-import com.northernwall.hadrian.db.DataAccess;
 import org.eclipse.jetty.server.Handler;
 
 /**
@@ -29,6 +28,6 @@ import org.eclipse.jetty.server.Handler;
  * @author rthursto
  */
 public interface AccessHandlerFactory {
-    Handler create(DataAccess dataAccess, MetricRegistry metricRegistry);
+    Handler create(AccessHelper accessHelper, MetricRegistry metricRegistry);
 
 }

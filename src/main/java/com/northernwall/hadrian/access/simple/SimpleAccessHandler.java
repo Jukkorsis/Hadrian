@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.access.simple;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -34,8 +34,8 @@ public class SimpleAccessHandler extends AbstractHandler {
     
     private final SimpleSessionStore sessionStore;
 
-    public SimpleAccessHandler(DataAccess dataAccess) {
-        sessionStore = new SimpleSessionStore(dataAccess);
+    public SimpleAccessHandler(AccessHelper accessHelper) {
+        sessionStore = new SimpleSessionStore(accessHelper);
     }
 
     @Override

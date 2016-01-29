@@ -19,9 +19,13 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
+import java.util.List;
 import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AccessHelper {
+    private final static Logger logger = LoggerFactory.getLogger(AccessHelper.class);
 
     private final DataAccess dataAccess;
 
@@ -29,6 +33,22 @@ public class AccessHelper {
         this.dataAccess = dataAccess;
     }
 
+    public User getUser(String username) {
+        User user = dataAccess.getUser(username);
+        if (user == null) {
+            List<User> users = dataAccess.getUsers();
+            if (users == null || users.isEmpty()) {
+                logger.info("No users found. So creating {} as the first user", username);
+                user = new User(username, username, true, true);
+            } else {
+                logger.info("User {} not found, creating", username);
+                user = new User(username, username, false, false);
+            }
+            dataAccess.saveUser(user);
+        }
+        return user;
+    }
+    
     public boolean canUserModify(Request request, String teamId) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
