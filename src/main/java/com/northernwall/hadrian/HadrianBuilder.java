@@ -198,7 +198,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
             }
-            accessHandler = accessHanlderFactory.create(accessHelper, metricRegistry);
+            accessHandler = accessHanlderFactory.create(dataAccess, metricRegistry);
         }
 
         if (webHookSender == null) {

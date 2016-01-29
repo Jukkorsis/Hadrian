@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.access.simple;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleAccessHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(SimpleAccessHandler.class);
+    
+    private final SimpleSessionStore sessionStore;
 
-    private final AccessHelper accessHelper;
-
-    public SimpleAccessHandler(AccessHelper accessHelper) {
-        this.accessHelper = accessHelper;
+    public SimpleAccessHandler(DataAccess dataAccess) {
+        sessionStore = new SimpleSessionStore(dataAccess);
     }
 
     @Override
@@ -51,16 +51,12 @@ public class SimpleAccessHandler extends AbstractHandler {
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
-                //for (Cookie cookie : request.getCookies()) {
-                //    logger.info("cookie name={} value={} domain={} path={}", cookie.getName(), cookie.getValue(), cookie.getDomain(), cookie.getPath());
-                //}
                 for (Cookie cookie : request.getCookies()) {
                     if (cookie.getName().equals(Const.COOKIE_SESSION)) {
-                        User user = accessHelper.getUserForSession(cookie.getValue());
+                        User user = sessionStore.getUserForSession(cookie.getValue());
                         if (user != null) {
                             request.setAttribute(Const.ATTR_SESSION, cookie.getValue());
                             request.setAttribute(Const.ATTR_USER, user);
-                            //logger.info("found, allowing to continue, user={}", username);
                             request.setHandled(false);
                             return;
                         }
@@ -100,7 +96,7 @@ public class SimpleAccessHandler extends AbstractHandler {
             return false;
         }
         
-        String sessionId = accessHelper.createUserSession(username);
+        String sessionId = sessionStore.createUserSession(username);
         Cookie cookie = new Cookie(Const.COOKIE_SESSION, sessionId);
         cookie.setMaxAge(Const.COOKIE_EXPRIY);
         response.addCookie(cookie);

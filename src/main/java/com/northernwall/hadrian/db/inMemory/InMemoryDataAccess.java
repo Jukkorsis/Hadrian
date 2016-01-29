@@ -27,7 +27,6 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Collections;
 import java.util.Date;
@@ -37,15 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class InMemoryDataAccess implements DataAccess {
-    private final static Logger logger = LoggerFactory.getLogger(InMemoryDataAccess.class);
     
     private final Map<String, Team> teams;
     private final Map<String, Service> services;
@@ -57,7 +53,6 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
     private final Map<String, User> users;
-    private final Map<String, UserSession> userSessions;
     private final List<Audit> audits;
 
     public InMemoryDataAccess() {
@@ -71,7 +66,6 @@ public class InMemoryDataAccess implements DataAccess {
         dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
-        userSessions = new ConcurrentHashMap<>();
         audits = new LinkedList<>();
     }
 
@@ -423,21 +417,6 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteUser(String userName) {
         users.remove(userName);
-    }
-
-    @Override
-    public UserSession getUserSession(String sessionId) {
-        return userSessions.get(sessionId);
-    }
-
-    @Override
-    public void saveUserSession(UserSession userSession) {
-        userSessions.put(userSession.getSessionId(), userSession);
-    }
-
-    @Override
-    public void deleteUserSession(String sessionId) {
-        userSessions.remove(sessionId);
     }
 
     @Override

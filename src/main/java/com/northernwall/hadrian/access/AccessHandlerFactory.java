@@ -16,13 +16,19 @@
 package com.northernwall.hadrian.access;
 
 import com.codahale.metrics.MetricRegistry;
+import com.northernwall.hadrian.db.DataAccess;
 import org.eclipse.jetty.server.Handler;
 
 /**
+ * The AccessHandlerFactory returns a Jetty Handler that validates user
+ * logins/sessions. If a user is not logged in then the handler should redirect
+ * the user to a log in page. If the user is logged in then the handler is
+ * required to add the User to the request.
+ * request.setAttribute(Const.ATTR_USER, user);
  *
  * @author rthursto
  */
 public interface AccessHandlerFactory {
-    Handler create(AccessHelper accessHelper, MetricRegistry metricRegistry);
-    
+    Handler create(DataAccess dataAccess, MetricRegistry metricRegistry);
+
 }

@@ -35,7 +35,6 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -88,9 +87,6 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement userInsert;
     private final PreparedStatement userUpdate;
     private final PreparedStatement userDelete;
-    private final PreparedStatement userSessionSelect;
-    private final PreparedStatement userSessionInsert;
-    private final PreparedStatement userSessionDelete;
     private final PreparedStatement vipSelect;
     private final PreparedStatement vipSelect2;
     private final PreparedStatement vipInsert;
@@ -178,12 +174,6 @@ public class CassandraDataAccess implements DataAccess {
         userUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         userDelete = session.prepare("DELETE FROM user WHERE id = ?;");
         userDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userSessionSelect = session.prepare("SELECT * FROM userSession WHERE id = ?;");
-        userSessionSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userSessionInsert = session.prepare("INSERT INTO userSession (id, data) VALUES (?, ?);");
-        userSessionInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userSessionDelete = session.prepare("DELETE FROM userSession WHERE id = ?;");
-        userSessionDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipSelect = session.prepare("SELECT * FROM vip WHERE serviceId = ?;");
         vipSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipSelect2 = session.prepare("SELECT * FROM vip WHERE serviceId = ? AND id = ?;");
@@ -572,21 +562,6 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteWorkItem(String id) {
         deleteData(id, workItemDelete);
-    }
-
-    @Override
-    public UserSession getUserSession(String sessionId) {
-        return getData(sessionId, userSessionSelect, UserSession.class);
-    }
-
-    @Override
-    public void saveUserSession(UserSession userSession) {
-        saveData(userSession.getSessionId(), gson.toJson(userSession), userSessionInsert);
-    }
-
-    @Override
-    public void deleteUserSession(String sessionId) {
-        deleteData(sessionId, userSessionDelete);
     }
 
     @Override

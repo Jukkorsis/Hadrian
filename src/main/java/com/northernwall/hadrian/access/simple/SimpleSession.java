@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.access.simple;
 
 import java.util.UUID;
 
-public class UserSession {
+public class SimpleSession {
     private final String sessionId;
     private final String username;
     private final long endDateTime;
 
-    public UserSession(String username, long endDateTime) {
+    public SimpleSession(String username, long endDateTime) {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
         this.endDateTime = endDateTime;

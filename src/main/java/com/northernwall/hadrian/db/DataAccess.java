@@ -26,7 +26,6 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.domain.UserSession;
 import com.northernwall.hadrian.domain.WorkItem;
 import java.util.Date;
 import java.util.List;
@@ -99,10 +98,6 @@ public interface DataAccess {
     void saveWorkItem(WorkItem workItem);
     void deleteWorkItem(String id);
 
-    UserSession getUserSession(String sessionId);
-    void saveUserSession(UserSession userSession);
-    void deleteUserSession(String sessionId);
-    
     void saveAudit(Audit audit, String output);
     List<Audit> getAudit(String serviceId, Date start, Date end);
 
