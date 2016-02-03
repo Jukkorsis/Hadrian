@@ -28,12 +28,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MetricHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
 
     private final HandlerList handlers;
     private final Timer timerGet;

@@ -51,6 +51,7 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
@@ -159,7 +160,11 @@ public class Hadrian {
         
         MetricHandler metricHandler = new MetricHandler(handlers, metricRegistry);
         
-        server.setHandler(metricHandler);
+        ContextHandler contextHandler = new ContextHandler();
+        contextHandler.setHandler(metricHandler);
+        contextHandler.setContextPath("/");
+
+        server.setHandler(contextHandler);
     }
 
     public void start() {
