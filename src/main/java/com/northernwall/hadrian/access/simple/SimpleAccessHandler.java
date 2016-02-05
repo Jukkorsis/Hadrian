@@ -67,6 +67,7 @@ public class SimpleAccessHandler extends AbstractHandler {
 
         logger.info("No session found, redirecting to login");
         redirect("/ui/login.html", response);
+        response.addHeader("X-Login-Request", "true");
         request.setHandled(true);
     }
 

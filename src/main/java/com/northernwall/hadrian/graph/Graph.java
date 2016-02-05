@@ -58,7 +58,7 @@ public class Graph {
         } else {
             writer.append(service.getServiceName());
             writer.append("<br/>");
-            writer.append("Business Impact: ");
+            writer.append("BI: ");
             writer.append(service.getBusinessImpact());
             writer.append("<br/>");
             writer.append(service.getPiiUsage());

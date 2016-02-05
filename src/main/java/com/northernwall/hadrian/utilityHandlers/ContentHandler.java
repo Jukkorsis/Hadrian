@@ -34,8 +34,11 @@ import org.slf4j.LoggerFactory;
 public class ContentHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ContentHandler.class);
+    
+    private final String rootPath;
 
-    public ContentHandler() {
+    public ContentHandler(String rootPath) {
+        this.rootPath = rootPath;
     }
 
     @Override
@@ -46,16 +49,18 @@ public class ContentHandler extends AbstractHandler {
                 return;
             }
             if (target.equals("/ui/")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                getContent(response, "/webapp/index.html");
-                response.setStatus(200);
-                request.setHandled(true);
+                if (getContent(response, rootPath + "/index.html")) {
+                    logger.info("Handled {} request {} with root path {}", request.getMethod(), target, rootPath);
+                    response.setStatus(200);
+                    request.setHandled(true);
+                }
             } else if (target.startsWith("/ui/")) {
-                logger.debug("Handling {} request {}", request.getMethod(), target);
-                getContent(response, "/webapp" + target.substring(3));
-                response.setStatus(200);
-                request.setHandled(true);
-            } else if (target.startsWith("/favicon.ico")) {
+                if (getContent(response, rootPath + target.substring(3))) {
+                    logger.debug("Handled {} request {} root path {}", request.getMethod(), target, rootPath);
+                    response.setStatus(200);
+                    request.setHandled(true);
+                }
+            } else if (target.equals("/favicon.ico")) {
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -65,15 +70,15 @@ public class ContentHandler extends AbstractHandler {
         }
     }
 
-    private void getContent(HttpServletResponse response, String resource) throws IOException {
-        if (resource.toLowerCase().endsWith(".html")) {
-            response.addHeader("X-Frame-Options", "DENY");
-            response.setContentType(Const.HTML);
-        }
+    private boolean getContent(HttpServletResponse response, String resource) throws IOException {
         byte[] buffer = new byte[50*1024];
         try (InputStream is = this.getClass().getResourceAsStream(resource)) {
             if (is == null) {
-                throw new RuntimeException("Can not find resource '" + resource + "'");
+                return false;
+            }
+            if (resource.toLowerCase().endsWith(".html")) {
+                response.addHeader("X-Frame-Options", "DENY");
+                response.setContentType(Const.HTML);
             }
             int len = is.read(buffer);
             while (len != -1) {
@@ -81,6 +86,7 @@ public class ContentHandler extends AbstractHandler {
                 len = is.read(buffer);
             }
         }
+        return true;
     }
 
 }

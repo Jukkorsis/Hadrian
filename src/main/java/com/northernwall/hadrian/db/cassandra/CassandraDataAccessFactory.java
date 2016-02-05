@@ -18,6 +18,7 @@ package com.northernwall.hadrian.db.cassandra;
 
 import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
@@ -37,11 +38,14 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     @Override
     public DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry) {
         String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
+        String username = parameters.getString(Const.CASS_USERNAME, null);
+        String password = parameters.getString(Const.CASS_PASSWORD, null);
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
         int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
         int auditTimeToLive = parameters.getInt(Const.CASS_AUDIT_TTL_DAYS, Const.CASS_AUDIT_TTL_DAYS_DEFAULT) * 86_400;
 
-        connect(node);
+        connect(node, username, password);
+        
         setup(keyspace, replicationFactor);
         
         Thread thread = new Thread(this);
@@ -51,8 +55,13 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         return dataAccess;
     }
 
-    private void connect(String node) {        
-        cluster = Cluster.builder().addContactPoint(node).build();
+    private void connect(String node, String username, String password) {        
+        Builder builder = Cluster.builder();
+        builder.addContactPoint(node);
+        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+            builder.withCredentials(username, password);
+        }
+        cluster = builder.build();
         Metadata metadata = cluster.getMetadata();
         logger.info("Connected to cluster: {}", metadata.getClusterName());
         for (Host host : metadata.getAllHosts()) {

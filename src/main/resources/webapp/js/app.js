@@ -63,23 +63,3 @@ soaRepApp.config(['$routeProvider',
                     redirectTo: '/Home'
                 });
     }]);
-
-soaRepApp.factory('redirectInterceptor', function ($q, $location, $window) {
-    return {
-        'response': function (response) {
-            if (typeof response.data === 'string' && response.data.indexOf("/ui/login.html") > -1) {
-                console.log("LOGIN!!");
-                console.log(response.data);
-                $window.location.href = "/ui/login.html";
-                return $q.reject(response);
-            } else {
-                return response;
-            }
-        }
-    }
-
-});
-
-soaRepApp.config(['$httpProvider', function ($httpProvider) {
-        $httpProvider.interceptors.push('redirectInterceptor');
-    }]); 

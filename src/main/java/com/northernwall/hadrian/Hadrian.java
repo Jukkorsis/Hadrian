@@ -140,11 +140,12 @@ public class Hadrian {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(new AvailabilityHandler(accessHandler, dataAccess, mavenHelper));
-        handlers.addHandler(new ContentHandler());
+        handlers.addHandler(new ContentHandler("/webcontent"));
         handlers.addHandler(new WorkItemCallbackHandler(workItemProcess));
         handlers.addHandler(new PreProxyHandler());
         handlers.addHandler(accessHandler);
         handlers.addHandler(new PostProxyHandler(client));
+        handlers.addHandler(new ContentHandler("/webapp"));
         handlers.addHandler(new TreeHandler(dataAccess));
         handlers.addHandler(new UserHandler(accessHelper, dataAccess));
         handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
