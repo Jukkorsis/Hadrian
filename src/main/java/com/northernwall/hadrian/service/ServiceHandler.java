@@ -49,6 +49,9 @@ import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.dao.PostServiceData;
 import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import com.northernwall.hadrian.service.dao.PutServiceData;
+import com.northernwall.hadrian.service.helper.ReadAvailabilityRunnable;
+import com.northernwall.hadrian.service.helper.ReadMavenVersionsRunnable;
+import com.northernwall.hadrian.service.helper.ReadVersionRunnable;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.DateFormat;
@@ -83,18 +86,18 @@ public class ServiceHandler extends AbstractHandler {
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
-    private final MavenHelper mavenhelper;
+    private final MavenHelper mavenHelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService executorService;
     private final DateFormat format;
 
 
-    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenhelper, InfoHelper infoHelper) {
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenHelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
-        this.mavenhelper = mavenhelper;
+        this.mavenHelper = mavenHelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
 
@@ -199,6 +202,9 @@ public class ServiceHandler extends AbstractHandler {
         GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
+        List<Future> futures = new LinkedList<>();
+        futures.add(executorService.submit(new ReadMavenVersionsRunnable(getServiceData, mavenHelper)));
+        
         List<Vip> vips = dataAccess.getVips(id);
         Collections.sort(vips);
         for (Vip vip : vips) {
@@ -206,13 +212,12 @@ public class ServiceHandler extends AbstractHandler {
             getServiceData.vips.add(getVipData);
         }
 
-        List<Future> futures = new LinkedList<>();
         List<Host> hosts = dataAccess.getHosts(id);
         Collections.sort(hosts);
         for (Host host : hosts) {
             GetHostData getHostData = GetHostData.create(host);
-            futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getServiceData)));
-            futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getServiceData)));
+            futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getServiceData, infoHelper)));
+            futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getServiceData, infoHelper)));
             for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
                 GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
                 for (GetVipData vip : getServiceData.vips) {
@@ -251,9 +256,6 @@ public class ServiceHandler extends AbstractHandler {
             getServiceData.customFunctions.add(getCustomFunctionData);
         }
 
-        //TODO: make this a future also
-        getServiceData.versions.addAll(mavenhelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));
-
         waitForFutures(futures);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
@@ -275,44 +277,6 @@ public class ServiceHandler extends AbstractHandler {
             });
             if (futures.isEmpty()) {
                 return;
-            }
-        }
-    }
-
-    class ReadVersionRunnable implements Runnable {
-
-        private final GetHostData getHostData;
-        private final GetServiceData getServiceData;
-
-        public ReadVersionRunnable(GetHostData getHostData, GetServiceData getServiceData) {
-            this.getHostData = getHostData;
-            this.getServiceData = getServiceData;
-        }
-
-        @Override
-        public void run() {
-            try {
-                getHostData.version = infoHelper.readVersion(getHostData.hostName, getServiceData.versionUrl);
-            } catch (IOException ex) {
-            }
-        }
-    }
-
-    class ReadAvailabilityRunnable implements Runnable {
-
-        private final GetHostData getHostData;
-        private final GetServiceData getServiceData;
-
-        public ReadAvailabilityRunnable(GetHostData getHostData, GetServiceData getServiceData) {
-            this.getHostData = getHostData;
-            this.getServiceData = getServiceData;
-        }
-
-        @Override
-        public void run() {
-            try {
-                getHostData.availability = infoHelper.readAvailability(getHostData.hostName, getServiceData.availabilityUrl);
-            } catch (IOException ex) {
             }
         }
     }

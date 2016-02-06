@@ -4,15 +4,15 @@
 <div class="modal-body">
     <dl class="dl-horizontal">
         <dt>Abbreviation:</dt>
-        <dd><input ng-model="formSaveService.serviceAbbr" type="text" class="form-control"></dd>
+        <dd><input ng-model="formSaveService.serviceAbbr" type="text" class="form-control" uib-popover="The service abbreviation is used in places like the host name. Abbreviations must only contain letters and numbers." popover-trigger="mouseenter"></dd>
         <dt>Name:</dt>
         <dd><input ng-model="formSaveService.serviceName" type="text" class="form-control"></dd>
         <dt>Description:</dt>
         <dd><input ng-model="formSaveService.description" type="text" class="form-control"></dd>
         <dt>Project Template:</dt>
-        <dd><select ng-model="formSaveService.template" ng-options="c for c in config.templates" class="form-control"></select></dd>
+        <dd><select ng-model="formSaveService.template" ng-options="c for c in config.templates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
         <dt>Business Impact:</dt>
-        <dd><select ng-model="formSaveService.businessImpact" ng-options="c for c in config.businessImpacts" class="form-control"></select></dd>
+        <dd><select ng-model="formSaveService.businessImpact" ng-options="c for c in config.businessImpacts" class="form-control" uib-popover="What would be the impact to the business if this service (as a whole) was unavailable." popover-trigger="mouseenter"></select></dd>
         <dt>PII Usage:</dt>
         <dd><select ng-model="formSaveService.piiUsage" ng-options="c for c in config.piiUsages" class="form-control"></select></dd>
         <dt>Git Path:</dt>

@@ -28,10 +28,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public abstract class MavenHelper {
+    private final MavenVersionComparator mavenVersionComparator;
     private final int maxMavenVersions;
 
     public MavenHelper(Parameters parameters) {
         this.maxMavenVersions = parameters.getInt(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT);
+        mavenVersionComparator = new MavenVersionComparator();
     }
 
     public abstract List<String> readMavenVersions(String groupId, String artifactId);
@@ -49,7 +51,7 @@ public abstract class MavenHelper {
                 versions.add(child.getTextContent());
             }
         }
-        Collections.reverse(versions);
+        Collections.sort(versions, mavenVersionComparator);
         if (versions.size() > maxMavenVersions) {
             return versions.subList(0, maxMavenVersions);
         }

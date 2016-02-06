@@ -93,6 +93,9 @@ public class Hadrian {
     }
 
     private void loadConfig(String key, String defaultValue, List<String> target) {
+        if (key.equals(Const.CONFIG_TEMPLATES)) {
+            target.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
+        }
         String temp = parameters.getString(key, defaultValue);
         String[] parts = temp.split(",");
         for (String part : parts) {

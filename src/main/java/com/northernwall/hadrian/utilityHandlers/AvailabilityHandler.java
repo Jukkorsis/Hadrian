@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class AvailabilityHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
-    private final static String VERSION = "1.3.15";
+    private final static String VERSION = "1.3.16";
 
     private final Handler accessHandler;
     private final DataAccess dataAccess;

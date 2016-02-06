@@ -148,7 +148,8 @@ public class Const {
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
     public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = "jar, war, targz";
     public static final String CONFIG_TEMPLATES = "config.templates";
-    public static final String CONFIG_TEMPLATES_DEFAULT = "No template, Java template";
+    public static final String CONFIG_TEMPLATES_NO_TEMPLATE = "No template";
+    public static final String CONFIG_TEMPLATES_DEFAULT = "Java template";
     public static final String CONFIG_BUSINESS_IMPACTS = "config.businessImpacts";
     public static final String CONFIG_BUSINESS_IMPACTS_DEFAULT = "Low, Medium, High";
     public static final String CONFIG_PII_USAGES = "config.piiUsages";
