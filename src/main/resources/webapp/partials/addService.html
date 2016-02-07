@@ -14,7 +14,7 @@
         <dt>Business Impact:</dt>
         <dd><select ng-model="formSaveService.businessImpact" ng-options="c for c in config.businessImpacts" class="form-control" uib-popover="What would be the impact to the business if this service (as a whole) was unavailable." popover-trigger="mouseenter"></select></dd>
         <dt>PII Usage:</dt>
-        <dd><select ng-model="formSaveService.piiUsage" ng-options="c for c in config.piiUsages" class="form-control"></select></dd>
+        <dd><select ng-model="formSaveService.piiUsage" ng-options="c for c in config.piiUsages" class="form-control" uib-popover="Does the service interact with any Personally Identifiable Information (PII) and if so how." popover-trigger="mouseenter"></select></dd>
         <dt>Git Path:</dt>
         <dd>
             <div class="input-group">
@@ -30,7 +30,7 @@
         <dt>Artifact Type:</dt>
         <dd><select ng-model="formSaveService.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
         <dt>Artifact Suffix:</dt>
-        <dd><input ng-model="formSaveService.artifactSuffix" type="text" class="form-control"></dd>
+        <dd><input ng-model="formSaveService.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
         <dt>Version Url:</dt>
         <dd><input ng-model="formSaveService.versionUrl" type="text" class="form-control"></dd>
         <dt>Availability Url:</dt>
@@ -38,9 +38,9 @@
         <dt>Run As User:</dt>
         <dd><input ng-model="formSaveService.runAs" type="text" class="form-control"></dd>
         <dt>Start Cmd Line:</dt>
-        <dd><input ng-model="formSaveService.startCmdLine" type="text" class="form-control"></dd>
+        <dd><input ng-model="formSaveService.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
         <dt>Stop Cmd Line:</dt>
-        <dd><input ng-model="formSaveService.stopCmdLine" type="text" class="form-control"></dd>
+        <dd><input ng-model="formSaveService.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
     </dl>
 </div>
 <div class="modal-footer">

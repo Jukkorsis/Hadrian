@@ -72,7 +72,7 @@ public class WorkItemProcessor {
             processCallback(callbackData);
         }
     }
-    
+
     public void processCallback(CallbackData callbackData) throws IOException {
         Timer.Context context = timerCalback.time();
         try {
@@ -146,9 +146,19 @@ public class WorkItemProcessor {
                 }
                 audit.notes = notes;
                 dataAccess.saveAudit(audit, callbackData.output);
+            } else {
+                deleteNextWorkItem(workItem.getNextId());
             }
         } finally {
             context.stop();
+        }
+    }
+
+    private void deleteNextWorkItem(String nextId) {
+        if (nextId != null) {
+            WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
+            deleteNextWorkItem(nextWorkItem.getNextId());
+            dataAccess.deleteWorkItem(nextId);
         }
     }
 
@@ -188,11 +198,6 @@ public class WorkItemProcessor {
         } else {
             logger.warn("Callback for {} failed with status {}", host.getHostId(), status);
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
-            if (workItem.getNextId() != null) {
-                dataAccess.deleteWorkItem(workItem.getNextId());
-            } else {
-                logger.warn("Odd, the failed create host {} work item has no deploy work item id", host.getHostName());
-            }
         }
     }
 
@@ -223,7 +228,6 @@ public class WorkItemProcessor {
             sendWorkItem(nextWorkItem);
         } else {
             logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, status);
-            //TODO: need to find the remaining workitems and cancel them
         }
     }
 
