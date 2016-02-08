@@ -57,11 +57,15 @@ public class Graph {
             writer.append(service.getServiceAbbr());
         } else {
             writer.append(service.getServiceName());
-            writer.append("<br/>");
-            writer.append("BI: ");
-            writer.append(service.getBusinessImpact());
-            writer.append("<br/>");
-            writer.append(service.getPiiUsage());
+            if (service.getBusinessImpact() != null && !service.getBusinessImpact().isEmpty()) {
+                writer.append("<br/>");
+                writer.append("BI: ");
+                writer.append(service.getBusinessImpact());
+            }
+            if (service.getPiiUsage() != null && !service.getPiiUsage().isEmpty()) {
+                writer.append("<br/>");
+                writer.append(service.getPiiUsage());
+            }
         }
         writer.append(">");
         writer.append("];");
