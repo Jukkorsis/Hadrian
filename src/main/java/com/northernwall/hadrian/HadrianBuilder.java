@@ -23,6 +23,8 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.calendar.CalendarHelper;
+import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.maven.MavenHelper;
@@ -52,6 +54,7 @@ public class HadrianBuilder {
     private MavenHelper mavenHelper;
     private AccessHelper accessHelper;
     private Handler accessHandler;
+    private CalendarHelper calendarHelper;
     private WorkItemSender webHookSender;
     private MetricRegistry metricRegistry;
 
@@ -200,7 +203,26 @@ public class HadrianBuilder {
             }
             accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
         }
-
+        
+        if (calendarHelper == null) {
+            String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find Calendar Helper class " + factoryName);
+            }
+            CalendarHelperFactory calendarHelperFactory;
+            try {
+                calendarHelperFactory = (CalendarHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation Calendar Helper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access Calendar Helper class " + factoryName);
+            }
+            calendarHelper = calendarHelperFactory.create(parameters, client);
+        }
+        
         if (webHookSender == null) {
             String factoryName = parameters.getString(Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME, Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -222,7 +244,7 @@ public class HadrianBuilder {
         
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, webHookSender, metricRegistry);
 
-        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, workItemProcessor, metricRegistry);
+        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, metricRegistry);
     }
     
     private String getHostname() {

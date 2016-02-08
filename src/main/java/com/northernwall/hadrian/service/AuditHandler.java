@@ -30,7 +30,7 @@ public class AuditHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/audit") && request.getMethod().equals(Const.HTTP_POST)) {
+            if (target.startsWith("/v1/audit") && request.getMethod().equals(Const.HTTP_POST)) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
                 createAudit(request);
                 response.setStatus(200);

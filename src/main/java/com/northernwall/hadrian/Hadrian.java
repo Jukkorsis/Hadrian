@@ -17,6 +17,7 @@ package com.northernwall.hadrian;
 
 import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.graph.GraphHandler;
@@ -25,6 +26,7 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.proxy.PostProxyHandler;
 import com.northernwall.hadrian.proxy.PreProxyHandler;
+import com.northernwall.hadrian.service.CalendarHandler;
 import com.northernwall.hadrian.service.ConfigHandler;
 import com.northernwall.hadrian.service.CustomFuntionHandler;
 import com.northernwall.hadrian.service.DataStoreHandler;
@@ -68,19 +70,21 @@ public class Hadrian {
     private final MavenHelper mavenHelper;
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
+    private final CalendarHelper calendarHelper;
     private final WorkItemProcessor workItemProcess;
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, MavenHelper mavenHelper, AccessHelper accessHelper, Handler accessHandler, WorkItemProcessor workItemProcess, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, MavenHelper mavenHelper, AccessHelper accessHelper, Handler accessHandler, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
         this.accessHelper = accessHelper;
         this.accessHandler = accessHandler;
+        this.calendarHelper = calendarHelper;
         this.workItemProcess = workItemProcess;
         this.metricRegistry = metricRegistry;
 
@@ -159,6 +163,7 @@ public class Hadrian {
         handlers.addHandler(new WorkItemHandler(dataAccess));
         handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));
         handlers.addHandler(new ConfigHandler(config));
+        handlers.addHandler(new CalendarHandler(calendarHelper));
         handlers.addHandler(new GraphHandler(dataAccess));
         handlers.addHandler(new RedirectHandler());
         

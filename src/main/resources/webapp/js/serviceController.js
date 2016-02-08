@@ -490,9 +490,10 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
         });
     }]);
 
-soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'hosts',
-    function ($scope, $http, $modalInstance, $route, Config, service, hosts) {
+soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts',
+    function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts) {
         $scope.config = Config.get();
+        $scope.calendar = Calendar.get();
         $scope.service = service;
         $scope.hosts = hosts;
 

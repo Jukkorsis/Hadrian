@@ -6,6 +6,20 @@
         <dt>Version:</dt>
         <dd><select ng-model="formUpdateHost.version" ng-options="v for v in service.versions" class="form-control"></select></dd>
     </dl>
+    <table class="table table-hover  table-condensed">
+        <tr>
+            <th>Calendar</th>
+            <th>Description</th>
+            <th>Starts</th>
+            <th>Ends</th>
+        </tr>
+        <tr ng-repeat="entry in calendar.entries">
+            <td>{{entry.calendarName}}</td>
+            <td>{{entry.description}}</td>
+            <td>{{entry.starts}}</td>
+            <td>{{entry.ends}}</td>
+        </tr>
+    </table>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
