@@ -309,6 +309,7 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                 $scope.formUpdateService.availabilityUrl = service.availabilityUrl;
                 $scope.formUpdateService.startCmdLine = service.startCmdLine;
                 $scope.formUpdateService.stopCmdLine = service.stopCmdLine;
+                $scope.formUpdateService.cmdLineTimeOut = service.cmdLineTimeOut;
 
                 $scope.save = function () {
                     var dataObject = {
@@ -325,7 +326,8 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                         versionUrl: $scope.formUpdateService.versionUrl,
                         availabilityUrl: $scope.formUpdateService.availabilityUrl,
                         startCmdLine: $scope.formUpdateService.startCmdLine,
-                        stopCmdLine: $scope.formUpdateService.stopCmdLine
+                        stopCmdLine: $scope.formUpdateService.stopCmdLine,
+                        cmdLineTimeOut: $scope.formUpdateService.cmdLineTimeOut
                     };
 
                     var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
@@ -493,7 +495,7 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
 soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts',
     function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts) {
         $scope.config = Config.get();
-        $scope.calendar = Calendar.get();
+        $scope.calendar = Calendar.get($scope.service.serviceId);
         $scope.service = service;
         $scope.hosts = hosts;
 

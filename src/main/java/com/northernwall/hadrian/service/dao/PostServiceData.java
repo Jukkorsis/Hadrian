@@ -38,5 +38,6 @@ public class PostServiceData {
     public String runAs;
     public String startCmdLine;
     public String stopCmdLine;
+    public int cmdLineTimeOut;
 
 }

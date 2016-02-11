@@ -163,7 +163,7 @@ public class Hadrian {
         handlers.addHandler(new WorkItemHandler(dataAccess));
         handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));
         handlers.addHandler(new ConfigHandler(config));
-        handlers.addHandler(new CalendarHandler(calendarHelper));
+        handlers.addHandler(new CalendarHandler(dataAccess, calendarHelper));
         handlers.addHandler(new GraphHandler(dataAccess));
         handlers.addHandler(new RedirectHandler());
         

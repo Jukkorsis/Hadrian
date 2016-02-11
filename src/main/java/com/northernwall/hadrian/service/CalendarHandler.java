@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.calendar.CalendarHelper;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CalendarEntry;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetCalendarData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,10 +24,12 @@ public class CalendarHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AuditHandler.class);
     
+    private final DataAccess dataAccess;
     private final CalendarHelper calendarHelper;
     private final Gson gson;
 
-    public CalendarHandler(CalendarHelper calendarHelper) {
+    public CalendarHandler(DataAccess dataAccess, CalendarHelper calendarHelper) {
+        this.dataAccess = dataAccess;
         this.calendarHelper = calendarHelper;
         gson = new Gson();
     }
@@ -32,9 +37,9 @@ public class CalendarHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/v1/calendar") && request.getMethod().equals(Const.HTTP_GET)) {
+            if (target.equalsIgnoreCase("/v1/calendar") && request.getMethod().equals(Const.HTTP_GET)) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                getCalendar(response);
+                getCalendar(request.getParameter("serviceId"),response);
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -44,20 +49,28 @@ public class CalendarHandler extends AbstractHandler {
         }
     }
 
-    private void getCalendar(HttpServletResponse response) throws IOException {        
+    private void getCalendar(String serviceId, HttpServletResponse response) throws IOException {   
         GetCalendarData getCalendarData = new GetCalendarData();
-        getCalendarData.entries = calendarHelper.getCalendarEntries();
-        
-        if (getCalendarData.entries ==null) {
-            getCalendarData.entries = new LinkedList<>();
-        }
-        if (getCalendarData.entries.isEmpty()) {
-            CalendarEntry entry = new CalendarEntry();
-            entry.calendarName = "-";
-            entry.starts = "-";
-            entry.ends = "-";
-            entry.description = "-";
-            getCalendarData.entries.add(entry);
+        if (serviceId != null) {
+            Service service = dataAccess.getService(serviceId);
+            if (service != null) {
+                Team team = dataAccess.getTeam(service.getTeamId());
+                if (team != null) {
+                    getCalendarData.entries = calendarHelper.getCalendarEntries(team);
+
+                    if (getCalendarData.entries ==null) {
+                        getCalendarData.entries = new LinkedList<>();
+                    }
+                    if (getCalendarData.entries.isEmpty()) {
+                        CalendarEntry entry = new CalendarEntry();
+                        entry.calendarName = "-";
+                        entry.starts = "-";
+                        entry.ends = "-";
+                        entry.description = "-";
+                        getCalendarData.entries.add(entry);
+                    }
+                }
+            }
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

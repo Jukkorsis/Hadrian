@@ -43,10 +43,11 @@ public class Service implements Comparable<Service>{
     private String availabilityUrl;
     private String startCmdLine;
     private String stopCmdLine;
+    private int cmdLineTimeOut;
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String businessImpact, String piiUsage, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String businessImpact, String piiUsage, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine, int cmdLineTimeOut) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
@@ -64,6 +65,7 @@ public class Service implements Comparable<Service>{
         this.availabilityUrl = availabilityUrl;
         this.startCmdLine = startCmdLine;
         this.stopCmdLine = stopCmdLine;
+        this.cmdLineTimeOut = cmdLineTimeOut;
         this.creationDate = new Date();
     }
 
@@ -197,6 +199,14 @@ public class Service implements Comparable<Service>{
 
     public void setStopCmdLine(String stopCmdLine) {
         this.stopCmdLine = stopCmdLine;
+    }
+
+    public int getCmdLineTimeOut() {
+        return cmdLineTimeOut;
+    }
+
+    public void setCmdLineTimeOut(int cmdLineTimeOut) {
+        this.cmdLineTimeOut = cmdLineTimeOut;
     }
 
     public Date getCreationDate() {

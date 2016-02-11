@@ -52,8 +52,8 @@ public class AuditHandler extends AbstractHandler {
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
-        audit.timePerformed = new Date();
-        audit.timeRequested = new Date();
+        audit.timePerformed = Util.getGmt();
+        audit.timeRequested = Util.getGmt();
         audit.requestor = postAudit.username;
         audit.type = postAudit.type;
         audit.operation = postAudit.operation;

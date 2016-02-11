@@ -30,9 +30,11 @@
         <dt>Run As User:</dt>
         <dd><input ng-model="formUpdateService.runAs" type="text" class="form-control"></dd>
         <dt>Start Cmd Line:</dt>
-        <dd><input ng-model="formUpdateService.startCmdLine" type="text" class="form-control"></dd>
+        <dd><input ng-model="formUpdateService.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
         <dt>Stop Cmd Line:</dt>
-        <dd><input ng-model="formUpdateService.stopCmdLine" type="text" class="form-control"></dd>
+        <dd><input ng-model="formUpdateService.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        <dt>Cmd Line Time Out:</dt>
+        <dd><input ng-model="formUpdateService.cmdLineTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
     </dl>
 </div>
 <div class="modal-footer">

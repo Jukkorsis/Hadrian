@@ -24,6 +24,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetTeamData;
 import com.northernwall.hadrian.service.dao.PostTeamData;
+import com.northernwall.hadrian.service.dao.PutTeamData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -69,7 +70,13 @@ public class TeamHandler extends AbstractHandler {
                         }
                         break;
                     case Const.HTTP_PUT:
-                        if (target.matches("/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+")) {
+                        if (target.matches("/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
+                            String teamId = target.substring(9, target.length());
+                            updateTeam(request, teamId);
+                            response.setStatus(200);
+                            request.setHandled(true);
+                        } else if (target.matches("/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             String temp = target.substring(9, target.length());
                             int i = temp.indexOf("/");
@@ -131,11 +138,30 @@ public class TeamHandler extends AbstractHandler {
                 throw new RuntimeException("Failed to create new team, as team with name " + postTeamData.teamName + " already exists");
             }
         }
-        Team team = new Team(postTeamData.teamAbbr, postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc);
+        
+        Team team = new Team(postTeamData.teamAbbr, postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.calendarId);
         if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
             throw new RuntimeException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
         }
         team.getUsernames().add(postTeamData.user.getUsername());
+        
+        dataAccess.saveTeam(team);
+    }
+
+    private void updateTeam(Request request, String teamId) throws IOException {
+        accessHelper.checkIfUserCanModify(request, teamId, "update team");
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new RuntimeException("Can not find team " + teamId + ", could not update team");
+        }
+        
+        PutTeamData putTeamData = Util.fromJson(request, PutTeamData.class);
+        
+        team.setTeamName(putTeamData.teamName);
+        team.setTeamEmail(putTeamData.teamEmail);
+        team.setTeamIrc(putTeamData.teamIrc);
+        team.setCalendarId(putTeamData.calendarId);
+        
         dataAccess.saveTeam(team);
     }
 

@@ -35,5 +35,6 @@ public class PutServiceData {
     public String availabilityUrl;
     public String startCmdLine;
     public String stopCmdLine;
+    public int cmdLineTimeOut;
 
 }

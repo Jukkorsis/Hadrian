@@ -19,6 +19,7 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
@@ -133,7 +134,7 @@ public class WorkItemProcessor {
             if (status) {
                 Audit audit = new Audit();
                 audit.serviceId = workItem.getService().serviceId;
-                audit.timePerformed = new Date();
+                audit.timePerformed = Util.getGmt();
                 audit.timeRequested = workItem.getRequestDate();
                 audit.requestor = workItem.getUsername();
                 audit.type = workItem.getType();

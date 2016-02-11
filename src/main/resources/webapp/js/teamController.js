@@ -12,6 +12,40 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
             $scope.team = team;
         });
 
+        $scope.openUpdateTeamModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateTeam.html',
+                controller: 'ModalUpdateTeamCtrl',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $location.path('/ui/#/tree', true);
+            }, function () {
+            });
+        };
+
+        $scope.openAddServiceModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addService.html',
+                controller: 'ModalAddServiceCtrl',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $location.path('/ui/#/tree', true);
+            }, function () {
+            });
+        };
+
         $scope.openAddUserModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -41,41 +75,31 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 alert("Request to create new team has failed!");
             });
         };
-
-        $scope.openAddServiceModal = function () {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addService.html',
-                controller: 'ModalAddServiceCtrl',
-                resolve: {
-                    team: function () {
-                        return $scope.team;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $location.path('/ui/#/tree', true);
-            }, function () {
-            });
-        };
     }]);
 
-soaRepControllers.controller('ModalAddUserToTeamCtrl',
-        function ($scope, $http, $modalInstance, $route, users, team) {
-            $scope.users = users;
-            $scope.team = team;
-
-            $scope.formAddUserToTeam = {};
-            $scope.formAddUserToTeam.user = users.users[0];
+soaRepControllers.controller('ModalUpdateTeamCtrl',
+        function ($scope, $http, $modalInstance, $route, team) {
+            $scope.formUpdateTeam = {};
+            $scope.formUpdateTeam.name = team.teamName;
+            $scope.formUpdateTeam.email = team.teamEmail;
+            $scope.formUpdateTeam.irc = team.teamIrc;
+            $scope.formUpdateTeam.calendarId = team.calendarId;
 
             $scope.save = function () {
-                var responsePromise = $http.put("/v1/team/" + $scope.team.teamId + "/" + $scope.formAddUserToTeam.user.username, {}, {});
+                var dataObject = {
+                    teamName: $scope.formUpdateTeam.name,
+                    teamEmail: $scope.formUpdateTeam.email,
+                    teamIrc: $scope.formUpdateTeam.irc,
+                    calendarId: $scope.formUpdateTeam.calendarId
+                };
+
+                var responsePromise = $http.put("/v1/team/" + tesm.teamId, dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();
                 });
                 responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new team has failed!");
+                    alert("Request to update team has failed!");
                 });
             };
 
@@ -109,6 +133,7 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.runAs = "";
             $scope.formSaveService.startCmdLine = $scope.config.startCmd;
             $scope.formSaveService.stopCmdLine = $scope.config.stopCmd;
+            $scope.formSaveService.cmdLineTimeOut = 60;
 
             $scope.save = function () {
                 var dataObject = {
@@ -128,7 +153,8 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
                     availabilityUrl: $scope.formSaveService.availabilityUrl,
                     runAs: $scope.formSaveService.runAs,
                     startCmdLine: $scope.formSaveService.startCmdLine,
-                    stopCmdLine: $scope.formSaveService.stopCmdLine
+                    stopCmdLine: $scope.formSaveService.stopCmdLine,
+                    cmdLineTimeOut: $scope.formSaveService.cmdLineTimeOut
                 };
 
                 var responsePromise = $http.post("/v1/service/service", dataObject, {});
@@ -146,3 +172,28 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             };
         });
     }]);
+
+soaRepControllers.controller('ModalAddUserToTeamCtrl',
+        function ($scope, $http, $modalInstance, $route, users, team) {
+            $scope.users = users;
+            $scope.team = team;
+
+            $scope.formAddUserToTeam = {};
+            $scope.formAddUserToTeam.user = users.users[0];
+
+            $scope.save = function () {
+                var responsePromise = $http.put("/v1/team/" + $scope.team.teamId + "/" + $scope.formAddUserToTeam.user.username, {}, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                    $route.reload();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new team has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
+

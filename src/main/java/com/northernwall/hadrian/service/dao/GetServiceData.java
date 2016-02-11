@@ -25,6 +25,7 @@ public class GetServiceData {
     public String availabilityUrl;
     public String startCmdLine;
     public String stopCmdLine;
+    public int cmdLineTimeOut;
     public Date creationDate;
     public List<GetHostData> hosts;
     public List<GetVipData> vips;
@@ -55,6 +56,7 @@ public class GetServiceData {
         temp.availabilityUrl = service.getAvailabilityUrl();
         temp.startCmdLine = service.getStartCmdLine();
         temp.stopCmdLine = service.getStopCmdLine();
+        temp.cmdLineTimeOut = service.getCmdLineTimeOut();
         temp.creationDate = service.getCreationDate();
         temp.hosts = new LinkedList<>();
         temp.vips = new LinkedList<>();

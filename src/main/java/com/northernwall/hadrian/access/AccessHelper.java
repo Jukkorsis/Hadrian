@@ -77,6 +77,17 @@ public class AccessHelper {
         return user;
     }
 
+    public User checkIfUserIsOps(Request request, String action) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new AccessException("unknown users attempted to " + action + " but is not in ops group");
+        }
+        if (!user.isOps()) {
+            throw new AccessException(user.getUsername() + " attempted to " + action + " but is not in ops group");
+        }
+        return user;
+    }
+
     public User checkIfUserIsAdmin(Request request, String action) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {

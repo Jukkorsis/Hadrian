@@ -126,6 +126,9 @@ public class Const {
 
     public static final String CALENDAR_HELPER_FACTORY_CLASS_NAME = "calendarHelper.factoryClassName";
     public static final String CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.calendar.simple.SimpleCalendarHelperFactory";
+    public static final String CALENDAR_GOOGLE_DATA_STORE_DIR = "calendarHelper.google.dataStoreDir";
+    public static final String CALENDAR_GOOGLE_CLIENT_SECRETS = "calendarHelper.google.clientSecrets";
+    public static final String CALENDAR_GOOGLE_GLOBAL_ID = "calendarHelper.google.globalCalendarId";
 
     public static final String CONFIG_VERSION_URL = "config.versionUrl";
     public static final String CONFIG_VERSION_URL_DEFAULT = "{host}.mydomain.com:9090/version";

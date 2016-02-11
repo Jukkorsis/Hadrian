@@ -92,7 +92,6 @@ public class ServiceHandler extends AbstractHandler {
     private final ExecutorService executorService;
     private final DateFormat format;
 
-
     public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenHelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
@@ -102,7 +101,7 @@ public class ServiceHandler extends AbstractHandler {
         gson = new Gson();
 
         executorService = Executors.newFixedThreadPool(20);
-        
+
         format = new SimpleDateFormat("MM/dd/yyyy");
     }
 
@@ -204,7 +203,7 @@ public class ServiceHandler extends AbstractHandler {
 
         List<Future> futures = new LinkedList<>();
         futures.add(executorService.submit(new ReadMavenVersionsRunnable(getServiceData, mavenHelper)));
-        
+
         List<Vip> vips = dataAccess.getVips(id);
         Collections.sort(vips);
         for (Vip vip : vips) {
@@ -367,7 +366,8 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.versionUrl,
                 postServiceData.availabilityUrl,
                 postServiceData.startCmdLine,
-                postServiceData.stopCmdLine);
+                postServiceData.stopCmdLine,
+                postServiceData.cmdLineTimeOut);
 
         dataAccess.saveService(service);
         WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null);
@@ -398,6 +398,7 @@ public class ServiceHandler extends AbstractHandler {
         service.setAvailabilityUrl(putServiceData.availabilityUrl);
         service.setStartCmdLine(putServiceData.startCmdLine);
         service.setStopCmdLine(putServiceData.stopCmdLine);
+        service.setCmdLineTimeOut(putServiceData.cmdLineTimeOut);
 
         dataAccess.updateService(service);
     }
@@ -416,8 +417,8 @@ public class ServiceHandler extends AbstractHandler {
                 if (serverService != null) {
                     ServiceRef ref = new ServiceRef(clientId, serverId);
                     dataAccess.saveServiceRef(ref);
-                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, "uses="+serverService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, "use by="+clientService.getServiceAbbr());
+                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, "uses=" + serverService.getServiceAbbr());
+                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, "use by=" + clientService.getServiceAbbr());
                 }
             }
         }
@@ -434,10 +435,10 @@ public class ServiceHandler extends AbstractHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
         dataAccess.deleteServiceRef(clientId, serverId);
-        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, "uses="+serverService.getServiceAbbr());
-        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, "use by="+clientService.getServiceAbbr());
+        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, "uses=" + serverService.getServiceAbbr());
+        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, "use by=" + clientService.getServiceAbbr());
     }
-    
+
     private void createAudit(String serviceId, String requestor, String operation, String notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;

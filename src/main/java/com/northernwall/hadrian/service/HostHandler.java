@@ -23,6 +23,7 @@ import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -224,17 +226,17 @@ public class HostHandler extends AbstractHandler {
                     postHostData.env,
                     postHostData.size);
             dataAccess.saveHost(host);
-            
+
             WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, host, null, null);
             WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, host, null, null);
-            
+
             workItemCreate.getHost().version = postHostData.version;
             workItemCreate.setNextId(workItemDeploy.getId());
             workItemDeploy.getHost().version = postHostData.version;
-            
+
             dataAccess.saveWorkItem(workItemCreate);
             dataAccess.saveWorkItem(workItemDeploy);
-            
+
             workItemProcess.sendWorkItem(workItemCreate);
         }
     }
@@ -307,29 +309,56 @@ public class HostHandler extends AbstractHandler {
     }
 
     private void backfillHosts(Request request) throws IOException {
+        User user = accessHelper.checkIfUserIsOps(request, "Backfill");
         BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
         String s = reader.readLine();
         while (s != null && !s.isEmpty()) {
             String[] parts = s.split(",");
-            if (parts.length == 6
-                    && config.dataCenters.contains(parts[2])
-                    && config.networks.contains(parts[3])
-                    && config.envs.contains(parts[4])
-                    && config.sizes.contains(parts[5])) {
-                for (Service service : dataAccess.getServices()) {
-                    if (service.getServiceAbbr().equalsIgnoreCase(parts[1])) {
-                        Host host = new Host(parts[0],
-                                service.getServiceId(),
-                                Const.NO_STATUS,
-                                parts[2],
-                                parts[3],
-                                parts[4],
-                                parts[5]);
-                        dataAccess.saveHost(host);
-                    }
-                }
+            if (parts.length == 6) {
+                backfillHost(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], user);
             }
             s = reader.readLine();
+        }
+    }
+
+    private void backfillHost(String serviceAbbr, String hostName, String dataCenter, String network, String env, String size, User user) {
+        if (config.dataCenters.contains(dataCenter)
+                && config.networks.contains(network)
+                && config.envs.contains(env)
+                && config.sizes.contains(size)) {
+            for (Service service : dataAccess.getServices()) {
+                if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
+                    List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+                    for (Host host : hosts) {
+                        if (host.getHostName().equalsIgnoreCase(hostName)) {
+                            logger.warn("There already exists host '{}' on service '{}'", hostName, serviceAbbr);
+                            return;
+                        }
+                    }
+                    Host host = new Host(hostName,
+                            service.getServiceId(),
+                            Const.NO_STATUS,
+                            dataCenter,
+                            network,
+                            env,
+                            size);
+                    dataAccess.saveHost(host);
+
+                    Audit audit = new Audit();
+                    audit.serviceId = service.getServiceId();
+                    audit.timePerformed = new Date();
+                    audit.timeRequested = new Date();
+                    audit.requestor = user.getUsername();
+                    audit.type = Const.TYPE_HOST;
+                    audit.operation = Const.OPERATION_CREATE;
+                    audit.hostName = hostName;
+                    audit.notes = "Backfill";
+                    dataAccess.saveAudit(audit, "");
+
+                    return;
+                }
+            }
+            logger.warn("Could not find a service with the abbr '{}'", serviceAbbr);
         }
     }
 

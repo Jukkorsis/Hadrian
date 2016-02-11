@@ -1,6 +1,7 @@
 package com.northernwall.hadrian.calendar;
 
 import com.northernwall.hadrian.domain.CalendarEntry;
+import com.northernwall.hadrian.domain.Team;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public abstract class CalendarHelper {
     public static final long MINUS_ONE_HOUR = -1 * ONE_HOUR;
     public static final long MINUS_ONE_DAY = -1 * ONE_DAY;
 
-    public abstract List<CalendarEntry> getCalendarEntries();
+    public abstract List<CalendarEntry> getCalendarEntries(Team team);
     
     public static String buildStartsEndsText(Date date) {
         return buildStartsEndsText(date.getTime());
