@@ -1,21 +1,21 @@
 package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.service.dao.GetServiceData;
+import com.northernwall.hadrian.service.dao.GetModuleData;
 
 public class ReadMavenVersionsRunnable implements Runnable {
 
     private final MavenHelper mavenHelper;
-    private final GetServiceData getServiceData;
+    private final GetModuleData getModuleData;
 
-    public ReadMavenVersionsRunnable(GetServiceData getServiceData, MavenHelper mavenHelper) {
+    public ReadMavenVersionsRunnable(GetModuleData getModuleData, MavenHelper mavenHelper) {
         this.mavenHelper = mavenHelper;
-        this.getServiceData = getServiceData;
+        this.getModuleData = getModuleData;
     }
 
     @Override
     public void run() {
-        getServiceData.versions.addAll(mavenHelper.readMavenVersions(getServiceData.mavenGroupId, getServiceData.mavenArtifactId));
+        getModuleData.versions.addAll(mavenHelper.readMavenVersions(getModuleData.mavenGroupId, getModuleData.mavenArtifactId));
     }
 
 }

@@ -12,6 +12,7 @@ import com.northernwall.hadrian.service.dao.GetCalendarData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class CalendarHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(AuditHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(CalendarHandler.class);
     
     private final DataAccess dataAccess;
     private final CalendarHelper calendarHelper;
@@ -37,9 +38,9 @@ public class CalendarHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.equalsIgnoreCase("/v1/calendar") && request.getMethod().equals(Const.HTTP_GET)) {
+            if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/v1/calendar")) {
                 logger.info("Handling {} request {}", request.getMethod(), target);
-                getCalendar(request.getParameter("serviceId"),response);
+                getCalendar(request.getParameter("serviceId"), response);
                 response.setStatus(200);
                 request.setHandled(true);
             }
@@ -49,9 +50,9 @@ public class CalendarHandler extends AbstractHandler {
         }
     }
 
-    private void getCalendar(String serviceId, HttpServletResponse response) throws IOException {   
+    private void getCalendar(String serviceId, HttpServletResponse response) throws IOException { 
         GetCalendarData getCalendarData = new GetCalendarData();
-        if (serviceId != null) {
+        if (serviceId != null && !serviceId.isEmpty()) {
             Service service = dataAccess.getService(serviceId);
             if (service != null) {
                 Team team = dataAccess.getTeam(service.getTeamId());

@@ -31,6 +31,7 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -56,6 +57,8 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Session session;
 
+    private final PreparedStatement auditSelect;
+    private final PreparedStatement auditInsert;
     private final PreparedStatement customFunctionSelect;
     private final PreparedStatement customFunctionSelect2;
     private final PreparedStatement customFunctionInsert;
@@ -71,6 +74,11 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement hostInsert;
     private final PreparedStatement hostUpdate;
     private final PreparedStatement hostDelete;
+    private final PreparedStatement moduleSelect;
+    private final PreparedStatement moduleSelect2;
+    private final PreparedStatement moduleInsert;
+    private final PreparedStatement moduleUpdate;
+    private final PreparedStatement moduleDelete;
     private final PreparedStatement serviceSelect;
     private final PreparedStatement serviceInsert;
     private final PreparedStatement serviceUpdate;
@@ -104,8 +112,6 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
     private final PreparedStatement workItemDelete;
-    private final PreparedStatement auditSelect;
-    private final PreparedStatement auditInsert;
 
     private final Gson gson;
 
@@ -122,6 +128,7 @@ public class CassandraDataAccess implements DataAccess {
         customFunctionUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         customFunctionDelete = session.prepare("DELETE FROM customFunction WHERE serviceId = ? AND id = ?;");
         customFunctionDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
         dataStoreSelect = session.prepare("SELECT * FROM dataStore WHERE serviceId = ?;");
         dataStoreSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         dataStoreSelect2 = session.prepare("SELECT * FROM dataStore WHERE serviceId = ? AND id = ?;");
@@ -132,6 +139,7 @@ public class CassandraDataAccess implements DataAccess {
         dataStoreUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         dataStoreDelete = session.prepare("DELETE FROM dataStore WHERE serviceId = ? AND id = ?;");
         dataStoreDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         hostSelect = session.prepare("SELECT * FROM host WHERE serviceId = ?;");
         hostSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         hostSelect2 = session.prepare("SELECT * FROM host WHERE serviceId = ? AND id = ?;");
@@ -142,12 +150,25 @@ public class CassandraDataAccess implements DataAccess {
         hostUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         hostDelete = session.prepare("DELETE FROM host WHERE serviceId = ? AND id = ?;");
         hostDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
+        moduleSelect = session.prepare("SELECT * FROM module WHERE serviceId = ?;");
+        moduleSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleSelect2 = session.prepare("SELECT * FROM module WHERE serviceId = ? AND id = ?;");
+        moduleSelect2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleInsert = session.prepare("INSERT INTO module (serviceId, id, data) VALUES (?, ?, ?);");
+        moduleInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleUpdate = session.prepare("UPDATE module SET data = ? WHERE serviceId = ? AND id = ?;");
+        moduleUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleDelete = session.prepare("DELETE FROM module WHERE serviceId = ? AND id = ?;");
+        moduleDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         serviceSelect = session.prepare("SELECT * FROM service WHERE id = ?;");
         serviceSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceInsert = session.prepare("INSERT INTO service (id, data) VALUES (?, ?);");
         serviceInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceUpdate = session.prepare("UPDATE service SET data = ? WHERE id = ?;");
         serviceUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
         serviceRefSelectClient = session.prepare("SELECT * FROM serviceRefClient WHERE clientServiceId = ?;");
         serviceRefSelectClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceRefSelectServer = session.prepare("SELECT * FROM serviceRefServer WHERE serverServiceId = ?;");
@@ -160,12 +181,14 @@ public class CassandraDataAccess implements DataAccess {
         serviceRefDeleteClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceRefDeleteServer = session.prepare("DELETE FROM serviceRefServer WHERE serverServiceId = ? AND clientServiceId = ?;");
         serviceRefDeleteServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
         teamSelect = session.prepare("SELECT * FROM team WHERE id = ?;");
         teamSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         teamInsert = session.prepare("INSERT INTO team (id, data) VALUES (?, ?);");
         teamInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         teamUpdate = session.prepare("UPDATE team SET data = ? WHERE id = ?;");
         teamUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         userSelect = session.prepare("SELECT * FROM user WHERE id = ?;");
         userSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         userInsert = session.prepare("INSERT INTO user (id, data) VALUES (?, ?);");
@@ -174,6 +197,7 @@ public class CassandraDataAccess implements DataAccess {
         userUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         userDelete = session.prepare("DELETE FROM user WHERE id = ?;");
         userDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         vipSelect = session.prepare("SELECT * FROM vip WHERE serviceId = ?;");
         vipSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipSelect2 = session.prepare("SELECT * FROM vip WHERE serviceId = ? AND id = ?;");
@@ -184,6 +208,7 @@ public class CassandraDataAccess implements DataAccess {
         vipUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipDelete = session.prepare("DELETE FROM vip WHERE serviceId = ? AND id = ?;");
         vipDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         vipRefSelectHost1 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ?;");
         vipRefSelectHost1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipRefSelectHost2 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ? AND vipId = ?;");
@@ -202,6 +227,7 @@ public class CassandraDataAccess implements DataAccess {
         vipRefDeleteVip1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipRefDeleteVip2 = session.prepare("DELETE FROM vipRefVip WHERE vipId = ? AND hostId = ?;");
         vipRefDeleteVip2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        
         workItemSelect = session.prepare("SELECT * FROM workItem WHERE id = ?;");
         workItemSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemInsert = session.prepare("INSERT INTO workItem (id, data) VALUES (?, ?);");
@@ -317,6 +343,31 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteHost(String serviceId, String hostId) {
         deleteServiceData(serviceId, hostId, hostDelete);
+    }
+
+    @Override
+    public List<Module> getModules(String serviceId) {
+        return getServiceData(serviceId, moduleSelect, Module.class);
+    }
+
+    @Override
+    public Module getModule(String serviceId, String moduleId) {
+        return getServiceData(serviceId, moduleId, moduleSelect2, Module.class);
+    }
+
+    @Override
+    public void saveModule(Module module) {
+        saveServiceData(module.getServiceId(), module.getModuleId(), gson.toJson(module), moduleInsert);
+    }
+
+    @Override
+    public void updateModule(Module module) {
+        updateServiceData(module.getServiceId(), module.getModuleId(), gson.toJson(module), moduleUpdate);
+    }
+
+    @Override
+    public void deleteModule(String serviceId, String moduleId) {
+        deleteServiceData(serviceId, moduleId, moduleDelete);
     }
 
     @Override

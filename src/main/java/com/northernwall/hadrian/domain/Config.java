@@ -14,9 +14,8 @@ public class Config {
     public List<String> sizes = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
+    public List<String> moduleTypes = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> templates = new LinkedList<>();
-    public List<String> businessImpacts = new LinkedList<>();
-    public List<String> piiUsages = new LinkedList<>();
     
 }

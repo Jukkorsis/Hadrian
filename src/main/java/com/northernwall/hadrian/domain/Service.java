@@ -31,41 +31,15 @@ public class Service implements Comparable<Service>{
     private String serviceName;
     private String teamId;
     private String description;
-    private String businessImpact;
-    private String piiUsage;
-    private String runAs;
-    private String gitPath;
-    private String mavenGroupId;
-    private String mavenArtifactId;
-    private String artifactType;
-    private String artifactSuffix;
-    private String versionUrl;
-    private String availabilityUrl;
-    private String startCmdLine;
-    private String stopCmdLine;
-    private int cmdLineTimeOut;
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String businessImpact, String piiUsage, String runAs, String gitPath, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String versionUrl, String availabilityUrl, String startCmdLine, String stopCmdLine, int cmdLineTimeOut) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
-        this.businessImpact = businessImpact;
-        this.piiUsage = piiUsage;
-        this.runAs = runAs;
-        this.gitPath = gitPath;
-        this.mavenGroupId = mavenGroupId;
-        this.mavenArtifactId = mavenArtifactId;
-        this.artifactType = artifactType;
-        this.artifactSuffix = artifactSuffix;
-        this.versionUrl = versionUrl;
-        this.availabilityUrl = availabilityUrl;
-        this.startCmdLine = startCmdLine;
-        this.stopCmdLine = stopCmdLine;
-        this.cmdLineTimeOut = cmdLineTimeOut;
         this.creationDate = new Date();
     }
 
@@ -103,110 +77,6 @@ public class Service implements Comparable<Service>{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getBusinessImpact() {
-        return businessImpact;
-    }
-
-    public void setBusinessImpact(String businessImpact) {
-        this.businessImpact = businessImpact;
-    }
-
-    public String getPiiUsage() {
-        return piiUsage;
-    }
-
-    public void setPiiUsage(String piiUsage) {
-        this.piiUsage = piiUsage;
-    }
-
-    public String getRunAs() {
-        return runAs;
-    }
-
-    public void setRunAs(String runAs) {
-        this.runAs = runAs;
-    }
-
-    public String getGitPath() {
-        return gitPath;
-    }
-
-    public void setGitPath(String gitPath) {
-        this.gitPath = gitPath;
-    }
-
-    public String getMavenGroupId() {
-        return mavenGroupId;
-    }
-
-    public void setMavenGroupId(String mavenGroupId) {
-        this.mavenGroupId = mavenGroupId;
-    }
-
-    public String getMavenArtifactId() {
-        return mavenArtifactId;
-    }
-
-    public void setMavenArtifactId(String mavenArtifactId) {
-        this.mavenArtifactId = mavenArtifactId;
-    }
-
-    public String getArtifactType() {
-        return artifactType;
-    }
-
-    public void setArtifactType(String artifactType) {
-        this.artifactType = artifactType;
-    }
-
-    public String getArtifactSuffix() {
-        return artifactSuffix;
-    }
-
-    public void setArtifactSuffix(String artifactSuffix) {
-        this.artifactSuffix = artifactSuffix;
-    }
-
-    public String getVersionUrl() {
-        return versionUrl;
-    }
-
-    public void setVersionUrl(String versionUrl) {
-        this.versionUrl = versionUrl;
-    }
-
-    public String getAvailabilityUrl() {
-        return availabilityUrl;
-    }
-
-    public void setAvailabilityUrl(String availabilityUrl) {
-        this.availabilityUrl = availabilityUrl;
-    }
-
-    public String getStartCmdLine() {
-        return startCmdLine;
-    }
-
-    public void setStartCmdLine(String startCmdLine) {
-        this.startCmdLine = startCmdLine;
-    }
-
-    public String getStopCmdLine() {
-        return stopCmdLine;
-    }
-
-    public void setStopCmdLine(String stopCmdLine) {
-        this.stopCmdLine = stopCmdLine;
-    }
-
-    public int getCmdLineTimeOut() {
-        return cmdLineTimeOut;
-    }
-
-    public void setCmdLineTimeOut(int cmdLineTimeOut) {
-        this.cmdLineTimeOut = cmdLineTimeOut;
     }
 
     public Date getCreationDate() {

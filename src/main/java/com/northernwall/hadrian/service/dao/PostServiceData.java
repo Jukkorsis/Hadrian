@@ -25,19 +25,5 @@ public class PostServiceData {
     public String serviceName;
     public String teamId;
     public String description;
-    public String template;
-    public String businessImpact;
-    public String piiUsage;
-    public String gitPath;
-    public String mavenGroupId;
-    public String mavenArtifactId;
-    public String artifactType;
-    public String artifactSuffix;
-    public String versionUrl;
-    public String availabilityUrl;
-    public String runAs;
-    public String startCmdLine;
-    public String stopCmdLine;
-    public int cmdLineTimeOut;
 
 }

@@ -29,7 +29,6 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +93,12 @@ public class WorkItemProcessor {
             if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createService(workItem, status);
-                    notes = "template=" + workItem.getService().template;
+                } else {
+                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
+                }
+            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
+                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
+                    notes = "template=" + workItem.getModule().template;
                 } else {
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
@@ -105,6 +109,8 @@ public class WorkItemProcessor {
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
                     deploySoftware(workItem, status);
                     notes = "version=" + workItem.getHost().version;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_RESTART)) {
+                    restartHost(workItem, status);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteHost(workItem, status);
                 } else {
@@ -139,6 +145,9 @@ public class WorkItemProcessor {
                 audit.requestor = workItem.getUsername();
                 audit.type = workItem.getType();
                 audit.operation = workItem.getOperation();
+                if (workItem.getModule() != null) {
+                    audit.moduleName = workItem.getModule().moduleName;
+                }
                 if (workItem.getHost() != null) {
                     audit.hostName = workItem.getHost().hostName;
                 }
@@ -224,6 +233,36 @@ public class WorkItemProcessor {
                 return;
             }
             nextHost.setStatus("Deploying...");
+            dataAccess.saveHost(nextHost);
+
+            sendWorkItem(nextWorkItem);
+        } else {
+            logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, status);
+        }
+    }
+
+    private void restartHost(WorkItem workItem, boolean status) throws IOException {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
+            return;
+        }
+        if (status) {
+            host.setStatus(Const.NO_STATUS);
+            dataAccess.updateHost(host);
+
+            if (workItem.getNextId() == null) {
+                //No more hosts to restart in the chain
+                return;
+            }
+
+            WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
+            Host nextHost = dataAccess.getHost(nextWorkItem.getService().serviceId, nextWorkItem.getHost().hostId);
+            if (nextHost == null) {
+                logger.error("Finished restarting {}, next work item is {}, but could not find it.", workItem.getHost().hostId, nextWorkItem.getHost().hostId);
+                return;
+            }
+            nextHost.setStatus("Restarting...");
             dataAccess.saveHost(nextHost);
 
             sendWorkItem(nextWorkItem);

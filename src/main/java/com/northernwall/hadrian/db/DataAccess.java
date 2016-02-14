@@ -22,6 +22,7 @@ import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -81,6 +82,12 @@ public interface DataAccess {
     void updateCustomFunction(CustomFunction customFunction);
     void deleteCustomFunction(String serviceId, String customFunctionId);
 
+    List<Module> getModules(String serviceId);
+    Module getModule(String serviceId, String moduleId);
+    void saveModule(Module module);
+    void updateModule(Module module);
+    void deleteModule(String serviceId, String moduleId);
+    
     List<DataStore> getDataStores(String serviceId);
     DataStore getDataStore(String serviceId, String dataStoreId);
     void saveDataStore(DataStore dataStore);

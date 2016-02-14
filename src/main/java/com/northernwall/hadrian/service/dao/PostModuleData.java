@@ -20,9 +20,23 @@ package com.northernwall.hadrian.service.dao;
  *
  * @author Richard Thurston
  */
-public class PutServiceData {
-    public String serviceAbbr;
-    public String serviceName;
-    public String description;
+public class PostModuleData {
+    public String moduleName;
+    public String serviceId;
+    public String moduleType;
+    public String gitPath;
+    public String gitFolder;
+    public String mavenGroupId;
+    public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
+    public String hostAbbr;
+    public String versionUrl;
+    public String availabilityUrl;
+    public String runAs;
+    public String startCmdLine;
+    public String stopCmdLine;
+    public int cmdLineTimeOut;
+    public String template;
 
 }

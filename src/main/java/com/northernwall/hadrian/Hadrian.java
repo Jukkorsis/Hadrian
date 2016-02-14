@@ -31,6 +31,7 @@ import com.northernwall.hadrian.service.ConfigHandler;
 import com.northernwall.hadrian.service.CustomFuntionHandler;
 import com.northernwall.hadrian.service.DataStoreHandler;
 import com.northernwall.hadrian.service.HostHandler;
+import com.northernwall.hadrian.service.ModuleHandler;
 import com.northernwall.hadrian.service.ServiceHandler;
 import com.northernwall.hadrian.service.TeamHandler;
 import com.northernwall.hadrian.service.UserHandler;
@@ -126,8 +127,9 @@ public class Hadrian {
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
         loadConfig(Const.CONFIG_TEMPLATES, Const.CONFIG_TEMPLATES_DEFAULT, config.templates);
-        loadConfig(Const.CONFIG_BUSINESS_IMPACTS, Const.CONFIG_BUSINESS_IMPACTS_DEFAULT, config.businessImpacts);
-        loadConfig(Const.CONFIG_PII_USAGES, Const.CONFIG_PII_USAGES_DEFAULT, config.piiUsages);
+        config.moduleTypes.add(Const.MODULE_TYPE_DEPLOYABLE);
+        config.moduleTypes.add(Const.MODULE_TYPE_LIBRARY);
+        config.moduleTypes.add(Const.MODULE_TYPE_TEST);
     }
 
     private void setupJetty() {
@@ -156,9 +158,10 @@ public class Hadrian {
         handlers.addHandler(new TreeHandler(dataAccess));
         handlers.addHandler(new UserHandler(accessHelper, dataAccess));
         handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
-        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, mavenHelper, infoHelper));
+        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, config, mavenHelper, infoHelper));
         handlers.addHandler(new VipHandler(accessHelper, dataAccess, workItemProcess));
-        handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, workItemProcess, client, hostDetailsHelper));
+        handlers.addHandler(new ModuleHandler(accessHelper, config, dataAccess, workItemProcess));
+        handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, workItemProcess, hostDetailsHelper));
         handlers.addHandler(new CustomFuntionHandler(accessHelper, dataAccess, client));
         handlers.addHandler(new WorkItemHandler(dataAccess));
         handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));

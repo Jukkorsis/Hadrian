@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', '$uibModal', 'Service', 'HostDetails',
-    function ($scope, $http, $routeParams, $uibModal, Service, HostDetails) {
+soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
+    function ($scope, $http, $routeParams, $uibModal, Config, Team, Service, HostDetails) {
         selectTreeNode($routeParams.serviceId);
 
         $scope.hostSortType = 'hostName';
@@ -18,7 +18,14 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
 
         Service.get({serviceId: $routeParams.serviceId}, function (service) {
             $scope.service = service;
+            Team.get({teamId: service.teamId}, function (team) {
+                $scope.team = team;
+            });
         });
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
+
         $scope.openUpdateServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -61,6 +68,26 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
                 $scope.my_tree_handler(tree.get_selected_branch());
+            });
+        };
+
+        $scope.openAddModuleModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addModule.html',
+                controller: 'ModalAddModuleCtrl',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $scope.my_tree_handler(tree.get_selected_branch());
+            }, function () {
             });
         };
 
@@ -112,7 +139,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
         };
 
-        $scope.openAddHostModal = function () {
+        $scope.openAddHostModal = function (network, module) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addHost.html',
@@ -120,6 +147,12 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    network: function () {
+                        return network;
+                    },
+                    module: function () {
+                        return module;
                     }
                 }
             });
@@ -129,17 +162,23 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
         };
 
-        $scope.openUpdateHostModal = function () {
+        $scope.openDeploySoftwareModal = function (network, module) {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'partials/updateHost.html',
-                controller: 'ModalUpdateHostCtrl',
+                templateUrl: 'partials/deploySoftware.html',
+                controller: 'ModalDeploySoftwareCtrl',
                 resolve: {
                     service: function () {
                         return $scope.service;
                     },
                     hosts: function () {
                         return $scope.formSelectHost;
+                    },
+                    network: function () {
+                        return network;
+                    },
+                    module: function () {
+                        return module;
                     }
                 }
             });
@@ -149,10 +188,12 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
         };
 
-        $scope.restartHost = function () {
+        $scope.restartHost = function (network, module) {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                hosts: $scope.formSelectHost
+                hosts: $scope.formSelectHost,
+                network: network,
+                moduleId: module.moduleId
             };
 
             var responsePromise = $http.put("/v1/host/restart", dataObject, {});
@@ -298,36 +339,12 @@ soaRepControllers.controller('ModalUpdateServiceCtrl',
                 $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
                 $scope.formUpdateService.serviceName = service.serviceName;
                 $scope.formUpdateService.description = service.description;
-                $scope.formUpdateService.businessImpact = service.businessImpact;
-                $scope.formUpdateService.piiUsage = service.piiUsage;
-                $scope.formUpdateService.runAs = service.runAs;
-                $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
-                $scope.formUpdateService.mavenArtifactId = service.mavenArtifactId;
-                $scope.formUpdateService.artifactType = service.artifactType;
-                $scope.formUpdateService.artifactSuffix = service.artifactSuffix;
-                $scope.formUpdateService.versionUrl = service.versionUrl;
-                $scope.formUpdateService.availabilityUrl = service.availabilityUrl;
-                $scope.formUpdateService.startCmdLine = service.startCmdLine;
-                $scope.formUpdateService.stopCmdLine = service.stopCmdLine;
-                $scope.formUpdateService.cmdLineTimeOut = service.cmdLineTimeOut;
 
                 $scope.save = function () {
                     var dataObject = {
                         serviceAbbr: $scope.formUpdateService.serviceAbbr,
                         serviceName: $scope.formUpdateService.serviceName,
-                        description: $scope.formUpdateService.description,
-                        businessImpact: $scope.formUpdateService.businessImpact,
-                        piiUsage: $scope.formUpdateService.piiUsage,
-                        runAs: $scope.formUpdateService.runAs,
-                        mavenGroupId: $scope.formUpdateService.mavenGroupId,
-                        mavenArtifactId: $scope.formUpdateService.mavenArtifactId,
-                        artifactType: $scope.formUpdateService.artifactType,
-                        artifactSuffix: $scope.formUpdateService.artifactSuffix,
-                        versionUrl: $scope.formUpdateService.versionUrl,
-                        availabilityUrl: $scope.formUpdateService.availabilityUrl,
-                        startCmdLine: $scope.formUpdateService.startCmdLine,
-                        stopCmdLine: $scope.formUpdateService.stopCmdLine,
-                        cmdLineTimeOut: $scope.formUpdateService.cmdLineTimeOut
+                        description: $scope.formUpdateService.description
                     };
 
                     var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
@@ -373,6 +390,68 @@ soaRepControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInst
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
+    }]);
+
+soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'team', 'service',
+    function ($scope, $http, $modalInstance, $route, Config, team, service) {
+        $scope.team = team;
+        $scope.service = service;
+        Config.get({}, function (config) {
+            $scope.config = config;
+
+            $scope.formSaveModule = {};
+            $scope.formSaveModule.moduleName = "";
+            $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
+            $scope.formSaveModule.template = $scope.config.templates[0];
+            $scope.formSaveModule.gitPath = "";
+            $scope.formSaveModule.gitFolder = "";
+            $scope.formSaveModule.mavenGroupId = "";
+            $scope.formSaveModule.mavenArtifactId = "";
+            $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
+            $scope.formSaveModule.artifactSuffix = "";
+            $scope.formSaveModule.hostAbbr = "";
+            $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
+            $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
+            $scope.formSaveModule.runAs = "";
+            $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
+            $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
+            $scope.formSaveModule.cmdLineTimeOut = 60;
+
+            $scope.save = function () {
+                var dataObject = {
+                    moduleName: $scope.formSaveModule.moduleName,
+                    serviceId: $scope.service.serviceId,
+                    moduleType: $scope.formSaveModule.moduleType,
+                    template: $scope.formSaveModule.template,
+                    gitPath: $scope.formSaveModule.gitPath,
+                    gitFolder: $scope.formSaveModule.gitFolder,
+                    mavenGroupId: $scope.formSaveModule.mavenGroupId,
+                    mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
+                    artifactType: $scope.formSaveModule.artifactType,
+                    artifactSuffix: $scope.formSaveModule.artifactSuffix,
+                    hostAbbr: $scope.formSaveModule.hostAbbr,
+                    versionUrl: $scope.formSaveModule.versionUrl,
+                    availabilityUrl: $scope.formSaveModule.availabilityUrl,
+                    runAs: $scope.formSaveModule.runAs,
+                    startCmdLine: $scope.formSaveModule.startCmdLine,
+                    stopCmdLine: $scope.formSaveModule.stopCmdLine,
+                    cmdLineTimeOut: $scope.formSaveModule.cmdLineTimeOut
+                };
+
+                var responsePromise = $http.post("/v1/module/module", dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                    $route.reload();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to create new vip has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        });
     }]);
 
 soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service',
@@ -451,25 +530,27 @@ soaRepControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalIn
         };
     }]);
 
-soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service',
-    function ($scope, $http, $modalInstance, $route, Config, service) {
+soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
         $scope.service = service;
+        $scope.network = network;
+        $scope.module = module;
         Config.get({}, function (config) {
             $scope.config = config;
 
             $scope.formSaveHost = {};
             $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
-            $scope.formSaveHost.network = $scope.config.networks[0];
             $scope.formSaveHost.env = $scope.config.envs[0];
             $scope.formSaveHost.size = $scope.config.sizes[0];
-            $scope.formSaveHost.version = $scope.service.versions[0];
+            $scope.formSaveHost.version = $scope.module.versions[0];
             $scope.formSaveHost.count = 1;
 
             $scope.save = function () {
                 var dataObject = {
                     serviceId: $scope.service.serviceId,
+                    moduleId: $scope.module.moduleId,
                     dataCenter: $scope.formSaveHost.dataCenter,
-                    network: $scope.formSaveHost.network,
+                    network: $scope.network,
                     env: $scope.formSaveHost.env,
                     size: $scope.formSaveHost.size,
                     version: $scope.formSaveHost.version,
@@ -492,21 +573,25 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
         });
     }]);
 
-soaRepControllers.controller('ModalUpdateHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts',
-    function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts) {
+soaRepControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts, network, module) {
         $scope.config = Config.get();
-        $scope.calendar = Calendar.get($scope.service.serviceId);
         $scope.service = service;
         $scope.hosts = hosts;
+        $scope.network = network;
+        $scope.module = module;
+        $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
 
         $scope.formUpdateHost = {};
-        $scope.formUpdateHost.version = "";
+        $scope.formUpdateHost.version = $scope.module.versions[0];
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 version: $scope.formUpdateHost.version,
-                hosts: $scope.hosts
+                hosts: $scope.hosts,
+                network: $scope.network,
+                moduleId: $scope.module.moduleId
             };
 
             var responsePromise = $http.put("/v1/host/host", dataObject, {});

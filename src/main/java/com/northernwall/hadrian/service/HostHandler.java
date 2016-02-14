@@ -28,6 +28,7 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
@@ -36,8 +37,8 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.GetHostDetailsData;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
-import com.northernwall.hadrian.service.dao.PutHostData;
-import com.squareup.okhttp.OkHttpClient;
+import com.northernwall.hadrian.service.dao.PutDeploySoftwareData;
+import com.northernwall.hadrian.service.dao.PutRestartHostData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -69,7 +70,7 @@ public class HostHandler extends AbstractHandler {
     private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WorkItemProcessor workItemProcess, OkHttpClient client, HostDetailsHelper hostDetailsHelper) {
+    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WorkItemProcessor workItemProcess, HostDetailsHelper hostDetailsHelper) {
         this.accessHelper = accessHelper;
         this.config = config;
         this.dataAccess = dataAccess;
@@ -110,7 +111,7 @@ public class HostHandler extends AbstractHandler {
                     case "PUT":
                         if (target.matches("/v1/host/host")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            updateHost(request);
+                            deploySoftware(request);
                         } else if (target.matches("/v1/host/restart")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             restartHost(request);
@@ -193,9 +194,20 @@ public class HostHandler extends AbstractHandler {
         if (!config.sizes.contains(postHostData.size)) {
             throw new RuntimeException("Unknown size");
         }
+        
+        List<Module> modules = dataAccess.getModules(postHostData.serviceId);
+        Module module = null;
+        for (Module temp : modules) {
+            if (temp.getModuleId().equals(postHostData.moduleId)) {
+                module = temp;
+            }
+        }
+        if (module == null) {
+            throw new RuntimeException("Unknown module");
+        }
 
         //calc host name
-        String prefix = postHostData.dataCenter + "-" + postHostData.network + "-" + service.getServiceAbbr() + "-";
+        String prefix = postHostData.dataCenter + "-" + postHostData.network + "-" + module.getHostAbbr() + "-";
         int len = prefix.length();
         int num = 0;
         List<Host> hosts = dataAccess.getHosts(postHostData.serviceId);
@@ -221,14 +233,15 @@ public class HostHandler extends AbstractHandler {
             Host host = new Host(prefix + numStr,
                     postHostData.serviceId,
                     "Creating...",
+                    postHostData.moduleId,
                     postHostData.dataCenter,
                     postHostData.network,
                     postHostData.env,
                     postHostData.size);
             dataAccess.saveHost(host);
 
-            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, host, null, null);
-            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, host, null, null);
+            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, module, host, null, null);
+            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
 
             workItemCreate.getHost().version = postHostData.version;
             workItemCreate.setNextId(workItemDeploy.getId());
@@ -241,9 +254,10 @@ public class HostHandler extends AbstractHandler {
         }
     }
 
-    private void updateHost(Request request) throws IOException {
-        PutHostData putHostData = Util.fromJson(request, PutHostData.class);
+    private void deploySoftware(Request request) throws IOException {
+        PutDeploySoftwareData putHostData = Util.fromJson(request, PutDeploySoftwareData.class);
         Service service = null;
+        Module module = null;
         List<WorkItem> workItems = new ArrayList<>(putHostData.hosts.size());
         User user = null;
 
@@ -252,16 +266,23 @@ public class HostHandler extends AbstractHandler {
         for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 Host host = dataAccess.getHost(putHostData.serviceId, entry.getKey());
-                if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(Const.NO_STATUS)) {
+                if (host != null && 
+                        host.getServiceId().equals(putHostData.serviceId) && 
+                        host.getStatus().equals(Const.NO_STATUS) &&
+                        host.getNetwork().equals(putHostData.network) &&
+                        host.getModuleId().equals(putHostData.moduleId)) {
                     if (service == null) {
                         service = dataAccess.getService(host.getServiceId());
                         if (service == null) {
                             throw new RuntimeException("Could not find service");
                         }
-                        user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update a host");
+                        user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deploy software to host");
                         team = dataAccess.getTeam(service.getTeamId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, host, null, null);
+                    if (module == null || !module.getModuleId().equals(host.getModuleId())) {
+                        module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
+                    }
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
                     workItem.getHost().version = putHostData.version;
                     if (workItems.isEmpty()) {
                         host.setStatus("Deploying...");
@@ -287,6 +308,55 @@ public class HostHandler extends AbstractHandler {
     }
 
     private void restartHost(Request request) throws IOException {
+        PutRestartHostData putRestartHostData = Util.fromJson(request, PutRestartHostData.class);
+        Service service = null;
+        Module module = null;
+        List<WorkItem> workItems = new ArrayList<>(putRestartHostData.hosts.size());
+        User user = null;
+
+        Team team = null;
+
+        for (Map.Entry<String, String> entry : putRestartHostData.hosts.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase("true")) {
+                Host host = dataAccess.getHost(putRestartHostData.serviceId, entry.getKey());
+                if (host != null && 
+                        host.getServiceId().equals(putRestartHostData.serviceId) && 
+                        host.getStatus().equals(Const.NO_STATUS) &&
+                        host.getNetwork().equals(putRestartHostData.network) &&
+                        host.getModuleId().equals(putRestartHostData.moduleId)) {
+                    if (service == null) {
+                        service = dataAccess.getService(host.getServiceId());
+                        if (service == null) {
+                            throw new RuntimeException("Could not find service");
+                        }
+                        user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "restart host");
+                        team = dataAccess.getTeam(service.getTeamId());
+                    }
+                    if (module == null || !module.getModuleId().equals(host.getModuleId())) {
+                        module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
+                    }
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_RESTART, user, team, service, module, host, null, null);
+                    if (workItems.isEmpty()) {
+                        host.setStatus("Restarting...");
+                    } else {
+                        host.setStatus("Restart Queued");
+                    }
+                    dataAccess.updateHost(host);
+                    workItems.add(workItem);
+                }
+            }
+        }
+        String prevId = null;
+        int size = workItems.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                WorkItem workItem = workItems.get(size - i - 1);
+                workItem.setNextId(prevId);
+                prevId = workItem.getId();
+                dataAccess.saveWorkItem(workItem);
+            }
+            workItemProcess.sendWorkItem(workItems.get(0));
+        }
     }
 
     private void deleteHost(Request request, String serviceId, String hostId) throws IOException {
@@ -303,7 +373,7 @@ public class HostHandler extends AbstractHandler {
         Team team = dataAccess.getTeam(service.getTeamId());
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, host, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, null, host, null, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -314,14 +384,22 @@ public class HostHandler extends AbstractHandler {
         String s = reader.readLine();
         while (s != null && !s.isEmpty()) {
             String[] parts = s.split(",");
-            if (parts.length == 6) {
-                backfillHost(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], user);
+            if (parts.length == 7) {
+                backfillHost(
+                        parts[0].trim(), 
+                        parts[1].trim(), 
+                        parts[2].trim(), 
+                        parts[3].trim(), 
+                        parts[4].trim(), 
+                        parts[5].trim(), 
+                        parts[6].trim(), 
+                        user);
             }
             s = reader.readLine();
         }
     }
 
-    private void backfillHost(String serviceAbbr, String hostName, String dataCenter, String network, String env, String size, User user) {
+    private void backfillHost(String serviceAbbr, String moduleName, String hostName, String dataCenter, String network, String env, String size, User user) {
         if (config.dataCenters.contains(dataCenter)
                 && config.networks.contains(network)
                 && config.envs.contains(env)
@@ -335,9 +413,21 @@ public class HostHandler extends AbstractHandler {
                             return;
                         }
                     }
+                    Module module = null;
+                    List<Module> modules = dataAccess.getModules(service.getServiceId());
+                    for (Module temp : modules) {
+                        if (temp.getModuleName().equalsIgnoreCase(moduleName)) {
+                            module = temp;
+                        }
+                    };
+                    if (module == null) {
+                        logger.warn("Could not find module with name {} in service {}", moduleName, serviceAbbr);
+                        return;
+                    }
                     Host host = new Host(hostName,
                             service.getServiceId(),
                             Const.NO_STATUS,
+                            module.getModuleId(),
                             dataCenter,
                             network,
                             env,
@@ -351,6 +441,7 @@ public class HostHandler extends AbstractHandler {
                     audit.requestor = user.getUsername();
                     audit.type = Const.TYPE_HOST;
                     audit.operation = Const.OPERATION_CREATE;
+                    audit.moduleName = module.getModuleName();
                     audit.hostName = hostName;
                     audit.notes = "Backfill";
                     dataAccess.saveAudit(audit, "");
@@ -386,7 +477,7 @@ public class HostHandler extends AbstractHandler {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, host, vip, null);
+                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, null, host, vip, null);
                                             dataAccess.saveWorkItem(workItem);
                                             workItemProcess.sendWorkItem(workItem);
                                         } else {
@@ -429,7 +520,7 @@ public class HostHandler extends AbstractHandler {
         }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, host, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, null, host, vip, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

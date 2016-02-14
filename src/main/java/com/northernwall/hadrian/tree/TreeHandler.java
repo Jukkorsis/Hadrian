@@ -81,7 +81,6 @@ public class TreeHandler extends AbstractHandler {
             jw.beginArray();
             listDevTeams(jw);
             listGraph(jw);
-            listPortal(jw);
             if (user.isOps()) {
                 listOpsTeam(jw);
             }
@@ -120,13 +119,6 @@ public class TreeHandler extends AbstractHandler {
         TreeNode graphTreenode = new TreeNode();
         graphTreenode.setLabel("Graph");
         graphTreenode.setData(new TreeNodeData("-2", "Graph"));
-        gson.toJson(graphTreenode, TreeNode.class, jw);
-    }
-
-    private void listPortal(final JsonWriter jw) throws JsonIOException {
-        TreeNode graphTreenode = new TreeNode();
-        graphTreenode.setLabel("Portal");
-        graphTreenode.setData(new TreeNodeData("-3", "Portal"));
         gson.toJson(graphTreenode, TreeNode.class, jw);
     }
 

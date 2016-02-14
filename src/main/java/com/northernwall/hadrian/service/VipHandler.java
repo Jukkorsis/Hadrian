@@ -130,7 +130,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Creating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, null, null, vip, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -152,7 +152,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, team, service, null, vip, vip);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, team, service, null, null, vip, vip);
         workItem.getNewVip().external = putVipData.external;
         workItem.getNewVip().servicePort = putVipData.servicePort;
         dataAccess.saveWorkItem(workItem);
@@ -176,7 +176,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
         
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, team, service, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, team, service, null, null, vip, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

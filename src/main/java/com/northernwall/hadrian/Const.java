@@ -32,14 +32,20 @@ public class Const {
     
     public static final String OPERATION_CREATE = "create";
     public static final String OPERATION_DEPLOY = "deploy";
+    public static final String OPERATION_RESTART = "restart";
     public static final String OPERATION_UPDATE = "update";
     public static final String OPERATION_DELETE = "delete";
     
     public static final String TYPE_SERVICE = "service";
     public static final String TYPE_SERVICE_REF = "serviceRef";
+    public static final String TYPE_MODULE = "module";
     public static final String TYPE_HOST = "host";
     public static final String TYPE_VIP = "vip";
     public static final String TYPE_HOST_VIP = "hostvip";
+    
+    public static final String MODULE_TYPE_DEPLOYABLE = "Deployable";
+    public static final String MODULE_TYPE_LIBRARY = "Library";
+    public static final String MODULE_TYPE_TEST = "Test";
     
     public static final String ATTR_SESSION = "session";
     public static final String ATTR_USER = "user";
@@ -105,14 +111,13 @@ public class Const {
 
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.inMemory.InMemoryDataAccessFactory";
-    //public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.cassandra.CassandraDataAccessFactory";
 
     public static final String CASS_NODE = "dataAccess.cassandra.node";
     public static final String CASS_NODE_DEFAULT = "127.0.0.1";
     public static final String CASS_USERNAME = "dataAccess.cassandra.username";
     public static final String CASS_PASSWORD = "dataAccess.cassandra.password";
     public static final String CASS_KEY_SPACE = "dataAccess.cassandra.keyspace";
-    public static final String CASS_KEY_SPACE_DEFAULT = "devops";
+    public static final String CASS_KEY_SPACE_DEFAULT = "hadrian";
     public static final String CASS_REPLICATION_FACTOR = "dataAccess.cassandra.replicationFactor";
     public static final int CASS_REPLICATION_FACTOR_DEFAULT = 1;
     public static final String CASS_AUDIT_TTL_DAYS = "dataAccess.cassandra.auditTtlDays";
@@ -156,10 +161,6 @@ public class Const {
     public static final String CONFIG_TEMPLATES = "config.templates";
     public static final String CONFIG_TEMPLATES_NO_TEMPLATE = "No template";
     public static final String CONFIG_TEMPLATES_DEFAULT = "Java template";
-    public static final String CONFIG_BUSINESS_IMPACTS = "config.businessImpacts";
-    public static final String CONFIG_BUSINESS_IMPACTS_DEFAULT = "Low, Medium, High";
-    public static final String CONFIG_PII_USAGES = "config.piiUsages";
-    public static final String CONFIG_PII_USAGES_DEFAULT = "No PII, Transmit PII, Transmit and Store PII";
     
     private Const() {
     }

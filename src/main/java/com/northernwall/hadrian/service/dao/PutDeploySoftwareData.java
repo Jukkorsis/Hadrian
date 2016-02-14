@@ -23,9 +23,11 @@ import java.util.Map;
  *
  * @author Richard Thurston
  */
-public class PutHostData {
+public class PutDeploySoftwareData {
     public String serviceId;
     public String version;
     public Map<String, String> hosts = new HashMap<>();
+    public String network;
+    public String moduleId;
 
 }

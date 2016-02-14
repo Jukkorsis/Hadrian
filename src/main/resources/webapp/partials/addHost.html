@@ -4,14 +4,10 @@
 <div class="modal-body">
     <dl class="dl-horizontal">
         <dt>Host:</dt>
-        <dd>{{formSaveHost.dataCenter}}-{{formSaveHost.network}}-{{service.serviceAbbr}}-###</dd>
+        <dd>{{formSaveHost.dataCenter}}-{{network}}-{{module.hostAbbr}}-###</dd>
         <dt>Data Center:</dt>
         <dd>
             <select ng-model="formSaveHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select>
-        </dd>
-        <dt>Network:</dt>
-        <dd>
-            <select ng-model="formSaveHost.network" ng-options="c for c in config.networks" class="form-control"></select>
         </dd>
         <dt>Env:</dt>
         <dd>
@@ -23,7 +19,7 @@
         </dd>
         <dt>Version:</dt>
         <dd>
-            <select ng-model="formSaveHost.version" ng-options="v for v in service.versions" class="form-control"></select>
+            <select ng-model="formSaveHost.version" ng-options="v for v in module.versions" class="form-control"></select>
         </dd>
         <dt>Count:</dt>
         <dd><input ng-model="formSaveHost.count" type="number" class="form-control"></dd>

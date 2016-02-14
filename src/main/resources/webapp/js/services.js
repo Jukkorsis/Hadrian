@@ -59,8 +59,8 @@ soaRepServices.factory('Config', ['$resource', function($resource) {
     }]);
 
 soaRepServices.factory('Calendar', ['$resource', function($resource) {
-        return $resource('/v1/calendar?serviceId=:serviceId', {}, {
-            query: {method: 'GET', params: {serviceId: 'services'}, isArray: false}
+        return $resource('/v1/calendar', {}, {
+            query: {method: 'GET', isArray: false}
         });
     }]);
 

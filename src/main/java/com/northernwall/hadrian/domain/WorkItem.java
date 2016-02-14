@@ -17,6 +17,7 @@
 package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.workItem.dao.HostData;
+import com.northernwall.hadrian.workItem.dao.ModuleData;
 import com.northernwall.hadrian.workItem.dao.ServiceData;
 import com.northernwall.hadrian.workItem.dao.TeamData;
 import com.northernwall.hadrian.workItem.dao.VipData;
@@ -38,11 +39,12 @@ public class WorkItem {
     private Date requestDate;
     private TeamData team;
     private ServiceData service;
+    private ModuleData module;
     private HostData host;
     private VipData vip;
     private VipData newVip;
 
-    public WorkItem(String type, String operation, User user, Team team, Service service, Host host, Vip vip, Vip newVip) {
+    public WorkItem(String type, String operation, User user, Team team, Service service, Module module, Host host, Vip vip, Vip newVip) {
         this.id = UUID.randomUUID().toString();
         this.type = type;
         this.operation = operation;
@@ -52,6 +54,7 @@ public class WorkItem {
         this.requestDate = new Date();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
+        this.module = ModuleData.create(team, module);
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
         this.newVip = VipData.create(newVip);
@@ -127,6 +130,14 @@ public class WorkItem {
 
     public void setService(ServiceData service) {
         this.service = service;
+    }
+
+    public ModuleData getModule() {
+        return module;
+    }
+
+    public void setModule(ModuleData module) {
+        this.module = module;
     }
 
     public HostData getHost() {

@@ -139,7 +139,7 @@ public class TeamHandler extends AbstractHandler {
             }
         }
         
-        Team team = new Team(postTeamData.teamAbbr, postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.calendarId);
+        Team team = new Team(postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.gitRepo, postTeamData.calendarId);
         if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
             throw new RuntimeException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
         }
@@ -160,6 +160,7 @@ public class TeamHandler extends AbstractHandler {
         team.setTeamName(putTeamData.teamName);
         team.setTeamEmail(putTeamData.teamEmail);
         team.setTeamIrc(putTeamData.teamIrc);
+        team.setGitRepo(putTeamData.gitRepo);
         team.setCalendarId(putTeamData.calendarId);
         
         dataAccess.saveTeam(team);

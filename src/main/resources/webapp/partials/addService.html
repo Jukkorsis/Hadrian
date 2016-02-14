@@ -9,40 +9,6 @@
         <dd><input ng-model="formSaveService.serviceName" type="text" class="form-control"></dd>
         <dt>Description:</dt>
         <dd><input ng-model="formSaveService.description" type="text" class="form-control"></dd>
-        <dt>Project Template:</dt>
-        <dd><select ng-model="formSaveService.template" ng-options="c for c in config.templates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
-        <dt>Business Impact:</dt>
-        <dd><select ng-model="formSaveService.businessImpact" ng-options="c for c in config.businessImpacts" class="form-control" uib-popover="What would be the impact to the business if this service (as a whole) was unavailable." popover-trigger="mouseenter"></select></dd>
-        <dt>PII Usage:</dt>
-        <dd><select ng-model="formSaveService.piiUsage" ng-options="c for c in config.piiUsages" class="form-control" uib-popover="Does the service interact with any Personally Identifiable Information (PII) and if so how." popover-trigger="mouseenter"></select></dd>
-        <dt>Git Path:</dt>
-        <dd>
-            <div class="input-group">
-                <div class="input-group-addon">{{team.teamAbbr}} / </div>
-                <input ng-model="formSaveService.gitPath" type="text" class="form-control">
-                <div class="input-group-addon">.git</div>
-            </div>
-        </dd>
-        <dt>Maven Group Id:</dt>
-        <dd><input ng-model="formSaveService.mavenGroupId" type="text" class="form-control"></dd>
-        <dt>Maven Artifact Id:</dt>
-        <dd><input ng-model="formSaveService.mavenArtifactId" type="text" class="form-control"></dd>
-        <dt>Artifact Type:</dt>
-        <dd><select ng-model="formSaveService.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
-        <dt>Artifact Suffix:</dt>
-        <dd><input ng-model="formSaveService.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
-        <dt>Version Url:</dt>
-        <dd><input ng-model="formSaveService.versionUrl" type="text" class="form-control"></dd>
-        <dt>Availability Url:</dt>
-        <dd><input ng-model="formSaveService.availabilityUrl" type="text" class="form-control"></dd>
-        <dt>Run As User:</dt>
-        <dd><input ng-model="formSaveService.runAs" type="text" class="form-control"></dd>
-        <dt>Start Cmd Line:</dt>
-        <dd><input ng-model="formSaveService.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-        <dt>Stop Cmd Line:</dt>
-        <dd><input ng-model="formSaveService.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-        <dt>Cmd Line Time Out:</dt>
-        <dd><input ng-model="formSaveService.cmdLineTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
     </dl>
 </div>
 <div class="modal-footer">

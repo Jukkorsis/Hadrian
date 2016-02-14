@@ -76,6 +76,9 @@ public class EmailWorkItemSender implements WorkItemSender {
             case Const.TYPE_SERVICE:
                 sendServiceEmail(workItem);
                 break;
+            case Const.TYPE_MODULE:
+                sendModuleEmail(workItem);
+                break;
             case Const.TYPE_HOST:
                 sendHostEmail(workItem);
                 break;
@@ -102,6 +105,20 @@ public class EmailWorkItemSender implements WorkItemSender {
         emailWorkItem(subject, body.toString());
     }
 
+    protected void sendModuleEmail(WorkItem workItem) {
+        logger.info("Processing Module {} on {} with opertion {}", workItem.getModule().moduleName, workItem.getService().serviceName, workItem.getOperation());
+
+        String subject = workItem.getOperation() + " module " + workItem.getModule().moduleName;
+
+        StringBuffer body = new StringBuffer();
+        addEmailHeader(workItem, body);
+        body.append("\n");
+        addLine("Module Name", workItem.getModule().moduleName, body);
+        addLine("Module Type", workItem.getModule().moduleType, body);
+
+        emailWorkItem(subject, body.toString());
+    }
+
     protected void sendHostEmail(WorkItem workItem) {
         logger.info("Processing Host {} on {} with opertion {}", workItem.getHost().hostName, workItem.getService().serviceName, workItem.getOperation());
 
@@ -116,17 +133,6 @@ public class EmailWorkItemSender implements WorkItemSender {
         addLine("Environment", workItem.getHost().env, body);
         addLine("Size", workItem.getHost().size, body);
         addLine("Version", workItem.getHost().version, body);
-        body.append("\n");
-        addLine("GIT Path", gitPathUrl.replace(Const.GIT_PATH_URL_PATTERN, workItem.getService().gitPath), body);
-        addLine("Maven Group", workItem.getService().mavenGroupId, body);
-        addLine("Maven Artifact ID", workItem.getService().mavenArtifactId, body);
-        addLine("Artifact Type", workItem.getService().artifactType, body);
-        addLine("Artifact Suffix", workItem.getService().artifactSuffix, body);
-        addLine("Run As", workItem.getService().runAs, body);
-        addLine("Start Command", workItem.getService().startCmdLine, body);
-        addLine("Stop Command", workItem.getService().stopCmdLine, body);
-        addLine("Version Url", workItem.getService().versionUrl.replace(Const.HOST, workItem.getHost().hostName), body);
-        addLine("Availability Url", workItem.getService().availabilityUrl.replace(Const.HOST, workItem.getHost().hostName), body);
 
         emailWorkItem(subject, body.toString());
     }
@@ -146,7 +152,6 @@ public class EmailWorkItemSender implements WorkItemSender {
         addLine("Protocol", workItem.getVip().protocol, body);
         addLine("VIP Port", Integer.toString(workItem.getVip().vipPort), body);
         addLine("Service Port", Integer.toString(workItem.getVip().servicePort), body);
-        addLine("Availability Url", workItem.getService().availabilityUrl, body);
 
         emailWorkItem(subject, body.toString());
     }
@@ -184,7 +189,7 @@ public class EmailWorkItemSender implements WorkItemSender {
         addLine("Type", workItem.getType(), body);
         addLine("Operation", workItem.getOperation(), body);
         addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
-        addLine("Team", workItem.getTeam().teamAbbr, workItem.getTeam().teamName, body);
+        addLine("Team", workItem.getTeam().teamName, body);
         body.append("\n");
         addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
     }

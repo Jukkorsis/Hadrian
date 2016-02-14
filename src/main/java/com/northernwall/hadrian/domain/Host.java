@@ -26,6 +26,7 @@ public class Host implements Comparable<Host> {
     private String hostId;
     private String hostName;
     private String serviceId;
+    private String moduleId;
     private String status;
     private String dataCenter;
     private String network;
@@ -43,11 +44,12 @@ public class Host implements Comparable<Host> {
         this.size = null;
     }
 
-    public Host(String hostName, String serviceId, String status, String dataCenter, String network, String env, String size) {
+    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String network, String env, String size) {
         this.hostId = UUID.randomUUID().toString();
         this.hostName = hostName;
         this.serviceId = serviceId;
         this.status = status;
+        this.moduleId = moduleId;
         this.dataCenter = dataCenter;
         this.network = network;
         this.env = env;
@@ -84,6 +86,14 @@ public class Host implements Comparable<Host> {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
     }
 
     public String getDataCenter() {

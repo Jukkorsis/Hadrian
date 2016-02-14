@@ -24,7 +24,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $location.path('/ui/#/tree', true);
+                $scope.my_tree_handler(tree.get_selected_branch());
             }, function () {
             });
         };
@@ -41,7 +41,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $location.path('/ui/#/tree', true);
+                $scope.my_tree_handler(tree.get_selected_branch());
             }, function () {
             });
         };
@@ -61,7 +61,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $location.path('/ui/#/tree', true);
+                $scope.my_tree_handler(tree.get_selected_branch());
             }, function () {
             });
         };
@@ -69,10 +69,11 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
         $scope.removeUserFromTeam = function (username) {
             var responsePromise = $http.delete("/v1/team/" + $scope.team.teamId + "/" + username, {}, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+                $scope.my_tree_handler(tree.get_selected_branch());
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to create new team has failed!");
+                $scope.my_tree_handler(tree.get_selected_branch());
             });
         };
     }]);
@@ -83,6 +84,7 @@ soaRepControllers.controller('ModalUpdateTeamCtrl',
             $scope.formUpdateTeam.name = team.teamName;
             $scope.formUpdateTeam.email = team.teamEmail;
             $scope.formUpdateTeam.irc = team.teamIrc;
+            $scope.formUpdateTeam.gitRepo = team.gitRepo;
             $scope.formUpdateTeam.calendarId = team.calendarId;
 
             $scope.save = function () {
@@ -90,10 +92,11 @@ soaRepControllers.controller('ModalUpdateTeamCtrl',
                     teamName: $scope.formUpdateTeam.name,
                     teamEmail: $scope.formUpdateTeam.email,
                     teamIrc: $scope.formUpdateTeam.irc,
+                    gitRepo: $scope.formUpdateTeam.gitRepo,
                     calendarId: $scope.formUpdateTeam.calendarId
                 };
 
-                var responsePromise = $http.put("/v1/team/" + tesm.teamId, dataObject, {});
+                var responsePromise = $http.put("/v1/team/" + team.teamId, dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();
@@ -120,41 +123,13 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.serviceAbbr = "";
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
-            $scope.formSaveService.template = $scope.config.templates[0];
-            $scope.formSaveService.businessImpact = $scope.config.businessImpacts[0];
-            $scope.formSaveService.piiUsage = $scope.config.piiUsages[0];
-            $scope.formSaveService.gitPath = "";
-            $scope.formSaveService.mavenGroupId = "";
-            $scope.formSaveService.mavenArtifactId = "";
-            $scope.formSaveService.artifactType = $scope.config.artifactTypes[0];
-            $scope.formSaveService.artifactSuffix = "";
-            $scope.formSaveService.versionUrl = $scope.config.versionUrl;
-            $scope.formSaveService.availabilityUrl = $scope.config.availabilityUrl;
-            $scope.formSaveService.runAs = "";
-            $scope.formSaveService.startCmdLine = $scope.config.startCmd;
-            $scope.formSaveService.stopCmdLine = $scope.config.stopCmd;
-            $scope.formSaveService.cmdLineTimeOut = 60;
 
             $scope.save = function () {
                 var dataObject = {
                     serviceAbbr: $scope.formSaveService.serviceAbbr,
                     serviceName: $scope.formSaveService.serviceName,
                     teamId: $scope.team.teamId,
-                    description: $scope.formSaveService.description,
-                    template: $scope.formSaveService.template,
-                    businessImpact: $scope.formSaveService.businessImpact,
-                    piiUsage: $scope.formSaveService.piiUsage,
-                    gitPath: $scope.formSaveService.gitPath,
-                    mavenGroupId: $scope.formSaveService.mavenGroupId,
-                    mavenArtifactId: $scope.formSaveService.mavenArtifactId,
-                    artifactType: $scope.formSaveService.artifactType,
-                    artifactSuffix: $scope.formSaveService.artifactSuffix,
-                    versionUrl: $scope.formSaveService.versionUrl,
-                    availabilityUrl: $scope.formSaveService.availabilityUrl,
-                    runAs: $scope.formSaveService.runAs,
-                    startCmdLine: $scope.formSaveService.startCmdLine,
-                    stopCmdLine: $scope.formSaveService.stopCmdLine,
-                    cmdLineTimeOut: $scope.formSaveService.cmdLineTimeOut
+                    description: $scope.formSaveService.description
                 };
 
                 var responsePromise = $http.post("/v1/service/service", dataObject, {});

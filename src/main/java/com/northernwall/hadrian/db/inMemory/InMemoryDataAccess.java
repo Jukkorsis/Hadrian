@@ -23,6 +23,7 @@ import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -50,6 +51,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final List<ServiceRef> serviceRefs;
     private final List<VipRef> vipRefs;
     private final Map<String, CustomFunction> customFunctions;
+    private final Map<String, Module> modules;
     private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
     private final Map<String, User> users;
@@ -63,6 +65,7 @@ public class InMemoryDataAccess implements DataAccess {
         serviceRefs = new LinkedList<>();
         vipRefs = new LinkedList<>();
         customFunctions = new ConcurrentHashMap<>();
+        modules = new ConcurrentHashMap<>();
         dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
@@ -336,6 +339,38 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteCustomFunction(String serviceId, String customFunctionId) {
         customFunctions.remove(customFunctionId);
+    }
+    
+    @Override
+    public List<Module> getModules(String serviceId) {
+        List<Module> temp = new LinkedList<>();
+        for (Module module : modules.values()) {
+            if (module.getServiceId().equals(serviceId)) {
+                temp.add(module);
+            }
+        }
+        Collections.sort(temp);
+        return temp;
+    }
+
+    @Override
+    public Module getModule(String serviceId, String moduleId) {
+        return modules.get(moduleId);
+    }
+
+    @Override
+    public void saveModule(Module module) {
+        modules.put(module.getModuleId(), module);
+    }
+    
+    @Override
+    public void updateModule(Module module) {
+        modules.put(module.getModuleId(), module);
+    }
+    
+    @Override
+    public void deleteModule(String serviceId, String moduleId) {
+        modules.remove(moduleId);
     }
     
     @Override

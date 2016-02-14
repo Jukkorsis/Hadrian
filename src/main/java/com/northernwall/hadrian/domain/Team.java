@@ -26,19 +26,19 @@ import java.util.UUID;
  */
 public class Team implements Comparable<Team> {
     private String teamId;
-    private String teamAbbr;
     private String teamName;
     private String teamEmail;
     private String teamIrc;
+    private String gitRepo;
     private String calendarId;
     private List<String> usernames;
 
-    public Team(String teamAbbr, String teamName, String teamEmail, String teamIrc, String calendarId) {
+    public Team(String teamName, String teamEmail, String teamIrc, String gitRepo, String calendarId) {
         this.teamId = UUID.randomUUID().toString();
-        this.teamAbbr = teamAbbr;
         this.teamName = teamName;
         this.teamEmail = teamEmail;
         this.teamIrc = teamIrc;
+        this.gitRepo = gitRepo;
         this.calendarId = calendarId;
         this.usernames = new LinkedList<>();
     }
@@ -49,14 +49,6 @@ public class Team implements Comparable<Team> {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
-    }
-
-    public String getTeamAbbr() {
-        return teamAbbr;
-    }
-
-    public void setTeamAbbr(String teamAbbr) {
-        this.teamAbbr = teamAbbr;
     }
 
     public String getTeamName() {
@@ -81,6 +73,14 @@ public class Team implements Comparable<Team> {
 
     public void setTeamIrc(String teamIrc) {
         this.teamIrc = teamIrc;
+    }
+
+    public String getGitRepo() {
+        return gitRepo;
+    }
+
+    public void setGitRepo(String gitRepo) {
+        this.gitRepo = gitRepo;
     }
 
     public String getCalendarId() {

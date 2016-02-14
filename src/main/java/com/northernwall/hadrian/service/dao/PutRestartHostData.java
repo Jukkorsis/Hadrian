@@ -16,13 +16,17 @@
 
 package com.northernwall.hadrian.service.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Richard Thurston
  */
-public class PutServiceData {
-    public String serviceAbbr;
-    public String serviceName;
-    public String description;
+public class PutRestartHostData {
+    public String serviceId;
+    public Map<String, String> hosts = new HashMap<>();
+    public String network;
+    public String moduleId;
 
 }

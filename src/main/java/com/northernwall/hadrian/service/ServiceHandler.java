@@ -25,12 +25,14 @@ import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
@@ -40,6 +42,7 @@ import com.northernwall.hadrian.service.dao.GetAuditData;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetHostData;
+import com.northernwall.hadrian.service.dao.GetModuleData;
 import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
 import com.northernwall.hadrian.service.dao.GetServiceRefData;
@@ -86,16 +89,18 @@ public class ServiceHandler extends AbstractHandler {
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
+    private final Config config;
     private final MavenHelper mavenHelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService executorService;
     private final DateFormat format;
 
-    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, MavenHelper mavenHelper, InfoHelper infoHelper) {
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, Config config, MavenHelper mavenHelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
+        this.config = config;
         this.mavenHelper = mavenHelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
@@ -202,7 +207,14 @@ public class ServiceHandler extends AbstractHandler {
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         List<Future> futures = new LinkedList<>();
-        futures.add(executorService.submit(new ReadMavenVersionsRunnable(getServiceData, mavenHelper)));
+
+        List<Module> modules = dataAccess.getModules(id);
+        Collections.sort(modules);
+        for (Module module : modules) {
+            GetModuleData getModuleData = GetModuleData.create(module, config);
+            futures.add(executorService.submit(new ReadMavenVersionsRunnable(getModuleData, mavenHelper)));
+            getServiceData.modules.add(getModuleData);
+        }
 
         List<Vip> vips = dataAccess.getVips(id);
         Collections.sort(vips);
@@ -214,19 +226,27 @@ public class ServiceHandler extends AbstractHandler {
         List<Host> hosts = dataAccess.getHosts(id);
         Collections.sort(hosts);
         for (Host host : hosts) {
-            GetHostData getHostData = GetHostData.create(host);
-            futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getServiceData, infoHelper)));
-            futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getServiceData, infoHelper)));
-            for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
-                GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
-                for (GetVipData vip : getServiceData.vips) {
-                    if (vip.vipId.equals(getVipRefData.vipId)) {
-                        getVipRefData.vipName = vip.vipName;
-                    }
+            GetModuleData getModuleData = null;
+            for (GetModuleData temp : getServiceData.modules) {
+                if (host.getModuleId().equals(temp.moduleId)) {
+                    getModuleData = temp;
                 }
-                getHostData.vipRefs.add(getVipRefData);
             }
-            getServiceData.hosts.add(getHostData);
+            if (getModuleData != null) {
+                GetHostData getHostData = GetHostData.create(host);
+                futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
+                futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
+                for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
+                    GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
+                    for (GetVipData vip : getServiceData.vips) {
+                        if (vip.vipId.equals(getVipRefData.vipId)) {
+                            getVipRefData.vipName = vip.vipName;
+                        }
+                    }
+                    getHostData.vipRefs.add(getVipRefData);
+                }
+                getModuleData.addHost(getHostData);
+            }
         }
 
         List<DataStore> dataStores = dataAccess.getDataStores(id);
@@ -317,8 +337,7 @@ public class ServiceHandler extends AbstractHandler {
             startDate = format.parse(start);
         } catch (ParseException ex) {
             Calendar now = Calendar.getInstance();
-            now.add(Calendar.YEAR, -2);
-            now.add(Calendar.DATE, -1);
+            now.add(Calendar.DATE, -15);
             startDate = now.getTime();
         }
         Date endDate = null;
@@ -330,6 +349,7 @@ public class ServiceHandler extends AbstractHandler {
             endDate = now.getTime();
         }
         auditData.audits = dataAccess.getAudit(id, startDate, endDate);
+        Collections.sort(auditData.audits);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(auditData, GetAuditData.class, jw);
@@ -354,24 +374,11 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.serviceAbbr,
                 postServiceData.serviceName,
                 postServiceData.teamId,
-                postServiceData.description,
-                postServiceData.businessImpact,
-                postServiceData.piiUsage,
-                postServiceData.runAs,
-                team.getTeamAbbr() + "/" + postServiceData.gitPath,
-                postServiceData.mavenGroupId,
-                postServiceData.mavenArtifactId,
-                postServiceData.artifactType,
-                postServiceData.artifactSuffix,
-                postServiceData.versionUrl,
-                postServiceData.availabilityUrl,
-                postServiceData.startCmdLine,
-                postServiceData.stopCmdLine,
-                postServiceData.cmdLineTimeOut);
+                postServiceData.description);
 
         dataAccess.saveService(service);
-        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null);
-        workItem.getService().template = postServiceData.template;
+        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null, null);
+        //workItem.getService().template = postServiceData.template;
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -387,18 +394,6 @@ public class ServiceHandler extends AbstractHandler {
         service.setServiceAbbr(putServiceData.serviceAbbr);
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
-        service.setBusinessImpact(putServiceData.businessImpact);
-        service.setPiiUsage(putServiceData.piiUsage);
-        service.setRunAs(putServiceData.runAs);
-        service.setMavenGroupId(putServiceData.mavenGroupId);
-        service.setMavenArtifactId(putServiceData.mavenArtifactId);
-        service.setArtifactType(putServiceData.artifactType);
-        service.setArtifactSuffix(putServiceData.artifactSuffix);
-        service.setVersionUrl(putServiceData.versionUrl);
-        service.setAvailabilityUrl(putServiceData.availabilityUrl);
-        service.setStartCmdLine(putServiceData.startCmdLine);
-        service.setStopCmdLine(putServiceData.stopCmdLine);
-        service.setCmdLineTimeOut(putServiceData.cmdLineTimeOut);
 
         dataAccess.updateService(service);
     }

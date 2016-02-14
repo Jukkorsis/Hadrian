@@ -76,18 +76,23 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         logger.info("Keyspace created");
         
         session = cluster.connect();
+        //Data tables
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".workItem (id text, data text, PRIMARY KEY (id));");
+        //Data tables below Service
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        //Ref tables
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefServer (serverServiceId text, clientServiceId text, PRIMARY KEY (serverServiceId, clientServiceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".workItem (id text, data text, PRIMARY KEY (id));");
+        //Audit table
         session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".audit (serviceId text, time timeuuid, data text, output text, PRIMARY KEY (serviceId, time));");
         logger.info("Tables created");
 

@@ -22,17 +22,6 @@ public class ServiceData {
     public String serviceAbbr;
     public String serviceName;
     public String teamId;
-    public String template;
-    public String gitPath;
-    public String mavenGroupId;
-    public String mavenArtifactId;
-    public String artifactType;
-    public String artifactSuffix;
-    public String versionUrl;
-    public String availabilityUrl;
-    public String runAs;
-    public String startCmdLine;
-    public String stopCmdLine;
 
     public static ServiceData create(Service service) {
         if (service == null) {
@@ -43,16 +32,6 @@ public class ServiceData {
         temp.serviceAbbr = service.getServiceAbbr();
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
-        temp.runAs = service.getRunAs();
-        temp.gitPath = service.getGitPath();
-        temp.mavenGroupId = service.getMavenGroupId();
-        temp.mavenArtifactId = service.getMavenArtifactId();
-        temp.artifactType = service.getArtifactType();
-        temp.artifactSuffix = service.getArtifactSuffix();
-        temp.versionUrl = service.getVersionUrl();
-        temp.availabilityUrl = service.getAvailabilityUrl();
-        temp.startCmdLine = service.getStartCmdLine();
-        temp.stopCmdLine = service.getStopCmdLine();
         return temp;
     }
 

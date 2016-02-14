@@ -31,10 +31,6 @@ soaRepApp.config(['$routeProvider',
                     templateUrl: 'partials/graph.html',
                     controller: 'GraphCtrl'
                 }).
-                when('/Proxy', {
-                    templateUrl: 'partials/proxy.html',
-                    controller: 'ProxyCtrl'
-                }).
                 when('/Parameters', {
                     templateUrl: 'partials/parameters.html',
                     controller: 'ParametersCtrl'

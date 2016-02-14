@@ -1,25 +1,25 @@
 package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.service.dao.GetHostData;
-import com.northernwall.hadrian.service.dao.GetServiceData;
+import com.northernwall.hadrian.service.dao.GetModuleData;
 import java.io.IOException;
 
 public class ReadVersionRunnable implements Runnable {
 
     private final InfoHelper infoHelper;
     private final GetHostData getHostData;
-    private final GetServiceData getServiceData;
+    private final GetModuleData getModuleData;
 
-    public ReadVersionRunnable(GetHostData getHostData, GetServiceData getServiceData, InfoHelper infoHelper) {
+    public ReadVersionRunnable(GetHostData getHostData, GetModuleData getModuleData, InfoHelper infoHelper) {
         this.infoHelper = infoHelper;
         this.getHostData = getHostData;
-        this.getServiceData = getServiceData;
+        this.getModuleData = getModuleData;
     }
 
     @Override
     public void run() {
         try {
-            getHostData.version = infoHelper.readVersion(getHostData.hostName, getServiceData.versionUrl);
+            getHostData.version = infoHelper.readVersion(getHostData.hostName, getModuleData.versionUrl);
         } catch (IOException ex) {
         }
     }
