@@ -54,7 +54,7 @@ public class WorkItem {
         this.requestDate = new Date();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
-        this.module = ModuleData.create(team, module);
+        this.module = ModuleData.create(module);
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
         this.newVip = VipData.create(newVip);

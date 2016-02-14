@@ -29,7 +29,7 @@ import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailWorkItemSender implements WorkItemSender {
+public class EmailWorkItemSender extends WorkItemSender {
 
     private final static Logger logger = LoggerFactory.getLogger(EmailWorkItemSender.class);
 
@@ -40,9 +40,9 @@ public class EmailWorkItemSender implements WorkItemSender {
     private final String smtpPassword;
     private final List<String> emailTos;
     private final String emailFrom;
-    protected final String gitPathUrl;
 
     public EmailWorkItemSender(Parameters parameters, MetricRegistry metricRegistry) {
+        super(parameters);
         smtpHostname = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_HOSTNAME, null);
         smtpPort = parameters.getInt(Const.EMAIL_WORK_ITEM_SMTP_POST, Const.EMAIL_WORK_ITEM_SMTP_POST_DEFAULT);
         smtpSsl = parameters.getBoolean(Const.EMAIL_WORK_ITEM_SMTP_SSL, Const.EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT);
@@ -67,7 +67,6 @@ public class EmailWorkItemSender implements WorkItemSender {
             fromDefault = emailTos.get(0);
         }
         emailFrom = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_From, fromDefault);
-        gitPathUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
     }
 
     @Override
@@ -115,10 +114,17 @@ public class EmailWorkItemSender implements WorkItemSender {
         body.append("\n");
         addLine("Module Name", workItem.getModule().moduleName, body);
         addLine("Module Type", workItem.getModule().moduleType, body);
+        body.append("\n");
+        addLine("Git URL", getGitUrl(workItem), body);
+        addLine("Git Folder", workItem.getModule().gitFolder, body);
+        addLine("Maven Group", workItem.getModule().mavenGroupId, body);
+        addLine("Maven Artifact ID", workItem.getModule().mavenArtifactId, body);
+        addLine("Artifact Type", workItem.getModule().artifactType, body);
+        addLine("Artifact Suffix", workItem.getModule().artifactSuffix, body);
 
         emailWorkItem(subject, body.toString());
     }
-
+    
     protected void sendHostEmail(WorkItem workItem) {
         logger.info("Processing Host {} on {} with opertion {}", workItem.getHost().hostName, workItem.getService().serviceName, workItem.getOperation());
 

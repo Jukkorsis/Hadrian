@@ -25,7 +25,7 @@ public class NoopWorkItemSenderFactory implements WorkItemSenderFactory {
 
     @Override
     public WorkItemSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
-        return new NoopWorkItemSender();
+        return new NoopWorkItemSender(parameters);
     }
 
 }

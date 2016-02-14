@@ -16,14 +16,12 @@
 package com.northernwall.hadrian.workItem.dao;
 
 import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.Team;
 
 public class ModuleData {
     public String moduleId;
     public String moduleName;
     public String moduleType;
     public String template;
-    public String gitRepo;
     public String gitPath;
     public String gitFolder;
     public String mavenGroupId;
@@ -31,7 +29,7 @@ public class ModuleData {
     public String artifactType;
     public String artifactSuffix;
 
-    public static ModuleData create(Team team, Module module) {
+    public static ModuleData create(Module module) {
         if (module == null) {
             return null;
         }
@@ -39,7 +37,6 @@ public class ModuleData {
         temp.moduleId = module.getModuleId();
         temp.moduleName = module.getModuleName();
         temp.moduleType = module.getModuleType();
-        temp.gitRepo = team.getGitRepo();
         temp.gitPath = module.getGitPath();
         temp.gitFolder = module.getGitFolder();
         temp.mavenGroupId = module.getMavenGroupId();

@@ -16,13 +16,10 @@
 package com.northernwall.hadrian.workItem.simple;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.codahale.metrics.Timer.Context;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -36,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class SimpleWorkItemSender implements WorkItemSender {
+public class SimpleWorkItemSender extends WorkItemSender {
     private final static Logger logger = LoggerFactory.getLogger(SimpleWorkItemSender.class);
 
     private final String url;
@@ -45,6 +42,7 @@ public class SimpleWorkItemSender implements WorkItemSender {
     private final OkHttpClient client;
 
     public SimpleWorkItemSender(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+        super(parameters);
         this.client = client;
         gson = new Gson();
 

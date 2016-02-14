@@ -15,15 +15,30 @@
  */
 package com.northernwall.hadrian.workItem;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.IOException;
 
 /**
  *
  * @author Richard Thurston
  */
-public interface WorkItemSender {
+public abstract class WorkItemSender {
 
-    boolean sendWorkItem(WorkItem workItem) throws IOException;
+    private final Parameters parameters;
+
+    public WorkItemSender(Parameters parameters) {
+        this.parameters = parameters;
+    }
+
+    public abstract boolean sendWorkItem(WorkItem workItem) throws IOException;
+
+    protected String getGitUrl(WorkItem workItem) {
+        String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
+        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_REPO, workItem.getTeam().gitRepo);
+        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_REPO, workItem.getModule().gitPath);
+        return gitUrl;
+    }
 
 }
