@@ -16,15 +16,15 @@ public class Audit implements Comparable<Audit> {
 
     @Override
     public int compareTo(Audit o) {
-        int result = timePerformed.compareTo(o.timePerformed);
+        int result = o.timePerformed.compareTo(timePerformed);
         if (result != 0) {
             return result;
         }
-        result = timeRequested.compareTo(o.timeRequested);
+        result = o.timeRequested.compareTo(timeRequested);
         if (result != 0) {
             return result;
         }
-        return serviceId.compareTo(o.serviceId);
+        return o.serviceId.compareTo(serviceId);
     }
 
 }

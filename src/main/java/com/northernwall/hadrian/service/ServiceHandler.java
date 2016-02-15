@@ -219,8 +219,16 @@ public class ServiceHandler extends AbstractHandler {
         List<Vip> vips = dataAccess.getVips(id);
         Collections.sort(vips);
         for (Vip vip : vips) {
-            GetVipData getVipData = GetVipData.create(vip);
-            getServiceData.vips.add(getVipData);
+            GetModuleData getModuleData = null;
+            for (GetModuleData temp : getServiceData.modules) {
+                if (vip.getModuleId().equals(temp.moduleId)) {
+                    getModuleData = temp;
+                }
+            }
+            if (getModuleData != null) {
+                GetVipData getVipData = GetVipData.create(vip);
+                getModuleData.addVip(getVipData);
+            }
         }
 
         List<Host> hosts = dataAccess.getHosts(id);
@@ -238,7 +246,7 @@ public class ServiceHandler extends AbstractHandler {
                 futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
                 for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
                     GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
-                    for (GetVipData vip : getServiceData.vips) {
+                    for (GetVipData vip : getModuleData.getVips(host.getNetwork())) {
                         if (vip.vipId.equals(getVipRefData.vipId)) {
                             getVipRefData.vipName = vip.vipName;
                         }

@@ -5,15 +5,15 @@
     <table class="table table-hover  table-condensed">
         <tr>
             <th></th>
-            <th>VIP-</th>
+            <th>VIP</th>
             <th>DNS</th>
             <th>Network</th>
         </tr>
-        <tr ng-repeat="ep in service.vips">
-            <td><input ng-model="formSelectVip[ep.vipId]" type="checkbox"></td>
-            <td>{{ep.vipName}}</td>
-            <td>{{ep.dns}}</td>
-            <td>{{ep.network}}</td>
+        <tr ng-repeat="v in moduleNetwork.vips">
+            <td><input ng-model="formSelectVip[v.vipId]" type="checkbox"></td>
+            <td>{{v.vipName}}</td>
+            <td>{{v.dns}}</td>
+            <td>{{v.network}}</td>
         </tr>
     </table>
 </div>

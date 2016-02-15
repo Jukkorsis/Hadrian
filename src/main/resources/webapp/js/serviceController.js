@@ -10,8 +10,6 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.hostSortReverse = false;
         $scope.hostFilter = '';
 
-        $scope.auditSortType = 'timePerformed';
-        $scope.auditSortReverse = false;
         $scope.auditFilter = '';
 
         $scope.formSelectHost = {};
@@ -91,7 +89,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
         };
 
-        $scope.openAddVipModal = function () {
+        $scope.openAddVipModal = function (network, module) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addVip.html',
@@ -99,6 +97,12 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    network: function () {
+                        return network;
+                    },
+                    module: function () {
+                        return module;
                     }
                 }
             });
@@ -217,7 +221,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
         };
 
-        $scope.openAddHostToVipModal = function () {
+        $scope.openAddHostToVipModal = function (moduleNetwork) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addHostToVip.html',
@@ -225,6 +229,9 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    moduleNetwork: function () {
+                        return moduleNetwork;
                     },
                     hosts: function () {
                         return $scope.formSelectHost;
@@ -315,10 +322,10 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 $scope.my_tree_handler(tree.get_selected_branch());
             });
         };
-        
+
         $scope.search = {};
         $scope.searchAudit = function () {
-            var responsePromise = $http.get("/v1/service/" + $scope.service.serviceId + "/audit?start="+$scope.search.start+"&end="+$scope.search.end, {});
+            var responsePromise = $http.get("/v1/service/" + $scope.service.serviceId + "/audit?start=" + $scope.search.start + "&end=" + $scope.search.end, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.audits = dataFromServer.audits;
             });
@@ -454,9 +461,11 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
         });
     }]);
 
-soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service',
-    function ($scope, $http, $modalInstance, $route, Config, service) {
+soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
         $scope.service = service;
+        $scope.network = network;
+        $scope.module = module;
         Config.get({}, function (config) {
             $scope.config = config;
 
@@ -465,7 +474,6 @@ soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInsta
             $scope.formSaveVip.dns = "";
             $scope.formSaveVip.domain = $scope.config.domains[0];
             $scope.formSaveVip.external = false;
-            $scope.formSaveVip.network = $scope.config.networks[0];
             $scope.formSaveVip.protocol = $scope.config.protocols[0];
             $scope.formSaveVip.vipPort = 80;
             $scope.formSaveVip.servicePort = 8080;
@@ -474,10 +482,11 @@ soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInsta
                 var dataObject = {
                     vipName: $scope.formSaveVip.vipName,
                     serviceId: $scope.service.serviceId,
+                    moduleId: $scope.module.moduleId,
                     dns: $scope.formSaveVip.dns,
                     domain: $scope.formSaveVip.domain,
                     external: $scope.formSaveVip.external,
-                    network: $scope.formSaveVip.network,
+                    network: $scope.network,
                     protocol: $scope.formSaveVip.protocol,
                     vipPort: $scope.formSaveVip.vipPort,
                     servicePort: $scope.formSaveVip.servicePort
@@ -609,34 +618,36 @@ soaRepControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$mo
         };
     }]);
 
-soaRepControllers.controller('ModalAddHostToVipCtrl',
-        function ($scope, $http, $modalInstance, $route, service, hosts) {
-            $scope.service = service;
-            $scope.hosts = hosts;
+soaRepControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hosts',
+    function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hosts) {
+        $scope.service = service;
+        $scope.moduleNetwork = moduleNetwork;
+        $scope.hosts = hosts;
 
-            $scope.formSelectVip = {};
+        $scope.formSelectVip = {};
 
-            $scope.save = function () {
-                var dataObject = {
-                    serviceId: $scope.service.serviceId,
-                    vips: $scope.formSelectVip,
-                    hosts: $scope.hosts
-                };
-
-                var responsePromise = $http.post("/v1/host/vips", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update hosts has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                vips: $scope.formSelectVip,
+                hosts: $scope.hosts
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.post("/v1/host/vips", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update hosts has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }
+]);
 
 soaRepControllers.controller('ModalAddCustomFunctionCtrl',
         function ($scope, $http, $modalInstance, $route, service) {

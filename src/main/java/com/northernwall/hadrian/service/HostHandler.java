@@ -463,6 +463,7 @@ public class HostHandler extends AbstractHandler {
         Team team = dataAccess.getTeam(service.getTeamId());
         List<Host> hosts = dataAccess.getHosts(data.serviceId);
         List<Vip> vips = dataAccess.getVips(data.serviceId);
+        Module module = null;
         for (Map.Entry<String, String> entry : data.hosts.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 boolean found = false;
@@ -476,8 +477,15 @@ public class HostHandler extends AbstractHandler {
                                     if (entry2.getKey().equals(vip.getVipId())) {
                                         found2 = true;
                                         if (host.getNetwork().equals(vip.getNetwork())) {
+                                            if (module == null || host.getModuleId().equals(module.getModuleId())) {
+                                                for (Module temp : dataAccess.getModules(host.getServiceId())) {
+                                                    if (temp.getModuleId().equals(host.getModuleId())) {
+                                                        module = temp;
+                                                    }
+                                                }
+                                            }
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, null, host, vip, null);
+                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, module, host, vip, null);
                                             dataAccess.saveWorkItem(workItem);
                                             workItemProcess.sendWorkItem(workItem);
                                         } else {

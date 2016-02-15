@@ -20,11 +20,13 @@ import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.service.dao.PostVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutVipData;
 import java.io.IOException;
@@ -105,9 +107,9 @@ public class VipHandler extends AbstractHandler {
     }
 
     private void createVip(Request request) throws IOException {
-        Vip vip = Util.fromJson(request, Vip.class);
+        PostVipData postVipData = Util.fromJson(request, PostVipData.class);
 
-        Service service = dataAccess.getService(vip.getServiceId());
+        Service service = dataAccess.getService(postVipData.serviceId);
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
@@ -115,22 +117,44 @@ public class VipHandler extends AbstractHandler {
         Team team = dataAccess.getTeam(service.getTeamId());
 
         //Check for duplicate VIP
-        List<Vip> vips = dataAccess.getVips(vip.getServiceId());
+        List<Vip> vips = dataAccess.getVips(postVipData.serviceId);
         for (Vip temp : vips) {
-            if (temp.getVipName().equals(vip.getVipName())) {
+            if (temp.getVipName().equals(postVipData.vipName)) {
                 return;
             }
-            if (temp.getDns().equals(vip.getDns())
-                    && temp.getDomain().equals(vip.getDomain())
-                    && temp.getVipPort() == vip.getVipPort()) {
+            if (temp.getDns().equals(postVipData.dns)
+                    && temp.getDomain().equals(postVipData.domain)
+                    && temp.getVipPort() == postVipData.vipPort) {
                 return;
             }
         }
 
-        vip.setStatus("Creating...");
+        List<Module> modules = dataAccess.getModules(postVipData.serviceId);
+        Module module = null;
+        for (Module temp : modules) {
+            if (temp.getModuleId().equals(postVipData.moduleId)) {
+                module = temp;
+            }
+        }
+        if (module == null) {
+            throw new RuntimeException("Unknown module");
+        }
+
+        Vip vip = new Vip(
+                postVipData.vipName, 
+                postVipData.serviceId, 
+                "Creating...", 
+                postVipData.moduleId, 
+                postVipData.dns, 
+                postVipData.domain, 
+                postVipData.external, 
+                postVipData.network, 
+                postVipData.protocol, 
+                postVipData.vipPort, 
+                postVipData.servicePort);
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, module, null, vip, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

@@ -14,7 +14,6 @@ public class GetServiceData {
     public String teamId;
     public String description;
     public Date creationDate;
-    public List<GetVipData> vips;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
     public List<GetCustomFunctionData> customFunctions;
@@ -31,7 +30,6 @@ public class GetServiceData {
         temp.teamId = service.getTeamId();
         temp.description = service.getDescription();
         temp.creationDate = service.getCreationDate();
-        temp.vips = new LinkedList<>();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
         temp.customFunctions = new LinkedList<>();

@@ -61,4 +61,22 @@ public class GetModuleData {
         }
     }
 
+    public void addVip(GetVipData vipData) {
+        for (GetModuleNetworkData getModuleNetworkData : networks) {
+            if (getModuleNetworkData.network.equals(vipData.network)) {
+                getModuleNetworkData.vips.add(vipData);
+                return;
+            }
+        }
+    }
+    
+    public List<GetVipData> getVips(String network) {
+        for (GetModuleNetworkData getModuleNetworkData : networks) {
+            if (getModuleNetworkData.network.equals(network)) {
+                return getModuleNetworkData.vips;
+            }
+        }
+        return new LinkedList<>();
+    }
+
 }
