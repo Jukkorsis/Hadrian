@@ -23,6 +23,7 @@ package com.northernwall.hadrian.service.dao;
 public class PostModuleData {
     public String moduleName;
     public String serviceId;
+    public int order;
     public String moduleType;
     public String gitPath;
     public String gitFolder;
@@ -35,8 +36,9 @@ public class PostModuleData {
     public String availabilityUrl;
     public String runAs;
     public String startCmdLine;
+    public int startTimeOut;
     public String stopCmdLine;
-    public int cmdLineTimeOut;
+    public int stopTimeOut;
     public String template;
 
 }

@@ -20,6 +20,7 @@ import com.northernwall.hadrian.domain.Module;
 public class ModuleData {
     public String moduleId;
     public String moduleName;
+    public int order;
     public String moduleType;
     public String template;
     public String gitPath;
@@ -28,6 +29,14 @@ public class ModuleData {
     public String mavenArtifactId;
     public String artifactType;
     public String artifactSuffix;
+    public String hostAbbr;
+    public String versionUrl;
+    public String availabilityUrl;
+    public String runAs;
+    public String startCmdLine;
+    public int startTimeOut;
+    public String stopCmdLine;
+    public int stopTimeOut;
 
     public static ModuleData create(Module module) {
         if (module == null) {
@@ -36,6 +45,7 @@ public class ModuleData {
         ModuleData temp = new ModuleData();
         temp.moduleId = module.getModuleId();
         temp.moduleName = module.getModuleName();
+        temp.order = module.getOrder();
         temp.moduleType = module.getModuleType();
         temp.gitPath = module.getGitPath();
         temp.gitFolder = module.getGitFolder();
@@ -43,6 +53,14 @@ public class ModuleData {
         temp.mavenArtifactId = module.getMavenArtifactId();
         temp.artifactType = module.getArtifactType();
         temp.artifactSuffix = module.getArtifactSuffix();
+        temp.hostAbbr = module.getHostAbbr();
+        temp.versionUrl = module.getVersionUrl();
+        temp.availabilityUrl = module.getAvailabilityUrl();
+        temp.runAs = module.getRunAs();
+        temp.startCmdLine = module.getStartCmdLine();
+        temp.startTimeOut = module.getStartTimeOut();
+        temp.stopCmdLine = module.getStopCmdLine();
+        temp.stopTimeOut = module.getStopTimeOut();
         return temp;
     }
 

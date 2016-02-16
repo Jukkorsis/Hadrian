@@ -239,6 +239,7 @@
                     <tr>
                         <th></th>
                         <th>Name</th>
+                        <th>order</th>
                         <th>Type</th>
                         <th>Git Path</th>
                         <th>Git Folder</th>
@@ -256,6 +257,7 @@
                             </span>
                             -->
                         </td>
+                        <td>{{m.order}}</td>
                         <td>{{m.moduleType}}</td>
                         <td>{{team.gitRepo}}/{{m.gitPath}}.git</td>
                         <td>{{m.gitFolder}}</td>
@@ -276,8 +278,8 @@
                                             <dd>{{m.hostAbbr}}</dd>
                                             <dt>Start Cmd Line</dt>
                                             <dd>{{m.startCmdLine}}</dd>
-                                            <dt>Cmd Line Timeout</dt>
-                                            <dd>{{m.cmdLineTimeOut}}</dd>
+                                            <dt>Start Timeout</dt>
+                                            <dd>{{m.startTimeOut}}</dd>
                                         </div>
                                     </dl>
                                 </div>
@@ -294,6 +296,8 @@
                                             <dd>{{m.runAs}}</dd>
                                             <dt>Stop Cmd Line</dt>
                                             <dd>{{m.stopCmdLine}}</dd>
+                                            <dt>Stop Timeout</dt>
+                                            <dd>{{m.stopTimeOut}}</dd>
                                         </div>
                                     </dl>
                                 </div>

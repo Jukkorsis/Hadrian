@@ -22,6 +22,8 @@ import com.northernwall.hadrian.workItem.dao.ServiceData;
 import com.northernwall.hadrian.workItem.dao.TeamData;
 import com.northernwall.hadrian.workItem.dao.VipData;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -40,6 +42,7 @@ public class WorkItem {
     private TeamData team;
     private ServiceData service;
     private ModuleData module;
+    private List<ModuleData> modules;
     private HostData host;
     private VipData vip;
     private VipData newVip;
@@ -55,6 +58,7 @@ public class WorkItem {
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
         this.module = ModuleData.create(module);
+        this.modules = new LinkedList<>();
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
         this.newVip = VipData.create(newVip);
@@ -138,6 +142,10 @@ public class WorkItem {
 
     public void setModule(ModuleData module) {
         this.module = module;
+    }
+
+    public void addModule(Module module) {
+        modules.add(ModuleData.create(module));
     }
 
     public HostData getHost() {

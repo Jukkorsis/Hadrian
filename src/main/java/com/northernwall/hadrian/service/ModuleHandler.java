@@ -33,6 +33,7 @@ import com.northernwall.hadrian.service.dao.PostModuleData;
 import com.northernwall.hadrian.service.dao.PutDeploySoftwareData;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -138,8 +139,9 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.availabilityUrl = "";
                 postModuleData.runAs = "";
                 postModuleData.startCmdLine = "";
+                postModuleData.startTimeOut = 0;
                 postModuleData.stopCmdLine = "";
-                postModuleData.cmdLineTimeOut = 0;
+                postModuleData.stopTimeOut = 0;
         } else {
             if (postModuleData.hostAbbr.contains("-")) {
                 throw new RuntimeException("Can not have '-' in host abbr");
@@ -147,6 +149,13 @@ public class ModuleHandler extends AbstractHandler {
         }
         
         List<Module> modules = dataAccess.getModules(postModuleData.serviceId);
+        Collections.sort(modules);
+        if (postModuleData.order < 1) {
+            postModuleData.order = 1;
+        }
+        if (postModuleData.order > (modules.size() + 1)) {
+            postModuleData.order = modules.size() + 1;
+        }
         for (Module temp : modules) {
             if (postModuleData.moduleName.equalsIgnoreCase(temp.getModuleName())) {
                 logger.warn("Error there already exists a module named {} on service {}", postModuleData.moduleName, postModuleData.serviceId);
@@ -157,10 +166,17 @@ public class ModuleHandler extends AbstractHandler {
                 return;
             }
         }
+        for (Module temp : modules) {
+            if (temp.getOrder() >= postModuleData.order) {
+                temp.setOrder(temp.getOrder() + 1);
+                dataAccess.updateModule(temp);
+            }
+        }
 
         Module module = new Module(
                 postModuleData.moduleName,
                 postModuleData.serviceId,
+                postModuleData.order,
                 postModuleData.moduleType,
                 postModuleData.gitPath,
                 postModuleData.gitFolder,
@@ -173,12 +189,16 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.availabilityUrl,
                 postModuleData.runAs,
                 postModuleData.startCmdLine,
+                postModuleData.startTimeOut,
                 postModuleData.stopCmdLine,
-                postModuleData.cmdLineTimeOut);
+                postModuleData.stopTimeOut);
         dataAccess.saveModule(module);
 
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null, null);
         workItem.getModule().template = postModuleData.template;
+        for (Module temp : modules) {
+            workItem.addModule(temp);
+        }
 
         dataAccess.saveWorkItem(workItem);
 

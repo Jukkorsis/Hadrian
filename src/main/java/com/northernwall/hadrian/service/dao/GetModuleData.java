@@ -9,6 +9,7 @@ public class GetModuleData {
 
     public String moduleId;
     public String moduleName;
+    public int order;
     public String moduleType;
     public String gitPath;
     public String gitFolder;
@@ -21,8 +22,9 @@ public class GetModuleData {
     public String availabilityUrl;
     public String runAs;
     public String startCmdLine;
+    public int startTimeOut;
     public String stopCmdLine;
-    public int cmdLineTimeOut;
+    public int stopTimeOut;
     public List<String> versions;
     public List<GetModuleNetworkData> networks;
     
@@ -30,6 +32,7 @@ public class GetModuleData {
         GetModuleData temp = new GetModuleData();
         temp.moduleId = module.getModuleId();
         temp.moduleName = module.getModuleName();
+        temp.order = module.getOrder();
         temp.moduleType = module.getModuleType();
         temp.gitPath = module.getGitPath();
         temp.gitFolder = module.getGitFolder();
@@ -42,8 +45,9 @@ public class GetModuleData {
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.runAs = module.getRunAs();
         temp.startCmdLine = module.getStartCmdLine();
+        temp.startTimeOut = module.getStartTimeOut();
         temp.stopCmdLine = module.getStopCmdLine();
-        temp.cmdLineTimeOut = module.getCmdLineTimeOut();
+        temp.stopTimeOut = module.getStopTimeOut();
         temp.versions = new LinkedList<>();
         temp.networks = new LinkedList<>();
         for (String network : config.networks) {

@@ -5,6 +5,8 @@
     <dl class="dl-horizontal">
         <dt>Name:</dt>
         <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
+        <dt>Order:</dt>
+        <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built." popover-trigger="mouseenter"></dd>
         <dt>Type</dt>
         <dd><select ng-model="formSaveModule.moduleType" ng-options="c for c in config.moduleTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
         <dt>Template:</dt>
@@ -38,10 +40,12 @@
             <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
             <dt>Start Cmd Line:</dt>
             <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+            <dt>Start Time Out:</dt>
+            <dd><input ng-model="formSaveModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
             <dt>Stop Cmd Line:</dt>
             <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-            <dt>Cmd Line Time Out:</dt>
-            <dd><input ng-model="formSaveModule.cmdLineTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+            <dt>Stop Time Out:</dt>
+            <dd><input ng-model="formSaveModule.stopTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
         </div>
     </dl>
 </div>

@@ -22,6 +22,7 @@ public class Module implements Comparable<Module> {
     private String moduleId;
     private String moduleName;
     private String serviceId;
+    private int order;
     private String moduleType;
     private String gitPath;
     private String gitFolder;
@@ -34,13 +35,15 @@ public class Module implements Comparable<Module> {
     private String availabilityUrl;
     private String runAs;
     private String startCmdLine;
+    private int startTimeOut;
     private String stopCmdLine;
-    private int cmdLineTimeOut;
+    private int stopTimeOut;
 
-    public Module(String moduleName, String serviceId, String moduleType, String gitPath, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String startCmdLine, String stopCmdLine, int cmdLineTimeOut) {
+    public Module(String moduleName, String serviceId, int order, String moduleType, String gitPath, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
+        this.order = order;
         this.moduleType = moduleType;
         this.gitPath = gitPath;
         this.gitFolder = gitFolder;
@@ -53,8 +56,9 @@ public class Module implements Comparable<Module> {
         this.availabilityUrl = availabilityUrl;
         this.runAs = runAs;
         this.startCmdLine = startCmdLine;
+        this.startTimeOut = startTimeOut;
         this.stopCmdLine = stopCmdLine;
-        this.cmdLineTimeOut = cmdLineTimeOut;
+        this.stopTimeOut = stopTimeOut;
     }
 
     public String getModuleId() {
@@ -79,6 +83,14 @@ public class Module implements Comparable<Module> {
 
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public String getModuleType() {
@@ -177,6 +189,14 @@ public class Module implements Comparable<Module> {
         this.startCmdLine = startCmdLine;
     }
 
+    public int getStartTimeOut() {
+        return startTimeOut;
+    }
+
+    public void setStartTimeOut(int startTimeOut) {
+        this.startTimeOut = startTimeOut;
+    }
+
     public String getStopCmdLine() {
         return stopCmdLine;
     }
@@ -184,18 +204,18 @@ public class Module implements Comparable<Module> {
     public void setStopCmdLine(String stopCmdLine) {
         this.stopCmdLine = stopCmdLine;
     }
-
-    public int getCmdLineTimeOut() {
-        return cmdLineTimeOut;
+    
+    public int getStopTimeOut() {
+        return stopTimeOut;
     }
 
-    public void setCmdLineTimeOut(int cmdLineTimeOut) {
-        this.cmdLineTimeOut = cmdLineTimeOut;
+    public void setStopTimeOut(int stopTimeOut) {
+        this.stopTimeOut = stopTimeOut;
     }
 
     @Override
     public int compareTo(Module o) {
-        return moduleName.compareTo(o.moduleName);
+        return order - o.order;
     }
 
 }

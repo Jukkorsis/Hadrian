@@ -408,6 +408,7 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
 
             $scope.formSaveModule = {};
             $scope.formSaveModule.moduleName = "";
+            $scope.formSaveModule.order = 1;
             $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
             $scope.formSaveModule.template = $scope.config.templates[0];
             $scope.formSaveModule.gitPath = "";
@@ -421,13 +422,15 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
             $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
             $scope.formSaveModule.runAs = "";
             $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
+            $scope.formSaveModule.startTimeOut = 60;
             $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
-            $scope.formSaveModule.cmdLineTimeOut = 60;
+            $scope.formSaveModule.stopTimeOut = 60;
 
             $scope.save = function () {
                 var dataObject = {
                     moduleName: $scope.formSaveModule.moduleName,
                     serviceId: $scope.service.serviceId,
+                    order: $scope.formSaveModule.order,
                     moduleType: $scope.formSaveModule.moduleType,
                     template: $scope.formSaveModule.template,
                     gitPath: $scope.formSaveModule.gitPath,
@@ -441,8 +444,9 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
                     availabilityUrl: $scope.formSaveModule.availabilityUrl,
                     runAs: $scope.formSaveModule.runAs,
                     startCmdLine: $scope.formSaveModule.startCmdLine,
+                    startTimeOut: $scope.formSaveModule.startTimeOut,
                     stopCmdLine: $scope.formSaveModule.stopCmdLine,
-                    cmdLineTimeOut: $scope.formSaveModule.cmdLineTimeOut
+                    stopTimeOut: $scope.formSaveModule.stopTimeOut
                 };
 
                 var responsePromise = $http.post("/v1/module/module", dataObject, {});
