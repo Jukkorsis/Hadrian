@@ -5,22 +5,28 @@
     <dl class="dl-horizontal">
         <dt>Name:</dt>
         <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
+        <div ng-if="service.serviceType === 'Service'">
+            <dt>Type</dt>
+            <dd><select ng-model="formSaveModule.moduleType" ng-options="c for c in config.moduleTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
+        </div>
         <dt>Order:</dt>
         <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built." popover-trigger="mouseenter"></dd>
-        <dt>Type</dt>
-        <dd><select ng-model="formSaveModule.moduleType" ng-options="c for c in config.moduleTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
         <dt>Template:</dt>
         <dd><select ng-model="formSaveModule.template" ng-options="c for c in config.templates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
-        <dt>Git Path:</dt>
-        <dd>
-            <div class="input-group">
-                <div class="input-group-addon">{{team.gitRepo}} / </div>
-                <input ng-model="formSaveModule.gitPath" type="text" class="form-control">
-                <div class="input-group-addon">.git</div>
-            </div>
-        </dd>
-        <dt>Git Folder:</dt>
-        <dd><input ng-model="formSaveModule.gitFolder" type="text" class="form-control"></dd>
+        <div ng-if="service.gitMode === 'Flat'">
+            <dt>Git Path:</dt>
+            <dd>
+                <div class="input-group">
+                    <div class="input-group-addon">{{team.gitRepo}} / </div>
+                    <input ng-model="formSaveModule.gitPath" type="text" class="form-control">
+                    <div class="input-group-addon">.git</div>
+                </div>
+            </dd>
+        </div>
+        <div ng-if="service.gitMode === 'Consolidated'">
+            <dt>Git Folder:</dt>
+            <dd><input ng-model="formSaveModule.gitFolder" type="text" class="form-control"></dd>
+        </div>
         <dt>Maven Group Id:</dt>
         <dd><input ng-model="formSaveModule.mavenGroupId" type="text" class="form-control"></dd>
         <dt>Maven Artifact Id:</dt>

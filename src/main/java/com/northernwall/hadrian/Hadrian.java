@@ -127,6 +127,13 @@ public class Hadrian {
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
         loadConfig(Const.CONFIG_TEMPLATES, Const.CONFIG_TEMPLATES_DEFAULT, config.templates);
+        
+        config.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
+        config.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
+        
+        config.gitModes.add(Const.GIT_MODE_CONSOLIDATED);
+        config.gitModes.add(Const.GIT_MODE_FLAT);
+        
         config.moduleTypes.add(Const.MODULE_TYPE_DEPLOYABLE);
         config.moduleTypes.add(Const.MODULE_TYPE_LIBRARY);
         config.moduleTypes.add(Const.MODULE_TYPE_TEST);

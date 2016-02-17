@@ -123,13 +123,19 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
             $scope.formSaveService.serviceAbbr = "";
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
+            $scope.formSaveService.serviceType = $scope.config.serviceTypes[0];
+            $scope.formSaveService.gitMode = $scope.config.gitModes[0];
+            $scope.formSaveService.gitPath = "";
 
             $scope.save = function () {
                 var dataObject = {
                     serviceAbbr: $scope.formSaveService.serviceAbbr,
                     serviceName: $scope.formSaveService.serviceName,
                     teamId: $scope.team.teamId,
-                    description: $scope.formSaveService.description
+                    description: $scope.formSaveService.description,
+                    serviceType: $scope.formSaveService.serviceType,
+                    gitMode: $scope.formSaveService.gitMode,
+                    gitPath: $scope.formSaveService.gitPath
                 };
 
                 var responsePromise = $http.post("/v1/service/service", dataObject, {});

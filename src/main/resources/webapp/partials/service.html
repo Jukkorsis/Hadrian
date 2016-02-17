@@ -1,4 +1,4 @@
-<h3>{{service.serviceName}}</h3>
+<h3>{{service.serviceType}} - {{service.serviceName}}</h3>
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
@@ -6,6 +6,14 @@
             <dd>{{service.serviceAbbr}}</dd>
             <dt>Name:</dt>
             <dd>{{service.serviceName}}</dd>
+            <span ng-if="service.serviceType === 'Service'">
+                <dt>Git Mode</dt>
+                <dd>{{service.gitMode}}</dd>
+                <div ng-if="service.gitMode === 'Consolidated'">
+                    <dt>Git Path</dt>
+                    <dd>{{team.gitRepo}}/{{service.gitPath}}.git</dd>
+                </div>
+            </span>
             <dt>Description:</dt>
             <dd>{{service.description}}</dd>
             <dt>Creation Date:</dt>
@@ -43,7 +51,88 @@
     </span>
 </div>
 <uib-tabset type="pills">
-    <uib-tab heading="Hosts">
+    <uib-tab heading="Modules">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <span ng-if="service.canModify">
+                        <a ng-click="openAddModuleModal();" class="btn btn-info btn-xs" uib-popover="Add a new Module to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Module</a>
+                    </span>
+                </div>
+                <table class="table table-hover  table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>order</th>
+                        <th>Type</th>
+                        <th>Git Path</th>
+                        <th>Git Folder</th>
+                    </tr>
+                    <tr ng-repeat-start="m in service.modules">
+                        <td>
+                            <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
+                            <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
+                        </td>
+                        <td>
+                            {{m.moduleName}}
+                            <!--
+                            <span ng-if="service.canModify">
+                                <a ng-click="deleteModule(m.moduleId);" class="btn btn-info btn-xs" uib-popover="Delete Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                            </span>
+                            -->
+                        </td>
+                        <td>{{m.order}}</td>
+                        <td>{{m.moduleType}}</td>
+                        <td>{{team.gitRepo}}/{{m.gitPath}}.git</td>
+                        <td>/{{m.gitFolder}}</td>
+                    </tr>
+                    <tr ng-if="m.expanded" ng-repeat-end="">
+                        <td colspan="9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <dt>Maven Group ID</dt>
+                                        <dd>{{m.mavenGroupId}}</dd>
+                                        <dt>Artifact Type</dt>
+                                        <dd>{{m.artifactType}}</dd>
+                                        <div ng-if="m.moduleType === 'Deployable'">
+                                            <dt>Version URL</dt>
+                                            <dd>{{m.versionUrl}}</dd>
+                                            <dt>Host Abbr</dt>
+                                            <dd>{{m.hostAbbr}}</dd>
+                                            <dt>Start Cmd Line</dt>
+                                            <dd>{{m.startCmdLine}}</dd>
+                                            <dt>Start Timeout</dt>
+                                            <dd>{{m.startTimeOut}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <dt>Maven Artifact ID</dt>
+                                        <dd>{{m.mavenArtifactId}}</dd>
+                                        <dt>Artifact Suffix</dt>
+                                        <dd>{{m.artifactSuffix}}</dd>
+                                        <div ng-if="m.moduleType === 'Deployable'">
+                                            <dt>Availability URL</dt>
+                                            <dd>{{m.availabilityUrl}}</dd>
+                                            <dt>Run As</dt>
+                                            <dd>{{m.runAs}}</dd>
+                                            <dt>Stop Cmd Line</dt>
+                                            <dd>{{m.stopCmdLine}}</dd>
+                                            <dt>Stop Timeout</dt>
+                                            <dd>{{m.stopTimeOut}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Hosts" ng-if="service.serviceType === 'Service'">
         <div class="panel panel-default">
             <div class="panel-body">
                 <form>
@@ -182,7 +271,7 @@
             </div>
         </div>
     </uib-tab>
-    <uib-tab heading="VIPs">
+    <uib-tab heading="VIPs" ng-if="service.serviceType === 'Service'">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div ng-repeat="m in service.modules">
@@ -227,88 +316,7 @@
             </div>
         </div>
     </uib-tab>
-    <uib-tab heading="Modules">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div align="center">
-                    <span ng-if="service.canModify">
-                        <a ng-click="openAddModuleModal();" class="btn btn-info btn-xs" uib-popover="Add a new Module to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Module</a>
-                    </span>
-                </div>
-                <table class="table table-hover  table-condensed">
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>order</th>
-                        <th>Type</th>
-                        <th>Git Path</th>
-                        <th>Git Folder</th>
-                    </tr>
-                    <tr ng-repeat-start="m in service.modules">
-                        <td>
-                            <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
-                            <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
-                        </td>
-                        <td>
-                            {{m.moduleName}}
-                            <!--
-                            <span ng-if="service.canModify">
-                                <a ng-click="deleteModule(m.moduleId);" class="btn btn-info btn-xs" uib-popover="Delete Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                            </span>
-                            -->
-                        </td>
-                        <td>{{m.order}}</td>
-                        <td>{{m.moduleType}}</td>
-                        <td>{{team.gitRepo}}/{{m.gitPath}}.git</td>
-                        <td>{{m.gitFolder}}</td>
-                    </tr>
-                    <tr ng-if="m.expanded" ng-repeat-end="">
-                        <td colspan="9">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <dt>Maven Group ID</dt>
-                                        <dd>{{m.mavenGroupId}}</dd>
-                                        <dt>Artifact Type</dt>
-                                        <dd>{{m.artifactType}}</dd>
-                                        <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Version URL</dt>
-                                            <dd>{{m.versionUrl}}</dd>
-                                            <dt>Host Abbr</dt>
-                                            <dd>{{m.hostAbbr}}</dd>
-                                            <dt>Start Cmd Line</dt>
-                                            <dd>{{m.startCmdLine}}</dd>
-                                            <dt>Start Timeout</dt>
-                                            <dd>{{m.startTimeOut}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <dt>Maven Artifact ID</dt>
-                                        <dd>{{m.mavenArtifactId}}</dd>
-                                        <dt>Artifact Suffix</dt>
-                                        <dd>{{m.artifactSuffix}}</dd>
-                                        <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Availability URL</dt>
-                                            <dd>{{m.availabilityUrl}}</dd>
-                                            <dt>Run As</dt>
-                                            <dd>{{m.runAs}}</dd>
-                                            <dt>Stop Cmd Line</dt>
-                                            <dd>{{m.stopCmdLine}}</dd>
-                                            <dt>Stop Timeout</dt>
-                                            <dd>{{m.stopTimeOut}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Data Stores">
+    <uib-tab heading="Data Stores" ng-if="service.serviceType === 'Service'">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div align="center">
@@ -337,7 +345,7 @@
             </div>
         </div>
     </uib-tab>
-    <uib-tab heading="Custom Functions" ng-if="service.canModify">
+    <uib-tab heading="Custom Functions" ng-if="service.serviceType === 'Service' && service.canModify">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div align="center">
@@ -416,7 +424,7 @@
                         <th>VIP</th>
                         <th>Notes</th>
                     </tr>
-                    <tr ng-repeat="a in audits | filter:auditFilter">
+                    <tr ng-repeat="a in audits| filter:auditFilter">
                         <td>{{a.requestor}}</td>
                         <td>{{a.timePerformed}}</td>
                         <td>{{a.timeRequested}}</td>

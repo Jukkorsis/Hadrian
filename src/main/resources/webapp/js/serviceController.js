@@ -13,7 +13,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.auditFilter = '';
 
         $scope.formSelectHost = {};
-
+        
         Service.get({serviceId: $routeParams.serviceId}, function (service) {
             $scope.service = service;
             Team.get({teamId: service.teamId}, function (team) {
@@ -409,7 +409,11 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
             $scope.formSaveModule = {};
             $scope.formSaveModule.moduleName = "";
             $scope.formSaveModule.order = 1;
-            $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
+            if (service.serviceType === 'Service') {
+                $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
+            } else {
+                $scope.formSaveModule.moduleType = 'Library';
+            }
             $scope.formSaveModule.template = $scope.config.templates[0];
             $scope.formSaveModule.gitPath = "";
             $scope.formSaveModule.gitFolder = "";

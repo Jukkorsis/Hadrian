@@ -377,16 +377,22 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         Team team = dataAccess.getTeam(postServiceData.teamId);
+        
+        if (postServiceData.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
+            postServiceData.gitMode = Const.GIT_MODE_FLAT;
+        }
 
         Service service = new Service(
                 postServiceData.serviceAbbr,
                 postServiceData.serviceName,
                 postServiceData.teamId,
-                postServiceData.description);
+                postServiceData.description,
+                postServiceData.serviceType, 
+                postServiceData.gitMode, 
+                postServiceData.gitPath);
 
         dataAccess.saveService(service);
         WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null, null);
-        //workItem.getService().template = postServiceData.template;
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

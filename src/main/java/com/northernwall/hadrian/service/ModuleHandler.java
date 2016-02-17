@@ -132,6 +132,10 @@ public class ModuleHandler extends AbstractHandler {
         if (!config.artifactTypes.contains(postModuleData.artifactType)) {
             throw new RuntimeException("Unknown artifact");
         }
+
+        if (service.getServiceType().equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
+            postModuleData.moduleType = Const.MODULE_TYPE_LIBRARY;
+        }
         
         if (!postModuleData.moduleType.equals(Const.MODULE_TYPE_DEPLOYABLE)) {
                 postModuleData.hostAbbr = "";
@@ -146,6 +150,12 @@ public class ModuleHandler extends AbstractHandler {
             if (postModuleData.hostAbbr.contains("-")) {
                 throw new RuntimeException("Can not have '-' in host abbr");
             }
+        }
+        
+        if (service.getGitMode().equals(Const.GIT_MODE_CONSOLIDATED)) {
+            postModuleData.gitPath = service.getGitPath();
+        } else {
+            postModuleData.gitFolder = "";
         }
         
         List<Module> modules = dataAccess.getModules(postModuleData.serviceId);

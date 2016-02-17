@@ -31,15 +31,21 @@ public class Service implements Comparable<Service>{
     private String serviceName;
     private String teamId;
     private String description;
+    private String serviceType;
+    private String gitMode;
+    private String gitPath;
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, String gitMode, String gitPath) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
+        this.serviceType = serviceType;
+        this.gitMode = gitMode;
+        this.gitPath = gitPath;
         this.creationDate = new Date();
     }
 
@@ -79,6 +85,30 @@ public class Service implements Comparable<Service>{
         this.description = description;
     }
 
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getGitMode() {
+        return gitMode;
+    }
+
+    public void setGitMode(String gitMode) {
+        this.gitMode = gitMode;
+    }
+
+    public String getGitPath() {
+        return gitPath;
+    }
+
+    public void setGitPath(String gitPath) {
+        this.gitPath = gitPath;
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }
@@ -93,7 +123,7 @@ public class Service implements Comparable<Service>{
 
     @Override
     public int compareTo(Service o) {
-        return serviceName.compareTo(o.serviceName);
+        return serviceName.compareToIgnoreCase(o.serviceName);
     }
 
 }

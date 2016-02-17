@@ -9,6 +9,22 @@
         <dd><input ng-model="formSaveService.serviceName" type="text" class="form-control"></dd>
         <dt>Description:</dt>
         <dd><input ng-model="formSaveService.description" type="text" class="form-control"></dd>
+        <dt>Type</dt>
+        <dd><select ng-model="formSaveService.serviceType" ng-options="c for c in config.serviceTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
+        <div ng-if="formSaveService.serviceType === 'Service'">
+            <dt>Git Mode</dt>
+            <dd><select ng-model="formSaveService.gitMode" ng-options="c for c in config.gitModes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
+            <div ng-if="formSaveService.gitMode === 'Consolidated'">
+                <dt>Git Path</dt>
+                <dd>
+                    <div class="input-group">
+                        <div class="input-group-addon">{{team.gitRepo}} / </div>
+                        <input ng-model="formSaveService.gitPath" type="text" class="form-control">
+                        <div class="input-group-addon">.git</div>
+                    </div>
+                </dd>
+            </div>
+        </div>
     </dl>
 </div>
 <div class="modal-footer">

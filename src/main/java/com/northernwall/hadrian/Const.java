@@ -43,6 +43,12 @@ public class Const {
     public static final String TYPE_VIP = "vip";
     public static final String TYPE_HOST_VIP = "hostvip";
     
+    public static final String SERVICE_TYPE_SERVICE = "Service";
+    public static final String SERVICE_TYPE_SHARED_LIBRARY = "Shared Library";
+
+    public static final String GIT_MODE_CONSOLIDATED = "Consolidated";
+    public static final String GIT_MODE_FLAT = "Flat";
+    
     public static final String MODULE_TYPE_DEPLOYABLE = "Deployable";
     public static final String MODULE_TYPE_LIBRARY = "Library";
     public static final String MODULE_TYPE_TEST = "Test";

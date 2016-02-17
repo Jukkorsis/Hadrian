@@ -25,5 +25,8 @@ public class PostServiceData {
     public String serviceName;
     public String teamId;
     public String description;
+    public String serviceType;
+    public String gitMode;
+    public String gitPath;
 
 }
