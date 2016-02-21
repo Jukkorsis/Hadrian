@@ -64,4 +64,9 @@ public class ModuleData {
         return temp;
     }
 
+    @Override
+    public String toString() {
+        return "Module{" + "moduleId=" + moduleId + ", moduleName=" + moduleName + ", order=" + order + ", moduleType=" + moduleType + '}';
+    }
+
 }

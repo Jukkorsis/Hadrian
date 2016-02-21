@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal', '$http', 'User', 'Team',
-    function ($scope, $routeParams, $uibModal, $http, User, Team) {
+soaRepControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'User', 'Team',
+    function ($scope, $route, $routeParams, $uibModal, $http, User, Team) {
         selectTreeNode($routeParams.teamId);
 
         $scope.users = User.get();
@@ -24,7 +24,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -41,7 +41,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -61,7 +61,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -69,11 +69,11 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$routeParams', '$uibModal',
         $scope.removeUserFromTeam = function (username) {
             var responsePromise = $http.delete("/v1/team/" + $scope.team.teamId + "/" + username, {}, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to create new team has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         };
     }]);

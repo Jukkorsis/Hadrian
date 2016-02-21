@@ -37,7 +37,7 @@ public abstract class WorkItemSender {
     protected String getGitUrl(WorkItem workItem) {
         String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_REPO, workItem.getTeam().gitRepo);
-        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_REPO, workItem.getModule().gitPath);
+        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_REPO, workItem.getMainModule().gitPath);
         return gitUrl;
     }
 

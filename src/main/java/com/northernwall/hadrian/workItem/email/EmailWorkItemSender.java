@@ -105,22 +105,22 @@ public class EmailWorkItemSender extends WorkItemSender {
     }
 
     protected void sendModuleEmail(WorkItem workItem) {
-        logger.info("Processing Module {} on {} with opertion {}", workItem.getModule().moduleName, workItem.getService().serviceName, workItem.getOperation());
+        logger.info("Processing Module {} on {} with opertion {}", workItem.getMainModule().moduleName, workItem.getService().serviceName, workItem.getOperation());
 
-        String subject = workItem.getOperation() + " module " + workItem.getModule().moduleName;
+        String subject = workItem.getOperation() + " module " + workItem.getMainModule().moduleName;
 
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
         body.append("\n");
-        addLine("Module Name", workItem.getModule().moduleName, body);
-        addLine("Module Type", workItem.getModule().moduleType, body);
+        addLine("Module Name", workItem.getMainModule().moduleName, body);
+        addLine("Module Type", workItem.getMainModule().moduleType, body);
         body.append("\n");
         addLine("Git URL", getGitUrl(workItem), body);
-        addLine("Git Folder", workItem.getModule().gitFolder, body);
-        addLine("Maven Group", workItem.getModule().mavenGroupId, body);
-        addLine("Maven Artifact ID", workItem.getModule().mavenArtifactId, body);
-        addLine("Artifact Type", workItem.getModule().artifactType, body);
-        addLine("Artifact Suffix", workItem.getModule().artifactSuffix, body);
+        addLine("Git Folder", workItem.getMainModule().gitFolder, body);
+        addLine("Maven Group", workItem.getMainModule().mavenGroupId, body);
+        addLine("Maven Artifact ID", workItem.getMainModule().mavenArtifactId, body);
+        addLine("Artifact Type", workItem.getMainModule().artifactType, body);
+        addLine("Artifact Suffix", workItem.getMainModule().artifactSuffix, body);
 
         emailWorkItem(subject, body.toString());
     }

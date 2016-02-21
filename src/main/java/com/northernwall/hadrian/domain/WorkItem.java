@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.workItem.dao.HostData;
@@ -41,7 +40,7 @@ public class WorkItem {
     private Date requestDate;
     private TeamData team;
     private ServiceData service;
-    private ModuleData module;
+    private ModuleData mainModule;
     private List<ModuleData> modules;
     private HostData host;
     private VipData vip;
@@ -57,7 +56,7 @@ public class WorkItem {
         this.requestDate = new Date();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
-        this.module = ModuleData.create(module);
+        this.mainModule = ModuleData.create(module);
         this.modules = new LinkedList<>();
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
@@ -136,16 +135,20 @@ public class WorkItem {
         this.service = service;
     }
 
-    public ModuleData getModule() {
-        return module;
+    public ModuleData getMainModule() {
+        return mainModule;
     }
 
-    public void setModule(ModuleData module) {
-        this.module = module;
+    public void setMainModule(ModuleData module) {
+        this.mainModule = module;
     }
 
     public void addModule(Module module) {
         modules.add(ModuleData.create(module));
+    }
+
+    public List<ModuleData> getModules() {
+        return modules;
     }
 
     public HostData getHost() {
@@ -170,6 +173,55 @@ public class WorkItem {
 
     public void setNewVip(VipData newVip) {
         this.newVip = newVip;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer str = new StringBuffer();
+        str.append("WorkItem{id=");
+        str.append(id);
+        str.append(", type=");
+        str.append(type);
+        str.append(", operation=");
+        str.append(operation);
+        str.append(", nextId=");
+        str.append(nextId);
+        str.append(", username=");
+        str.append(username);
+        str.append(", fullname=");
+        str.append(fullname);
+        str.append(", requestDate=");
+        str.append(requestDate);
+        str.append(", team=");
+        str.append(team);
+        str.append(", service=");
+        str.append(service);
+        if (mainModule != null) {
+            str.append(", mainModule=");
+            str.append(mainModule.toString());
+        }
+        if (modules != null && !modules.isEmpty()) {
+            str.append(", modules=[");
+            for (ModuleData temp : modules) {
+                str.append(temp.toString());
+                str.append(",");
+            }
+            str.append("]");
+        }
+        if (host != null) {
+            str.append(", host=");
+            str.append(host);
+        }
+        if (vip != null) {
+            str.append(", vip=");
+            str.append(vip);
+        }
+        if (newVip != null) {
+            str.append(", newVip=");
+            str.append(newVip);
+        }
+        str.append('}');
+        return str.toString();
     }
 
 }

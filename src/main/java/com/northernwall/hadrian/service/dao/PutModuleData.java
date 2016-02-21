@@ -13,11 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.proxy.dao;
 
-public class GetProxyData {
+package com.northernwall.hadrian.service.dao;
 
-    public String url;
-    public String name;
+/**
+ *
+ * @author Richard Thurston
+ */
+public class PutModuleData {
+    public String moduleName;
+    public String serviceId;
+    public int order;
+    public String mavenGroupId;
+    public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
+    public String hostAbbr;
+    public String versionUrl;
+    public String availabilityUrl;
+    public String runAs;
+    public String startCmdLine;
+    public int startTimeOut;
+    public String stopCmdLine;
+    public int stopTimeOut;
 
 }

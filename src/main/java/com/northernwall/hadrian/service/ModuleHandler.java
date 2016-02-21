@@ -27,15 +27,14 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PostModuleData;
-import com.northernwall.hadrian.service.dao.PutDeploySoftwareData;
+import com.northernwall.hadrian.service.dao.PutModuleData;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,32 +68,34 @@ public class ModuleHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         try {
-            if (target.startsWith("/v1/module/")) {
+            if (target.startsWith("/v1/module")) {
                 switch (request.getMethod()) {
                     case "POST":
-                        if (target.equalsIgnoreCase("/v1/module/module")) {
+                        if (target.equalsIgnoreCase("/v1/module")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
                             createModule(request);
                         } else {
-                            throw new RuntimeException("Unknown host operation");
+                            throw new RuntimeException("Unknown module operation");
                         }
                         break;
                     case "PUT":
-                        if (target.equalsIgnoreCase("/v1/module/module")) {
+                        if (target.matches("/v1/module/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            updateModule(request);
+                            String serviceId = target.substring(11, 47);
+                            String moduleId = target.substring(48);
+                            updateModule(request, serviceId, moduleId);
                         } else {
-                            throw new RuntimeException("Unknown host operation");
+                            throw new RuntimeException("Unknown module operation");
                         }
                         break;
                     case "DELETE":
                         if (target.matches("/v1/module/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+")) {
                             logger.info("Handling {} request {}", request.getMethod(), target);
-                            String serviceId = target.substring(9, 45);
-                            String moduleId = target.substring(46);
+                            String serviceId = target.substring(11, 47);
+                            String moduleId = target.substring(48);
                             deleteModule(request, serviceId, moduleId);
                         } else {
-                            throw new RuntimeException("Unknown host operation");
+                            throw new RuntimeException("Unknown module operation");
                         }
                         break;
                     default:
@@ -203,9 +204,10 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.stopCmdLine,
                 postModuleData.stopTimeOut);
         dataAccess.saveModule(module);
+        modules.add(module.getOrder()-1, module);
 
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null, null);
-        workItem.getModule().template = postModuleData.template;
+        workItem.getMainModule().template = postModuleData.template;
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
@@ -215,66 +217,113 @@ public class ModuleHandler extends AbstractHandler {
         workItemProcess.sendWorkItem(workItem);
     }
 
-    private void updateModule(Request request) throws IOException {
-        PutDeploySoftwareData putHostData = Util.fromJson(request, PutDeploySoftwareData.class);
-        Service service = null;
-        List<WorkItem> workItems = new ArrayList<>(putHostData.hosts.size());
-        User user = null;
-
-        Team team = null;
-
-        for (Map.Entry<String, String> entry : putHostData.hosts.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase("true")) {
-                Host host = dataAccess.getHost(putHostData.serviceId, entry.getKey());
-                if (host != null && host.getServiceId().equals(putHostData.serviceId) && host.getStatus().equals(Const.NO_STATUS)) {
-                    if (service == null) {
-                        service = dataAccess.getService(host.getServiceId());
-                        if (service == null) {
-                            throw new RuntimeException("Could not find service");
-                        }
-                        user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update a host");
-                        team = dataAccess.getTeam(service.getTeamId());
-                    }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, null, host, null, null);
-                    workItem.getHost().version = putHostData.version;
-                    if (workItems.isEmpty()) {
-                        host.setStatus("Deploying...");
-                    } else {
-                        host.setStatus("Deploy Queued");
-                    }
-                    dataAccess.updateHost(host);
-                    workItems.add(workItem);
-                }
-            }
-        }
-        String prevId = null;
-        int size = workItems.size();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                WorkItem workItem = workItems.get(size - i - 1);
-                workItem.setNextId(prevId);
-                prevId = workItem.getId();
-                dataAccess.saveWorkItem(workItem);
-            }
-            workItemProcess.sendWorkItem(workItems.get(0));
-        }
-    }
-
-    private void deleteModule(Request request, String serviceId, String hostId) throws IOException {
-        Host host = dataAccess.getHost(serviceId, hostId);
-        if (host == null) {
-            logger.info("Could not find host with id {}", hostId);
-            return;
-        }
-        Service service = dataAccess.getService(host.getServiceId());
+    private void updateModule(Request request, String serviceId, String moduleId) throws IOException {
+        Service service = dataAccess.getService(serviceId);
         if (service == null) {
             throw new RuntimeException("Could not find service");
         }
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
         Team team = dataAccess.getTeam(service.getTeamId());
-        host.setStatus("Deleting...");
-        dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, null, host, null, null);
+        
+        PutModuleData putModuleData = Util.fromJson(request, PutModuleData.class);
+        List<Module> modules = dataAccess.getModules(serviceId);
+        Collections.sort(modules);
+        if (putModuleData.order < 1) {
+            putModuleData.order = 1;
+        }
+        if (putModuleData.order > modules.size()) {
+            putModuleData.order = modules.size();
+        }
+        Module module = null;
+        for (Module temp : modules) {
+            if (temp.getModuleId().equals(moduleId)) {
+                module = temp;
+            }
+        }
+        if (module == null) {
+            logger.warn("Could not find module with id {} in service {}", moduleId, serviceId);
+            return;
+        }
+        
+        module.setModuleName(putModuleData.moduleName);
+        module.setMavenGroupId(putModuleData.mavenGroupId);
+        module.setMavenArtifactId(putModuleData.mavenArtifactId);
+        module.setArtifactType(putModuleData.artifactType);
+        module.setArtifactSuffix(putModuleData.artifactSuffix);
+        module.setHostAbbr(putModuleData.hostAbbr);
+        module.setVersionUrl(putModuleData.versionUrl);
+        module.setAvailabilityUrl(putModuleData.availabilityUrl);
+        module.setRunAs(putModuleData.runAs);
+        module.setStartCmdLine(putModuleData.startCmdLine);
+        module.setStartTimeOut(putModuleData.startTimeOut);
+        module.setStopCmdLine(putModuleData.stopCmdLine);
+        module.setStopTimeOut(putModuleData.stopTimeOut);
+        
+        if (module.getOrder() != putModuleData.order) {
+            modules.remove(module);
+            module.setOrder(putModuleData.order);
+            modules.add(putModuleData.order - 1, module);
+            int i = 1;
+            for (Module temp : modules) {
+                if (temp.getOrder() != i) {
+                    temp.setOrder(i);
+                    dataAccess.saveModule(temp);
+                }
+                i++;
+            }
+        }
+        dataAccess.saveModule(module);
+        
+        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null, null);
+        for (Module temp : modules) {
+            workItem.addModule(temp);
+        }
+        dataAccess.saveWorkItem(workItem);
+        workItemProcess.sendWorkItem(workItem);
+    }
+
+    private void deleteModule(Request request, String serviceId, String moduleId) throws IOException {
+        Module module = dataAccess.getModule(serviceId, moduleId);
+        if (module == null) {
+            logger.warn("Could not find module with id {}", moduleId);
+            return;
+        }
+        Service service = dataAccess.getService(serviceId);
+        if (service == null) {
+            throw new RuntimeException("Could not find service");
+        }
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
+        Team team = dataAccess.getTeam(service.getTeamId());
+        
+        for (Host host : dataAccess.getHosts(serviceId)) {
+            if (host.getModuleId().equals(moduleId)) {
+                throw new RuntimeException("Can not delete module with an active host");
+            }
+        }
+        for (Vip vip : dataAccess.getVips(serviceId)) {
+            if (vip.getModuleId().equals(moduleId)) {
+                throw new RuntimeException("Can not delete module with an active vip");
+            }
+        }
+
+        List<Module> modules = dataAccess.getModules(serviceId);
+        Collections.sort(modules);
+
+        modules.remove(module.getOrder() - 1);
+        int i = 1;
+        for (Module temp : modules) {
+            if (temp.getOrder() != i) {
+                temp.setOrder(i);
+                dataAccess.saveModule(temp);
+            }
+            i++;
+        }
+        dataAccess.deleteModule(serviceId, moduleId);
+        
+        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_DELETE, user, team, service, module, null, null, null);
+        for (Module temp : modules) {
+            workItem.addModule(temp);
+        }
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

@@ -16,15 +16,11 @@
 
 package com.northernwall.hadrian.tree.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author Richard Thurston
  */
 public class TreeNodeData {
-    private final static Logger logger = LoggerFactory.getLogger(TreeNodeData.class);
     private String id;
     private String type;
 

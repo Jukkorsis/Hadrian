@@ -151,8 +151,8 @@ soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
         };
     }]);
 
-soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
-    function ($scope, $uibModal, User) {
+soaRepControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'User',
+    function ($scope, $route, $uibModal, User) {
         selectTreeNode("-9");
 
         $scope.users = User.get();
@@ -169,7 +169,7 @@ soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -186,7 +186,7 @@ soaRepControllers.controller('AdminCtrl', ['$scope', '$uibModal', 'User',
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };

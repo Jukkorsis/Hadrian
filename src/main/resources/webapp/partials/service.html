@@ -75,11 +75,10 @@
                         </td>
                         <td>
                             {{m.moduleName}}
-                            <!--
                             <span ng-if="service.canModify">
+                                <a ng-click="openUpdateModuleModal(m);" class="btn btn-info btn-xs" uib-popover="Update Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
                                 <a ng-click="deleteModule(m.moduleId);" class="btn btn-info btn-xs" uib-popover="Delete Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </span>
-                            -->
                         </td>
                         <td>{{m.order}}</td>
                         <td>{{m.moduleType}}</td>

@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
-    function ($scope, $http, $routeParams, $uibModal, Config, Team, Service, HostDetails) {
+soaRepControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
+    function ($scope, $route, $http, $routeParams, $uibModal, Config, Team, Service, HostDetails) {
         selectTreeNode($routeParams.serviceId);
 
         $scope.hostSortType = 'hostName';
@@ -13,7 +13,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.auditFilter = '';
 
         $scope.formSelectHost = {};
-        
+
         Service.get({serviceId: $routeParams.serviceId}, function (service) {
             $scope.service = service;
             Team.get({teamId: service.teamId}, function (team) {
@@ -36,7 +36,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -53,7 +53,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -61,11 +61,11 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.deleteServiceRef = function (clientId, serviceId) {
             var responsePromise = $http.delete("/v1/service/" + clientId + "/uses/" + serviceId, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         };
 
@@ -84,8 +84,39 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
+            });
+        };
+
+        $scope.openUpdateModuleModal = function (module) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/updateModule.html',
+                controller: 'ModalUpdateModuleCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    module: function () {
+                        return module;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.deleteModule = function (id) {
+            var responsePromise = $http.delete("/v1/module/" + $scope.service.serviceId + "/" + id, {});
+            responsePromise.success(function () {
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete module has failed!");
+                $route.reload();
             });
         };
 
@@ -107,7 +138,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -127,7 +158,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -135,11 +166,11 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.deleteVip = function (id) {
             var responsePromise = $http.delete("/v1/vip/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                alert("Request to delete vip has failed!");
+                $route.reload();
             });
         };
 
@@ -161,7 +192,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -187,7 +218,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -202,22 +233,22 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
 
             var responsePromise = $http.put("/v1/host/restart", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to create new host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         }
 
         $scope.deleteHost = function (id) {
             var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         };
 
@@ -239,7 +270,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         }
@@ -247,11 +278,11 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.deleteHostFromVip = function (hostId, vipId) {
             var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + hostId + "/" + vipId, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         }
 
@@ -276,7 +307,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         }
@@ -307,7 +338,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
                 }
             });
             modalInstance.result.then(function () {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             }, function () {
             });
         };
@@ -315,11 +346,11 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
         $scope.deleteCustomFunction = function (id) {
             var responsePromise = $http.delete("/v1/cf/" + $scope.service.serviceId + "/" + id, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         };
 
@@ -331,44 +362,44 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$http', '$routeParams', 
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
-                $scope.my_tree_handler(tree.get_selected_branch());
+                $route.reload();
             });
         };
     }]);
 
-soaRepControllers.controller('ModalUpdateServiceCtrl',
-        function ($scope, $http, $modalInstance, $route, Config, service) {
-            Config.get({}, function (config) {
-                $scope.config = config;
+soaRepControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'Config', 'service',
+    function ($scope, $route, $http, $modalInstance, Config, service) {
+        Config.get({}, function (config) {
+            $scope.config = config;
 
-                $scope.formUpdateService = {};
-                $scope.formUpdateService.serviceId = service.serviceId;
-                $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
-                $scope.formUpdateService.serviceName = service.serviceName;
-                $scope.formUpdateService.description = service.description;
+            $scope.formUpdateService = {};
+            $scope.formUpdateService.serviceId = service.serviceId;
+            $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
+            $scope.formUpdateService.serviceName = service.serviceName;
+            $scope.formUpdateService.description = service.description;
 
-                $scope.save = function () {
-                    var dataObject = {
-                        serviceAbbr: $scope.formUpdateService.serviceAbbr,
-                        serviceName: $scope.formUpdateService.serviceName,
-                        description: $scope.formUpdateService.description
-                    };
-
-                    var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
-                    responsePromise.success(function (dataFromServer, status, headers, config) {
-                        $modalInstance.close();
-                        $route.reload();
-                    });
-                    responsePromise.error(function (data, status, headers, config) {
-                        alert("Request to update service has failed!");
-                    });
+            $scope.save = function () {
+                var dataObject = {
+                    serviceAbbr: $scope.formUpdateService.serviceAbbr,
+                    serviceName: $scope.formUpdateService.serviceName,
+                    description: $scope.formUpdateService.description
                 };
 
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            });
+                var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
+                responsePromise.success(function (dataFromServer, status, headers, config) {
+                    $modalInstance.close();
+                    $route.reload();
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    alert("Request to update service has failed!");
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
         });
+    }]);
 
 soaRepControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
     function ($scope, $http, $modalInstance, $route, ServiceNotUses, service) {
@@ -453,7 +484,7 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
                     stopTimeOut: $scope.formSaveModule.stopTimeOut
                 };
 
-                var responsePromise = $http.post("/v1/module/module", dataObject, {});
+                var responsePromise = $http.post("/v1/module", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();
@@ -467,6 +498,61 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
                 $modalInstance.dismiss('cancel');
             };
         });
+    }]);
+
+soaRepControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, service, module) {
+        $scope.service = service;
+        $scope.module = module;
+
+        $scope.formUpdateModule = {};
+        $scope.formUpdateModule.moduleName = module.moduleName;
+        $scope.formUpdateModule.order = module.order;
+        $scope.formUpdateModule.mavenGroupId = module.mavenGroupId;
+        $scope.formUpdateModule.mavenArtifactId = module.mavenArtifactId;
+        $scope.formUpdateModule.artifactType = module.artifactType;
+        $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
+        $scope.formUpdateModule.hostAbbr = module.hostAbbr;
+        $scope.formUpdateModule.versionUrl = module.versionUrl;
+        $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
+        $scope.formUpdateModule.runAs = module.runAs;
+        $scope.formUpdateModule.startCmdLine = module.startCmdLine;
+        $scope.formUpdateModule.startTimeOut = module.startTimeOut;
+        $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
+        $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleName: $scope.formUpdateModule.moduleName,
+                order: $scope.formUpdateModule.order,
+                mavenGroupId: $scope.formUpdateModule.mavenGroupId,
+                mavenArtifactId: $scope.formUpdateModule.mavenArtifactId,
+                artifactType: $scope.formUpdateModule.artifactType,
+                artifactSuffix: $scope.formUpdateModule.artifactSuffix,
+                hostAbbr: $scope.formUpdateModule.hostAbbr,
+                versionUrl: $scope.formUpdateModule.versionUrl,
+                availabilityUrl: $scope.formUpdateModule.availabilityUrl,
+                runAs: $scope.formUpdateModule.runAs,
+                startCmdLine: $scope.formUpdateModule.startCmdLine,
+                startTimeOut: $scope.formUpdateModule.startTimeOut,
+                stopCmdLine: $scope.formUpdateModule.stopCmdLine,
+                stopTimeOut: $scope.formUpdateModule.stopTimeOut
+            };
+
+            var responsePromise = $http.put("/v1/module/" + $scope.service.serviceId + "/" + $scope.module.moduleId, dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update module has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
 soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',

@@ -98,7 +98,9 @@ public class WorkItemProcessor {
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    notes = "template=" + workItem.getModule().template;
+                    notes = "template=" + workItem.getMainModule().template;
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
+                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                 } else {
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                 }
@@ -145,8 +147,8 @@ public class WorkItemProcessor {
                 audit.requestor = workItem.getUsername();
                 audit.type = workItem.getType();
                 audit.operation = workItem.getOperation();
-                if (workItem.getModule() != null) {
-                    audit.moduleName = workItem.getModule().moduleName;
+                if (workItem.getMainModule() != null) {
+                    audit.moduleName = workItem.getMainModule().moduleName;
                 }
                 if (workItem.getHost() != null) {
                     audit.hostName = workItem.getHost().hostName;

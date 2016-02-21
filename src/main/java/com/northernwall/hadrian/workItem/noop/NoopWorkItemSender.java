@@ -32,7 +32,7 @@ public class NoopWorkItemSender extends WorkItemSender {
 
     @Override
     public boolean sendWorkItem(WorkItem workItem) throws IOException {
-        logger.info("Work Item {} {} for service {}", workItem.getType(), workItem.getType(), workItem.getService().serviceName);
+        logger.info(workItem.toString());
         return true;
     }
 
