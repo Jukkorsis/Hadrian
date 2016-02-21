@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var soaRepControllers = angular.module('soaRepControllers', []);
+var hadrianControllers = angular.module('hadrianControllers', []);
 
 var tree;
 var selectTreeNode = function (id) {
@@ -25,7 +25,7 @@ var selectTreeNode = function (id) {
     }
 };
 
-soaRepControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
+hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
     function ($scope, $location, Tree) {
         $scope.my_tree_handler = function (branch) {
             if (branch.data.id < 0) {
@@ -38,11 +38,11 @@ soaRepControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
         $scope.my_tree = tree = {};
     }]);
 
-soaRepControllers.controller('HomeCtrl', ['$scope',
+hadrianControllers.controller('HomeCtrl', ['$scope',
     function ($scope) {
     }]);
 
-soaRepControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
+hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
     function ($scope, $http, Services) {
         selectTreeNode("-2");
         
@@ -72,18 +72,18 @@ soaRepControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
         }
     }]);
 
-soaRepControllers.controller('ParametersCtrl', ['$scope', 'Config',
+hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
     function ($scope, Config) {
         $scope.config = Config.get();
         selectTreeNode("-8");
     }]);
 
-soaRepControllers.controller('CrossServiceCtrl', ['$scope',
+hadrianControllers.controller('CrossServiceCtrl', ['$scope',
     function ($scope) {
         selectTreeNode("-5");
     }]);
 
-soaRepControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',
+hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',
     function ($scope, $http, $route, WorkItem) {
         selectTreeNode("-6");
 
@@ -135,7 +135,7 @@ soaRepControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wor
 
     }]);
 
-soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
+hadrianControllers.controller('BackfillCtrl', ['$scope', '$http',
     function ($scope, $http) {
         selectTreeNode("-7");
 
@@ -151,7 +151,7 @@ soaRepControllers.controller('BackfillCtrl', ['$scope', '$http',
         };
     }]);
 
-soaRepControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'User',
+hadrianControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'User',
     function ($scope, $route, $uibModal, User) {
         selectTreeNode("-9");
 
@@ -192,7 +192,7 @@ soaRepControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'Use
         };
     }]);
 
-soaRepControllers.controller('ModalAddTeamCtrl',
+hadrianControllers.controller('ModalAddTeamCtrl',
         function ($scope, $http, $modalInstance, $window, users) {
             $scope.users = users;
 
@@ -229,7 +229,7 @@ soaRepControllers.controller('ModalAddTeamCtrl',
             };
         });
 
-soaRepControllers.controller('ModalUpdateUserCtrl',
+hadrianControllers.controller('ModalUpdateUserCtrl',
         function ($scope, $http, $modalInstance, $route, user) {
             $scope.user = user;
 
@@ -262,6 +262,6 @@ soaRepControllers.controller('ModalUpdateUserCtrl',
             };
         });
 
-soaRepControllers.controller('HelpCtrl', ['$scope',
+hadrianControllers.controller('HelpCtrl', ['$scope',
     function ($scope) {
     }]);

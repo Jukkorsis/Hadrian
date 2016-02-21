@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-soaRepControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
     function ($scope, $route, $http, $routeParams, $uibModal, Config, Team, Service, HostDetails) {
         selectTreeNode($routeParams.serviceId);
 
@@ -367,7 +367,7 @@ soaRepControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rout
         };
     }]);
 
-soaRepControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'Config', 'service',
+hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'Config', 'service',
     function ($scope, $route, $http, $modalInstance, Config, service) {
         Config.get({}, function (config) {
             $scope.config = config;
@@ -401,7 +401,7 @@ soaRepControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$ht
         });
     }]);
 
-soaRepControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
+hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
     function ($scope, $http, $modalInstance, $route, ServiceNotUses, service) {
         $scope.service = service;
         $scope.formSelectUses = {};
@@ -430,7 +430,7 @@ soaRepControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInst
         };
     }]);
 
-soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'team', 'service',
+hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'team', 'service',
     function ($scope, $http, $modalInstance, $route, Config, team, service) {
         $scope.team = team;
         $scope.service = service;
@@ -500,7 +500,7 @@ soaRepControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalIn
         });
     }]);
 
-soaRepControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
+hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
     function ($scope, $http, $modalInstance, $route, service, module) {
         $scope.service = service;
         $scope.module = module;
@@ -555,7 +555,7 @@ soaRepControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$moda
         };
     }]);
 
-soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
+hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
         $scope.service = service;
         $scope.network = network;
@@ -602,7 +602,7 @@ soaRepControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInsta
         });
     }]);
 
-soaRepControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'vip',
+hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'vip',
     function ($scope, $http, $modalInstance, $route, service, vip) {
         $scope.service = service;
         $scope.vip = vip;
@@ -633,7 +633,7 @@ soaRepControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalIn
         };
     }]);
 
-soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
+hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
         $scope.service = service;
         $scope.network = network;
@@ -676,7 +676,7 @@ soaRepControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInst
         });
     }]);
 
-soaRepControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts', 'network', 'module',
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts, network, module) {
         $scope.config = Config.get();
         $scope.service = service;
@@ -712,7 +712,7 @@ soaRepControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$mo
         };
     }]);
 
-soaRepControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hosts',
+hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hosts',
     function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hosts) {
         $scope.service = service;
         $scope.moduleNetwork = moduleNetwork;
@@ -743,7 +743,7 @@ soaRepControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$moda
     }
 ]);
 
-soaRepControllers.controller('ModalAddCustomFunctionCtrl',
+hadrianControllers.controller('ModalAddCustomFunctionCtrl',
         function ($scope, $http, $modalInstance, $route, service) {
             $scope.service = service;
 
@@ -774,7 +774,7 @@ soaRepControllers.controller('ModalAddCustomFunctionCtrl',
             };
         });
 
-soaRepControllers.controller('ModalUpdateCustomFunctionCtrl',
+hadrianControllers.controller('ModalUpdateCustomFunctionCtrl',
         function ($scope, $http, $modalInstance, $route, service, cf) {
             $scope.service = service;
             $scope.cf = cf;

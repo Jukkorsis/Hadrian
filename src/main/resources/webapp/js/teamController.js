@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-soaRepControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'User', 'Team',
+hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'User', 'Team',
     function ($scope, $route, $routeParams, $uibModal, $http, User, Team) {
         selectTreeNode($routeParams.teamId);
 
@@ -78,7 +78,7 @@ soaRepControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$
         };
     }]);
 
-soaRepControllers.controller('ModalUpdateTeamCtrl',
+hadrianControllers.controller('ModalUpdateTeamCtrl',
         function ($scope, $http, $modalInstance, $route, team) {
             $scope.formUpdateTeam = {};
             $scope.formUpdateTeam.name = team.teamName;
@@ -111,7 +111,7 @@ soaRepControllers.controller('ModalUpdateTeamCtrl',
             };
         });
 
-soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
+hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
     function ($scope, $http, $modalInstance, $window, Config, team) {
         $scope.team = team;
         Config.get({}, function (config) {
@@ -154,7 +154,7 @@ soaRepControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalI
         });
     }]);
 
-soaRepControllers.controller('ModalAddUserToTeamCtrl',
+hadrianControllers.controller('ModalAddUserToTeamCtrl',
         function ($scope, $http, $modalInstance, $route, users, team) {
             $scope.users = users;
             $scope.team = team;

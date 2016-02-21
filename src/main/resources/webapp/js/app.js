@@ -2,17 +2,17 @@
 
 /* App Module */
 
-var soaRepApp = angular.module('SoaRepApp', [
+var hadrianApp = angular.module('HadrianApp', [
     'ngRoute',
     'ngAnimate',
     'ui.bootstrap',
-    'soaRepDirectives',
-    'soaRepControllers',
-    'soaRepFilters',
-    'soaRepServices'
+    'hadrianDirectives',
+    'hadrianControllers',
+    'hadrianFilters',
+    'hadrianServices'
 ]);
 
-soaRepApp.config(['$routeProvider',
+hadrianApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
                 when('/Home', {

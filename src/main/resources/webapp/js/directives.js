@@ -2,9 +2,9 @@
 
 /* Directives */
 
-var soaRepDirectives = angular.module('soaRepDirectives', []);
+var hadrianDirectives = angular.module('hadrianDirectives', []);
 
-soaRepDirectives.directive('abnTree', [
+hadrianDirectives.directive('abnTree', [
     '$timeout', function ($timeout) {
         return {
             restrict: 'E',

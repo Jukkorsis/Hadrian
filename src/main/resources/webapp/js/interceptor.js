@@ -1,4 +1,4 @@
-soaRepApp.factory('redirectInterceptor', function ($q, $location, $window) {
+hadrianApp.factory('redirectInterceptor', function ($q, $location, $window) {
     return {
         'response': function (response) {
             if (typeof response.data === 'string' && response.headers("X-Login-Request")) {
@@ -12,7 +12,7 @@ soaRepApp.factory('redirectInterceptor', function ($q, $location, $window) {
 
 });
 
-soaRepApp.config(['$httpProvider', 
+hadrianApp.config(['$httpProvider', 
     function ($httpProvider) {
         $httpProvider.interceptors.push('redirectInterceptor');
     }
