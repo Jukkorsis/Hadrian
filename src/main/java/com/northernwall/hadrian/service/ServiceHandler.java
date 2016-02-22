@@ -63,8 +63,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -377,18 +379,18 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         Team team = dataAccess.getTeam(postServiceData.teamId);
-        
+
         if (postServiceData.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
             postServiceData.gitMode = Const.GIT_MODE_FLAT;
         }
 
         Service service = new Service(
-                postServiceData.serviceAbbr,
+                postServiceData.serviceAbbr.toUpperCase(),
                 postServiceData.serviceName,
                 postServiceData.teamId,
                 postServiceData.description,
-                postServiceData.serviceType, 
-                postServiceData.gitMode, 
+                postServiceData.serviceType,
+                postServiceData.gitMode,
                 postServiceData.gitPath);
 
         dataAccess.saveService(service);
@@ -405,7 +407,7 @@ public class ServiceHandler extends AbstractHandler {
         }
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
 
-        service.setServiceAbbr(putServiceData.serviceAbbr);
+        service.setServiceAbbr(putServiceData.serviceAbbr.toUpperCase());
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
 
@@ -426,8 +428,12 @@ public class ServiceHandler extends AbstractHandler {
                 if (serverService != null) {
                     ServiceRef ref = new ServiceRef(clientId, serverId);
                     dataAccess.saveServiceRef(ref);
-                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, "uses=" + serverService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, "use by=" + clientService.getServiceAbbr());
+                    Map<String, String> notes = new HashMap<>();
+                    notes.put("uses", serverService.getServiceAbbr());
+                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, notes);
+                    notes = new HashMap<>();
+                    notes.put("use_by", clientService.getServiceAbbr());
+                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, notes);
                 }
             }
         }
@@ -444,11 +450,15 @@ public class ServiceHandler extends AbstractHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
         dataAccess.deleteServiceRef(clientId, serverId);
-        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, "uses=" + serverService.getServiceAbbr());
-        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, "use by=" + clientService.getServiceAbbr());
+        Map<String, String> notes = new HashMap<>();
+        notes.put("uses", serverService.getServiceAbbr());
+        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, notes);
+        notes = new HashMap<>();
+        notes.put("use_by", clientService.getServiceAbbr());
+        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, notes);
     }
 
-    private void createAudit(String serviceId, String requestor, String operation, String notes) {
+    private void createAudit(String serviceId, String requestor, String operation, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
         audit.timePerformed = new Date();
@@ -456,7 +466,7 @@ public class ServiceHandler extends AbstractHandler {
         audit.requestor = requestor;
         audit.type = Const.TYPE_SERVICE_REF;
         audit.operation = operation;
-        audit.notes = notes;
+        audit.notes = gson.toJson(notes);
         dataAccess.saveAudit(audit, " ");
     }
 

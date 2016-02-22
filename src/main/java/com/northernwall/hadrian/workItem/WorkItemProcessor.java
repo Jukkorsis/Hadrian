@@ -18,6 +18,7 @@ package com.northernwall.hadrian.workItem;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
@@ -29,6 +30,8 @@ import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +45,8 @@ public class WorkItemProcessor {
     private final Timer timerCalback;
     private final Meter meterSuccess;
     private final Meter meterFail;
+    private final Gson gson;
+
 
     public WorkItemProcessor(DataAccess dataAccess, WorkItemSender webHookSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
@@ -51,6 +56,7 @@ public class WorkItemProcessor {
         timerCalback = metricRegistry.timer("workItem.callback.process");
         meterSuccess = metricRegistry.meter("workItem.callback.success");
         meterFail = metricRegistry.meter("workItem.callback.fail");
+        gson = new Gson();
     }
 
     public void sendWorkItem(WorkItem workItem) throws IOException {
@@ -89,7 +95,7 @@ public class WorkItemProcessor {
                 meterFail.mark();
             }
 
-            String notes = " ";
+            Map<String, String> notes = new HashMap<>();
             if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createService(workItem, status);
@@ -98,7 +104,8 @@ public class WorkItemProcessor {
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    notes = "template=" + workItem.getMainModule().template;
+                    notes.put("template", workItem.getMainModule().template);
+                    notes.put("type", workItem.getMainModule().moduleType);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                 } else {
@@ -107,10 +114,13 @@ public class WorkItemProcessor {
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     createHost(workItem, status);
-                    notes = "env=" + workItem.getHost().env + " size=" + workItem.getHost().size;
+                    notes.put("env", workItem.getHost().env);
+                    notes.put("size",workItem.getHost().size);
+                    notes.put("reason",workItem.getHost().reason);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
                     deploySoftware(workItem, status);
-                    notes = "version=" + workItem.getHost().version;
+                    notes.put("version", workItem.getHost().version);
+                    notes.put("reason", workItem.getHost().reason);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_RESTART)) {
                     restartHost(workItem, status);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
@@ -156,7 +166,11 @@ public class WorkItemProcessor {
                 if (workItem.getVip() != null) {
                     audit.vipName = workItem.getVip().vipName;
                 }
-                audit.notes = notes;
+                if (notes == null || notes.isEmpty()) {
+                    audit.notes = "";
+                } else {
+                    audit.notes = gson.toJson(notes);
+                }
                 dataAccess.saveAudit(audit, callbackData.output);
             } else {
                 deleteNextWorkItem(workItem.getNextId());

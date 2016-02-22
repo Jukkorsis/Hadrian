@@ -1,4 +1,4 @@
-<h3>{{service.serviceType}} - {{service.serviceName}}</h3>
+<h3>{{service.serviceName}}</h3>
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
@@ -6,22 +6,24 @@
             <dd>{{service.serviceAbbr}}</dd>
             <dt>Name:</dt>
             <dd>{{service.serviceName}}</dd>
+            <dt>Type:</dt>
+            <dd>{{service.serviceType}}</dd>
             <span ng-if="service.serviceType === 'Service'">
-                <dt>Git Mode</dt>
+                <dt>Git Mode:</dt>
                 <dd>{{service.gitMode}}</dd>
                 <div ng-if="service.gitMode === 'Consolidated'">
-                    <dt>Git Path</dt>
+                    <dt>Git Path:</dt>
                     <dd>{{team.gitRepo}}/{{service.gitPath}}.git</dd>
                 </div>
             </span>
             <dt>Description:</dt>
             <dd>{{service.description}}</dd>
-            <dt>Creation Date:</dt>
-            <dd>{{service.creationDate}}</dd>
         </dl>
     </div>
     <div class="col-md-6">
         <dl class="dl-horizontal">
+            <dt>Creation Date:</dt>
+            <dd>{{service.creationDate}}</dd>
             <dt>Used By:</dt>
             <dd>
                 <div ng-repeat="sr in service.usedBy">
@@ -421,10 +423,13 @@
                         <th>Module</th>
                         <th>Host</th>
                         <th>VIP</th>
-                        <th>Notes</th>
                     </tr>
-                    <tr ng-repeat="a in audits| filter:auditFilter">
-                        <td>{{a.requestor}}</td>
+                    <tr ng-repeat-start="a in audits| filter:auditFilter">
+                        <td>
+                            <span ng-if="a.expanded" class="glyphicon glyphicon-chevron-down" ng-click="a.expanded = false"></span>
+                            <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="a.expanded = true"></span>
+                            {{a.requestor}}
+                        </td>
                         <td>{{a.timePerformed}}</td>
                         <td>{{a.timeRequested}}</td>
                         <td>{{a.type}}</td>
@@ -432,7 +437,26 @@
                         <td>{{a.moduleName}}</td>
                         <td>{{a.hostName}}</td>
                         <td>{{a.vipName}}</td>
-                        <td>{{a.notes}}</td>
+                    </tr>
+                    <tr ng-if="a.expanded" ng-repeat-end="">
+                        <td colspan="8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <div ng-repeat="d in a.left">
+                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <div ng-repeat="d in a.right">
+                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 </table>
             </div>

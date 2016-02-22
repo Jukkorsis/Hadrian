@@ -9,5 +9,6 @@ public class PostHostData {
     public String size;
     public String version;
     public int count;
+    public String reason;
 
 }

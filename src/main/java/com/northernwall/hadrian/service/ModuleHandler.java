@@ -195,7 +195,7 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.mavenArtifactId,
                 postModuleData.artifactType,
                 postModuleData.artifactSuffix,
-                postModuleData.hostAbbr,
+                postModuleData.hostAbbr.toLowerCase(),
                 postModuleData.versionUrl,
                 postModuleData.availabilityUrl,
                 postModuleData.runAs,
@@ -250,7 +250,7 @@ public class ModuleHandler extends AbstractHandler {
         module.setMavenArtifactId(putModuleData.mavenArtifactId);
         module.setArtifactType(putModuleData.artifactType);
         module.setArtifactSuffix(putModuleData.artifactSuffix);
-        module.setHostAbbr(putModuleData.hostAbbr);
+        module.setHostAbbr(putModuleData.hostAbbr.toLowerCase());
         module.setVersionUrl(putModuleData.versionUrl);
         module.setAvailabilityUrl(putModuleData.availabilityUrl);
         module.setRunAs(putModuleData.runAs);

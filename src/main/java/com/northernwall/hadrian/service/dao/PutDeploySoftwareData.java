@@ -26,6 +26,7 @@ import java.util.Map;
 public class PutDeploySoftwareData {
     public String serviceId;
     public String version;
+    public String reason;
     public Map<String, String> hosts = new HashMap<>();
     public String network;
     public String moduleId;

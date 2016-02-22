@@ -25,6 +25,7 @@ public class HostData {
     public String env;
     public String size;
     public String version;
+    public String reason;
 
     public static HostData create(Host host) {
         if (host == null) {
@@ -38,6 +39,7 @@ public class HostData {
         temp.env = host.getEnv();
         temp.size = host.getSize();
         temp.version = null;
+        temp.reason = null;
         return temp;
     }
 

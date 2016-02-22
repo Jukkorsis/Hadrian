@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -244,8 +245,10 @@ public class HostHandler extends AbstractHandler {
             WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
 
             workItemCreate.getHost().version = postHostData.version;
+            workItemCreate.getHost().reason = postHostData.reason;
             workItemCreate.setNextId(workItemDeploy.getId());
             workItemDeploy.getHost().version = postHostData.version;
+            workItemDeploy.getHost().reason = postHostData.reason;
 
             dataAccess.saveWorkItem(workItemCreate);
             dataAccess.saveWorkItem(workItemDeploy);
@@ -284,6 +287,7 @@ public class HostHandler extends AbstractHandler {
                     }
                     WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
                     workItem.getHost().version = putHostData.version;
+                    workItem.getHost().reason = putHostData.reason;
                     if (workItems.isEmpty()) {
                         host.setStatus("Deploying...");
                     } else {
@@ -443,7 +447,9 @@ public class HostHandler extends AbstractHandler {
                     audit.operation = Const.OPERATION_CREATE;
                     audit.moduleName = module.getModuleName();
                     audit.hostName = hostName;
-                    audit.notes = "Backfill";
+                    Map<String, String> notes = new HashMap<>();
+                    notes.put("reason", "Backfill via OPS tool.");
+                    audit.notes = gson.toJson(notes);
                     dataAccess.saveAudit(audit, "");
 
                     return;

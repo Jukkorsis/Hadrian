@@ -80,6 +80,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     },
                     service: function () {
                         return $scope.service;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -100,6 +103,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     },
                     module: function () {
                         return module;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -134,6 +140,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     },
                     module: function () {
                         return module;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -188,6 +197,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     },
                     module: function () {
                         return module;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -214,6 +226,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     },
                     module: function () {
                         return module;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -239,7 +254,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 alert("Request to create new host has failed!");
                 $route.reload();
             });
-        }
+        };
 
         $scope.deleteHost = function (id) {
             var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + id, {});
@@ -273,7 +288,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             }, function () {
             });
-        }
+        };
 
         $scope.deleteHostFromVip = function (hostId, vipId) {
             var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + hostId + "/" + vipId, {});
@@ -284,7 +299,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 alert("Request to delete host has failed!");
                 $route.reload();
             });
-        }
+        };
 
         $scope.getHostDetails = function (host) {
             host.expanded = true;
@@ -293,7 +308,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 host.left = details.left;
                 host.right = details.right;
             });
-        }
+        };
 
         $scope.openAddCustomFunctionModal = function () {
             var modalInstance = $uibModal.open({
@@ -310,18 +325,18 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             }, function () {
             });
-        }
+        };
 
         $scope.openDoCustomFunctionModal = function (cf) {
             for (var key in $scope.service.hosts) {
                 var h = $scope.service.hosts[key];
                 for (var key2 in $scope.formSelectHost) {
-                    if (h.hostId == key2 && $scope.formSelectHost[key2]) {
+                    if (h.hostId === key2 && $scope.formSelectHost[key2]) {
                         window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + h.hostId, '_blank');
                     }
                 }
             }
-        }
+        };
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
             var modalInstance = $uibModal.open({
@@ -359,6 +374,30 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             var responsePromise = $http.get("/v1/service/" + $scope.service.serviceId + "/audit?start=" + $scope.search.start + "&end=" + $scope.search.end, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.audits = dataFromServer.audits;
+                for (var j = 0; j < $scope.audits.length; j++) {
+                    var a = $scope.audits[j];
+                    if (a.notes !== null) {
+                        var notes = JSON.parse(a.notes);
+                        a.left = [];
+                        a.right = [];
+                        var addLeft = true;
+                        for (var key in notes) {
+                            if (notes.hasOwnProperty(key)) {
+                                var temp = {
+                                    label: key.replace("_"," "),
+                                    value: notes[key]
+                                };
+                                if (addLeft) {
+                                    a.left.push(temp);
+                                    addLeft = false;
+                                } else {
+                                    a.right.push(temp);
+                                    addLeft = true;
+                                }
+                            }
+                        }
+                    }
+                }
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to delete host has failed!");
@@ -367,38 +406,34 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'Config', 'service',
-    function ($scope, $route, $http, $modalInstance, Config, service) {
-        Config.get({}, function (config) {
-            $scope.config = config;
+hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
+    function ($scope, $route, $http, $modalInstance, service) {
+        $scope.formUpdateService = {};
+        $scope.formUpdateService.serviceId = service.serviceId;
+        $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
+        $scope.formUpdateService.serviceName = service.serviceName;
+        $scope.formUpdateService.description = service.description;
 
-            $scope.formUpdateService = {};
-            $scope.formUpdateService.serviceId = service.serviceId;
-            $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
-            $scope.formUpdateService.serviceName = service.serviceName;
-            $scope.formUpdateService.description = service.description;
-
-            $scope.save = function () {
-                var dataObject = {
-                    serviceAbbr: $scope.formUpdateService.serviceAbbr,
-                    serviceName: $scope.formUpdateService.serviceName,
-                    description: $scope.formUpdateService.description
-                };
-
-                var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update service has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                serviceAbbr: $scope.formUpdateService.serviceAbbr,
+                serviceName: $scope.formUpdateService.serviceName,
+                description: $scope.formUpdateService.description
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update service has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
 hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
@@ -430,80 +465,79 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'team', 'service',
-    function ($scope, $http, $modalInstance, $route, Config, team, service) {
+hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'team', 'service',
+    function ($scope, $http, $modalInstance, $route, config, team, service) {
         $scope.team = team;
         $scope.service = service;
-        Config.get({}, function (config) {
-            $scope.config = config;
+        $scope.config = config;
 
-            $scope.formSaveModule = {};
-            $scope.formSaveModule.moduleName = "";
-            $scope.formSaveModule.order = 1;
-            if (service.serviceType === 'Service') {
-                $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
-            } else {
-                $scope.formSaveModule.moduleType = 'Library';
-            }
-            $scope.formSaveModule.template = $scope.config.templates[0];
-            $scope.formSaveModule.gitPath = "";
-            $scope.formSaveModule.gitFolder = "";
-            $scope.formSaveModule.mavenGroupId = "";
-            $scope.formSaveModule.mavenArtifactId = "";
-            $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
-            $scope.formSaveModule.artifactSuffix = "";
-            $scope.formSaveModule.hostAbbr = "";
-            $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
-            $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
-            $scope.formSaveModule.runAs = "";
-            $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
-            $scope.formSaveModule.startTimeOut = 60;
-            $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
-            $scope.formSaveModule.stopTimeOut = 60;
+        $scope.formSaveModule = {};
+        $scope.formSaveModule.moduleName = "";
+        $scope.formSaveModule.order = 1;
+        if (service.serviceType === 'Service') {
+            $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
+        } else {
+            $scope.formSaveModule.moduleType = 'Library';
+        }
+        $scope.formSaveModule.template = $scope.config.templates[0];
+        $scope.formSaveModule.gitPath = "";
+        $scope.formSaveModule.gitFolder = "";
+        $scope.formSaveModule.mavenGroupId = "";
+        $scope.formSaveModule.mavenArtifactId = "";
+        $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
+        $scope.formSaveModule.artifactSuffix = "";
+        $scope.formSaveModule.hostAbbr = "";
+        $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
+        $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
+        $scope.formSaveModule.runAs = "";
+        $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
+        $scope.formSaveModule.startTimeOut = 60;
+        $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
+        $scope.formSaveModule.stopTimeOut = 60;
 
-            $scope.save = function () {
-                var dataObject = {
-                    moduleName: $scope.formSaveModule.moduleName,
-                    serviceId: $scope.service.serviceId,
-                    order: $scope.formSaveModule.order,
-                    moduleType: $scope.formSaveModule.moduleType,
-                    template: $scope.formSaveModule.template,
-                    gitPath: $scope.formSaveModule.gitPath,
-                    gitFolder: $scope.formSaveModule.gitFolder,
-                    mavenGroupId: $scope.formSaveModule.mavenGroupId,
-                    mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
-                    artifactType: $scope.formSaveModule.artifactType,
-                    artifactSuffix: $scope.formSaveModule.artifactSuffix,
-                    hostAbbr: $scope.formSaveModule.hostAbbr,
-                    versionUrl: $scope.formSaveModule.versionUrl,
-                    availabilityUrl: $scope.formSaveModule.availabilityUrl,
-                    runAs: $scope.formSaveModule.runAs,
-                    startCmdLine: $scope.formSaveModule.startCmdLine,
-                    startTimeOut: $scope.formSaveModule.startTimeOut,
-                    stopCmdLine: $scope.formSaveModule.stopCmdLine,
-                    stopTimeOut: $scope.formSaveModule.stopTimeOut
-                };
-
-                var responsePromise = $http.post("/v1/module", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new vip has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                moduleName: $scope.formSaveModule.moduleName,
+                serviceId: $scope.service.serviceId,
+                order: $scope.formSaveModule.order,
+                moduleType: $scope.formSaveModule.moduleType,
+                template: $scope.formSaveModule.template,
+                gitPath: $scope.formSaveModule.gitPath,
+                gitFolder: $scope.formSaveModule.gitFolder,
+                mavenGroupId: $scope.formSaveModule.mavenGroupId,
+                mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
+                artifactType: $scope.formSaveModule.artifactType,
+                artifactSuffix: $scope.formSaveModule.artifactSuffix,
+                hostAbbr: $scope.formSaveModule.hostAbbr,
+                versionUrl: $scope.formSaveModule.versionUrl,
+                availabilityUrl: $scope.formSaveModule.availabilityUrl,
+                runAs: $scope.formSaveModule.runAs,
+                startCmdLine: $scope.formSaveModule.startCmdLine,
+                startTimeOut: $scope.formSaveModule.startTimeOut,
+                stopCmdLine: $scope.formSaveModule.stopCmdLine,
+                stopTimeOut: $scope.formSaveModule.stopTimeOut
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.post("/v1/module", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new vip has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
-hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
-    function ($scope, $http, $modalInstance, $route, service, module) {
+hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, module) {
         $scope.service = service;
         $scope.module = module;
+        $scope.config = config;
 
         $scope.formUpdateModule = {};
         $scope.formUpdateModule.moduleName = module.moduleName;
@@ -555,51 +589,49 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         };
     }]);
 
-hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
-    function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
+hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, network, module) {
         $scope.service = service;
         $scope.network = network;
         $scope.module = module;
-        Config.get({}, function (config) {
-            $scope.config = config;
+        $scope.config = config;
 
-            $scope.formSaveVip = {};
-            $scope.formSaveVip.vipName = "";
-            $scope.formSaveVip.dns = "";
-            $scope.formSaveVip.domain = $scope.config.domains[0];
-            $scope.formSaveVip.external = false;
-            $scope.formSaveVip.protocol = $scope.config.protocols[0];
-            $scope.formSaveVip.vipPort = 80;
-            $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip = {};
+        $scope.formSaveVip.vipName = "";
+        $scope.formSaveVip.dns = "";
+        $scope.formSaveVip.domain = $scope.config.domains[0];
+        $scope.formSaveVip.external = false;
+        $scope.formSaveVip.protocol = $scope.config.protocols[0];
+        $scope.formSaveVip.vipPort = 80;
+        $scope.formSaveVip.servicePort = 8080;
 
-            $scope.save = function () {
-                var dataObject = {
-                    vipName: $scope.formSaveVip.vipName,
-                    serviceId: $scope.service.serviceId,
-                    moduleId: $scope.module.moduleId,
-                    dns: $scope.formSaveVip.dns,
-                    domain: $scope.formSaveVip.domain,
-                    external: $scope.formSaveVip.external,
-                    network: $scope.network,
-                    protocol: $scope.formSaveVip.protocol,
-                    vipPort: $scope.formSaveVip.vipPort,
-                    servicePort: $scope.formSaveVip.servicePort
-                };
-
-                var responsePromise = $http.post("/v1/vip/vip", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new vip has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                vipName: $scope.formSaveVip.vipName,
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                dns: $scope.formSaveVip.dns,
+                domain: $scope.formSaveVip.domain,
+                external: $scope.formSaveVip.external,
+                network: $scope.network,
+                protocol: $scope.formSaveVip.protocol,
+                vipPort: $scope.formSaveVip.vipPort,
+                servicePort: $scope.formSaveVip.servicePort
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.post("/v1/vip/vip", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new vip has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
 hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'vip',
@@ -633,65 +665,67 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         };
     }]);
 
-hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'service', 'network', 'module',
-    function ($scope, $http, $modalInstance, $route, Config, service, network, module) {
+hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, network, module) {
         $scope.service = service;
         $scope.network = network;
         $scope.module = module;
-        Config.get({}, function (config) {
-            $scope.config = config;
+        $scope.config = config;
 
-            $scope.formSaveHost = {};
-            $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
-            $scope.formSaveHost.env = $scope.config.envs[0];
-            $scope.formSaveHost.size = $scope.config.sizes[0];
-            $scope.formSaveHost.version = $scope.module.versions[0];
-            $scope.formSaveHost.count = 1;
+        $scope.formSaveHost = {};
+        $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
+        $scope.formSaveHost.env = $scope.config.envs[0];
+        $scope.formSaveHost.size = $scope.config.sizes[0];
+        $scope.formSaveHost.version = $scope.module.versions[0];
+        $scope.formSaveHost.count = 1;
+        $scope.formSaveHost.reason = "";
 
-            $scope.save = function () {
-                var dataObject = {
-                    serviceId: $scope.service.serviceId,
-                    moduleId: $scope.module.moduleId,
-                    dataCenter: $scope.formSaveHost.dataCenter,
-                    network: $scope.network,
-                    env: $scope.formSaveHost.env,
-                    size: $scope.formSaveHost.size,
-                    version: $scope.formSaveHost.version,
-                    count: $scope.formSaveHost.count
-                };
-
-                var responsePromise = $http.post("/v1/host/host", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new host has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                dataCenter: $scope.formSaveHost.dataCenter,
+                network: $scope.network,
+                env: $scope.formSaveHost.env,
+                size: $scope.formSaveHost.size,
+                version: $scope.formSaveHost.version,
+                count: $scope.formSaveHost.count,
+                reason: $scope.formSaveHost.reason
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.post("/v1/host/host", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to create new host has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
-hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'Config', 'Calendar', 'service', 'hosts', 'network', 'module',
-    function ($scope, $http, $modalInstance, $route, Config, Calendar, service, hosts, network, module) {
-        $scope.config = Config.get();
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hosts', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hosts, network, module) {
         $scope.service = service;
         $scope.hosts = hosts;
         $scope.network = network;
         $scope.module = module;
+        $scope.config = config;
         $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
 
         $scope.formUpdateHost = {};
         $scope.formUpdateHost.version = $scope.module.versions[0];
+        $scope.formUpdateHost.reason = "";
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 version: $scope.formUpdateHost.version,
+                reason: $scope.formUpdateHost.reason,
                 hosts: $scope.hosts,
                 network: $scope.network,
                 moduleId: $scope.module.moduleId
@@ -743,36 +777,36 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
     }
 ]);
 
-hadrianControllers.controller('ModalAddCustomFunctionCtrl',
-        function ($scope, $http, $modalInstance, $route, service) {
-            $scope.service = service;
+hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service',
+    function ($scope, $http, $modalInstance, $route, service) {
+        $scope.service = service;
 
-            $scope.formSaveCF = {};
+        $scope.formSaveCF = {};
 
-            $scope.save = function () {
-                var dataObject = {
-                    serviceId: $scope.service.serviceId,
-                    name: $scope.formSaveCF.name,
-                    method: $scope.formSaveCF.method,
-                    url: $scope.formSaveCF.url,
-                    helpText: $scope.formSaveCF.helpText,
-                    teamOnly: $scope.formSaveCF.teamOnly
-                };
-
-                var responsePromise = $http.post("/v1/cf/cf", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update hosts has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                name: $scope.formSaveCF.name,
+                method: $scope.formSaveCF.method,
+                url: $scope.formSaveCF.url,
+                helpText: $scope.formSaveCF.helpText,
+                teamOnly: $scope.formSaveCF.teamOnly
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.post("/v1/cf/cf", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update hosts has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
 
 hadrianControllers.controller('ModalUpdateCustomFunctionCtrl',
         function ($scope, $http, $modalInstance, $route, service, cf) {

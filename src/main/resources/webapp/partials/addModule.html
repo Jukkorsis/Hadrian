@@ -6,7 +6,7 @@
         <dt>Name:</dt>
         <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
         <div ng-if="service.serviceType === 'Service'">
-            <dt>Type</dt>
+            <dt>Type:</dt>
             <dd><select ng-model="formSaveModule.moduleType" ng-options="c for c in config.moduleTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
         </div>
         <dt>Order:</dt>
