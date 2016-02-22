@@ -130,6 +130,7 @@ public class WorkItemProcessor {
                 }
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
+                    notes.put("protocol", workItem.getVip().protocol);
                     createVip(workItem, status);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
                     updateVip(workItem, status);
