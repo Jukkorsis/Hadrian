@@ -5,8 +5,8 @@
     <dl class="dl-horizontal">
         <dt>Name:</dt>
         <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
-        <dt>Order:</dt>
-        <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built." popover-trigger="mouseenter"></dd>
+        <dt>Build Order:</dt>
+        <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
         <dt>Maven Group Id:</dt>
         <dd><input ng-model="formUpdateModule.mavenGroupId" type="text" class="form-control"></dd>
         <dt>Maven Artifact Id:</dt>
@@ -24,6 +24,8 @@
             <dd><input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control"></dd>
             <dt>Run As User:</dt>
             <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
+            <dt>Deployment Folder:</dt>
+            <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
             <dt>Start Cmd Line:</dt>
             <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
             <dt>Start Time Out:</dt>

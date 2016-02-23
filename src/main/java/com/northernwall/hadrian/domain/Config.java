@@ -21,6 +21,7 @@ import java.util.List;
 public class Config {
     public String versionUrl = "";
     public String availabilityUrl = "";
+    public String deploymentFolder = "";
     public String startCmd = "";
     public String stopCmd = "";
     public List<String> dataCenters = new LinkedList<>();

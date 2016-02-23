@@ -65,7 +65,7 @@
                     <tr>
                         <th></th>
                         <th>Name</th>
-                        <th>order</th>
+                        <th>Build Order</th>
                         <th>Type</th>
                         <th>Git Path</th>
                         <th>Git Folder</th>
@@ -92,36 +92,38 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <dl class="dl-horizontal">
-                                        <dt>Maven Group ID</dt>
+                                        <dt>Maven Group ID:</dt>
                                         <dd>{{m.mavenGroupId}}</dd>
-                                        <dt>Artifact Type</dt>
-                                        <dd>{{m.artifactType}}</dd>
+                                        <dt>Maven Artifact ID:</dt>
+                                        <dd>{{m.mavenArtifactId}}</dd>
                                         <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Version URL</dt>
-                                            <dd>{{m.versionUrl}}</dd>
-                                            <dt>Host Abbr</dt>
+                                            <dt>Host Abbr:</dt>
                                             <dd>{{m.hostAbbr}}</dd>
-                                            <dt>Start Cmd Line</dt>
-                                            <dd>{{m.startCmdLine}}</dd>
-                                            <dt>Start Timeout</dt>
-                                            <dd>{{m.startTimeOut}}</dd>
+                                            <dt>Availability URL:</dt>
+                                            <dd>{{m.availabilityUrl}}</dd>
+                                            <dt>Version URL:</dt>
+                                            <dd>{{m.versionUrl}}</dd>
+                                            <dt>Run As:</dt>
+                                            <dd>{{m.runAs}}</dd>
+                                            <dt>Deployment Folder:</dt>
+                                            <dd>{{m.deploymentFolder}}</dd>
                                         </div>
                                     </dl>
                                 </div>
                                 <div class="col-md-6">
                                     <dl class="dl-horizontal">
-                                        <dt>Maven Artifact ID</dt>
-                                        <dd>{{m.mavenArtifactId}}</dd>
-                                        <dt>Artifact Suffix</dt>
+                                        <dt>Artifact Type:</dt>
+                                        <dd>{{m.artifactType}}</dd>
+                                        <dt>Artifact Suffix:</dt>
                                         <dd>{{m.artifactSuffix}}</dd>
                                         <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Availability URL</dt>
-                                            <dd>{{m.availabilityUrl}}</dd>
-                                            <dt>Run As</dt>
-                                            <dd>{{m.runAs}}</dd>
-                                            <dt>Stop Cmd Line</dt>
+                                            <dt>Start Cmd Line:</dt>
+                                            <dd>{{m.startCmdLine}}</dd>
+                                            <dt>Start Timeout:</dt>
+                                            <dd>{{m.startTimeOut}}</dd>
+                                            <dt>Stop Cmd Line:</dt>
                                             <dd>{{m.stopCmdLine}}</dd>
-                                            <dt>Stop Timeout</dt>
+                                            <dt>Stop Timeout:</dt>
                                             <dd>{{m.stopTimeOut}}</dd>
                                         </div>
                                     </dl>

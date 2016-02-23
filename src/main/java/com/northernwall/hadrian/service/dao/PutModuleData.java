@@ -32,6 +32,7 @@ public class PutModuleData {
     public String versionUrl;
     public String availabilityUrl;
     public String runAs;
+    public String deploymentFolder;
     public String startCmdLine;
     public int startTimeOut;
     public String stopCmdLine;

@@ -146,6 +146,8 @@ public class Const {
     public static final String CONFIG_VERSION_URL_DEFAULT = "{host}.mydomain.com:9090/version";
     public static final String CONFIG_AVAILABILITY_URL = "config.availabilityUrl";
     public static final String CONFIG_AVAILABILITY_URL_DEFAULT = "{host}.mydomain.com:9090/availability";
+    public static final String CONFIG_DEPLOYMENT_FOLDER = "config.deploymentFolder";
+    public static final String CONFIG_DEPLOYMENT_FOLDER_DEFAULT = "/home/app";
     public static final String CONFIG_START_CMD = "config.startCmd";
     public static final String CONFIG_START_CMD_DEFAULT = "screen -d -m java -jar serviceAbbr.jar";
     public static final String CONFIG_STOP_CMD = "config.stopCmd";

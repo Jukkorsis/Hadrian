@@ -9,8 +9,8 @@
             <dt>Type:</dt>
             <dd><select ng-model="formSaveModule.moduleType" ng-options="c for c in config.moduleTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
         </div>
-        <dt>Order:</dt>
-        <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built." popover-trigger="mouseenter"></dd>
+        <dt>Build Order:</dt>
+        <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
         <dt>Template:</dt>
         <dd><select ng-model="formSaveModule.template" ng-options="c for c in config.templates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
         <div ng-if="service.gitMode === 'Flat'">
@@ -44,6 +44,8 @@
             <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
             <dt>Run As User:</dt>
             <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+            <dt>Deployment Folder:</dt>
+            <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
             <dt>Start Cmd Line:</dt>
             <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
             <dt>Start Time Out:</dt>

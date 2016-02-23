@@ -34,6 +34,7 @@ import com.northernwall.hadrian.service.dao.PostModuleData;
 import com.northernwall.hadrian.service.dao.PutModuleData;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -143,6 +144,7 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.versionUrl = "";
                 postModuleData.availabilityUrl = "";
                 postModuleData.runAs = "";
+                postModuleData.deploymentFolder = "";
                 postModuleData.startCmdLine = "";
                 postModuleData.startTimeOut = 0;
                 postModuleData.stopCmdLine = "";
@@ -160,13 +162,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         
         List<Module> modules = dataAccess.getModules(postModuleData.serviceId);
-        Collections.sort(modules);
-        if (postModuleData.order < 1) {
-            postModuleData.order = 1;
-        }
-        if (postModuleData.order > (modules.size() + 1)) {
-            postModuleData.order = modules.size() + 1;
-        }
+        List<Module> zeroModules = new LinkedList<>();
         for (Module temp : modules) {
             if (postModuleData.moduleName.equalsIgnoreCase(temp.getModuleName())) {
                 logger.warn("Error there already exists a module named {} on service {}", postModuleData.moduleName, postModuleData.serviceId);
@@ -176,11 +172,24 @@ public class ModuleHandler extends AbstractHandler {
                 logger.warn("Error there already exists a module with git path {} and folder {} on service {}", postModuleData.gitPath, postModuleData.gitFolder, postModuleData.serviceId);
                 return;
             }
+            if (temp.getOrder() == 0) {
+                zeroModules.add(temp);
+            }
         }
-        for (Module temp : modules) {
-            if (temp.getOrder() >= postModuleData.order) {
-                temp.setOrder(temp.getOrder() + 1);
-                dataAccess.updateModule(temp);
+        modules.removeAll(zeroModules);
+        Collections.sort(modules);
+        if (postModuleData.order < 0) {
+            postModuleData.order = 0;
+        }
+        if (postModuleData.order > 0) {
+            if (postModuleData.order > (modules.size() + 1)) {
+                postModuleData.order = modules.size() + 1;
+            }
+            for (Module temp : modules) {
+                if (temp.getOrder() >= postModuleData.order) {
+                    temp.setOrder(temp.getOrder() + 1);
+                    dataAccess.updateModule(temp);
+                }
             }
         }
 
@@ -199,15 +208,23 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.versionUrl,
                 postModuleData.availabilityUrl,
                 postModuleData.runAs,
+                postModuleData.deploymentFolder,
                 postModuleData.startCmdLine,
                 postModuleData.startTimeOut,
                 postModuleData.stopCmdLine,
                 postModuleData.stopTimeOut);
         dataAccess.saveModule(module);
-        modules.add(module.getOrder()-1, module);
+        if (module.getOrder() > 0) {
+            modules.add(module.getOrder()-1, module);
+        } else {
+            zeroModules.add(module);
+        }
 
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null, null);
         workItem.getMainModule().template = postModuleData.template;
+        for (Module temp : zeroModules) {
+            workItem.addModule(temp);
+        }
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
@@ -227,22 +244,27 @@ public class ModuleHandler extends AbstractHandler {
         
         PutModuleData putModuleData = Util.fromJson(request, PutModuleData.class);
         List<Module> modules = dataAccess.getModules(serviceId);
-        Collections.sort(modules);
-        if (putModuleData.order < 1) {
-            putModuleData.order = 1;
-        }
-        if (putModuleData.order > modules.size()) {
-            putModuleData.order = modules.size();
-        }
+        List<Module> zeroModules = new LinkedList<>();
         Module module = null;
         for (Module temp : modules) {
             if (temp.getModuleId().equals(moduleId)) {
                 module = temp;
             }
+            if (temp.getOrder() == 0) {
+                zeroModules.add(temp);
+            }
         }
         if (module == null) {
             logger.warn("Could not find module with id {} in service {}", moduleId, serviceId);
             return;
+        }
+        modules.removeAll(zeroModules);
+        Collections.sort(modules);
+        if (putModuleData.order < 0) {
+            putModuleData.order = 0;
+        }
+        if (putModuleData.order > modules.size()) {
+            putModuleData.order = modules.size();
         }
         
         module.setModuleName(putModuleData.moduleName);
@@ -254,15 +276,24 @@ public class ModuleHandler extends AbstractHandler {
         module.setVersionUrl(putModuleData.versionUrl);
         module.setAvailabilityUrl(putModuleData.availabilityUrl);
         module.setRunAs(putModuleData.runAs);
+        module.setDeploymentFolder(putModuleData.deploymentFolder);
         module.setStartCmdLine(putModuleData.startCmdLine);
         module.setStartTimeOut(putModuleData.startTimeOut);
         module.setStopCmdLine(putModuleData.stopCmdLine);
         module.setStopTimeOut(putModuleData.stopTimeOut);
         
         if (module.getOrder() != putModuleData.order) {
-            modules.remove(module);
+            if (module.getOrder() > 0) {
+                modules.remove(module);
+            } else {
+                zeroModules.remove(module);
+            }
             module.setOrder(putModuleData.order);
-            modules.add(putModuleData.order - 1, module);
+            if (putModuleData.order > 0) {
+                modules.add(putModuleData.order - 1, module);
+            } else {
+                zeroModules.add(module);
+            }
             int i = 1;
             for (Module temp : modules) {
                 if (temp.getOrder() != i) {
@@ -275,6 +306,9 @@ public class ModuleHandler extends AbstractHandler {
         dataAccess.saveModule(module);
         
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null, null);
+        for (Module temp : zeroModules) {
+            workItem.addModule(temp);
+        }
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

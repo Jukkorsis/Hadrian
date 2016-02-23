@@ -21,6 +21,7 @@ public class GetModuleData {
     public String versionUrl;
     public String availabilityUrl;
     public String runAs;
+    public String deploymentFolder;
     public String startCmdLine;
     public int startTimeOut;
     public String stopCmdLine;
@@ -44,6 +45,7 @@ public class GetModuleData {
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.runAs = module.getRunAs();
+        temp.deploymentFolder = module.getDeploymentFolder();
         temp.startCmdLine = module.getStartCmdLine();
         temp.startTimeOut = module.getStartTimeOut();
         temp.stopCmdLine = module.getStopCmdLine();

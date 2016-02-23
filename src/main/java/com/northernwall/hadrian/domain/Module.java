@@ -34,12 +34,13 @@ public class Module implements Comparable<Module> {
     private String versionUrl;
     private String availabilityUrl;
     private String runAs;
+    private String deploymentFolder;
     private String startCmdLine;
     private int startTimeOut;
     private String stopCmdLine;
     private int stopTimeOut;
 
-    public Module(String moduleName, String serviceId, int order, String moduleType, String gitPath, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
+    public Module(String moduleName, String serviceId, int order, String moduleType, String gitPath, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -55,6 +56,7 @@ public class Module implements Comparable<Module> {
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.runAs = runAs;
+        this.deploymentFolder = deploymentFolder;
         this.startCmdLine = startCmdLine;
         this.startTimeOut = startTimeOut;
         this.stopCmdLine = stopCmdLine;
@@ -181,6 +183,14 @@ public class Module implements Comparable<Module> {
         this.runAs = runAs;
     }
 
+    public String getDeploymentFolder() {
+        return deploymentFolder;
+    }
+
+    public void setDeploymentFolder(String deploymentFolder) {
+        this.deploymentFolder = deploymentFolder;
+    }
+
     public String getStartCmdLine() {
         return startCmdLine;
     }
@@ -215,7 +225,11 @@ public class Module implements Comparable<Module> {
 
     @Override
     public int compareTo(Module o) {
-        return order - o.order;
+        int result = order - o.order;
+        if (result == 0) {
+            result = moduleId.compareTo(o.moduleId);
+        }
+        return result;
     }
 
 }

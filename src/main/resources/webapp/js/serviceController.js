@@ -490,6 +490,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.runAs = "";
+        $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
         $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
         $scope.formSaveModule.startTimeOut = 60;
         $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
@@ -512,6 +513,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 runAs: $scope.formSaveModule.runAs,
+                deploymentFolder: $scope.formSaveModule.deploymentFolder,
                 startCmdLine: $scope.formSaveModule.startCmdLine,
                 startTimeOut: $scope.formSaveModule.startTimeOut,
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
@@ -550,6 +552,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.runAs = module.runAs;
+        $scope.formUpdateModule.deploymentFolder = module.deploymentFolder;
         $scope.formUpdateModule.startCmdLine = module.startCmdLine;
         $scope.formUpdateModule.startTimeOut = module.startTimeOut;
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
@@ -568,6 +571,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 runAs: $scope.formUpdateModule.runAs,
+                deploymentFolder: $scope.formUpdateModule.deploymentFolder,
                 startCmdLine: $scope.formUpdateModule.startCmdLine,
                 startTimeOut: $scope.formUpdateModule.startTimeOut,
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,
