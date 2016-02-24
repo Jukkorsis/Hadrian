@@ -44,9 +44,8 @@ public class WorkItem {
     private List<ModuleData> modules;
     private HostData host;
     private VipData vip;
-    private VipData newVip;
 
-    public WorkItem(String type, String operation, User user, Team team, Service service, Module module, Host host, Vip vip, Vip newVip) {
+    public WorkItem(String type, String operation, User user, Team team, Service service, Module module, Host host, Vip vip) {
         this.id = UUID.randomUUID().toString();
         this.type = type;
         this.operation = operation;
@@ -60,7 +59,6 @@ public class WorkItem {
         this.modules = new LinkedList<>();
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
-        this.newVip = VipData.create(newVip);
     }
 
     public String getId() {
@@ -167,14 +165,6 @@ public class WorkItem {
         this.vip = vip;
     }
 
-    public VipData getNewVip() {
-        return newVip;
-    }
-
-    public void setNewVip(VipData newVip) {
-        this.newVip = newVip;
-    }
-
     @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
@@ -216,11 +206,6 @@ public class WorkItem {
             str.append(", vip=");
             str.append(vip);
         }
-        if (newVip != null) {
-            str.append(", newVip=");
-            str.append(newVip);
-        }
-        str.append('}');
         return str.toString();
     }
 

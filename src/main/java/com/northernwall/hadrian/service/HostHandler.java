@@ -241,8 +241,8 @@ public class HostHandler extends AbstractHandler {
                     postHostData.size);
             dataAccess.saveHost(host);
 
-            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, module, host, null, null);
-            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
+            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, module, host, null);
+            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null);
 
             workItemCreate.getHost().version = postHostData.version;
             workItemCreate.getHost().reason = postHostData.reason;
@@ -285,7 +285,7 @@ public class HostHandler extends AbstractHandler {
                     if (module == null || !module.getModuleId().equals(host.getModuleId())) {
                         module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null, null);
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null);
                     workItem.getHost().version = putHostData.version;
                     workItem.getHost().reason = putHostData.reason;
                     if (workItems.isEmpty()) {
@@ -339,7 +339,7 @@ public class HostHandler extends AbstractHandler {
                     if (module == null || !module.getModuleId().equals(host.getModuleId())) {
                         module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_RESTART, user, team, service, module, host, null, null);
+                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_RESTART, user, team, service, module, host, null);
                     if (workItems.isEmpty()) {
                         host.setStatus("Restarting...");
                     } else {
@@ -377,7 +377,7 @@ public class HostHandler extends AbstractHandler {
         Team team = dataAccess.getTeam(service.getTeamId());
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, null, host, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, null, host, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -491,7 +491,7 @@ public class HostHandler extends AbstractHandler {
                                                 }
                                             }
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, module, host, vip, null);
+                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, module, host, vip);
                                             dataAccess.saveWorkItem(workItem);
                                             workItemProcess.sendWorkItem(workItem);
                                         } else {
@@ -534,7 +534,7 @@ public class HostHandler extends AbstractHandler {
         }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, null, host, vip, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, null, host, vip);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

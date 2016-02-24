@@ -72,9 +72,6 @@ public class EmailWorkItemSender extends WorkItemSender {
     @Override
     public boolean sendWorkItem(WorkItem workItem) {
         switch (workItem.getType()) {
-            case Const.TYPE_SERVICE:
-                sendServiceEmail(workItem);
-                break;
             case Const.TYPE_MODULE:
                 sendModuleEmail(workItem);
                 break;
@@ -91,17 +88,6 @@ public class EmailWorkItemSender extends WorkItemSender {
                 logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
         }
         return false;
-    }
-
-    protected void sendServiceEmail(WorkItem workItem) {
-        logger.info("Processing Service {} with opertion {}", workItem.getService().serviceName, workItem.getOperation());
-
-        String subject = workItem.getOperation() + " service " + workItem.getService().serviceName;
-
-        StringBuffer body = new StringBuffer();
-        addEmailHeader(workItem, body);
-
-        emailWorkItem(subject, body.toString());
     }
 
     protected void sendModuleEmail(WorkItem workItem) {

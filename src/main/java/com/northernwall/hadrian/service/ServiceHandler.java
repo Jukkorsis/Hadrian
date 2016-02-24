@@ -378,8 +378,6 @@ public class ServiceHandler extends AbstractHandler {
             }
         }
 
-        Team team = dataAccess.getTeam(postServiceData.teamId);
-
         if (postServiceData.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
             postServiceData.gitMode = Const.GIT_MODE_FLAT;
         }
@@ -394,9 +392,11 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.gitPath);
 
         dataAccess.saveService(service);
-        WorkItem workItem = new WorkItem(Const.TYPE_SERVICE, Const.OPERATION_CREATE, user, team, service, null, null, null, null);
-        dataAccess.saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        
+        Map<String, String> notes = new HashMap<>();
+        notes.put("name", service.getServiceName());
+        notes.put("abbr", service.getServiceAbbr());
+        createAudit(service.getServiceId(), user.getUsername(), Const.TYPE_SERVICE, Const.OPERATION_CREATE, notes);
     }
 
     private void updateService(Request request, String id) throws IOException {
@@ -430,10 +430,10 @@ public class ServiceHandler extends AbstractHandler {
                     dataAccess.saveServiceRef(ref);
                     Map<String, String> notes = new HashMap<>();
                     notes.put("uses", serverService.getServiceAbbr());
-                    createAudit(clientId, user.getUsername(), Const.OPERATION_CREATE, notes);
+                    createAudit(clientId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_CREATE, notes);
                     notes = new HashMap<>();
                     notes.put("use_by", clientService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), Const.OPERATION_CREATE, notes);
+                    createAudit(serverId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_CREATE, notes);
                 }
             }
         }
@@ -452,19 +452,19 @@ public class ServiceHandler extends AbstractHandler {
         dataAccess.deleteServiceRef(clientId, serverId);
         Map<String, String> notes = new HashMap<>();
         notes.put("uses", serverService.getServiceAbbr());
-        createAudit(clientId, user.getUsername(), Const.OPERATION_DELETE, notes);
+        createAudit(clientId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_DELETE, notes);
         notes = new HashMap<>();
         notes.put("use_by", clientService.getServiceAbbr());
-        createAudit(serverId, user.getUsername(), Const.OPERATION_DELETE, notes);
+        createAudit(serverId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_DELETE, notes);
     }
 
-    private void createAudit(String serviceId, String requestor, String operation, Map<String, String> notes) {
+    private void createAudit(String serviceId, String requestor, String type, String operation, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
         audit.timePerformed = new Date();
         audit.timeRequested = new Date();
         audit.requestor = requestor;
-        audit.type = Const.TYPE_SERVICE_REF;
+        audit.type = type;
         audit.operation = operation;
         audit.notes = gson.toJson(notes);
         dataAccess.saveAudit(audit, " ");

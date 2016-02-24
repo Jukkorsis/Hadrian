@@ -220,7 +220,7 @@ public class ModuleHandler extends AbstractHandler {
             zeroModules.add(module);
         }
 
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null);
         workItem.getMainModule().template = postModuleData.template;
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
@@ -305,7 +305,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         dataAccess.saveModule(module);
         
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null);
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
         }
@@ -354,7 +354,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         dataAccess.deleteModule(serviceId, moduleId);
         
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_DELETE, user, team, service, module, null, null, null);
+        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_DELETE, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

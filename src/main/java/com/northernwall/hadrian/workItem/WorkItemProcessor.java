@@ -96,13 +96,7 @@ public class WorkItemProcessor {
             }
 
             Map<String, String> notes = new HashMap<>();
-            if (workItem.getType().equalsIgnoreCase(Const.TYPE_SERVICE)) {
-                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    createService(workItem, status);
-                } else {
-                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                }
-            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
+            if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     notes.put("template", workItem.getMainModule().template);
                     notes.put("type", workItem.getMainModule().moduleType);
@@ -131,8 +125,15 @@ public class WorkItemProcessor {
             } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
                 if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
                     notes.put("protocol", workItem.getVip().protocol);
+                    notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
+                    notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
+                    notes.put("external", Boolean.toString(workItem.getVip().external));
                     createVip(workItem, status);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
+                    notes.put("protocol", workItem.getVip().protocol);
+                    notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
+                    notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
+                    notes.put("external", Boolean.toString(workItem.getVip().external));
                     updateVip(workItem, status);
                 } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
                     deleteVip(workItem, status);
@@ -186,18 +187,6 @@ public class WorkItemProcessor {
             WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
             deleteNextWorkItem(nextWorkItem.getNextId());
             dataAccess.deleteWorkItem(nextId);
-        }
-    }
-
-    private void createService(WorkItem workItem, boolean status) throws IOException {
-        Service service = dataAccess.getService(workItem.getService().serviceId);
-        if (service == null) {
-            logger.warn("Could not find service {} being created", workItem.getService().serviceId);
-            return;
-        }
-        if (status) {
-        } else {
-            logger.warn("Callback for {} failed with status {}", service.getServiceId(), status);
         }
     }
 
@@ -326,8 +315,8 @@ public class WorkItemProcessor {
         }
         if (status) {
             vip.setStatus(Const.NO_STATUS);
-            vip.setExternal(workItem.getNewVip().external);
-            vip.setServicePort(workItem.getNewVip().servicePort);
+            vip.setExternal(workItem.getVip().external);
+            vip.setServicePort(workItem.getVip().servicePort);
             dataAccess.updateVip(vip);
         } else {
             logger.warn("Callback for {} failed with status {}", workItem.getVip().vipId, status);
