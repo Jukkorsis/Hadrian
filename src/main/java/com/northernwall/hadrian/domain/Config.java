@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Config {
+    public String mavenGroupId = "";
     public String versionUrl = "";
     public String availabilityUrl = "";
     public String deploymentFolder = "";
@@ -34,6 +35,8 @@ public class Config {
     public List<String> gitModes = new LinkedList<>();
     public List<String> moduleTypes = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
-    public List<String> templates = new LinkedList<>();
+    public List<String> deployableTemplates = new LinkedList<>();
+    public List<String> libraryTemplates = new LinkedList<>();
+    public List<String> testTemplates = new LinkedList<>();
     
 }

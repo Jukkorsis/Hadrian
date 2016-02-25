@@ -15,11 +15,11 @@
             <dt>Git Mode:</dt>
             <dd><select ng-model="formSaveService.gitMode" ng-options="c for c in config.gitModes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
             <div ng-if="formSaveService.gitMode === 'Consolidated'">
-                <dt>Git Path:</dt>
+                <dt>Git Project</dt>
                 <dd>
                     <div class="input-group">
                         <div class="input-group-addon">{{team.gitRepo}} / </div>
-                        <input ng-model="formSaveService.gitPath" type="text" class="form-control">
+                        <input ng-model="formSaveService.gitProject" type="text" class="form-control">
                         <div class="input-group-addon">.git</div>
                     </div>
                 </dd>

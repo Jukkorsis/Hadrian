@@ -24,7 +24,7 @@ public class ServiceData {
     public String teamId;
     public String serviceType;
     public String gitMode;
-    public String gitPath;
+    public String gitProject;
 
     public static ServiceData create(Service service) {
         if (service == null) {
@@ -37,7 +37,7 @@ public class ServiceData {
         temp.teamId = service.getTeamId();
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
-        temp.gitPath = service.getGitPath();
+        temp.gitProject = service.getGitProject();
         return temp;
     }
 

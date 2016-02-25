@@ -23,7 +23,7 @@ public class ModuleData {
     public int order;
     public String moduleType;
     public String template;
-    public String gitPath;
+    public String gitProject;
     public String gitFolder;
     public String mavenGroupId;
     public String mavenArtifactId;
@@ -48,7 +48,7 @@ public class ModuleData {
         temp.moduleName = module.getModuleName();
         temp.order = module.getOrder();
         temp.moduleType = module.getModuleType();
-        temp.gitPath = module.getGitPath();
+        temp.gitProject = module.getGitProject();
         temp.gitFolder = module.getGitFolder();
         temp.mavenGroupId = module.getMavenGroupId();
         temp.mavenArtifactId = module.getMavenArtifactId();

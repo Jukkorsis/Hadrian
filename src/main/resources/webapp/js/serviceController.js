@@ -479,10 +479,12 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         } else {
             $scope.formSaveModule.moduleType = 'Library';
         }
-        $scope.formSaveModule.template = $scope.config.templates[0];
-        $scope.formSaveModule.gitPath = "";
+        $scope.formSaveModule.deployableTemplate = $scope.config.deployableTemplates[0];
+        $scope.formSaveModule.libraryTemplate = $scope.config.libraryTemplates[0];
+        $scope.formSaveModule.testTemplate = $scope.config.testTemplates[0];
+        $scope.formSaveModule.gitProject = "";
         $scope.formSaveModule.gitFolder = "";
-        $scope.formSaveModule.mavenGroupId = "";
+        $scope.formSaveModule.mavenGroupId = $scope.config.mavenGroupId;
         $scope.formSaveModule.mavenArtifactId = "";
         $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
         $scope.formSaveModule.artifactSuffix = "";
@@ -502,8 +504,10 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 serviceId: $scope.service.serviceId,
                 order: $scope.formSaveModule.order,
                 moduleType: $scope.formSaveModule.moduleType,
-                template: $scope.formSaveModule.template,
-                gitPath: $scope.formSaveModule.gitPath,
+                deployableTemplate: $scope.formSaveModule.deployableTemplate,
+                libraryTemplate: $scope.formSaveModule.libraryTemplate,
+                testTemplate: $scope.formSaveModule.testTemplate,
+                gitProject: $scope.formSaveModule.gitProject,
                 gitFolder: $scope.formSaveModule.gitFolder,
                 mavenGroupId: $scope.formSaveModule.mavenGroupId,
                 mavenArtifactId: $scope.formSaveModule.mavenArtifactId,

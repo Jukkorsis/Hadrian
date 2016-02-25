@@ -64,9 +64,9 @@ public class Const {
     public static final String MAVEN_SNAPSHOT = "SNAPSHOT";
     
     public static final String GIT_PATH_URL = "gitPathUrl";
-    public static final String GIT_PATH_URL_DETAULT = "git@github.com:{repo}/{path}.git";
+    public static final String GIT_PATH_URL_DETAULT = "git@github.com:{repo}/{project}.git";
     public static final String GIT_PATH_PATTERN_REPO = "{repo}";
-    public static final String GIT_PATH_PATTERN_PATH = "{path}";
+    public static final String GIT_PATH_PATTERN_PROJECT = "{project}";
 
     //Properties file constants
     public static final String PROPERTIES_FILENAME = "hadrian.properties";
@@ -142,6 +142,8 @@ public class Const {
     public static final String CALENDAR_GOOGLE_CLIENT_SECRETS = "calendarHelper.google.clientSecrets";
     public static final String CALENDAR_GOOGLE_GLOBAL_ID = "calendarHelper.google.globalCalendarId";
 
+    public static final String CONFIG_MAVEN_GROUP_ID = "config.mavenGroupId";
+    public static final String CONFIG_MAVEN_GROUP_ID_DEFAULT = "";
     public static final String CONFIG_VERSION_URL = "config.versionUrl";
     public static final String CONFIG_VERSION_URL_DEFAULT = "{host}.mydomain.com:9090/version";
     public static final String CONFIG_AVAILABILITY_URL = "config.availabilityUrl";
@@ -167,9 +169,10 @@ public class Const {
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
     public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = "jar, war, targz";
-    public static final String CONFIG_TEMPLATES = "config.templates";
+    public static final String CONFIG_DEPLOYABLE_TEMPLATES = "config.templates.deployable";
+    public static final String CONFIG_LIBRARY_TEMPLATES = "config.templates.library";
+    public static final String CONFIG_TEST_TEMPLATES = "config.templates.test";
     public static final String CONFIG_TEMPLATES_NO_TEMPLATE = "No template";
-    public static final String CONFIG_TEMPLATES_DEFAULT = "Java template";
     
     private Const() {
     }

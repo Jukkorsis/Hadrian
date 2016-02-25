@@ -33,11 +33,11 @@ public class Service implements Comparable<Service>{
     private String description;
     private String serviceType;
     private String gitMode;
-    private String gitPath;
+    private String gitProject;
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, String gitMode, String gitPath) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, String gitMode, String gitProject) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
@@ -45,7 +45,7 @@ public class Service implements Comparable<Service>{
         this.description = description;
         this.serviceType = serviceType;
         this.gitMode = gitMode;
-        this.gitPath = gitPath;
+        this.gitProject = gitProject;
         this.creationDate = new Date();
     }
 
@@ -101,12 +101,12 @@ public class Service implements Comparable<Service>{
         this.gitMode = gitMode;
     }
 
-    public String getGitPath() {
-        return gitPath;
+    public String getGitProject() {
+        return gitProject;
     }
 
-    public void setGitPath(String gitPath) {
-        this.gitPath = gitPath;
+    public void setGitProject(String gitProject) {
+        this.gitProject = gitProject;
     }
 
     public Date getCreationDate() {

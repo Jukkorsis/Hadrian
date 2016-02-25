@@ -128,8 +128,26 @@ public class ModuleHandler extends AbstractHandler {
         if (!config.moduleTypes.contains(postModuleData.moduleType)) {
             throw new RuntimeException("Unknown module type");
         }
-        if (!config.templates.contains(postModuleData.template)) {
-            throw new RuntimeException("Unknown template");
+        String template = null;
+        switch (postModuleData.moduleType) {
+            case Const.MODULE_TYPE_DEPLOYABLE:
+                if (!config.deployableTemplates.contains(postModuleData.deployableTemplate)) {
+                    throw new RuntimeException("Unknown deployable template");
+                }
+                template = postModuleData.deployableTemplate;
+                break;
+            case Const.MODULE_TYPE_LIBRARY:
+                if (!config.libraryTemplates.contains(postModuleData.libraryTemplate)) {
+                    throw new RuntimeException("Unknown library template");
+                }
+                template = postModuleData.libraryTemplate;
+                break;
+            case Const.MODULE_TYPE_TEST:
+                if (!config.testTemplates.contains(postModuleData.testTemplate)) {
+                    throw new RuntimeException("Unknown test template");
+                }
+                template = postModuleData.testTemplate;
+                break;
         }
         if (!config.artifactTypes.contains(postModuleData.artifactType)) {
             throw new RuntimeException("Unknown artifact");
@@ -138,29 +156,32 @@ public class ModuleHandler extends AbstractHandler {
         if (service.getServiceType().equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
             postModuleData.moduleType = Const.MODULE_TYPE_LIBRARY;
         }
-        
+
         if (!postModuleData.moduleType.equals(Const.MODULE_TYPE_DEPLOYABLE)) {
-                postModuleData.hostAbbr = "";
-                postModuleData.versionUrl = "";
-                postModuleData.availabilityUrl = "";
-                postModuleData.runAs = "";
-                postModuleData.deploymentFolder = "";
-                postModuleData.startCmdLine = "";
-                postModuleData.startTimeOut = 0;
-                postModuleData.stopCmdLine = "";
-                postModuleData.stopTimeOut = 0;
+            postModuleData.hostAbbr = "";
+            postModuleData.versionUrl = "";
+            postModuleData.availabilityUrl = "";
+            postModuleData.runAs = "";
+            postModuleData.deploymentFolder = "";
+            postModuleData.startCmdLine = "";
+            postModuleData.startTimeOut = 0;
+            postModuleData.stopCmdLine = "";
+            postModuleData.stopTimeOut = 0;
         } else {
             if (postModuleData.hostAbbr.contains("-")) {
                 throw new RuntimeException("Can not have '-' in host abbr");
             }
         }
-        
+
         if (service.getGitMode().equals(Const.GIT_MODE_CONSOLIDATED)) {
-            postModuleData.gitPath = service.getGitPath();
+            postModuleData.gitProject = service.getGitProject();
+            if (postModuleData.gitFolder.startsWith("/")) {
+                postModuleData.gitFolder = postModuleData.gitFolder.substring(1);
+            }
         } else {
             postModuleData.gitFolder = "";
         }
-        
+
         List<Module> modules = dataAccess.getModules(postModuleData.serviceId);
         List<Module> zeroModules = new LinkedList<>();
         for (Module temp : modules) {
@@ -168,8 +189,8 @@ public class ModuleHandler extends AbstractHandler {
                 logger.warn("Error there already exists a module named {} on service {}", postModuleData.moduleName, postModuleData.serviceId);
                 return;
             }
-            if (postModuleData.gitPath.equalsIgnoreCase(temp.getGitPath()) && postModuleData.gitFolder.equalsIgnoreCase(temp.getGitFolder())) {
-                logger.warn("Error there already exists a module with git path {} and folder {} on service {}", postModuleData.gitPath, postModuleData.gitFolder, postModuleData.serviceId);
+            if (postModuleData.gitProject.equalsIgnoreCase(temp.getGitProject()) && postModuleData.gitFolder.equalsIgnoreCase(temp.getGitFolder())) {
+                logger.warn("Error there already exists a module with git project {} and folder {} on service {}", postModuleData.gitProject, postModuleData.gitFolder, postModuleData.serviceId);
                 return;
             }
             if (temp.getOrder() == 0) {
@@ -198,7 +219,7 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.serviceId,
                 postModuleData.order,
                 postModuleData.moduleType,
-                postModuleData.gitPath,
+                postModuleData.gitProject,
                 postModuleData.gitFolder,
                 postModuleData.mavenGroupId,
                 postModuleData.mavenArtifactId,
@@ -215,13 +236,13 @@ public class ModuleHandler extends AbstractHandler {
                 postModuleData.stopTimeOut);
         dataAccess.saveModule(module);
         if (module.getOrder() > 0) {
-            modules.add(module.getOrder()-1, module);
+            modules.add(module.getOrder() - 1, module);
         } else {
             zeroModules.add(module);
         }
 
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null);
-        workItem.getMainModule().template = postModuleData.template;
+        workItem.getMainModule().template = template;
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
         }
@@ -241,7 +262,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
         Team team = dataAccess.getTeam(service.getTeamId());
-        
+
         PutModuleData putModuleData = Util.fromJson(request, PutModuleData.class);
         List<Module> modules = dataAccess.getModules(serviceId);
         List<Module> zeroModules = new LinkedList<>();
@@ -266,7 +287,7 @@ public class ModuleHandler extends AbstractHandler {
         if (putModuleData.order > modules.size()) {
             putModuleData.order = modules.size();
         }
-        
+
         module.setModuleName(putModuleData.moduleName);
         module.setMavenGroupId(putModuleData.mavenGroupId);
         module.setMavenArtifactId(putModuleData.mavenArtifactId);
@@ -281,7 +302,7 @@ public class ModuleHandler extends AbstractHandler {
         module.setStartTimeOut(putModuleData.startTimeOut);
         module.setStopCmdLine(putModuleData.stopCmdLine);
         module.setStopTimeOut(putModuleData.stopTimeOut);
-        
+
         if (module.getOrder() != putModuleData.order) {
             if (module.getOrder() > 0) {
                 modules.remove(module);
@@ -304,7 +325,7 @@ public class ModuleHandler extends AbstractHandler {
             }
         }
         dataAccess.saveModule(module);
-        
+
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null);
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
@@ -328,7 +349,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
         Team team = dataAccess.getTeam(service.getTeamId());
-        
+
         for (Host host : dataAccess.getHosts(serviceId)) {
             if (host.getModuleId().equals(moduleId)) {
                 throw new RuntimeException("Can not delete module with an active host");
@@ -353,7 +374,7 @@ public class ModuleHandler extends AbstractHandler {
             i++;
         }
         dataAccess.deleteModule(serviceId, moduleId);
-        
+
         WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_DELETE, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);

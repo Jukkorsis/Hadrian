@@ -24,7 +24,7 @@ public class Module implements Comparable<Module> {
     private String serviceId;
     private int order;
     private String moduleType;
-    private String gitPath;
+    private String gitProject;
     private String gitFolder;
     private String mavenGroupId;
     private String mavenArtifactId;
@@ -40,13 +40,13 @@ public class Module implements Comparable<Module> {
     private String stopCmdLine;
     private int stopTimeOut;
 
-    public Module(String moduleName, String serviceId, int order, String moduleType, String gitPath, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
+    public Module(String moduleName, String serviceId, int order, String moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
         this.order = order;
         this.moduleType = moduleType;
-        this.gitPath = gitPath;
+        this.gitProject = gitProject;
         this.gitFolder = gitFolder;
         this.mavenGroupId = mavenGroupId;
         this.mavenArtifactId = mavenArtifactId;
@@ -103,12 +103,12 @@ public class Module implements Comparable<Module> {
         this.moduleType = moduleType;
     }
 
-    public String getGitPath() {
-        return gitPath;
+    public String getGitProject() {
+        return gitProject;
     }
 
-    public void setGitPath(String gitPath) {
-        this.gitPath = gitPath;
+    public void setGitProject(String gitProject) {
+        this.gitProject = gitProject;
     }
 
     public String getGitFolder() {

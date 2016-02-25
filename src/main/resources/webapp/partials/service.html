@@ -12,8 +12,8 @@
                 <dt>Git Mode:</dt>
                 <dd>{{service.gitMode}}</dd>
                 <div ng-if="service.gitMode === 'Consolidated'">
-                    <dt>Git Path:</dt>
-                    <dd>{{team.gitRepo}}/{{service.gitPath}}.git</dd>
+                    <dt>Git Project</dt>
+                    <dd>{{team.gitRepo}}/{{service.gitProject}}.git</dd>
                 </div>
             </span>
             <dt>Description:</dt>
@@ -67,7 +67,7 @@
                         <th>Name</th>
                         <th>Build Order</th>
                         <th>Type</th>
-                        <th>Git Path</th>
+                        <th>Git Project</th>
                         <th>Git Folder</th>
                     </tr>
                     <tr ng-repeat-start="m in service.modules">
@@ -84,7 +84,7 @@
                         </td>
                         <td>{{m.order}}</td>
                         <td>{{m.moduleType}}</td>
-                        <td>{{team.gitRepo}}/{{m.gitPath}}.git</td>
+                        <td>{{team.gitRepo}}/{{m.gitProject}}.git</td>
                         <td>/{{m.gitFolder}}</td>
                     </tr>
                     <tr ng-if="m.expanded" ng-repeat-end="">

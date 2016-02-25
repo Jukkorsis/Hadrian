@@ -92,15 +92,15 @@ public class Hadrian {
 
         infoHelper = new InfoHelper(client);
         hostDetailsHelper = new HostDetailsHelper(client, parameters);
-        
+
         setupJetty();
     }
 
     private void loadConfig(String key, String defaultValue, List<String> target) {
-        if (key.equals(Const.CONFIG_TEMPLATES)) {
-            target.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        }
         String temp = parameters.getString(key, defaultValue);
+        if (temp == null) {
+            return;
+        }
         String[] parts = temp.split(",");
         for (String part : parts) {
             part = part.trim();
@@ -113,6 +113,7 @@ public class Hadrian {
     private void loadConfig() {
         config = new Config();
 
+        config.mavenGroupId = parameters.getString(Const.CONFIG_MAVEN_GROUP_ID, Const.CONFIG_MAVEN_GROUP_ID_DEFAULT);
         config.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
         config.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
         config.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
@@ -126,14 +127,20 @@ public class Hadrian {
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
-        loadConfig(Const.CONFIG_TEMPLATES, Const.CONFIG_TEMPLATES_DEFAULT, config.templates);
-        
+
+        config.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
+        config.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
+        config.testTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
+        loadConfig(Const.CONFIG_DEPLOYABLE_TEMPLATES, null, config.deployableTemplates);
+        loadConfig(Const.CONFIG_LIBRARY_TEMPLATES, null, config.libraryTemplates);
+        loadConfig(Const.CONFIG_TEST_TEMPLATES, null, config.testTemplates);
+
         config.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         config.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
-        
+
         config.gitModes.add(Const.GIT_MODE_CONSOLIDATED);
         config.gitModes.add(Const.GIT_MODE_FLAT);
-        
+
         config.moduleTypes.add(Const.MODULE_TYPE_DEPLOYABLE);
         config.moduleTypes.add(Const.MODULE_TYPE_LIBRARY);
         config.moduleTypes.add(Const.MODULE_TYPE_TEST);
@@ -175,9 +182,9 @@ public class Hadrian {
         handlers.addHandler(new CalendarHandler(dataAccess, calendarHelper));
         handlers.addHandler(new GraphHandler(dataAccess));
         handlers.addHandler(new RedirectHandler());
-        
+
         MetricHandler metricHandler = new MetricHandler(handlers, metricRegistry);
-        
+
         ContextHandler contextHandler = new ContextHandler();
         contextHandler.setHandler(metricHandler);
         contextHandler.setContextPath("/");

@@ -389,7 +389,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.description,
                 postServiceData.serviceType,
                 postServiceData.gitMode,
-                postServiceData.gitPath);
+                postServiceData.gitProject);
 
         dataAccess.saveService(service);
         

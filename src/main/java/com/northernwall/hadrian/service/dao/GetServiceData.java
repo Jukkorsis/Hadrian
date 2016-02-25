@@ -15,7 +15,7 @@ public class GetServiceData {
     public String description;
     public String serviceType;
     public String gitMode;
-    public String gitPath;
+    public String gitProject;
     public Date creationDate;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
@@ -34,7 +34,7 @@ public class GetServiceData {
         temp.description = service.getDescription();
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
-        temp.gitPath = service.getGitPath();
+        temp.gitProject = service.getGitProject();
         temp.creationDate = service.getCreationDate();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();

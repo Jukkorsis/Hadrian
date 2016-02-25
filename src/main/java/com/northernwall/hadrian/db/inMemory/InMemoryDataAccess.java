@@ -458,7 +458,7 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveAudit(Audit audit, String output) {
         synchronized (audits) {
             audits.add(audit);
-            if (audits.size() > 100) {
+            if (audits.size() > 1000) {
                 audits.remove(0);
             }
         }

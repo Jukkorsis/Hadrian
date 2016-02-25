@@ -25,7 +25,7 @@ public class PostModuleData {
     public String serviceId;
     public int order;
     public String moduleType;
-    public String gitPath;
+    public String gitProject;
     public String gitFolder;
     public String mavenGroupId;
     public String mavenArtifactId;
@@ -40,6 +40,8 @@ public class PostModuleData {
     public int startTimeOut;
     public String stopCmdLine;
     public int stopTimeOut;
-    public String template;
+    public String deployableTemplate;
+    public String libraryTemplate;
+    public String testTemplate;
 
 }

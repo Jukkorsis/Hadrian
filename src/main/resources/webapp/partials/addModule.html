@@ -11,21 +11,35 @@
         </div>
         <dt>Build Order:</dt>
         <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
-        <dt>Template:</dt>
-        <dd><select ng-model="formSaveModule.template" ng-options="c for c in config.templates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+        <div ng-if="formSaveModule.moduleType === 'Deployable'">
+            <dt>Template:</dt>
+            <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+        </div>
+        <div ng-if="formSaveModule.moduleType === 'Library'">
+            <dt>Template:</dt>
+            <dd><select ng-model="formSaveModule.libraryTemplate" ng-options="c for c in config.libraryTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+        </div>
+        <div ng-if="formSaveModule.moduleType === 'Test'">
+            <dt>Template:</dt>
+            <dd><select ng-model="formSaveModule.testTemplate" ng-options="c for c in config.testTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+        </div>
         <div ng-if="service.gitMode === 'Flat'">
-            <dt>Git Path:</dt>
+            <dt>Git Project:</dt>
             <dd>
                 <div class="input-group">
                     <div class="input-group-addon">{{team.gitRepo}} / </div>
-                    <input ng-model="formSaveModule.gitPath" type="text" class="form-control">
+                    <input ng-model="formSaveModule.gitProject" type="text" class="form-control">
                     <div class="input-group-addon">.git</div>
                 </div>
             </dd>
         </div>
         <div ng-if="service.gitMode === 'Consolidated'">
             <dt>Git Folder:</dt>
-            <dd><input ng-model="formSaveModule.gitFolder" type="text" class="form-control"></dd>
+            <dd>
+                <div class="input-group">
+                    <div class="input-group-addon"> / </div>
+                    <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
+            </dd>
         </div>
         <dt>Maven Group Id:</dt>
         <dd><input ng-model="formSaveModule.mavenGroupId" type="text" class="form-control"></dd>
