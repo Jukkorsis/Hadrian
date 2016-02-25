@@ -72,16 +72,16 @@ public class EmailWorkItemSender extends WorkItemSender {
     @Override
     public boolean sendWorkItem(WorkItem workItem) {
         switch (workItem.getType()) {
-            case Const.TYPE_MODULE:
+            case module:
                 sendModuleEmail(workItem);
                 break;
-            case Const.TYPE_HOST:
+            case host:
                 sendHostEmail(workItem);
                 break;
-            case Const.TYPE_VIP:
+            case vip:
                 sendVipEmail(workItem);
                 break;
-            case Const.TYPE_HOST_VIP:
+            case hostvip:
                 sendHostVipEmail(workItem);
                 break;
             default:
@@ -99,7 +99,7 @@ public class EmailWorkItemSender extends WorkItemSender {
         addEmailHeader(workItem, body);
         body.append("\n");
         addLine("Module Name", workItem.getMainModule().moduleName, body);
-        addLine("Module Type", workItem.getMainModule().moduleType, body);
+        addLine("Module Type", workItem.getMainModule().moduleType.toString(), body);
         body.append("\n");
         addLine("Git URL", getGitUrl(workItem), body);
         addLine("Git Folder", workItem.getMainModule().gitFolder, body);
@@ -153,10 +153,10 @@ public class EmailWorkItemSender extends WorkItemSender {
 
         String subject;
         switch (workItem.getOperation()) {
-            case Const.OPERATION_CREATE:
+            case create:
                 subject = "Add Host to Vip";
                 break;
-            case Const.OPERATION_DELETE:
+            case delete:
                 subject = "Remove Host from Vip";
                 break;
             default:
@@ -178,8 +178,8 @@ public class EmailWorkItemSender extends WorkItemSender {
     }
 
     private void addEmailHeader(WorkItem workItem, StringBuffer body) {
-        addLine("Type", workItem.getType(), body);
-        addLine("Operation", workItem.getOperation(), body);
+        addLine("Type", workItem.getType().toString(), body);
+        addLine("Operation", workItem.getOperation().toString(), body);
         addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
         addLine("Team", workItem.getTeam().teamName, body);
         body.append("\n");

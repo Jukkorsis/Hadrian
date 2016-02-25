@@ -29,30 +29,10 @@ public class Const {
     public static final String COOKIE_PORTAL_NAME = "portalname";
     public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
-    
-    public static final String OPERATION_CREATE = "create";
-    public static final String OPERATION_DEPLOY = "deploy";
-    public static final String OPERATION_RESTART = "restart";
-    public static final String OPERATION_UPDATE = "update";
-    public static final String OPERATION_DELETE = "delete";
-    
-    public static final String TYPE_SERVICE = "service";
-    public static final String TYPE_SERVICE_REF = "serviceRef";
-    public static final String TYPE_MODULE = "module";
-    public static final String TYPE_HOST = "host";
-    public static final String TYPE_VIP = "vip";
-    public static final String TYPE_HOST_VIP = "hostvip";
-    
+
     public static final String SERVICE_TYPE_SERVICE = "Service";
     public static final String SERVICE_TYPE_SHARED_LIBRARY = "Shared Library";
 
-    public static final String GIT_MODE_CONSOLIDATED = "Consolidated";
-    public static final String GIT_MODE_FLAT = "Flat";
-    
-    public static final String MODULE_TYPE_DEPLOYABLE = "Deployable";
-    public static final String MODULE_TYPE_LIBRARY = "Library";
-    public static final String MODULE_TYPE_TEST = "Test";
-    
     public static final String ATTR_SESSION = "session";
     public static final String ATTR_USER = "user";
 

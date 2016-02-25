@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.dao;
 
+import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Service;
 
 public class ServiceData {
@@ -23,7 +24,7 @@ public class ServiceData {
     public String serviceName;
     public String teamId;
     public String serviceType;
-    public String gitMode;
+    public GitMode gitMode;
     public String gitProject;
 
     public static ServiceData create(Service service) {

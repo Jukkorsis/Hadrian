@@ -24,7 +24,6 @@ import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -46,7 +45,6 @@ public class WorkItemProcessor {
     private final Meter meterSuccess;
     private final Meter meterFail;
     private final Gson gson;
-
 
     public WorkItemProcessor(DataAccess dataAccess, WorkItemSender webHookSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
@@ -96,60 +94,81 @@ public class WorkItemProcessor {
             }
 
             Map<String, String> notes = new HashMap<>();
-            if (workItem.getType().equalsIgnoreCase(Const.TYPE_MODULE)) {
-                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    notes.put("template", workItem.getMainModule().template);
-                    notes.put("type", workItem.getMainModule().moduleType);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                } else {
+            switch (workItem.getType()) {
+                case module:
+                    switch (workItem.getOperation()) {
+                        case create:
+                            notes.put("template", workItem.getMainModule().template);
+                            notes.put("type", workItem.getMainModule().moduleType.toString());
+                            break;
+                        case update:
+                            break;
+                        case delete:
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
+                    }
+                    break;
+                case host:
+                    switch (workItem.getOperation()) {
+                        case create:
+                            createHost(workItem, status);
+                            notes.put("env", workItem.getHost().env);
+                            notes.put("size", workItem.getHost().size);
+                            notes.put("reason", workItem.getHost().reason);
+                            break;
+                        case deploy:
+                            deploySoftware(workItem, status);
+                            notes.put("version", workItem.getHost().version);
+                            notes.put("reason", workItem.getHost().reason);
+                            break;
+                        case restart:
+                            restartHost(workItem, status);
+                            break;
+                        case delete:
+                            deleteHost(workItem, status);
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
+                    }
+                    break;
+                case vip:
+                    switch (workItem.getOperation()) {
+                        case create:
+                            notes.put("protocol", workItem.getVip().protocol);
+                            notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
+                            notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
+                            notes.put("external", Boolean.toString(workItem.getVip().external));
+                            createVip(workItem, status);
+                            break;
+                        case update:
+                            notes.put("protocol", workItem.getVip().protocol);
+                            notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
+                            notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
+                            notes.put("external", Boolean.toString(workItem.getVip().external));
+                            updateVip(workItem, status);
+                            break;
+                        case delete:
+                            deleteVip(workItem, status);
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
+                    }
+                    break;
+                case hostvip:
+                    switch (workItem.getOperation()) {
+                        case create:
+                            addHostVip(workItem, status);
+                            break;
+                        case delete:
+                            deleteHostVip(workItem, status);
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
+                    }
+                    break;
+                default:
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                }
-            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST)) {
-                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    createHost(workItem, status);
-                    notes.put("env", workItem.getHost().env);
-                    notes.put("size",workItem.getHost().size);
-                    notes.put("reason",workItem.getHost().reason);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DEPLOY)) {
-                    deploySoftware(workItem, status);
-                    notes.put("version", workItem.getHost().version);
-                    notes.put("reason", workItem.getHost().reason);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_RESTART)) {
-                    restartHost(workItem, status);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                    deleteHost(workItem, status);
-                } else {
-                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                }
-            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_VIP)) {
-                if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_CREATE)) {
-                    notes.put("protocol", workItem.getVip().protocol);
-                    notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
-                    notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
-                    notes.put("external", Boolean.toString(workItem.getVip().external));
-                    createVip(workItem, status);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_UPDATE)) {
-                    notes.put("protocol", workItem.getVip().protocol);
-                    notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
-                    notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
-                    notes.put("external", Boolean.toString(workItem.getVip().external));
-                    updateVip(workItem, status);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                    deleteVip(workItem, status);
-                } else {
-                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                }
-            } else if (workItem.getType().equalsIgnoreCase(Const.TYPE_HOST_VIP)) {
-                if (workItem.getOperation().equalsIgnoreCase("add")) {
-                    addHostVip(workItem, status);
-                } else if (workItem.getOperation().equalsIgnoreCase(Const.OPERATION_DELETE)) {
-                    deleteHostVip(workItem, status);
-                } else {
-                    throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                }
-            } else {
-                throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
             }
             if (status) {
                 Audit audit = new Audit();

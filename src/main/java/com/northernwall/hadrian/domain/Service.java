@@ -32,12 +32,12 @@ public class Service implements Comparable<Service>{
     private String teamId;
     private String description;
     private String serviceType;
-    private String gitMode;
+    private GitMode gitMode;
     private String gitProject;
     private Date creationDate;
     private final Map<String, String> links = new HashMap<>();
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, String gitMode, String gitProject) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
@@ -93,11 +93,11 @@ public class Service implements Comparable<Service>{
         this.serviceType = serviceType;
     }
 
-    public String getGitMode() {
+    public GitMode getGitMode() {
         return gitMode;
     }
 
-    public void setGitMode(String gitMode) {
+    public void setGitMode(GitMode gitMode) {
         this.gitMode = gitMode;
     }
 

@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.domain.ModuleType;
+
 /**
  *
  * @author Richard Thurston
@@ -24,7 +26,7 @@ public class PostModuleData {
     public String moduleName;
     public String serviceId;
     public int order;
-    public String moduleType;
+    public ModuleType moduleType;
     public String gitProject;
     public String gitFolder;
     public String mavenGroupId;

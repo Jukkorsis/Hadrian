@@ -16,12 +16,13 @@
 package com.northernwall.hadrian.workItem.dao;
 
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 
 public class ModuleData {
     public String moduleId;
     public String moduleName;
     public int order;
-    public String moduleType;
+    public ModuleType moduleType;
     public String template;
     public String gitProject;
     public String gitFolder;

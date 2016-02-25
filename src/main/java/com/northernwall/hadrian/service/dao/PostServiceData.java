@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.domain.GitMode;
+
 /**
  *
  * @author Richard Thurston
@@ -26,7 +28,7 @@ public class PostServiceData {
     public String teamId;
     public String description;
     public String serviceType;
-    public String gitMode;
+    public GitMode gitMode;
     public String gitProject;
 
 }

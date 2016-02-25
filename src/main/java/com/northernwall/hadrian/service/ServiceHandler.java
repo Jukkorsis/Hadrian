@@ -28,13 +28,16 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
+import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
@@ -379,7 +382,7 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         if (postServiceData.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
-            postServiceData.gitMode = Const.GIT_MODE_FLAT;
+            postServiceData.gitMode = GitMode.Flat;
         }
 
         Service service = new Service(
@@ -396,7 +399,7 @@ public class ServiceHandler extends AbstractHandler {
         Map<String, String> notes = new HashMap<>();
         notes.put("name", service.getServiceName());
         notes.put("abbr", service.getServiceAbbr());
-        createAudit(service.getServiceId(), user.getUsername(), Const.TYPE_SERVICE, Const.OPERATION_CREATE, notes);
+        createAudit(service.getServiceId(), user.getUsername(), Type.service, Operation.create, notes);
     }
 
     private void updateService(Request request, String id) throws IOException {
@@ -430,10 +433,10 @@ public class ServiceHandler extends AbstractHandler {
                     dataAccess.saveServiceRef(ref);
                     Map<String, String> notes = new HashMap<>();
                     notes.put("uses", serverService.getServiceAbbr());
-                    createAudit(clientId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_CREATE, notes);
+                    createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.create, notes);
                     notes = new HashMap<>();
                     notes.put("use_by", clientService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_CREATE, notes);
+                    createAudit(serverId, user.getUsername(), Type.serviceRef, Operation.create, notes);
                 }
             }
         }
@@ -452,13 +455,13 @@ public class ServiceHandler extends AbstractHandler {
         dataAccess.deleteServiceRef(clientId, serverId);
         Map<String, String> notes = new HashMap<>();
         notes.put("uses", serverService.getServiceAbbr());
-        createAudit(clientId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_DELETE, notes);
+        createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.delete, notes);
         notes = new HashMap<>();
         notes.put("use_by", clientService.getServiceAbbr());
-        createAudit(serverId, user.getUsername(), Const.TYPE_SERVICE_REF, Const.OPERATION_DELETE, notes);
+        createAudit(serverId, user.getUsername(), Type.serviceRef, Operation.delete, notes);
     }
 
-    private void createAudit(String serviceId, String requestor, String type, String operation, Map<String, String> notes) {
+    private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
         audit.timePerformed = new Date();

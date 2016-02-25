@@ -2,6 +2,7 @@ package com.northernwall.hadrian.service.dao;
 
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class GetModuleData {
     public String moduleId;
     public String moduleName;
     public int order;
-    public String moduleType;
+    public ModuleType moduleType;
     public String gitProject;
     public String gitFolder;
     public String mavenGroupId;

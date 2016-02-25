@@ -32,8 +32,8 @@ import java.util.UUID;
 public class WorkItem {
 
     private String id;
-    private String type;
-    private String operation;
+    private Type type;
+    private Operation operation;
     private String nextId;
     private String username;
     private String fullname;
@@ -45,7 +45,7 @@ public class WorkItem {
     private HostData host;
     private VipData vip;
 
-    public WorkItem(String type, String operation, User user, Team team, Service service, Module module, Host host, Vip vip) {
+    public WorkItem(Type type, Operation operation, User user, Team team, Service service, Module module, Host host, Vip vip) {
         this.id = UUID.randomUUID().toString();
         this.type = type;
         this.operation = operation;
@@ -69,19 +69,19 @@ public class WorkItem {
         this.id = id;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public String getOperation() {
+    public Operation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(Operation operation) {
         this.operation = operation;
     }
 

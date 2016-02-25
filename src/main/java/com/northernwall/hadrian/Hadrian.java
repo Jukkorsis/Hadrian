@@ -20,6 +20,8 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.domain.GitMode;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.graph.GraphHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -138,12 +140,12 @@ public class Hadrian {
         config.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         config.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
 
-        config.gitModes.add(Const.GIT_MODE_CONSOLIDATED);
-        config.gitModes.add(Const.GIT_MODE_FLAT);
+        config.gitModes.add(GitMode.Consolidated.toString());
+        config.gitModes.add(GitMode.Flat.toString());
 
-        config.moduleTypes.add(Const.MODULE_TYPE_DEPLOYABLE);
-        config.moduleTypes.add(Const.MODULE_TYPE_LIBRARY);
-        config.moduleTypes.add(Const.MODULE_TYPE_TEST);
+        config.moduleTypes.add(ModuleType.Deployable.toString());
+        config.moduleTypes.add(ModuleType.Library.toString());
+        config.moduleTypes.add(ModuleType.Test.toString());
     }
 
     private void setupJetty() {

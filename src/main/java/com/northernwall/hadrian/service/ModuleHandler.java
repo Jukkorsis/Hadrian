@@ -22,10 +22,14 @@ import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -130,19 +134,19 @@ public class ModuleHandler extends AbstractHandler {
         }
         String template = null;
         switch (postModuleData.moduleType) {
-            case Const.MODULE_TYPE_DEPLOYABLE:
+            case Deployable:
                 if (!config.deployableTemplates.contains(postModuleData.deployableTemplate)) {
                     throw new RuntimeException("Unknown deployable template");
                 }
                 template = postModuleData.deployableTemplate;
                 break;
-            case Const.MODULE_TYPE_LIBRARY:
+            case Library:
                 if (!config.libraryTemplates.contains(postModuleData.libraryTemplate)) {
                     throw new RuntimeException("Unknown library template");
                 }
                 template = postModuleData.libraryTemplate;
                 break;
-            case Const.MODULE_TYPE_TEST:
+            case Test:
                 if (!config.testTemplates.contains(postModuleData.testTemplate)) {
                     throw new RuntimeException("Unknown test template");
                 }
@@ -154,10 +158,10 @@ public class ModuleHandler extends AbstractHandler {
         }
 
         if (service.getServiceType().equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
-            postModuleData.moduleType = Const.MODULE_TYPE_LIBRARY;
+            postModuleData.moduleType = ModuleType.Library;
         }
 
-        if (!postModuleData.moduleType.equals(Const.MODULE_TYPE_DEPLOYABLE)) {
+        if (!postModuleData.moduleType.equals(ModuleType.Deployable)) {
             postModuleData.hostAbbr = "";
             postModuleData.versionUrl = "";
             postModuleData.availabilityUrl = "";
@@ -173,7 +177,7 @@ public class ModuleHandler extends AbstractHandler {
             }
         }
 
-        if (service.getGitMode().equals(Const.GIT_MODE_CONSOLIDATED)) {
+        if (service.getGitMode().equals(GitMode.Consolidated)) {
             postModuleData.gitProject = service.getGitProject();
             if (postModuleData.gitFolder.startsWith("/")) {
                 postModuleData.gitFolder = postModuleData.gitFolder.substring(1);
@@ -241,7 +245,7 @@ public class ModuleHandler extends AbstractHandler {
             zeroModules.add(module);
         }
 
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_CREATE, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null);
         workItem.getMainModule().template = template;
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
@@ -326,7 +330,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         dataAccess.saveModule(module);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_UPDATE, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null);
         for (Module temp : zeroModules) {
             workItem.addModule(temp);
         }
@@ -375,7 +379,7 @@ public class ModuleHandler extends AbstractHandler {
         }
         dataAccess.deleteModule(serviceId, moduleId);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_MODULE, Const.OPERATION_DELETE, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

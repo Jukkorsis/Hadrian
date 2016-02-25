@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Service;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ public class GetServiceData {
     public String teamId;
     public String description;
     public String serviceType;
-    public String gitMode;
+    public GitMode gitMode;
     public String gitProject;
     public Date creationDate;
     public List<GetModuleData> modules;

@@ -21,9 +21,11 @@ import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.service.dao.PostVipData;
@@ -154,7 +156,7 @@ public class VipHandler extends AbstractHandler {
                 postVipData.servicePort);
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_CREATE, user, team, service, module, null, vip);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -176,7 +178,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Updating...");
         dataAccess.saveVip(vip);
 
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_UPDATE, user, team, service, null, null, vip);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
         workItem.getVip().external = putVipData.external;
         workItem.getVip().servicePort = putVipData.servicePort;
         dataAccess.saveWorkItem(workItem);
@@ -200,7 +202,7 @@ public class VipHandler extends AbstractHandler {
         vip.setStatus("Deleting...");
         dataAccess.updateVip(vip);
         
-        WorkItem workItem = new WorkItem(Const.TYPE_VIP, Const.OPERATION_DELETE, user, team, service, null, null, vip);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.delete, user, team, service, null, null, vip);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }

@@ -23,7 +23,7 @@ public class Module implements Comparable<Module> {
     private String moduleName;
     private String serviceId;
     private int order;
-    private String moduleType;
+    private ModuleType moduleType;
     private String gitProject;
     private String gitFolder;
     private String mavenGroupId;
@@ -40,7 +40,7 @@ public class Module implements Comparable<Module> {
     private String stopCmdLine;
     private int stopTimeOut;
 
-    public Module(String moduleName, String serviceId, int order, String moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
+    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -95,11 +95,11 @@ public class Module implements Comparable<Module> {
         this.order = order;
     }
 
-    public String getModuleType() {
+    public ModuleType getModuleType() {
         return moduleType;
     }
 
-    public void setModuleType(String moduleType) {
+    public void setModuleType(ModuleType moduleType) {
         this.moduleType = moduleType;
     }
 

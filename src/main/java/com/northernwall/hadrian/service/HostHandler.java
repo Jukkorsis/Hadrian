@@ -29,8 +29,10 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
@@ -241,8 +243,8 @@ public class HostHandler extends AbstractHandler {
                     postHostData.size);
             dataAccess.saveHost(host);
 
-            WorkItem workItemCreate = new WorkItem(Const.TYPE_HOST, Const.OPERATION_CREATE, user, team, service, module, host, null);
-            WorkItem workItemDeploy = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null);
+            WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
+            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
 
             workItemCreate.getHost().version = postHostData.version;
             workItemCreate.getHost().reason = postHostData.reason;
@@ -285,7 +287,7 @@ public class HostHandler extends AbstractHandler {
                     if (module == null || !module.getModuleId().equals(host.getModuleId())) {
                         module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DEPLOY, user, team, service, module, host, null);
+                    WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                     workItem.getHost().version = putHostData.version;
                     workItem.getHost().reason = putHostData.reason;
                     if (workItems.isEmpty()) {
@@ -339,7 +341,7 @@ public class HostHandler extends AbstractHandler {
                     if (module == null || !module.getModuleId().equals(host.getModuleId())) {
                         module = dataAccess.getModule(host.getServiceId(), host.getModuleId());
                     }
-                    WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_RESTART, user, team, service, module, host, null);
+                    WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
                     if (workItems.isEmpty()) {
                         host.setStatus("Restarting...");
                     } else {
@@ -377,7 +379,7 @@ public class HostHandler extends AbstractHandler {
         Team team = dataAccess.getTeam(service.getTeamId());
         host.setStatus("Deleting...");
         dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST, Const.OPERATION_DELETE, user, team, service, null, host, null);
+        WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, null, host, null);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
@@ -443,8 +445,8 @@ public class HostHandler extends AbstractHandler {
                     audit.timePerformed = new Date();
                     audit.timeRequested = new Date();
                     audit.requestor = user.getUsername();
-                    audit.type = Const.TYPE_HOST;
-                    audit.operation = Const.OPERATION_CREATE;
+                    audit.type = Type.host;
+                    audit.operation = Operation.create;
                     audit.moduleName = module.getModuleName();
                     audit.hostName = hostName;
                     Map<String, String> notes = new HashMap<>();
@@ -491,7 +493,7 @@ public class HostHandler extends AbstractHandler {
                                                 }
                                             }
                                             dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, "add", user, team, service, module, host, vip);
+                                            WorkItem workItem = new WorkItem(Type.hostvip, Operation.create, user, team, service, module, host, vip);
                                             dataAccess.saveWorkItem(workItem);
                                             workItemProcess.sendWorkItem(workItem);
                                         } else {
@@ -534,7 +536,7 @@ public class HostHandler extends AbstractHandler {
         }
         vipRef.setStatus("Removing...");
         dataAccess.updateVipRef(vipRef);
-        WorkItem workItem = new WorkItem(Const.TYPE_HOST_VIP, Const.OPERATION_DELETE, user, team, service, null, host, vip);
+        WorkItem workItem = new WorkItem(Type.hostvip, Operation.delete, user, team, service, null, host, vip);
         dataAccess.saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
     }
