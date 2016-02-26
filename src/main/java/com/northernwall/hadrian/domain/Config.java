@@ -32,8 +32,8 @@ public class Config {
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> serviceTypes = new LinkedList<>();
-    public List<String> gitModes = new LinkedList<>();
-    public List<String> moduleTypes = new LinkedList<>();
+    public List<GitMode> gitModes = new LinkedList<>();
+    public List<ModuleType> moduleTypes = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> deployableTemplates = new LinkedList<>();
     public List<String> libraryTemplates = new LinkedList<>();

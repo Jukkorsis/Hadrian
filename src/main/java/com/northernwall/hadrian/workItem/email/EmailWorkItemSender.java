@@ -19,6 +19,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,7 +71,7 @@ public class EmailWorkItemSender extends WorkItemSender {
     }
 
     @Override
-    public boolean sendWorkItem(WorkItem workItem) {
+    public Result sendWorkItem(WorkItem workItem) {
         switch (workItem.getType()) {
             case module:
                 sendModuleEmail(workItem);
@@ -87,7 +88,7 @@ public class EmailWorkItemSender extends WorkItemSender {
             default:
                 logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
         }
-        return false;
+        return Result.wip;
     }
 
     protected void sendModuleEmail(WorkItem workItem) {

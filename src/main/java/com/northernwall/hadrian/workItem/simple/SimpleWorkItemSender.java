@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -50,7 +51,7 @@ public class SimpleWorkItemSender extends WorkItemSender {
     }
 
     @Override
-    public boolean sendWorkItem(WorkItem workItem) throws IOException {
+    public Result sendWorkItem(WorkItem workItem) throws IOException {
         RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(workItem));
         Request request = new Request.Builder()
                 .url(url)
@@ -59,7 +60,10 @@ public class SimpleWorkItemSender extends WorkItemSender {
                 .build();
         Response response = client.newCall(request).execute();
         logger.info("Sent workitem {} and got response {}", workItem.getId(), response.code());
-        return false;
+        if (response.isSuccessful()) {
+            return Result.wip;
+        }
+        return Result.error;
     }
 
 }

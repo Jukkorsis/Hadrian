@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.workItem.dao;
 
+import com.northernwall.hadrian.workItem.Result;
+
 public class CallbackData {
 
     /**
@@ -25,7 +27,7 @@ public class CallbackData {
     /**
      * one of SUCCESS/FAILURE
      */
-    public String status;
+    public Result status;
 
     /**
      * An optional code, provided by the service to assist in diagnosis.

@@ -32,7 +32,7 @@ public abstract class WorkItemSender {
         this.parameters = parameters;
     }
 
-    public abstract boolean sendWorkItem(WorkItem workItem) throws IOException;
+    public abstract Result sendWorkItem(WorkItem workItem) throws IOException;
 
     protected String getGitUrl(WorkItem workItem) {
         String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);

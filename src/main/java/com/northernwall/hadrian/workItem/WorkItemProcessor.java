@@ -58,23 +58,33 @@ public class WorkItemProcessor {
     }
 
     public void sendWorkItem(WorkItem workItem) throws IOException {
-        boolean done = false;
+        Result result;
         Timer.Context context = timerProcess.time();
         try {
-            done = webHookSender.sendWorkItem(workItem);
+            result = webHookSender.sendWorkItem(workItem);
         } finally {
             context.stop();
         }
-        if (done) {
-            logger.info("Work item sender says work item  {} has been process, no callback expected.", workItem.getId());
-            CallbackData callbackData = new CallbackData();
-            callbackData.requestId = workItem.getId();
-            callbackData.errorCode = 0;
-            callbackData.errorDescription = " ";
-            callbackData.status = Const.WORK_ITEM_STATUS_SUCCESS;
-            callbackData.output = "no output";
-            processCallback(callbackData);
+
+        switch (result) {
+            case success:
+                logger.info("Work item sender says work item  {} has been process, no callback expected.", workItem.getId());
+                break;
+            case error:
+                logger.warn("Work item sender says work item  {} failed to be process, no callback expected.", workItem.getId());
+                break;
+            case wip:
+                logger.info("Work item sender says work item  {} is being processed.", workItem.getId());
+                return;
         }
+        
+        CallbackData callbackData = new CallbackData();
+        callbackData.requestId = workItem.getId();
+        callbackData.errorCode = 0;
+        callbackData.errorDescription = " ";
+        callbackData.status = result;
+        callbackData.output = "no output";
+        processCallback(callbackData);
     }
 
     public void processCallback(CallbackData callbackData) throws IOException {
@@ -86,11 +96,16 @@ public class WorkItemProcessor {
             }
             dataAccess.deleteWorkItem(callbackData.requestId);
 
-            boolean status = callbackData.status.equalsIgnoreCase(Const.WORK_ITEM_STATUS_SUCCESS);
-            if (status) {
-                meterSuccess.mark();
-            } else {
-                meterFail.mark();
+            switch (callbackData.status) {
+                case success:
+                    meterSuccess.mark();
+                    break;
+                case error:
+                    meterFail.mark();
+                    break;
+                case wip:
+                    logger.warn("ProcessCallback should never be called for WIP");
+                    return;
             }
 
             Map<String, String> notes = new HashMap<>();
@@ -112,21 +127,21 @@ public class WorkItemProcessor {
                 case host:
                     switch (workItem.getOperation()) {
                         case create:
-                            createHost(workItem, status);
+                            createHost(workItem, callbackData.status);
                             notes.put("env", workItem.getHost().env);
                             notes.put("size", workItem.getHost().size);
                             notes.put("reason", workItem.getHost().reason);
                             break;
                         case deploy:
-                            deploySoftware(workItem, status);
+                            deploySoftware(workItem, callbackData.status);
                             notes.put("version", workItem.getHost().version);
                             notes.put("reason", workItem.getHost().reason);
                             break;
                         case restart:
-                            restartHost(workItem, status);
+                            restartHost(workItem, callbackData.status);
                             break;
                         case delete:
-                            deleteHost(workItem, status);
+                            deleteHost(workItem, callbackData.status);
                             break;
                         default:
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
@@ -139,17 +154,17 @@ public class WorkItemProcessor {
                             notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
                             notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
                             notes.put("external", Boolean.toString(workItem.getVip().external));
-                            createVip(workItem, status);
+                            createVip(workItem, callbackData.status);
                             break;
                         case update:
                             notes.put("protocol", workItem.getVip().protocol);
                             notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
                             notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
                             notes.put("external", Boolean.toString(workItem.getVip().external));
-                            updateVip(workItem, status);
+                            updateVip(workItem, callbackData.status);
                             break;
                         case delete:
-                            deleteVip(workItem, status);
+                            deleteVip(workItem, callbackData.status);
                             break;
                         default:
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
@@ -158,10 +173,10 @@ public class WorkItemProcessor {
                 case hostvip:
                     switch (workItem.getOperation()) {
                         case create:
-                            addHostVip(workItem, status);
+                            addHostVip(workItem, callbackData.status);
                             break;
                         case delete:
-                            deleteHostVip(workItem, status);
+                            deleteHostVip(workItem, callbackData.status);
                             break;
                         default:
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
@@ -170,7 +185,7 @@ public class WorkItemProcessor {
                 default:
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
             }
-            if (status) {
+            if (callbackData.status == Result.success) {
                 Audit audit = new Audit();
                 audit.serviceId = workItem.getService().serviceId;
                 audit.timePerformed = Util.getGmt();
@@ -187,7 +202,7 @@ public class WorkItemProcessor {
                 if (workItem.getVip() != null) {
                     audit.vipName = workItem.getVip().vipName;
                 }
-                if (notes == null || notes.isEmpty()) {
+                if (notes.isEmpty()) {
                     audit.notes = "";
                 } else {
                     audit.notes = gson.toJson(notes);
@@ -209,13 +224,13 @@ public class WorkItemProcessor {
         }
     }
 
-    private void createHost(WorkItem workItem, boolean status) throws IOException {
+    private void createHost(WorkItem workItem, Result result) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             if (workItem.getNextId() != null) {
                 WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
                 if (nextWorkItem != null) {
@@ -231,18 +246,18 @@ public class WorkItemProcessor {
                 logger.warn("Odd, create host {} work item has no deploy work item id", host.getHostName());
             }
         } else {
-            logger.warn("Callback for {} failed with status {}", host.getHostId(), status);
+            logger.warn("Callback for {} failed with status {}", host.getHostId(), result);
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
         }
     }
 
-    private void deploySoftware(WorkItem workItem, boolean status) throws IOException {
+    private void deploySoftware(WorkItem workItem, Result result) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being updated", workItem.getHost().hostId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
 
@@ -262,17 +277,17 @@ public class WorkItemProcessor {
 
             sendWorkItem(nextWorkItem);
         } else {
-            logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, status);
+            logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, result);
         }
     }
 
-    private void restartHost(WorkItem workItem, boolean status) throws IOException {
+    private void restartHost(WorkItem workItem, Result result) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
 
@@ -292,97 +307,97 @@ public class WorkItemProcessor {
 
             sendWorkItem(nextWorkItem);
         } else {
-            logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, status);
+            logger.warn("Callback for {} failed with status {}", workItem.getHost().hostId, result);
         }
     }
 
-    private void deleteHost(WorkItem workItem, boolean status) throws IOException {
+    private void deleteHost(WorkItem workItem, Result result) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} to delete.", workItem.getHost().hostId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
         } else {
-            logger.warn("Callback for {} failed with status {}", host.getHostId(), status);
+            logger.warn("Callback for {} failed with status {}", host.getHostId(), result);
             host.setStatus(Const.NO_STATUS);
             dataAccess.updateHost(host);
         }
     }
 
-    private void createVip(WorkItem workItem, boolean status) throws IOException {
+    private void createVip(WorkItem workItem, Result result) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being created", workItem.getVip().vipId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             vip.setStatus(Const.NO_STATUS);
             dataAccess.updateVip(vip);
         } else {
-            logger.warn("Callback for {} failed with status {}", vip.getVipId(), status);
+            logger.warn("Callback for {} failed with status {}", vip.getVipId(), result);
             dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         }
     }
 
-    private void updateVip(WorkItem workItem, boolean status) throws IOException {
+    private void updateVip(WorkItem workItem, Result result) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             vip.setStatus(Const.NO_STATUS);
             vip.setExternal(workItem.getVip().external);
             vip.setServicePort(workItem.getVip().servicePort);
             dataAccess.updateVip(vip);
         } else {
-            logger.warn("Callback for {} failed with status {}", workItem.getVip().vipId, status);
+            logger.warn("Callback for {} failed with status {}", workItem.getVip().vipId, result);
         }
     }
 
-    private void deleteVip(WorkItem workItem, boolean status) throws IOException {
+    private void deleteVip(WorkItem workItem, Result result) throws IOException {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.error("Could not find end point {} to delete.", workItem.getVip().vipId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             dataAccess.deleteVipRefs(vip.getVipId());
             dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         } else {
-            logger.warn("Callback for {} failed with status {}", vip.getVipId(), status);
+            logger.warn("Callback for {} failed with status {}", vip.getVipId(), result);
             vip.setStatus(Const.NO_STATUS);
             dataAccess.updateVip(vip);
         }
     }
 
-    private void addHostVip(WorkItem workItem, boolean status) {
+    private void addHostVip(WorkItem workItem, Result result) {
         VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
         if (vipRef == null) {
             logger.error("Could not find end point ref {} {} to create.", workItem.getHost().hostId, workItem.getVip().vipId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             vipRef.setStatus(Const.NO_STATUS);
             dataAccess.updateVipRef(vipRef);
         } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), status);
+            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result);
             dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
         }
     }
 
-    private void deleteHostVip(WorkItem workItem, boolean status) {
+    private void deleteHostVip(WorkItem workItem, Result result) {
         VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
         if (vipRef == null) {
             logger.error("Could not find end point ref {} {} to delete.", workItem.getHost().hostId, workItem.getVip().vipId);
             return;
         }
-        if (status) {
+        if (result == Result.success) {
             dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
         } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), status);
+            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result);
             vipRef.setStatus(Const.NO_STATUS);
             dataAccess.updateVipRef(vipRef);
         }

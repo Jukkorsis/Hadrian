@@ -124,7 +124,7 @@ public class Hadrian {
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, config.dataCenters);
         loadConfig(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT, config.networks);
-        loadConfig(Const.CONFIG_ENVSS, Const.CONFIG_ENVS_DEFAULT, config.envs);
+        loadConfig(Const.CONFIG_ENVS, Const.CONFIG_ENVS_DEFAULT, config.envs);
         loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, config.sizes);
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
@@ -140,12 +140,12 @@ public class Hadrian {
         config.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         config.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
 
-        config.gitModes.add(GitMode.Consolidated.toString());
-        config.gitModes.add(GitMode.Flat.toString());
+        config.gitModes.add(GitMode.Consolidated);
+        config.gitModes.add(GitMode.Flat);
 
-        config.moduleTypes.add(ModuleType.Deployable.toString());
-        config.moduleTypes.add(ModuleType.Library.toString());
-        config.moduleTypes.add(ModuleType.Test.toString());
+        config.moduleTypes.add(ModuleType.Deployable);
+        config.moduleTypes.add(ModuleType.Library);
+        config.moduleTypes.add(ModuleType.Test);
     }
 
     private void setupJetty() {

@@ -17,6 +17,7 @@ package com.northernwall.hadrian.workItem.noop;
 
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -31,9 +32,9 @@ public class NoopWorkItemSender extends WorkItemSender {
     }
 
     @Override
-    public boolean sendWorkItem(WorkItem workItem) throws IOException {
+    public Result sendWorkItem(WorkItem workItem) throws IOException {
         logger.info(workItem.toString());
-        return true;
+        return Result.success;
     }
 
 }

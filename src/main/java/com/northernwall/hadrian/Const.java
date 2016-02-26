@@ -44,9 +44,9 @@ public class Const {
     public static final String MAVEN_SNAPSHOT = "SNAPSHOT";
     
     public static final String GIT_PATH_URL = "gitPathUrl";
-    public static final String GIT_PATH_URL_DETAULT = "git@github.com:{repo}/{project}.git";
     public static final String GIT_PATH_PATTERN_REPO = "{repo}";
     public static final String GIT_PATH_PATTERN_PROJECT = "{project}";
+    public static final String GIT_PATH_URL_DETAULT = "git@github.com:"+GIT_PATH_PATTERN_REPO+"/"+GIT_PATH_PATTERN_PROJECT+".git";
 
     //Properties file constants
     public static final String PROPERTIES_FILENAME = "hadrian.properties";
@@ -68,8 +68,6 @@ public class Const {
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWorkItemSenderFactory";
 
-    public static final String WORK_ITEM_STATUS_SUCCESS = "success";
-    
     public static final String SIMPLE_WORK_ITEM_URL = "simpleWorkItem.url";
     public static final String SIMPLE_WORK_ITEM_URL_DEFAULT = "http://127.0.0.1:9090/webhook/simple";
 
@@ -125,9 +123,9 @@ public class Const {
     public static final String CONFIG_MAVEN_GROUP_ID = "config.mavenGroupId";
     public static final String CONFIG_MAVEN_GROUP_ID_DEFAULT = "";
     public static final String CONFIG_VERSION_URL = "config.versionUrl";
-    public static final String CONFIG_VERSION_URL_DEFAULT = "{host}.mydomain.com:9090/version";
+    public static final String CONFIG_VERSION_URL_DEFAULT = HOST+".mydomain.com:9090/version";
     public static final String CONFIG_AVAILABILITY_URL = "config.availabilityUrl";
-    public static final String CONFIG_AVAILABILITY_URL_DEFAULT = "{host}.mydomain.com:9090/availability";
+    public static final String CONFIG_AVAILABILITY_URL_DEFAULT = HOST+".mydomain.com:9090/availability";
     public static final String CONFIG_DEPLOYMENT_FOLDER = "config.deploymentFolder";
     public static final String CONFIG_DEPLOYMENT_FOLDER_DEFAULT = "/home/app";
     public static final String CONFIG_START_CMD = "config.startCmd";
@@ -139,7 +137,7 @@ public class Const {
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
     public static final String CONFIG_NETWORKS = "config.networks";
     public static final String CONFIG_NETWORKS_DEFAULT = "prd, tst";
-    public static final String CONFIG_ENVSS = "config.envs";
+    public static final String CONFIG_ENVS = "config.envs";
     public static final String CONFIG_ENVS_DEFAULT = "Java7, Java8, NodeJS";
     public static final String CONFIG_SIZES = "config.sizes";
     public static final String CONFIG_SIZES_DEFAULT = "S, M, L, XL";

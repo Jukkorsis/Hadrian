@@ -43,16 +43,24 @@ import org.slf4j.LoggerFactory;
 public class AvailabilityHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
-    private final static String VERSION = "1.3.23";
 
     private final Handler accessHandler;
     private final DataAccess dataAccess;
     private final MavenHelper mavenHelper;
+    private final String version;
+    private final byte[] versionBytes;
     
     public AvailabilityHandler(Handler accessHandler, DataAccess dataAccess, MavenHelper mavenHelper) {
         this.accessHandler = accessHandler;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
+        String temp = getClass().getPackage().getImplementationVersion();
+        if (temp == null) {
+            version = "unknown";
+        } else {
+            version = temp;
+        }
+        versionBytes = version.getBytes();
     }
 
     @Override
@@ -67,8 +75,7 @@ public class AvailabilityHandler extends AbstractHandler {
                 request.setHandled(true);
             } else if (target.equals("/version")) {
                 response.setStatus(200);
-                String version = VERSION; //getClass().getPackage().getImplementationVersion();
-                response.getOutputStream().write(version.getBytes());
+                response.getOutputStream().write(versionBytes);
                 request.setHandled(true);
             } else if (target.equals("/health")) {
                 response.setStatus(200);
@@ -88,7 +95,7 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, "<html>");
         writeln(response, "<body>");
         writeln(response, "<table>");
-        writeln(response, "Version", VERSION);
+        writeln(response, "Version", version);
         writeln(response, "JVM Name", runtimeMXBean.getSpecName());
         writeln(response, "JVM Version", runtimeMXBean.getSpecVersion());
         writeln(response, "JVM Vendor", runtimeMXBean.getSpecVendor());
