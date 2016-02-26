@@ -310,7 +310,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openAddCustomFunctionModal = function () {
+        $scope.openAddCustomFunctionModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addCustomFunction.html',
@@ -318,6 +318,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    module: function () {
+                        return module;
                     }
                 }
             });
@@ -785,15 +788,17 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
     }
 ]);
 
-hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service',
-    function ($scope, $http, $modalInstance, $route, service) {
+hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, service, module) {
         $scope.service = service;
+        $scope.module = module;
 
         $scope.formSaveCF = {};
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
                 name: $scope.formSaveCF.name,
                 method: $scope.formSaveCF.method,
                 url: $scope.formSaveCF.url,

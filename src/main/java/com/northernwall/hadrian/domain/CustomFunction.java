@@ -3,8 +3,9 @@ package com.northernwall.hadrian.domain;
 import java.util.UUID;
 
 public class CustomFunction implements Comparable<CustomFunction> {
-    private String serviceId;
     private String customFunctionId;
+    private String serviceId;
+    private String moduleId;
     private String name;
     private String method;
     private String url;
@@ -14,6 +15,7 @@ public class CustomFunction implements Comparable<CustomFunction> {
     public CustomFunction() {
         this.customFunctionId = UUID.randomUUID().toString();
         this.serviceId = null;
+        this.moduleId = null;
         this.name = null;
         this.method = null;
         this.url = null;
@@ -21,9 +23,10 @@ public class CustomFunction implements Comparable<CustomFunction> {
         this.teamOnly = true;
     }
 
-    public CustomFunction(String serviceId, String name, String method, String url, String helpText, boolean teamOnly) {
+    public CustomFunction(String serviceId, String moduleId, String name, String method, String url, String helpText, boolean teamOnly) {
         this.customFunctionId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
+        this.moduleId = moduleId;
         this.name = name;
         this.method = method;
         this.url = url;
@@ -45,6 +48,14 @@ public class CustomFunction implements Comparable<CustomFunction> {
 
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
     }
 
     public String getName() {

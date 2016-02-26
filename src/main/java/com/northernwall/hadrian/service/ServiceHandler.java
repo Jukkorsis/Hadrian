@@ -36,10 +36,8 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.ServiceRef;
-import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.GetAuditData;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
@@ -284,8 +282,12 @@ public class ServiceHandler extends AbstractHandler {
         List<CustomFunction> customFunctions = dataAccess.getCustomFunctions(id);
         Collections.sort(customFunctions);
         for (CustomFunction customFunction : customFunctions) {
-            GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
-            getServiceData.customFunctions.add(getCustomFunctionData);
+            for (GetModuleData temp : getServiceData.modules) {
+                if (customFunction.getModuleId().equals(temp.moduleId)) {
+                    GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
+                    temp.customFunctions.add(getCustomFunctionData);
+                }
+            }
         }
 
         waitForFutures(futures);
@@ -395,7 +397,7 @@ public class ServiceHandler extends AbstractHandler {
                 postServiceData.gitProject);
 
         dataAccess.saveService(service);
-        
+
         Map<String, String> notes = new HashMap<>();
         notes.put("name", service.getServiceName());
         notes.put("abbr", service.getServiceAbbr());

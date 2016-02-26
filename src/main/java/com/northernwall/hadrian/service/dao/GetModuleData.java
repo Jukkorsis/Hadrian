@@ -44,6 +44,7 @@ public class GetModuleData {
     public int stopTimeOut;
     public List<String> versions;
     public List<GetModuleNetworkData> networks;
+    public List<GetCustomFunctionData> customFunctions;
     
     public static GetModuleData create(Module module, Config config) {
         GetModuleData temp = new GetModuleData();
@@ -71,6 +72,7 @@ public class GetModuleData {
         for (String network : config.networks) {
             temp.networks.add(new GetModuleNetworkData(network));
         }
+        temp.customFunctions = new LinkedList<>();
         return temp;
     }
 
@@ -101,4 +103,8 @@ public class GetModuleData {
         return new LinkedList<>();
     }
 
+    public void addCustomFunction(GetCustomFunctionData customFunctionData) {
+        customFunctions.add(customFunctionData);
+    }
+    
 }

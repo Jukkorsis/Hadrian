@@ -61,7 +61,7 @@
                         <a ng-click="openAddModuleModal();" class="btn btn-info btn-xs" uib-popover="Add a new Module to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Module</a>
                     </span>
                 </div>
-                <table class="table table-hover  table-condensed">
+                <table class="table table-hover table-striped table-condensed">
                     <tr>
                         <th></th>
                         <th>Name</th>
@@ -157,7 +157,7 @@
                                     <a ng-click="restartHost(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Restarts the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Restart Hosts</a>
                                     <a ng-click="openAddHostToVipModal(mn);" class="btn btn-info btn-xs" uib-popover="Adds the selected Hosts to a VIP." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts to VIPs</a>
                                 </span>
-                                <span ng-repeat="cf in service.customFunctions">
+                                <span ng-repeat="cf in m.customFunctions">
                                     <span ng-if="service.canModify || !cf.teamOnly">
                                         <a ng-click="openDoCustomFunctionModal(cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
                                     </span>
@@ -165,38 +165,40 @@
                             </div>
                             <table class="table table-hover table-striped table-condensed">
                                 <tr>
-                                    <th></th>
-                                    <th>
+                                    <th width="5%"></th>
+                                    <th width="25%">
                                         <a ng-click="hostSortType = 'hostName';
                                                             hostSortReverse = !hostSortReverse">
                                             Host
                                         </a>
                                     </th>
-                                    <th>
+                                    <th width="5%">
                                         <a ng-click="hostSortType = 'dataCenter';
                                                             hostSortReverse = !hostSortReverse">
                                             DC
                                         </a>
                                     </th>
-                                    <th>VIP</th>
-                                    <th>
+                                    <th width="15%">VIP</th>
+                                    <th width="10%">
                                         <a ng-click="hostSortType = 'env';
                                                             hostSortReverse = !hostSortReverse">
                                             Env.
                                         </a>
                                     </th>
-                                    <th>
+                                    <th width="5%">
                                         <a ng-click="hostSortType = 'size';
                                                             hostSortReverse = !hostSortReverse">
                                             Size
                                         </a>
                                     </th>
-                                    <th><a ng-click="hostSortType = 'version';
+                                    <th width="15%">
+                                        <a ng-click="hostSortType = 'version';
                                                         hostSortReverse = !hostSortReverse">
                                             Ver.
                                         </a>
                                     </th>
-                                    <th><a ng-click="hostSortType = 'availability';
+                                    <th width="10%">
+                                        <a ng-click="hostSortType = 'availability';
                                                         hostSortReverse = !hostSortReverse">
                                             Avail.
                                         </a>
@@ -286,14 +288,14 @@
                                     <a ng-click="openAddVipModal(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Add a new VIP to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add VIP</a>
                                 </span>
                             </div>
-                            <table class="table table-hover  table-condensed">
+                            <table class="table table-hover table-striped table-condensed">
                                 <tr>
-                                    <th>VIP</th>
-                                    <th>DNS</th>
-                                    <th>External</th>
-                                    <th>Protocol</th>
-                                    <th>VIP Port</th>
-                                    <th>Service Port</th>
+                                    <th width="25%">VIP</th>
+                                    <th width="10%">External</th>
+                                    <th width="10%">Protocol</th>
+                                    <th width="30%">DNS</th>
+                                    <th width="10%">VIP Port</th>
+                                    <th width="15%">Service Port</th>
                                 </tr>
                                 <tr ng-repeat="ep in mn.vips">
                                     <td>
@@ -306,9 +308,9 @@
                                             <span class="label label-warning">{{ep.status}}</span>
                                         </span>
                                     </td>
-                                    <td>{{ep.dns}}.{{ep.domain}}</td>
                                     <td>{{ep.external}}</td>
                                     <td>{{ep.protocol}}</td>
+                                    <td>{{ep.dns}}.{{ep.domain}}</td>
                                     <td>{{ep.vipPort}}</td>
                                     <td>{{ep.servicePort}}</td>
                                 </tr>
@@ -327,7 +329,7 @@
                         <a ng-click="" class="btn btn-info btn-xs" uib-popover="Add a new Data Store to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Data Store</a>
                     </span>
                 </div>
-                <table class="table table-hover  table-condensed">
+                <table class="table table-hover table-striped table-condensed">
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
@@ -351,33 +353,38 @@
     <uib-tab heading="Custom Functions" ng-if="service.serviceType === 'Service' && service.canModify">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div align="center">
-                    <span ng-if="service.canModify">
-                        <a ng-click="openAddCustomFunctionModal()" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
-                    </span>
-                </div>
-                <table class="table table-hover  table-condensed">
-                    <tr>
-                        <th>Name</th>
-                        <th>Method</th>
-                        <th>URL</th>
-                        <th>Help Text</th>
-                        <th>Team Only</th>
-                    </tr>
-                    <tr ng-repeat="cf in service.customFunctions">
-                        <td>
-                            {{cf.name}}
+                <div ng-repeat="m in service.modules">
+                    <div ng-if="m.moduleType === 'Deployable'">
+                        <h4>{{m.moduleName}}</h4>
+                        <div align="center">
                             <span ng-if="service.canModify">
-                                <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-info btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a ng-click="openAddCustomFunctionModal(m)" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
                             </span>
-                        </td>
-                        <td>{{cf.method}}</td>
-                        <td>{{cf.url}}</td>
-                        <td>{{cf.helpText}}</td>
-                        <td>{{cf.teamOnly}}</td>
-                    </tr>
-                </table>
+                        </div>
+                        <table class="table table-hover table-striped table-condensed">
+                            <tr>
+                                <th width="20%">Name</th>
+                                <th width="10%">Method</th>
+                                <th width="30%">URL</th>
+                                <th width="30%">Help Text</th>
+                                <th width="10%">Team Only</th>
+                            </tr>
+                            <tr ng-repeat="cf in m.customFunctions">
+                                <td>
+                                    {{cf.name}}
+                                    <span ng-if="service.canModify">
+                                        <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                        <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-info btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                    </span>
+                                </td>
+                                <td>{{cf.method}}</td>
+                                <td>{{cf.url}}</td>
+                                <td>{{cf.helpText}}</td>
+                                <td>{{cf.teamOnly}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </uib-tab>

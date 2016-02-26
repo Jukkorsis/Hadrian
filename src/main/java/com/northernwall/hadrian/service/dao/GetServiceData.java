@@ -35,7 +35,6 @@ public class GetServiceData {
     public Date creationDate;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
-    public List<GetCustomFunctionData> customFunctions;
     public List<GetServiceRefData> uses;
     public List<GetServiceRefData> usedBy;
     public List<GetPairData> links;
@@ -54,7 +53,6 @@ public class GetServiceData {
         temp.creationDate = service.getCreationDate();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
-        temp.customFunctions = new LinkedList<>();
         temp.uses = new LinkedList<>();
         temp.usedBy = new LinkedList<>();
         temp.links = new LinkedList<>();

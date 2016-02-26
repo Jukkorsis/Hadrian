@@ -127,6 +127,7 @@ public class CustomFuntionHandler extends AbstractHandler {
         
         CustomFunction customFunction = new CustomFunction( 
                 service.getServiceId(),
+                postCFData.moduleId,
                 postCFData.name,
                 postCFData.method, 
                 postCFData.url, 
