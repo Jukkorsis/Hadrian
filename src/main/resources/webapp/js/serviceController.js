@@ -387,7 +387,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                         for (var key in notes) {
                             if (notes.hasOwnProperty(key)) {
                                 var temp = {
-                                    label: key.replace("_"," "),
+                                    label: key.replace("_", " "),
                                     value: notes[key]
                                 };
                                 if (addLeft) {
@@ -683,6 +683,14 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.module = module;
         $scope.config = config;
 
+        $scope.modelOptions = {
+            debounce: {
+                default: 500,
+                blur: 250
+            },
+            getterSetter: true
+        };
+
         $scope.formSaveHost = {};
         $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
         $scope.formSaveHost.env = $scope.config.envs[0];
@@ -727,6 +735,14 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.module = module;
         $scope.config = config;
         $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
+
+        $scope.modelOptions = {
+            debounce: {
+                default: 500,
+                blur: 250
+            },
+            getterSetter: true
+        };
 
         $scope.formUpdateHost = {};
         $scope.formUpdateHost.version = $scope.module.versions[0];
