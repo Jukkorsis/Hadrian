@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.service.dao.GetHostDetailsData;
 import com.northernwall.hadrian.service.dao.GetPairData;
@@ -37,21 +38,34 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HostDetailsHelper {
+public class HostDetailsHelper implements ParameterChangeListener {
     private final static Logger logger = LoggerFactory.getLogger(HostDetailsHelper.class);
 
     private final OkHttpClient client;
-    private final String urlTemplate;
+    private final Parameters parameters;
     private final JsonParser parser;
+    private String urlTemplate;
     private final List<String> attributes;
 
     public HostDetailsHelper(OkHttpClient client, Parameters parameters) {
         this.client = client;
-        this.urlTemplate = parameters.getString(Const.HOST_DETAILS_URL, null);
+        this.parameters = parameters;
         this.parser = new JsonParser();
-        attributes = new LinkedList<>();
+        this.attributes = new LinkedList<>();
+        load();
+        parameters.registerChangeListener(this);
+    }
+
+    @Override
+    public void onChange(List<String> keys) {
+        load();
+    }
+    
+    private void load() {
+        urlTemplate = parameters.getString(Const.HOST_DETAILS_URL, null);
         String temp = parameters.getString(Const.HOST_DETAILS_ATTRIBUTES, null);
-        if (temp != null) {
+        attributes.clear();
+        if (temp != null && !temp.isEmpty()) {
             String[] parts = temp.split(",");
             for (String part : parts) {
                 part = part.trim();

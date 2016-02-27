@@ -19,6 +19,7 @@ import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
@@ -92,18 +93,18 @@ public class ServiceHandler extends AbstractHandler {
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
-    private final Config config;
+    private final ConfigHelper configHelper;
     private final MavenHelper mavenHelper;
     private final InfoHelper infoHelper;
     private final Gson gson;
     private final ExecutorService executorService;
     private final DateFormat format;
 
-    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, Config config, MavenHelper mavenHelper, InfoHelper infoHelper) {
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, ConfigHelper configHelper, MavenHelper mavenHelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
-        this.config = config;
+        this.configHelper = configHelper;
         this.mavenHelper = mavenHelper;
         this.infoHelper = infoHelper;
         gson = new Gson();
@@ -214,7 +215,7 @@ public class ServiceHandler extends AbstractHandler {
         List<Module> modules = dataAccess.getModules(id);
         Collections.sort(modules);
         for (Module module : modules) {
-            GetModuleData getModuleData = GetModuleData.create(module, config);
+            GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
             futures.add(executorService.submit(new ReadMavenVersionsRunnable(getModuleData, mavenHelper)));
             getServiceData.modules.add(getModuleData);
         }

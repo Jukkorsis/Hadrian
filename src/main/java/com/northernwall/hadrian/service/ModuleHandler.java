@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
@@ -57,14 +58,14 @@ public class ModuleHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(ModuleHandler.class);
 
     private final AccessHelper accessHelper;
-    private final Config config;
+    private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
     private final Gson gson;
 
-    public ModuleHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public ModuleHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         this.accessHelper = accessHelper;
-        this.config = config;
+        this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
         gson = new Gson();
@@ -129,6 +130,7 @@ public class ModuleHandler extends AbstractHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
         Team team = dataAccess.getTeam(service.getTeamId());
 
+        Config config = configHelper.getConfig();
         if (!config.moduleTypes.contains(postModuleData.moduleType)) {
             throw new RuntimeException("Unknown module type");
         }

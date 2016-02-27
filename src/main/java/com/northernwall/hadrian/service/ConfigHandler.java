@@ -17,6 +17,7 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Config;
 import java.io.IOException;
@@ -37,11 +38,11 @@ public class ConfigHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
 
-    private final Config config;
+    private final ConfigHelper configHelper;
     private final Gson gson;
 
-    public ConfigHandler(Config config) {
-        this.config = config;
+    public ConfigHandler(ConfigHelper configHelper) {
+        this.configHelper = configHelper;
         this.gson = new Gson();
     }
 
@@ -68,7 +69,7 @@ public class ConfigHandler extends AbstractHandler {
         response.setContentType(Const.JSON);
         
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(config, Config.class, jw);
+            gson.toJson(configHelper.getConfig(), Config.class, jw);
         }
     }
 

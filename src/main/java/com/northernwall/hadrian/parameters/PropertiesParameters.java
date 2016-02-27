@@ -46,5 +46,9 @@ public class PropertiesParameters implements Parameters {
         }
         return Boolean.parseBoolean(temp);
     }
+    
+    @Override
+    public void registerChangeListener(ParameterChangeListener listener) {
+    }
 
 }

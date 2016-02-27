@@ -18,6 +18,7 @@ package com.northernwall.hadrian.service;
 import com.northernwall.hadrian.service.helper.HostDetailsHelper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessException;
@@ -67,15 +68,15 @@ public class HostHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(HostHandler.class);
 
     private final AccessHelper accessHelper;
-    private final Config config;
+    private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
     private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public HostHandler(AccessHelper accessHelper, Config config, DataAccess dataAccess, WorkItemProcessor workItemProcess, HostDetailsHelper hostDetailsHelper) {
+    public HostHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, HostDetailsHelper hostDetailsHelper) {
         this.accessHelper = accessHelper;
-        this.config = config;
+        this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
         this.hostDetailsHelper = hostDetailsHelper;
@@ -185,6 +186,7 @@ public class HostHandler extends AbstractHandler {
             postHostData.count = 10;
         }
 
+        Config config = configHelper.getConfig();
         if (!config.dataCenters.contains(postHostData.dataCenter)) {
             throw new RuntimeException("Unknown data center");
         }
@@ -406,6 +408,7 @@ public class HostHandler extends AbstractHandler {
     }
 
     private void backfillHost(String serviceAbbr, String moduleName, String hostName, String dataCenter, String network, String env, String size, User user) {
+        Config config = configHelper.getConfig();
         if (config.dataCenters.contains(dataCenter)
                 && config.networks.contains(network)
                 && config.envs.contains(env)

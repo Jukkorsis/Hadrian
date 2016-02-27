@@ -19,9 +19,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.GitMode;
-import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.graph.GraphHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -49,7 +46,6 @@ import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.squareup.okhttp.OkHttpClient;
 import org.slf4j.LoggerFactory;
 import java.net.BindException;
-import java.util.List;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -65,7 +61,7 @@ public class Hadrian {
     private final static Logger logger = LoggerFactory.getLogger(Hadrian.class);
 
     private final Parameters parameters;
-    private Config config;
+    private ConfigHelper configHelper;
     private final DataAccess dataAccess;
     private final MetricRegistry metricRegistry;
     private final OkHttpClient client;
@@ -90,62 +86,11 @@ public class Hadrian {
         this.workItemProcess = workItemProcess;
         this.metricRegistry = metricRegistry;
 
-        loadConfig();
-
+        configHelper = new ConfigHelper(parameters);
         infoHelper = new InfoHelper(client);
         hostDetailsHelper = new HostDetailsHelper(client, parameters);
 
         setupJetty();
-    }
-
-    private void loadConfig(String key, String defaultValue, List<String> target) {
-        String temp = parameters.getString(key, defaultValue);
-        if (temp == null) {
-            return;
-        }
-        String[] parts = temp.split(",");
-        for (String part : parts) {
-            part = part.trim();
-            if (!part.isEmpty()) {
-                target.add(part);
-            }
-        }
-    }
-
-    private void loadConfig() {
-        config = new Config();
-
-        config.mavenGroupId = parameters.getString(Const.CONFIG_MAVEN_GROUP_ID, Const.CONFIG_MAVEN_GROUP_ID_DEFAULT);
-        config.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
-        config.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
-        config.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
-        config.startCmd = parameters.getString(Const.CONFIG_START_CMD, Const.CONFIG_START_CMD_DEFAULT);
-        config.stopCmd = parameters.getString(Const.CONFIG_STOP_CMD, Const.CONFIG_STOP_CMD_DEFAULT);
-
-        loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, config.dataCenters);
-        loadConfig(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT, config.networks);
-        loadConfig(Const.CONFIG_ENVS, Const.CONFIG_ENVS_DEFAULT, config.envs);
-        loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, config.sizes);
-        loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, config.protocols);
-        loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, config.domains);
-        loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, config.artifactTypes);
-
-        config.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        config.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        config.testTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        loadConfig(Const.CONFIG_DEPLOYABLE_TEMPLATES, null, config.deployableTemplates);
-        loadConfig(Const.CONFIG_LIBRARY_TEMPLATES, null, config.libraryTemplates);
-        loadConfig(Const.CONFIG_TEST_TEMPLATES, null, config.testTemplates);
-
-        config.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
-        config.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
-
-        config.gitModes.add(GitMode.Consolidated);
-        config.gitModes.add(GitMode.Flat);
-
-        config.moduleTypes.add(ModuleType.Deployable);
-        config.moduleTypes.add(ModuleType.Library);
-        config.moduleTypes.add(ModuleType.Test);
     }
 
     private void setupJetty() {
@@ -173,14 +118,14 @@ public class Hadrian {
         handlers.addHandler(new TreeHandler(dataAccess));
         handlers.addHandler(new UserHandler(accessHelper, dataAccess));
         handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
-        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, config, mavenHelper, infoHelper));
+        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, configHelper, mavenHelper, infoHelper));
         handlers.addHandler(new VipHandler(accessHelper, dataAccess, workItemProcess));
-        handlers.addHandler(new ModuleHandler(accessHelper, config, dataAccess, workItemProcess));
-        handlers.addHandler(new HostHandler(accessHelper, config, dataAccess, workItemProcess, hostDetailsHelper));
+        handlers.addHandler(new ModuleHandler(accessHelper, configHelper, dataAccess, workItemProcess));
+        handlers.addHandler(new HostHandler(accessHelper, configHelper, dataAccess, workItemProcess, hostDetailsHelper));
         handlers.addHandler(new CustomFuntionHandler(accessHelper, dataAccess, client));
         handlers.addHandler(new WorkItemHandler(dataAccess));
         handlers.addHandler(new DataStoreHandler(accessHelper, dataAccess));
-        handlers.addHandler(new ConfigHandler(config));
+        handlers.addHandler(new ConfigHandler(configHelper));
         handlers.addHandler(new CalendarHandler(dataAccess, calendarHelper));
         handlers.addHandler(new GraphHandler(dataAccess));
         handlers.addHandler(new RedirectHandler());
