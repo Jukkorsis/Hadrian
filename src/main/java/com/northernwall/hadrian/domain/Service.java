@@ -17,8 +17,6 @@
 package com.northernwall.hadrian.domain;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -35,7 +33,6 @@ public class Service implements Comparable<Service>{
     private GitMode gitMode;
     private String gitProject;
     private Date creationDate;
-    private final Map<String, String> links = new HashMap<>();
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject) {
         this.serviceId = UUID.randomUUID().toString();
@@ -115,10 +112,6 @@ public class Service implements Comparable<Service>{
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public Map<String, String> getLinks() {
-        return links;
     }
 
     @Override
