@@ -20,6 +20,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,6 +69,10 @@ public class EmailWorkItemSender extends WorkItemSender {
             fromDefault = emailTos.get(0);
         }
         emailFrom = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_From, fromDefault);
+    }
+
+    @Override
+    public void setWorkItemProcessor(WorkItemProcessor workItemProcessor) {
     }
 
     @Override

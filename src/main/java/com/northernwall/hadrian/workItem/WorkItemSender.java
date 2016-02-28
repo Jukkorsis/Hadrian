@@ -32,6 +32,8 @@ public abstract class WorkItemSender {
         this.parameters = parameters;
     }
 
+    public abstract void setWorkItemProcessor(WorkItemProcessor workItemProcessor);
+
     public abstract Result sendWorkItem(WorkItem workItem) throws IOException;
 
     protected String getGitUrl(WorkItem workItem) {

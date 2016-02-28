@@ -21,6 +21,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -48,6 +49,10 @@ public class SimpleWorkItemSender extends WorkItemSender {
         gson = new Gson();
 
         url = parameters.getString(Const.SIMPLE_WORK_ITEM_URL, Const.SIMPLE_WORK_ITEM_URL_DEFAULT);
+    }
+
+    @Override
+    public void setWorkItemProcessor(WorkItemProcessor workItemProcessor) {
     }
 
     @Override

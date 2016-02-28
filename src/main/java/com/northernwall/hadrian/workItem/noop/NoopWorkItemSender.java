@@ -18,6 +18,7 @@ package com.northernwall.hadrian.workItem.noop;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -29,6 +30,10 @@ public class NoopWorkItemSender extends WorkItemSender {
 
     public NoopWorkItemSender(Parameters parameters) {
         super(parameters);
+    }
+
+    @Override
+    public void setWorkItemProcessor(WorkItemProcessor workItemProcessor) {
     }
 
     @Override

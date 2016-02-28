@@ -55,7 +55,7 @@ public class HadrianBuilder {
     private AccessHelper accessHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
-    private WorkItemSender webHookSender;
+    private WorkItemSender workItemSender;
     private MetricRegistry metricRegistry;
 
     public static HadrianBuilder create(Parameters parameters) {
@@ -81,8 +81,8 @@ public class HadrianBuilder {
         return this;
     }
 
-    public HadrianBuilder setWebHookSender(WorkItemSender webHookSender) {
-        this.webHookSender = webHookSender;
+    public HadrianBuilder setWorkItemSender(WorkItemSender workItemSender) {
+        this.workItemSender = workItemSender;
         return this;
     }
 
@@ -151,15 +151,15 @@ public class HadrianBuilder {
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not find DataAccess class " + factoryName);
             }
             DataAccessFactory factory;
             try {
                 factory = (DataAccessFactory) c.newInstance();
             } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not instantiation DataAccess class " + factoryName);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not access DataAccess class " + factoryName);
             }
             dataAccess = factory.createDataAccess(parameters, metricRegistry);
         }
@@ -170,15 +170,15 @@ public class HadrianBuilder {
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not find MavenHelper class " + factoryName);
             }
             MavenHelperFactory mavenHelperFactory;
             try {
                 mavenHelperFactory = (MavenHelperFactory) c.newInstance();
             } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not instantiation MavenHelper class " + factoryName);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not access MavenHelper class " + factoryName);
             }
             mavenHelper = mavenHelperFactory.create(parameters, client);
         }
@@ -191,15 +191,15 @@ public class HadrianBuilder {
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not find Access class " + factoryName);
             }
             AccessHandlerFactory accessHanlderFactory;
             try {
                 accessHanlderFactory = (AccessHandlerFactory) c.newInstance();
             } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not instantiation Access class " + factoryName);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not access Access class " + factoryName);
             }
             accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
         }
@@ -223,26 +223,27 @@ public class HadrianBuilder {
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
         
-        if (webHookSender == null) {
+        if (workItemSender == null) {
             String factoryName = parameters.getString(Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME, Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not find WorkItemSender class " + factoryName);
             }
-            WorkItemSenderFactory webHookSenderFactory;
+            WorkItemSenderFactory workItemSenderFactory;
             try {
-                webHookSenderFactory = (WorkItemSenderFactory) c.newInstance();
+                workItemSenderFactory = (WorkItemSenderFactory) c.newInstance();
             } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not instantiation WorkItemSender class " + factoryName);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Data Access class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not access WorkItemSender class " + factoryName);
             }
-            webHookSender = webHookSenderFactory.create(parameters, client, metricRegistry);
+            workItemSender = workItemSenderFactory.create(parameters, client, metricRegistry);
         }
         
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, webHookSender, metricRegistry);
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, workItemSender, metricRegistry);
+        workItemSender.setWorkItemProcessor(workItemProcessor);
 
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, metricRegistry);
     }
