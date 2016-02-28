@@ -1,2 +1,60 @@
 <h3>Cross Service Operations</h3>
-<br/><br/>
+<uib-tabset type="pills">
+    <uib-tab heading="Modules">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <a ng-click="" class="btn btn-info btn-xs" uib-popover="Rebuild the pipeline for the selected modules." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Rebuild Modules</a>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                            <input type="text" class="form-control" placeholder="Filter Modules" ng-model="modueFilter">
+                        </div>      
+                    </div>
+                </form>
+                <table class="table table-hover table-striped table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>Service</th>
+                        <th>Module</th>
+                        <th>Build Order</th>
+                        <th>Type</th>
+                        <th>Git Project</th>
+                        <th>Git Folder</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Hosts">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div align="center">
+                    <a ng-click="" class="btn btn-info btn-xs" uib-popover="Rolling restart of the service deployed to the selected hosts." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Restart Hosts</a>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                            <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
+                        </div>      
+                    </div>
+                </form>
+                <table class="table table-hover table-striped table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>Service</th>
+                        <th>Module</th>
+                        <th>DC</th>
+                        <th>Network</th>
+                        <th>Host</th>
+                        <th>Env.</th>
+                        <th>Size</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+</uib-tabset>
