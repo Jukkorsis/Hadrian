@@ -25,6 +25,7 @@ public class Config {
     public String deploymentFolder = "";
     public String startCmd = "";
     public String stopCmd = "";
+    public String gitUiURL = "";
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networks = new LinkedList<>();
     public List<String> envs = new LinkedList<>();

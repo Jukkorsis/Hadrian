@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.db.cassandra;
 
 import com.codahale.metrics.MetricRegistry;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
+
     private final static Logger logger = LoggerFactory.getLogger(CassandraDataAccessFactory.class);
 
     private Cluster cluster;
@@ -40,14 +40,15 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         String node = parameters.getString(Const.CASS_NODE, Const.CASS_NODE_DEFAULT);
         String username = parameters.getString(Const.CASS_USERNAME, null);
         String password = parameters.getString(Const.CASS_PASSWORD, null);
+        boolean createKeyspace = parameters.getBoolean(Const.CASS_CREATE_KEY_SPACE, Const.CASS_CREATE_KEY_SPACE_DEFAULT);
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
         int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
         int auditTimeToLive = parameters.getInt(Const.CASS_AUDIT_TTL_DAYS, Const.CASS_AUDIT_TTL_DAYS_DEFAULT) * 86_400;
 
         connect(node, username, password);
-        
-        setup(keyspace, replicationFactor);
-        
+
+        setup(createKeyspace, keyspace, replicationFactor);
+
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
@@ -55,7 +56,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         return dataAccess;
     }
 
-    private void connect(String node, String username, String password) {        
+    private void connect(String node, String username, String password) {
         Builder builder = Cluster.builder();
         builder.addContactPoint(node);
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
@@ -69,31 +70,34 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         }
     }
 
-    private void setup(String keyspace, int replicationFactor) {
+    private void setup(boolean createKeyspace, String keyspace, int replicationFactor) {
         Session session = cluster.connect();
 
-        session.execute("CREATE KEYSPACE IF NOT EXISTS "+keyspace+" WITH replication = {'class':'SimpleStrategy', 'replication_factor':"+replicationFactor+"};");
-        logger.info("Keyspace created");
-        
-        session = cluster.connect();
+        if (createKeyspace) {
+            session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspace + " WITH replication = {'class':'SimpleStrategy', 'replication_factor':" + replicationFactor + "};");
+            logger.info("Keyspace {} created", keyspace);
+        } else {
+            logger.info("Not calling create keyspace for {}", keyspace);
+        }
+
         //Data tables
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".service (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".team (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".user (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".workItem (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".service (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".team (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".user (id text, data text, PRIMARY KEY (id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".workItem (id text, data text, PRIMARY KEY (id));");
         //Data tables below Service
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         //Ref tables
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".serviceRefServer (serverServiceId text, clientServiceId text, PRIMARY KEY (serverServiceId, clientServiceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".serviceRefServer (serverServiceId text, clientServiceId text, PRIMARY KEY (serverServiceId, clientServiceId));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
         //Audit table
-        session.execute("CREATE TABLE IF NOT EXISTS "+keyspace+".audit (serviceId text, time timeuuid, data text, output text, PRIMARY KEY (serviceId, time));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".audit (serviceId text, time timeuuid, data text, output text, PRIMARY KEY (serviceId, time));");
         logger.info("Tables created");
 
         session.close();

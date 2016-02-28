@@ -61,7 +61,7 @@ public class Hadrian {
     private final static Logger logger = LoggerFactory.getLogger(Hadrian.class);
 
     private final Parameters parameters;
-    private ConfigHelper configHelper;
+    private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
     private final MetricRegistry metricRegistry;
     private final OkHttpClient client;
@@ -109,7 +109,7 @@ public class Hadrian {
         server.addConnector(connector);
 
         HandlerList handlers = new HandlerList();
-        handlers.addHandler(new AvailabilityHandler(accessHandler, dataAccess, mavenHelper));
+        handlers.addHandler(new AvailabilityHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemProcess.getWorkItemSender()));
         handlers.addHandler(new ContentHandler("/webcontent"));
         handlers.addHandler(new WorkItemCallbackHandler(workItemProcess));
         handlers.addHandler(new AuditHandler(dataAccess));

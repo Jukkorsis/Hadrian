@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.db.cassandra;
 
 import com.codahale.metrics.MetricRegistry;
@@ -118,6 +117,7 @@ public class CassandraDataAccess implements DataAccess {
     public CassandraDataAccess(Cluster cluster, String keyspace, int auditTimeToLive, MetricRegistry metricRegistry) {
         session = cluster.connect(keyspace);
 
+        logger.info("Praparing customFunction statements...");
         customFunctionSelect = session.prepare("SELECT * FROM customFunction WHERE serviceId = ?;");
         customFunctionSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         customFunctionSelect2 = session.prepare("SELECT * FROM customFunction WHERE serviceId = ? AND id = ?;");
@@ -129,6 +129,7 @@ public class CassandraDataAccess implements DataAccess {
         customFunctionDelete = session.prepare("DELETE FROM customFunction WHERE serviceId = ? AND id = ?;");
         customFunctionDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
+        logger.info("Praparing dataStore statements...");
         dataStoreSelect = session.prepare("SELECT * FROM dataStore WHERE serviceId = ?;");
         dataStoreSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         dataStoreSelect2 = session.prepare("SELECT * FROM dataStore WHERE serviceId = ? AND id = ?;");
@@ -139,7 +140,8 @@ public class CassandraDataAccess implements DataAccess {
         dataStoreUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         dataStoreDelete = session.prepare("DELETE FROM dataStore WHERE serviceId = ? AND id = ?;");
         dataStoreDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing host statements...");
         hostSelect = session.prepare("SELECT * FROM host WHERE serviceId = ?;");
         hostSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         hostSelect2 = session.prepare("SELECT * FROM host WHERE serviceId = ? AND id = ?;");
@@ -150,7 +152,8 @@ public class CassandraDataAccess implements DataAccess {
         hostUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         hostDelete = session.prepare("DELETE FROM host WHERE serviceId = ? AND id = ?;");
         hostDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing module statements...");
         moduleSelect = session.prepare("SELECT * FROM module WHERE serviceId = ?;");
         moduleSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleSelect2 = session.prepare("SELECT * FROM module WHERE serviceId = ? AND id = ?;");
@@ -161,7 +164,8 @@ public class CassandraDataAccess implements DataAccess {
         moduleUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleDelete = session.prepare("DELETE FROM module WHERE serviceId = ? AND id = ?;");
         moduleDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing service statements...");
         serviceSelect = session.prepare("SELECT * FROM service WHERE id = ?;");
         serviceSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceInsert = session.prepare("INSERT INTO service (id, data) VALUES (?, ?);");
@@ -169,6 +173,7 @@ public class CassandraDataAccess implements DataAccess {
         serviceUpdate = session.prepare("UPDATE service SET data = ? WHERE id = ?;");
         serviceUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
+        logger.info("Praparing serviceRef statements...");
         serviceRefSelectClient = session.prepare("SELECT * FROM serviceRefClient WHERE clientServiceId = ?;");
         serviceRefSelectClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         serviceRefSelectServer = session.prepare("SELECT * FROM serviceRefServer WHERE serverServiceId = ?;");
@@ -182,13 +187,15 @@ public class CassandraDataAccess implements DataAccess {
         serviceRefDeleteServer = session.prepare("DELETE FROM serviceRefServer WHERE serverServiceId = ? AND clientServiceId = ?;");
         serviceRefDeleteServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
+        logger.info("Praparing team statements...");
         teamSelect = session.prepare("SELECT * FROM team WHERE id = ?;");
         teamSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         teamInsert = session.prepare("INSERT INTO team (id, data) VALUES (?, ?);");
         teamInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         teamUpdate = session.prepare("UPDATE team SET data = ? WHERE id = ?;");
         teamUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing user statements...");
         userSelect = session.prepare("SELECT * FROM user WHERE id = ?;");
         userSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         userInsert = session.prepare("INSERT INTO user (id, data) VALUES (?, ?);");
@@ -197,7 +204,8 @@ public class CassandraDataAccess implements DataAccess {
         userUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         userDelete = session.prepare("DELETE FROM user WHERE id = ?;");
         userDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing vip statements...");
         vipSelect = session.prepare("SELECT * FROM vip WHERE serviceId = ?;");
         vipSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipSelect2 = session.prepare("SELECT * FROM vip WHERE serviceId = ? AND id = ?;");
@@ -208,7 +216,8 @@ public class CassandraDataAccess implements DataAccess {
         vipUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipDelete = session.prepare("DELETE FROM vip WHERE serviceId = ? AND id = ?;");
         vipDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing vipRef statements...");
         vipRefSelectHost1 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ?;");
         vipRefSelectHost1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipRefSelectHost2 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ? AND vipId = ?;");
@@ -227,19 +236,21 @@ public class CassandraDataAccess implements DataAccess {
         vipRefDeleteVip1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipRefDeleteVip2 = session.prepare("DELETE FROM vipRefVip WHERE vipId = ? AND hostId = ?;");
         vipRefDeleteVip2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing workItem statements...");
         workItemSelect = session.prepare("SELECT * FROM workItem WHERE id = ?;");
         workItemSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemInsert = session.prepare("INSERT INTO workItem (id, data) VALUES (?, ?);");
         workItemInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
+        logger.info("Praparing audit statements...");
         logger.info("Audit TTL {}", auditTimeToLive);
         auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
         auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?) USING TTL " + auditTimeToLive + ";");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        
+
         logger.info("Prapared statements created");
 
         gson = new Gson();
@@ -254,15 +265,16 @@ public class CassandraDataAccess implements DataAccess {
     public Map<String, String> getHealth() {
         Map<String, String> health = new HashMap<>();
         Metadata metadata = session.getCluster().getMetadata();
-        health.put("Cassandra - Cluster Name", metadata.getClusterName());
-        health.put("Cassandra - Session Keyspace", session.getLoggedKeyspace());
+        health.put("Cassandra - Cluster", metadata.getClusterName());
+        health.put("Cassandra - Keyspace", session.getLoggedKeyspace());
         int i = 1;
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
-            health.put("Cassandra - Host" + i + " Data Center:", host.getDatacenter());
-            health.put("Cassandra - Host" + i + " Address:", host.getAddress().getHostAddress());
-            health.put("Cassandra - Host" + i + " Rack:", host.getRack());
-            health.put("Cassandra - Host" + i + " State:", host.getState());
-            health.put("Cassandra - Host" + i + " Version:", host.getCassandraVersion().toString());
+            health.put("Cassandra - Host " + i,
+                    host.getDatacenter()
+                    + "  " + host.getAddress().getHostAddress()
+                    + "  " + host.getRack()
+                    + "  " + host.getState()
+                    + "  v" + host.getCassandraVersion().toString());
             i++;
         }
         return health;

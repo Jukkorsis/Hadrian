@@ -13,7 +13,9 @@
                 <dd>{{service.gitMode}}</dd>
                 <div ng-if="service.gitMode === 'Consolidated'">
                     <dt>Git Project</dt>
-                    <dd>{{team.gitRepo}}/{{service.gitProject}}.git</dd>
+                    <dd>
+                        <a href="{{config.gitUiURL}}{{team.gitRepo}}/{{service.gitProject}}" target="_blank">{{team.gitRepo}}/{{service.gitProject}}.git</a>
+                    </dd>
                 </div>
             </span>
             <dt>Description:</dt>
@@ -84,7 +86,9 @@
                         </td>
                         <td>{{m.order}}</td>
                         <td>{{m.moduleType}}</td>
-                        <td>{{team.gitRepo}}/{{m.gitProject}}.git</td>
+                        <td>
+                            <a href="{{config.gitUiURL}}{{team.gitRepo}}/{{m.gitProject}}" target="_blank">{{team.gitRepo}}/{{m.gitProject}}.git</a>
+                        </td>
                         <td>/{{m.gitFolder}}</td>
                     </tr>
                     <tr ng-if="m.expanded" ng-repeat-end="">

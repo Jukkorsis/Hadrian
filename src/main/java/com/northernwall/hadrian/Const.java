@@ -43,6 +43,8 @@ public class Const {
 
     public static final String MAVEN_SNAPSHOT = "SNAPSHOT";
     
+    public static final String GIT_UI_URL = "gitUiUrl";
+    public static final String GIT_UI_URL_DEFAULT = "http://127.0.0.1/";
     public static final String GIT_PATH_URL = "gitPathUrl";
     public static final String GIT_PATH_PATTERN_REPO = "{repo}";
     public static final String GIT_PATH_PATTERN_PROJECT = "{project}";
@@ -101,6 +103,8 @@ public class Const {
     public static final String CASS_NODE_DEFAULT = "127.0.0.1";
     public static final String CASS_USERNAME = "dataAccess.cassandra.username";
     public static final String CASS_PASSWORD = "dataAccess.cassandra.password";
+    public static final String CASS_CREATE_KEY_SPACE = "dataAccess.cassandra.createKeyspace";
+    public static final boolean CASS_CREATE_KEY_SPACE_DEFAULT = true;
     public static final String CASS_KEY_SPACE = "dataAccess.cassandra.keyspace";
     public static final String CASS_KEY_SPACE_DEFAULT = "hadrian";
     public static final String CASS_REPLICATION_FACTOR = "dataAccess.cassandra.replicationFactor";

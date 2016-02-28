@@ -16,8 +16,11 @@
 
 package com.northernwall.hadrian.utilityHandlers;
 
+import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -45,15 +48,21 @@ public class AvailabilityHandler extends AbstractHandler {
     private final static Logger logger = LoggerFactory.getLogger(AvailabilityHandler.class);
 
     private final Handler accessHandler;
+    private final CalendarHelper calendarHelper;
     private final DataAccess dataAccess;
     private final MavenHelper mavenHelper;
+    private final Parameters parameters;
+    private final WorkItemSender workItemSender;
     private final String version;
     private final byte[] versionBytes;
     
-    public AvailabilityHandler(Handler accessHandler, DataAccess dataAccess, MavenHelper mavenHelper) {
+    public AvailabilityHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, MavenHelper mavenHelper, Parameters parameters, WorkItemSender workItemSender) {
         this.accessHandler = accessHandler;
+        this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
+        this.parameters = parameters;
+        this.workItemSender = workItemSender;
         String temp = getClass().getPackage().getImplementationVersion();
         if (temp == null) {
             version = "unknown";
@@ -104,8 +113,11 @@ public class AvailabilityHandler extends AbstractHandler {
         writeln(response, "Current Time", new Date());
         writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
         writeln(response, "Class - Access Handler", accessHandler.getClass().getCanonicalName());
+        writeln(response, "Class - Calendar Helper", calendarHelper.getClass().getCanonicalName());
         writeln(response, "Class - Data Access", dataAccess.getClass().getCanonicalName());
         writeln(response, "Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
+        writeln(response, "Class - Parameters", parameters.getClass().getCanonicalName());
+        writeln(response, "Class - Work Item Sender", workItemSender.getClass().getCanonicalName());
         Map<String, String> healthMap = dataAccess.getHealth();
         Set<String> keys = new TreeSet<>(healthMap.keySet());
         for(String key : keys) {

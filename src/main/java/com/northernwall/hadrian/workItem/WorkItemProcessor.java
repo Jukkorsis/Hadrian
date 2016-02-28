@@ -39,16 +39,16 @@ public class WorkItemProcessor {
     private final static Logger logger = LoggerFactory.getLogger(WorkItemProcessor.class);
 
     private final DataAccess dataAccess;
-    private final WorkItemSender webHookSender;
+    private final WorkItemSender workItemSender;
     private final Timer timerProcess;
     private final Timer timerCalback;
     private final Meter meterSuccess;
     private final Meter meterFail;
     private final Gson gson;
 
-    public WorkItemProcessor(DataAccess dataAccess, WorkItemSender webHookSender, MetricRegistry metricRegistry) {
+    public WorkItemProcessor(DataAccess dataAccess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
-        this.webHookSender = webHookSender;
+        this.workItemSender = workItemSender;
 
         timerProcess = metricRegistry.timer("workItem.sendWorkItem");
         timerCalback = metricRegistry.timer("workItem.callback.process");
@@ -57,11 +57,15 @@ public class WorkItemProcessor {
         gson = new Gson();
     }
 
+    public WorkItemSender getWorkItemSender() {
+        return workItemSender;
+    }
+
     public void sendWorkItem(WorkItem workItem) throws IOException {
         Result result;
         Timer.Context context = timerProcess.time();
         try {
-            result = webHookSender.sendWorkItem(workItem);
+            result = workItemSender.sendWorkItem(workItem);
         } finally {
             context.stop();
         }
