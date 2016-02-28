@@ -32,13 +32,18 @@ public class HttpMavenHelper extends MavenHelper {
     private final static Logger logger = LoggerFactory.getLogger(HttpMavenHelper.class);
 
     private final OkHttpClient client;
-    private final String mavenRepo;
-    private final String mavenUsername;
-    private final String mavenPassword;
+    private String mavenRepo;
+    private String mavenUsername;
+    private String mavenPassword;
 
     public HttpMavenHelper(Parameters parameters, OkHttpClient client) {
         super(parameters);
         this.client = client;
+    }
+
+    @Override
+    public void setup() {
+        super.setup();
         mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
         mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
         mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);

@@ -24,7 +24,9 @@ public class HttpMavenHelperFactory implements MavenHelperFactory {
 
     @Override
     public MavenHelper create(Parameters parameters, OkHttpClient client) {
-        return new HttpMavenHelper(parameters, client);
+        MavenHelper temp = new HttpMavenHelper(parameters, client);
+        temp.setup();
+        return temp;
     }
 
 }

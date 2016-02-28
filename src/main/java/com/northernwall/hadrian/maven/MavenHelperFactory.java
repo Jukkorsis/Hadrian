@@ -23,6 +23,14 @@ import com.squareup.okhttp.OkHttpClient;
  * @author rthursto
  */
 public interface MavenHelperFactory {
-    public MavenHelper create(Parameters parameters, OkHttpClient client);
-    
+
+    /**
+     * Implementations of the create method must call "setup()" on MavenHelper
+     * before returning the newly created instance of MavenHelper.
+     * @param parameters
+     * @param client
+     * @return 
+     */
+    MavenHelper create(Parameters parameters, OkHttpClient client);
+
 }

@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.maven;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.io.InputStream;
 import java.util.Collections;
@@ -27,15 +28,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public abstract class MavenHelper {
+public abstract class MavenHelper implements ParameterChangeListener {
+    protected final Parameters parameters;
     private final MavenVersionComparator mavenVersionComparator;
-    private final int maxMavenVersions;
+    private int maxMavenVersions;
 
     public MavenHelper(Parameters parameters) {
-        this.maxMavenVersions = parameters.getInt(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT);
-        mavenVersionComparator = new MavenVersionComparator();
+        this.parameters = parameters;
+        this.mavenVersionComparator = new MavenVersionComparator();
     }
 
+    public void setup() {
+        maxMavenVersions = parameters.getInt(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT);
+    }
+
+    @Override
+    public void onChange(List<String> keys) {
+        setup();
+    }
+    
     public abstract List<String> readMavenVersions(String groupId, String artifactId);
 
     protected List<String> processMavenStream(InputStream inputStream) throws Exception {
