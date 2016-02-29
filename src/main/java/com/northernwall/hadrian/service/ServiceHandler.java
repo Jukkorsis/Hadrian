@@ -26,7 +26,6 @@ import com.northernwall.hadrian.access.AccessException;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
-import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.GitMode;
@@ -354,6 +353,9 @@ public class ServiceHandler extends AbstractHandler {
         } catch (ParseException ex) {
             Calendar now = Calendar.getInstance();
             now.add(Calendar.DATE, -15);
+            now.clear(Calendar.HOUR);
+            now.clear(Calendar.MINUTE);
+            now.clear(Calendar.SECOND);
             startDate = now.getTime();
         }
         Date endDate = null;
@@ -362,8 +364,12 @@ public class ServiceHandler extends AbstractHandler {
         } catch (ParseException ex) {
             Calendar now = Calendar.getInstance();
             now.add(Calendar.DATE, 1);
+            now.clear(Calendar.HOUR);
+            now.clear(Calendar.MINUTE);
+            now.clear(Calendar.SECOND);
             endDate = now.getTime();
         }
+        logger.info("Audit search from {} to {} on service {}", startDate.toString(), endDate.toString(), id);
         auditData.audits = dataAccess.getAudit(id, startDate, endDate);
         Collections.sort(auditData.audits);
 
