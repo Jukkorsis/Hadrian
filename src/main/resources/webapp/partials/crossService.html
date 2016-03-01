@@ -4,13 +4,33 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div align="center">
-                    <a ng-click="" class="btn btn-info btn-xs" uib-popover="Rebuild the pipeline for the selected modules." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Rebuild Modules</a>
+                    <a ng-click="" class="btn btn-info btn-xs" uib-popover="Rebuild the module pipeline for the selected services." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Rebuild Pipelines</a>
                 </div>
                 <form>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-                            <input type="text" class="form-control" placeholder="Filter Modules" ng-model="modueFilter">
+                            <input type="text" class="form-control" placeholder="Filter Services" ng-model="serviceFilter">
+                        </div>      
+                    </div>
+                </form>
+                <table class="table table-hover table-striped table-condensed">
+                    <tr>
+                        <th></th>
+                        <th>Service</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab heading="Modules">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                            <input type="text" class="form-control" placeholder="Filter Modules" ng-model="moduleFilter">
                         </div>      
                     </div>
                 </form>
