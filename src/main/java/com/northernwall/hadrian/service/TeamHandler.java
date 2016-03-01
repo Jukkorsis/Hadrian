@@ -64,6 +64,7 @@ public class TeamHandler extends AbstractHandler {
                         break;
                     case Const.HTTP_POST:
                         if (target.equals("/v1/team")) {
+                            logger.info("Handling {} request {}", request.getMethod(), target);
                             createTeam(request);
                             response.setStatus(200);
                             request.setHandled(true);

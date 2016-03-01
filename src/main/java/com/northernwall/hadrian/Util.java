@@ -16,9 +16,9 @@
 package com.northernwall.hadrian;
 
 import com.google.gson.Gson;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -32,10 +32,10 @@ public class Util {
     private static final Gson gson = new Gson();
 
     public static final <T> T fromJson(org.eclipse.jetty.server.Request request, Class<T> classOfT) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String s = reader.readLine();
-        logger.debug("JSON input -> {}", s);
-        return gson.fromJson(s, classOfT);
+        Reader reader = new InputStreamReader(request.getInputStream());
+        T temp = gson.fromJson(reader, classOfT);
+        logger.info("Stream->Json {}", gson.toJson(temp));
+        return temp;
     }
 
     public static Date getGmt() {

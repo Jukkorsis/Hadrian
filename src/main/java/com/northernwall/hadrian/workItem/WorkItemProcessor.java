@@ -98,6 +98,10 @@ public class WorkItemProcessor {
             if (workItem == null) {
                 throw new RuntimeException("Could not find work item " + callbackData.requestId);
             }
+            if (callbackData.status == null) {
+                throw new RuntimeException("Callback is missing status, " + callbackData.requestId);
+            }
+            
             dataAccess.deleteWorkItem(callbackData.requestId);
 
             switch (callbackData.status) {
@@ -261,10 +265,11 @@ public class WorkItemProcessor {
             logger.warn("Could not find host {} being updated", workItem.getHost().hostId);
             return;
         }
+        
+        host.setStatus(Const.NO_STATUS);
+        dataAccess.updateHost(host);
+        
         if (result == Result.success) {
-            host.setStatus(Const.NO_STATUS);
-            dataAccess.updateHost(host);
-
             if (workItem.getNextId() == null) {
                 //No more hosts to update in the chain
                 return;
