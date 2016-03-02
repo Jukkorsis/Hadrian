@@ -24,7 +24,9 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Session.State;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
@@ -54,6 +56,7 @@ public class CassandraDataAccess implements DataAccess {
     private static final String CQL_SELECT_PRE = "SELECT * FROM ";
     private static final String CQL_SELECT_POST = ";";
 
+    private final String username;
     private final Session session;
 
     private final PreparedStatement auditSelect;
@@ -114,7 +117,8 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace, int auditTimeToLive, MetricRegistry metricRegistry) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, String username, int auditTimeToLive, MetricRegistry metricRegistry) {
+        this.username = username;
         session = cluster.connect(keyspace);
 
         logger.info("Praparing customFunction statements...");
@@ -265,16 +269,27 @@ public class CassandraDataAccess implements DataAccess {
     public Map<String, String> getHealth() {
         Map<String, String> health = new HashMap<>();
         Metadata metadata = session.getCluster().getMetadata();
+        State state = session.getState();
+        health.put("Cassandra - Username", username);
         health.put("Cassandra - Cluster", metadata.getClusterName());
         health.put("Cassandra - Keyspace", session.getLoggedKeyspace());
         int i = 1;
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
-            health.put("Cassandra - Host " + i,
-                    host.getDatacenter()
-                    + "  " + host.getAddress().getHostAddress()
-                    + "  " + host.getRack()
-                    + "  " + host.getState()
-                    + "  v" + host.getCassandraVersion().toString());
+            StringBuilder temp = new StringBuilder();
+            temp.append(host.getDatacenter());
+            temp.append("  ");
+            temp.append(host.getAddress().getHostAddress());
+            temp.append("  ");
+            temp.append(host.getRack());
+            temp.append("  ");
+            temp.append(host.getState());
+            temp.append("  v");
+            temp.append(host.getCassandraVersion().toString());
+            temp.append("  open=");
+            temp.append(state.getOpenConnections(host));
+            temp.append("  trashed=");
+            temp.append(state.getTrashedConnections(host));
+            health.put("Cassandra - Host " + Util.formatInt(i, 2), temp.toString());
             i++;
         }
         return health;

@@ -52,7 +52,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace, auditTimeToLive, metricRegistry);
+        dataAccess = new CassandraDataAccess(cluster, keyspace, username, auditTimeToLive, metricRegistry);
         return dataAccess;
     }
 

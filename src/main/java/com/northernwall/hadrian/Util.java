@@ -41,6 +41,15 @@ public class Util {
     public static Date getGmt() {
         return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
     }
+    
+    public static String formatInt(int i, int len) {
+        StringBuilder temp = new StringBuilder();
+        temp.append(i);
+        while (temp.length() < len) {
+            temp.insert(0, "0");
+        }
+        return temp.toString();
+    }
 
     private Util() {
     }
