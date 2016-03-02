@@ -102,7 +102,7 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
                     if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
                         var dataObject = {
                             requestId: wi.id,
-                            status: "SUCCESS",
+                            status: "success",
                             errorCode: 0,
                             errorDescription: " ",
                             output: "Manually performed"
@@ -121,7 +121,7 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
                     if (wi.id == key2 && $scope.formSelectWorkItem[key2]) {
                         var dataObject = {
                             requestId: wi.id,
-                            status: "FAILURE",
+                            status: "error",
                             errorCode: 0,
                             errorDescription: " ",
                             output: "Manually performed"
