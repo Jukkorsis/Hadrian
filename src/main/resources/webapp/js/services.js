@@ -18,7 +18,7 @@ hadrianServices.factory('Team', ['$resource', function($resource) {
 
 hadrianServices.factory('Services', ['$resource', function($resource) {
         return $resource('/v1/service', {}, {
-            query: {method: 'GET', isArray: true}
+            query: {method: 'GET', isArray: false}
         });
     }]);
 

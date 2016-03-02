@@ -78,9 +78,11 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
         selectTreeNode("-8");
     }]);
 
-hadrianControllers.controller('CrossServiceCtrl', ['$scope',
-    function ($scope) {
+hadrianControllers.controller('CrossServiceCtrl', ['$scope', 'Services', 
+    function ($scope, Services) {
         selectTreeNode("-5");
+        
+        $scope.services = Services.get();
     }]);
 
 hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',

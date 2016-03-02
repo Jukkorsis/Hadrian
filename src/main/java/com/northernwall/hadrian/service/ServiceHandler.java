@@ -91,7 +91,6 @@ public class ServiceHandler extends AbstractHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
-    private final WorkItemProcessor workItemProcess;
     private final ConfigHelper configHelper;
     private final MavenHelper mavenHelper;
     private final InfoHelper infoHelper;
@@ -99,10 +98,9 @@ public class ServiceHandler extends AbstractHandler {
     private final ExecutorService executorService;
     private final DateFormat format;
 
-    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess, ConfigHelper configHelper, MavenHelper mavenHelper, InfoHelper infoHelper) {
+    public ServiceHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, MavenHelper mavenHelper, InfoHelper infoHelper) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
-        this.workItemProcess = workItemProcess;
         this.configHelper = configHelper;
         this.mavenHelper = mavenHelper;
         this.infoHelper = infoHelper;

@@ -118,7 +118,7 @@ public class Hadrian {
         handlers.addHandler(new TreeHandler(dataAccess));
         handlers.addHandler(new UserHandler(accessHelper, dataAccess));
         handlers.addHandler(new TeamHandler(accessHelper, dataAccess));
-        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, workItemProcess, configHelper, mavenHelper, infoHelper));
+        handlers.addHandler(new ServiceHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper));
         handlers.addHandler(new VipHandler(accessHelper, dataAccess, workItemProcess));
         handlers.addHandler(new ModuleHandler(accessHelper, configHelper, dataAccess, workItemProcess));
         handlers.addHandler(new HostHandler(accessHelper, configHelper, dataAccess, workItemProcess, hostDetailsHelper));

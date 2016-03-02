@@ -101,6 +101,7 @@ public class Const {
 
     public static final String CASS_NODES = "dataAccess.cassandra.nodes";
     public static final String CASS_NODES_DEFAULT = "127.0.0.1";
+    public static final String CASS_DATA_CENTER = "dataAccess.cassandra.dataCenter";
     public static final String CASS_USERNAME = "dataAccess.cassandra.username";
     public static final String CASS_PASSWORD = "dataAccess.cassandra.password";
     public static final String CASS_CREATE_KEY_SPACE = "dataAccess.cassandra.createKeyspace";
