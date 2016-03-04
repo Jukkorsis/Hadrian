@@ -16,8 +16,8 @@
 package com.northernwall.hadrian.utilityHandlers;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,26 +30,32 @@ import org.slf4j.LoggerFactory;
 public class RoutingHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(RoutingHandler.class);
-    
-    private final Map<Route, Handler> routes;
+
+    private final List<RouteEntry> routes;
 
     public RoutingHandler() {
-        routes = new ConcurrentHashMap<>();
+        routes = new LinkedList<>();
     }
-    
-    public void addRoute(String target, String method, Handler handler) {
-        Route route = new Route(target, method);
-        routes.put(route, handler);
+
+    public void addRoute(String method, RouteType type, String target, Handler handler) {
+        routes.add(new RouteEntry(method, type, target, handler));
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        Route route = new Route(target, request.getMethod());
-        Handler handler = routes.get(route);
-        if (handler == null) {
-            return;
+        for (RouteEntry entry : routes) {
+            if (entry.method.equals(request.getMethod())) {
+                if ((entry.type == RouteType.equals && entry.target.equals(target))
+                        || (entry.type == RouteType.startWith && entry.target.startsWith(target))
+                        || (entry.type == RouteType.matches && entry.target.matches(target))) {
+                    logger.info("{} handling {} request {}", entry.name, entry.method, target);
+                    entry.handler.handle(target, request, httpRequest, response);
+                    if (request.isHandled()) {
+                        return;
+                    }
+                }
+            }
         }
-        handler.handle(target, request, httpRequest, response);
     }
-    
+
 }
