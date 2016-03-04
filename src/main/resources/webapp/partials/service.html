@@ -168,7 +168,7 @@
                                     </span>
                                     <span ng-repeat="cf in m.customFunctions">
                                         <span ng-if="service.canModify || !cf.teamOnly">
-                                            <a ng-click="openDoCustomFunctionModal(cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
+                                            <a ng-click="openDoCustomFunctionModal(mn, cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
                                         </span>
                                     </span>
                                 </div>

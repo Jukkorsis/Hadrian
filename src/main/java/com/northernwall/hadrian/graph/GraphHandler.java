@@ -81,21 +81,21 @@ public class GraphHandler extends AbstractHandler {
         List<Team> teams;
         List<Service> services;
         List<ServiceRef> serviceRefs;
-        
+
         Graph graph = new Graph(response, true);
 
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
             int c = 0;
             for (Team team : teams) {
-                graph.startSubGraph(c);
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
+                    graph.startSubGraph(c);
                     for (Service service : services) {
                         graph.writeService(service, "ellipse");
                     }
+                    graph.finishSubGraph(team.getTeamName());
                 }
-                graph.finishSubGraph(team.getTeamName());
                 c++;
             }
             for (Team team : teams) {
@@ -129,7 +129,7 @@ public class GraphHandler extends AbstractHandler {
             fanIn(services.remove(0), graph, services, foundIds);
         }
         graph.newLine();
-        graph.writeService(service, "square");
+        graph.writeService(service, "rectangle");
         graph.close();
     }
 
@@ -161,7 +161,7 @@ public class GraphHandler extends AbstractHandler {
             fanOut(services.remove(0), graph, services, foundIds);
         }
         graph.newLine();
-        graph.writeService(service, "square");
+        graph.writeService(service, "rectangle");
         graph.close();
     }
 
@@ -180,5 +180,5 @@ public class GraphHandler extends AbstractHandler {
             }
         }
     }
-    
+
 }

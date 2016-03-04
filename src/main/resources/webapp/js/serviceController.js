@@ -330,9 +330,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openDoCustomFunctionModal = function (cf) {
-            for (var key in $scope.service.hosts) {
-                var h = $scope.service.hosts[key];
+        $scope.openDoCustomFunctionModal = function (mn, cf) {
+            for (var key in mn.hosts) {
+                var h = mn.hosts[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId === key2 && $scope.formSelectHost[key2]) {
                         window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + h.hostId, '_blank');
@@ -379,7 +379,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $scope.audits = dataFromServer.audits;
                 for (var j = 0; j < $scope.audits.length; j++) {
                     var a = $scope.audits[j];
-                    if (a.notes !== null) {
+                    if (a.notes !== null && a.notes.length > 2) {
                         var notes = JSON.parse(a.notes);
                         a.left = [];
                         a.right = [];

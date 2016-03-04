@@ -379,7 +379,11 @@ public class ServiceHandler extends AbstractHandler {
     private void createService(Request request) throws IOException {
         PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
         User user = accessHelper.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
-        postServiceData.serviceAbbr = postServiceData.serviceAbbr.toLowerCase();
+        postServiceData.serviceAbbr = postServiceData.serviceAbbr.toUpperCase();
+        if (!postServiceData.serviceAbbr.matches("\\w+")) {
+            logger.warn("Illegal service Abbr");
+            return;
+        }
 
         for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
             if (temp.getServiceAbbr().equals(postServiceData.serviceAbbr)) {
@@ -393,7 +397,7 @@ public class ServiceHandler extends AbstractHandler {
         }
 
         Service service = new Service(
-                postServiceData.serviceAbbr.toUpperCase(),
+                postServiceData.serviceAbbr,
                 postServiceData.serviceName,
                 postServiceData.teamId,
                 postServiceData.description,
