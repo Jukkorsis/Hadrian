@@ -19,12 +19,17 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http401UnauthorizedException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
+
 import java.util.List;
+
 import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AccessHelper {
+
     private final static Logger logger = LoggerFactory.getLogger(AccessHelper.class);
 
     private final DataAccess dataAccess;
@@ -48,15 +53,15 @@ public class AccessHelper {
         }
         return user;
     }
-    
+
     public boolean canUserModify(Request request, String teamId) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
-            throw new AccessException("unknown user");
+            throw new Http404NotFoundException("unknown user");
         }
         Team team = dataAccess.getTeam(teamId);
         if (team == null) {
-            throw new AccessException("unknown team");
+            throw new Http404NotFoundException("unknown team");
         }
         return team.getUsernames().contains(user.getUsername());
     }
@@ -64,15 +69,15 @@ public class AccessHelper {
     public User checkIfUserCanModify(Request request, String teamId, String action) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
-            throw new AccessException("unknown user attempted to " + action);
+            throw new Http404NotFoundException("unknown user attempted to " + action);
         }
         String username = user.getUsername();
         Team team = dataAccess.getTeam(teamId);
         if (team == null) {
-            throw new AccessException(username + " attempted to " + action + " on team " + teamId + " but could not find team");
+            throw new Http404NotFoundException(username + " attempted to " + action + " on team " + teamId + " but could not find team");
         }
         if (!team.getUsernames().contains(username)) {
-            throw new AccessException(username + " attempted to " + action + " on team " + team.getTeamName());
+            throw new Http401UnauthorizedException(username + " attempted to " + action + " on team " + team.getTeamName());
         }
         return user;
     }
@@ -80,10 +85,10 @@ public class AccessHelper {
     public User checkIfUserIsOps(Request request, String action) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
-            throw new AccessException("unknown users attempted to " + action + " but is not in ops group");
+            throw new Http404NotFoundException("unknown users attempted to " + action + " but is not in ops group");
         }
         if (!user.isOps()) {
-            throw new AccessException(user.getUsername() + " attempted to " + action + " but is not in ops group");
+            throw new Http401UnauthorizedException(user.getUsername() + " attempted to " + action + " but is not in ops group");
         }
         return user;
     }
@@ -91,10 +96,10 @@ public class AccessHelper {
     public User checkIfUserIsAdmin(Request request, String action) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
-            throw new AccessException("unknown users attempted to " + action + " but is not an admin");
+            throw new Http404NotFoundException("unknown users attempted to " + action + " but is not an admin");
         }
         if (!user.isAdmin()) {
-            throw new AccessException(user.getUsername() + " attempted to " + action + " but is not an admin");
+            throw new Http401UnauthorizedException(user.getUsername() + " attempted to " + action + " but is not an admin");
         }
         return user;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Richard Thurston.
+ * Copyright 2015 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,60 +17,55 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.service.dao.GetWorkItemData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class ConfigHandler extends AbstractHandler {
+public class WorkItemGetHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
-
-    private final ConfigHelper configHelper;
+    private final DataAccess dataAccess;
     private final Gson gson;
 
-    public ConfigHandler(ConfigHelper configHelper) {
-        this.configHelper = configHelper;
-        this.gson = new Gson();
+    public WorkItemGetHandler(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+        gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (target.matches("/v1/config")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "GET":
-                        getConfig(response);
-                        break;
-                }
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-        }
-    }
-
-    private void getConfig(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
-        
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(configHelper.getConfig(), Config.class, jw);
+        GetWorkItemData getWorkItemData = new GetWorkItemData();
+        List<WorkItem> workItems = dataAccess.getWorkItems();
+        for (WorkItem workItem : workItems) {
+            boolean found = false;
+            for (WorkItem workItem2 : workItems) {
+                if (workItem.getId().equals(workItem2.getNextId())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                getWorkItemData.workItems.add(workItem);
+            }
         }
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(getWorkItemData, GetWorkItemData.class, jw);
+        }
+
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

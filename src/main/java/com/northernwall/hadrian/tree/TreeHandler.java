@@ -34,16 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class TreeHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(TreeHandler.class);
 
     private final DataAccess dataAccess;
     private final Gson gson;
@@ -55,26 +51,6 @@ public class TreeHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (target.equals("/v1/tree")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "GET":
-                        listComponents(request, response);
-                        break;
-                    default:
-                        throw new RuntimeException("Unknown tree operation");
-                }
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-        }
-    }
-
-    private void listComponents(Request request, HttpServletResponse response) throws IOException {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
@@ -90,13 +66,15 @@ public class TreeHandler extends AbstractHandler {
             listHelp(jw);
             jw.endArray();
         }
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
     private void listDevTeams(final JsonWriter jw) throws JsonIOException {
         TreeNode devTeamsTreenode = new TreeNode();
         devTeamsTreenode.setLabel("Dev Teams");
         devTeamsTreenode.setData(new TreeNodeData("-1", "DevTeams"));
-        List<Team> teams  = dataAccess.getTeams();
+        List<Team> teams = dataAccess.getTeams();
         Collections.sort(teams);
         for (Team team : teams) {
             TreeNode teamTreenode = new TreeNode();
@@ -126,27 +104,27 @@ public class TreeHandler extends AbstractHandler {
         TreeNode opsTeamTreenode = new TreeNode();
         opsTeamTreenode.setLabel("Ops Team");
         opsTeamTreenode.setData(new TreeNodeData("-4", "OpsTeam"));
-        
+
         TreeNode tasksTreenode = new TreeNode();
         tasksTreenode.setLabel("Cross Service");
         tasksTreenode.setData(new TreeNodeData("-5", "CrossService"));
         opsTeamTreenode.getChildren().add(tasksTreenode);
-        
+
         TreeNode webhooksTreenode = new TreeNode();
         webhooksTreenode.setLabel("Work Items");
         webhooksTreenode.setData(new TreeNodeData("-6", "WorkItems"));
         opsTeamTreenode.getChildren().add(webhooksTreenode);
-        
+
         TreeNode backfillTreenode = new TreeNode();
         backfillTreenode.setLabel("Backfill");
         backfillTreenode.setData(new TreeNodeData("-7", "Backfill"));
         opsTeamTreenode.getChildren().add(backfillTreenode);
-        
+
         TreeNode optionsTreenode = new TreeNode();
         optionsTreenode.setLabel("Parameters");
         optionsTreenode.setData(new TreeNodeData("-8", "Parameters"));
         opsTeamTreenode.getChildren().add(optionsTreenode);
-        
+
         gson.toJson(opsTeamTreenode, TreeNode.class, jw);
     }
 

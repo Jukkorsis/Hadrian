@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.utilityHandlers;
+package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
 /**
  *
  * @author rthursto
  */
-public enum RouteType {
-    equals,
-    startWith,
-    matches;
+public enum MethodRule {
+    GET,
+    PUT,
+    POST, 
+    DELETE;
     
+    public boolean test(String method) {
+        return this.toString().equals(method);
+    }
+
 }

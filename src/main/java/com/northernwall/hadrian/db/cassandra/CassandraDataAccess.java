@@ -57,6 +57,7 @@ public class CassandraDataAccess implements DataAccess {
     private static final String CQL_SELECT_POST = ";";
 
     private final String username;
+    private final String dataCenter;
     private final Session session;
 
     private final PreparedStatement auditSelect;
@@ -117,8 +118,9 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace, String username, int auditTimeToLive, MetricRegistry metricRegistry) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, String username, String dataCenter, int auditTimeToLive, MetricRegistry metricRegistry) {
         this.username = username;
+        this.dataCenter = dataCenter;
         session = cluster.connect(keyspace);
 
         logger.info("Praparing customFunction statements...");
@@ -272,6 +274,9 @@ public class CassandraDataAccess implements DataAccess {
         State state = session.getState();
         health.put("Cassandra - Username", username);
         health.put("Cassandra - Cluster", metadata.getClusterName());
+        if (dataCenter != null) {
+            health.put("Cassandra - Preferred DC", dataCenter);
+        }
         health.put("Cassandra - Keyspace", session.getLoggedKeyspace());
         int i = 1;
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {

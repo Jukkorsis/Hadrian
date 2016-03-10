@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.utilityHandlers;
 
 import com.northernwall.hadrian.Const;
@@ -24,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -33,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ContentHandler.class);
-    
     private final String rootPath;
 
     public ContentHandler(String rootPath) {
@@ -43,35 +38,20 @@ public class ContentHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (!request.getMethod().equals(Const.HTTP_GET)) {
-                request.setHandled(false);
-                return;
-            }
-            if (target.equals("/ui/")) {
-                if (getContent(response, rootPath + "/index.html")) {
-                    logger.info("Handled {} request {} with root path {}", request.getMethod(), target, rootPath);
-                    response.setStatus(200);
-                    request.setHandled(true);
-                }
-            } else if (target.startsWith("/ui/")) {
-                if (getContent(response, rootPath + target.substring(3))) {
-                    logger.debug("Handled {} request {} root path {}", request.getMethod(), target, rootPath);
-                    response.setStatus(200);
-                    request.setHandled(true);
-                }
-            } else if (target.equals("/favicon.ico")) {
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
+        String path;
+        if (target.equals("/ui/")) {
+            path = rootPath + "/index.html";
+        } else {
+            path = rootPath + target.substring(3);
+        }
+        if (getContent(response, path)) {
+            response.setStatus(200);
+            request.setHandled(true);
         }
     }
 
     private boolean getContent(HttpServletResponse response, String resource) throws IOException {
-        byte[] buffer = new byte[50*1024];
+        byte[] buffer = new byte[50 * 1024];
         try (InputStream is = this.getClass().getResourceAsStream(resource)) {
             if (is == null) {
                 return false;

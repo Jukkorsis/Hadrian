@@ -17,34 +17,29 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CalendarEntry;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.GetCalendarData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CalendarHandler extends AbstractHandler {
+public class CalendarGetHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(CalendarHandler.class);
-    
     private final DataAccess dataAccess;
     private final CalendarHelper calendarHelper;
     private final Gson gson;
 
-    public CalendarHandler(DataAccess dataAccess, CalendarHelper calendarHelper) {
+    public CalendarGetHandler(DataAccess dataAccess, CalendarHelper calendarHelper) {
         this.dataAccess = dataAccess;
         this.calendarHelper = calendarHelper;
         gson = new Gson();
@@ -52,46 +47,39 @@ public class CalendarHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/v1/calendar")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                getCalendar(request.getParameter("serviceId"), response);
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-        }
-    }
+        String serviceId = request.getParameter("serviceId");
 
-    private void getCalendar(String serviceId, HttpServletResponse response) throws IOException { 
         GetCalendarData getCalendarData = new GetCalendarData();
         if (serviceId != null && !serviceId.isEmpty()) {
             Service service = dataAccess.getService(serviceId);
-            if (service != null) {
-                Team team = dataAccess.getTeam(service.getTeamId());
-                if (team != null) {
-                    getCalendarData.entries = calendarHelper.getCalendarEntries(team);
+            if (service == null) {
+                throw new Http404NotFoundException("Could not find service");
+            }
+            Team team = dataAccess.getTeam(service.getTeamId());
+            if (team == null) {
+                throw new Http404NotFoundException("Could not find team");
+            }
+            getCalendarData.entries = calendarHelper.getCalendarEntries(team);
 
-                    if (getCalendarData.entries ==null) {
-                        getCalendarData.entries = new LinkedList<>();
-                    }
-                    if (getCalendarData.entries.isEmpty()) {
-                        CalendarEntry entry = new CalendarEntry();
-                        entry.calendarName = "-";
-                        entry.starts = "-";
-                        entry.ends = "-";
-                        entry.description = "-";
-                        getCalendarData.entries.add(entry);
-                    }
-                }
+            if (getCalendarData.entries == null) {
+                getCalendarData.entries = new LinkedList<>();
+            }
+            if (getCalendarData.entries.isEmpty()) {
+                CalendarEntry entry = new CalendarEntry();
+                entry.calendarName = "-";
+                entry.starts = "-";
+                entry.ends = "-";
+                entry.description = "-";
+                getCalendarData.entries.add(entry);
             }
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getCalendarData, GetCalendarData.class, jw);
         }
+
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

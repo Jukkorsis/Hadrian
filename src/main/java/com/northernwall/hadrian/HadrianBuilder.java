@@ -27,6 +27,7 @@ import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
+import com.northernwall.hadrian.db.DataAccessUpdater;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -244,6 +245,8 @@ public class HadrianBuilder {
         
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, workItemSender, metricRegistry);
         workItemSender.setWorkItemProcessor(workItemProcessor);
+        
+        DataAccessUpdater.update(dataAccess);
 
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, metricRegistry);
     }

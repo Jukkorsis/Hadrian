@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Richard Thurston.
+ * Copyright 2015 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,53 +16,50 @@
 package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.access.AccessException;
+import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.service.dao.GetTeamData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author Richard Thurston
- */
-public class DataStoreHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(DataStoreHandler.class);
+public class TeamGetHandler extends AbstractHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public DataStoreHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+    public TeamGetHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
-        this.gson = new Gson();
+        gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (target.matches("/v1/datastore/")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (AccessException e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target);
-            response.setStatus(401);
-            request.setHandled(true);
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-            request.setHandled(true);
+        String teamId = target.substring(9);
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new Http404NotFoundException("Could not find team with id '" + teamId + "'");
         }
+
+        GetTeamData getTeamData = GetTeamData.create(team);
+        getTeamData.canModify = accessHelper.canUserModify(request, teamId);
+
+        response.setContentType(Const.JSON);
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(getTeamData, GetTeamData.class, jw);
+        }
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

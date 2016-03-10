@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,72 +15,55 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.service.helper.HostDetailsHelper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.service.dao.GetWorkItemData;
+import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.service.dao.GetHostDetailsData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class WorkItemHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(WorkItemHandler.class);
+public class HostGetHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
+    private final HostDetailsHelper hostDetailsHelper;
     private final Gson gson;
 
-    public WorkItemHandler(DataAccess dataAccess) {
+    public HostGetHandler(DataAccess dataAccess, HostDetailsHelper hostDetailsHelper) {
         this.dataAccess = dataAccess;
+        this.hostDetailsHelper = hostDetailsHelper;
         gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (request.getMethod().equals(Const.HTTP_GET) && target.equals("/v1/workitems")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                getWorkItems(response);
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
+        String serviceId = target.substring(9, 45);
+        String hostId = target.substring(46, 82);
+        Host host = dataAccess.getHost(serviceId, hostId);
+        if (host == null) {
+            throw new Http404NotFoundException("Could not find host");
         }
-    }
 
-    private void getWorkItems(HttpServletResponse response) throws IOException {
+        GetHostDetailsData details = hostDetailsHelper.getDetails(host);
+
         response.setContentType(Const.JSON);
-        GetWorkItemData getWorkItemData = new GetWorkItemData();
-        List<WorkItem> workItems = dataAccess.getWorkItems();
-        for (WorkItem workItem : workItems) {
-            boolean found = false;
-            for (WorkItem workItem2 : workItems) {
-                if (workItem.getId().equals(workItem2.getNextId())) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                getWorkItemData.workItems.add(workItem);
-            }
-        }
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(getWorkItemData, GetWorkItemData.class, jw);
+            gson.toJson(details, GetHostDetailsData.class, jw);
         }
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.workItem;
+package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.domain.Config;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,17 +32,23 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  *
  * @author Richard Thurston
  */
-public class WorkItemCallbackHandler extends AbstractHandler {
+public class ConfigGetHandler extends AbstractHandler {
 
-    private final WorkItemProcessor workItemProcess;
+    private final ConfigHelper configHelper;
+    private final Gson gson;
 
-    public WorkItemCallbackHandler(WorkItemProcessor workItemProcess) {
-        this.workItemProcess = workItemProcess;
+    public ConfigGetHandler(ConfigHelper configHelper) {
+        this.configHelper = configHelper;
+        this.gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        workItemProcess.processCallback(Util.fromJson(request, CallbackData.class));
+        response.setContentType(Const.JSON);
+
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(configHelper.getConfig(), Config.class, jw);
+        }
         response.setStatus(200);
         request.setHandled(true);
     }

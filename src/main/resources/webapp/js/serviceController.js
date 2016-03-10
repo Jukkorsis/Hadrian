@@ -241,9 +241,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
         $scope.restartHost = function (network, module) {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                hosts: $scope.formSelectHost,
+                moduleId: module.moduleId,
                 network: network,
-                moduleId: module.moduleId
+                hosts: $scope.formSelectHost
             };
 
             var responsePromise = $http.put("/v1/host/restart", dataObject, {});
@@ -751,14 +751,16 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                network: $scope.network,
+                all: false,
+                hosts: $scope.hosts,
                 version: $scope.formUpdateHost.version,
                 reason: $scope.formUpdateHost.reason,
-                hosts: $scope.hosts,
-                network: $scope.network,
-                moduleId: $scope.module.moduleId
+                wait: false
             };
 
-            var responsePromise = $http.put("/v1/host/host", dataObject, {});
+            var responsePromise = $http.put("/v1/host/deploy", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

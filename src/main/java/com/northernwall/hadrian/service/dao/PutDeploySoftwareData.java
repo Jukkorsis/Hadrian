@@ -25,10 +25,14 @@ import java.util.Map;
  */
 public class PutDeploySoftwareData {
     public String serviceId;
+    public String serviceName;
+    public String moduleId;
+    public String moduleName;
+    public String network;
+    public boolean all = false;
+    public Map<String, String> hosts = new HashMap<>();
     public String version;
     public String reason;
-    public Map<String, String> hosts = new HashMap<>();
-    public String network;
-    public String moduleId;
+    public boolean wait = false;
 
 }

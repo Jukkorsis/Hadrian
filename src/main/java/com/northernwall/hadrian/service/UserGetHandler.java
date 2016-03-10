@@ -18,8 +18,6 @@ package com.northernwall.hadrian.service;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.GetUsersData;
@@ -32,60 +30,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class UserHandler extends AbstractHandler {
+public class UserGetHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(UserHandler.class);
 
-    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final Gson gson;
 
-    public UserHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        this.accessHelper = accessHelper;
+    public UserGetHandler(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
         this.gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (target.matches("/v1/users")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "GET":
-                        getUsers(response);
-                        break;
-                }
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-            if (target.startsWith("/v1/user/")) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                switch (request.getMethod()) {
-                    case "PUT":
-                        updateUser(request, target.substring(9));
-                        break;
-                }
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-        }
-    }
-
-    private void getUsers(HttpServletResponse response) throws IOException {
         response.setContentType(Const.JSON);
         GetUsersData getUsersData = new GetUsersData();
-        
+
         List<User> users = dataAccess.getUsers();
         Collections.sort(users);
         for (User user : users) {
@@ -95,13 +60,8 @@ public class UserHandler extends AbstractHandler {
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(getUsersData, GetUsersData.class, jw);
         }
-    }
-
-    private void updateUser(Request request, String username) throws IOException {
-        accessHelper.checkIfUserIsAdmin(request, "update user");
-        
-        User temp = Util.fromJson(request, User.class);
-        dataAccess.updateUser(temp);
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

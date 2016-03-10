@@ -141,7 +141,9 @@ public class Const {
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
     public static final String CONFIG_NETWORKS = "config.networks";
-    public static final String CONFIG_NETWORKS_DEFAULT = "prd, tst";
+    public static final String CONFIG_NETWORKS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\"},{\"name\":\"Test\",\"pattern\":\"{dc}-tst-{abbr}-\"}]";
+    public static final String CONFIG_NETWORKS_DC = "{dc}";
+    public static final String CONFIG_NETWORKS_ABBR = "{abbr}";
     public static final String CONFIG_ENVS = "config.envs";
     public static final String CONFIG_ENVS_DEFAULT = "Java7, Java8, NodeJS";
     public static final String CONFIG_SIZES = "config.sizes";

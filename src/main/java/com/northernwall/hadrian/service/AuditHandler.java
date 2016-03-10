@@ -15,12 +15,13 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.service.dao.PostAudit;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class AuditHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AuditHandler.class);
-    
+
     private final DataAccess dataAccess;
 
     public AuditHandler(DataAccess dataAccess) {
@@ -43,26 +44,9 @@ public class AuditHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            if (target.startsWith("/v1/audit") && request.getMethod().equals(Const.HTTP_POST)) {
-                logger.info("Handling {} request {}", request.getMethod(), target);
-                createAudit(request);
-                response.setStatus(200);
-                request.setHandled(true);
-            }
-        } catch (Exception e) {
-            logger.error("Exception {} while handling request for {}", e.getMessage(), target, e);
-            response.setStatus(400);
-        }
-    }
-
-    private void createAudit(Request request) throws IOException {
         PostAudit postAudit = Util.fromJson(request, PostAudit.class);
-        
+
         Service service = findService(postAudit);
-        if (service == null) {
-            return;
-        }
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
@@ -79,8 +63,11 @@ public class AuditHandler extends AbstractHandler {
         }
         audit.notes = postAudit.notes;
         dataAccess.saveAudit(audit, "");
+
+        response.setStatus(200);
+        request.setHandled(true);
     }
-    
+
     private Service findService(PostAudit postAudit) {
         List<Service> services = dataAccess.getServices();
         for (Service service : services) {
@@ -95,15 +82,15 @@ public class AuditHandler extends AbstractHandler {
             }
         }
         if (postAudit.serviceId != null && !postAudit.serviceId.isEmpty()) {
-            logger.warn("Could not find service {}, so can not record audit", postAudit.serviceId);
+            throw new Http404NotFoundException("Could not find service "+postAudit.serviceId+", so can not record audit");
         }
         if (postAudit.serviceAbbr != null && !postAudit.serviceAbbr.isEmpty()) {
-            logger.warn("Could not find service {}, so can not record audit", postAudit.serviceAbbr);
+            throw new Http404NotFoundException("Could not find service "+postAudit.serviceAbbr+", so can not record audit");
         }
         if (postAudit.serviceName != null && !postAudit.serviceId.isEmpty()) {
-            logger.warn("Could not find service {}, so can not record audit", postAudit.serviceName);
+            throw new Http404NotFoundException("Could not find service "+postAudit.serviceName+", so can not record audit");
         }
-        return null;
+        throw new Http400BadRequestException("No service Id, abbr, or name provided");
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
-package com.northernwall.hadrian.service.dao;
+public class Http405NotAllowedException extends HttpAbstractException {
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- *
- * @author Richard Thurston
- */
-public class PutRestartHostData {
-    public String serviceId;
-    public String moduleId;
-    public String network;
-    public Map<String, String> hosts = new HashMap<>();
+    public Http405NotAllowedException(String message) {
+        super(405, message);
+    }
 
 }

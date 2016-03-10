@@ -18,6 +18,7 @@ package com.northernwall.hadrian.service.dao;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Network;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class GetModuleData {
         temp.stopTimeOut = module.getStopTimeOut();
         temp.versions = new LinkedList<>();
         temp.networks = new LinkedList<>();
-        for (String network : config.networks) {
+        for (String network : config.networkNames) {
             temp.networks.add(new GetModuleNetworkData(network));
         }
         temp.customFunctions = new LinkedList<>();

@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.utilityHandlers;
+package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.calendar.CalendarHelper;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemSender;
+import com.northernwall.hadrian.domain.CustomFunction;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -32,21 +31,34 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  *
  * @author Richard Thurston
  */
-public class AvailabilityHandler extends AbstractHandler {
+public class CustomFuntionDeleteHandler extends AbstractHandler {
 
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
-    public AvailabilityHandler(DataAccess dataAccess) {
+    public CustomFuntionDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        if (dataAccess.getAvailability()) {
-            response.setStatus(200);
-        } else {
-            response.setStatus(500);
+        String serviceId = target.substring(7, 43);
+        String customFunctionId = target.substring(44);
+
+        CustomFunction customFunction = dataAccess.getCustomFunction(serviceId, customFunctionId);
+        if (customFunction == null) {
+            throw new Http404NotFoundException("Could not find custom function");
         }
+        Service service = dataAccess.getService(customFunction.getServiceId());
+        if (service == null) {
+            throw new Http404NotFoundException("Could not find service");
+        }
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
+
+        dataAccess.deleteCustomFunction(serviceId, customFunctionId);
+
+        response.setStatus(200);
         request.setHandled(true);
     }
 

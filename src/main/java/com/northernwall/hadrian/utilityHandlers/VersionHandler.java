@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.workItem;
+package com.northernwall.hadrian.utilityHandlers;
 
-import com.northernwall.hadrian.Util;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,18 +26,25 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  *
  * @author Richard Thurston
  */
-public class WorkItemCallbackHandler extends AbstractHandler {
+public class VersionHandler extends AbstractHandler {
 
-    private final WorkItemProcessor workItemProcess;
+    private final String version;
+    private final byte[] versionBytes;
 
-    public WorkItemCallbackHandler(WorkItemProcessor workItemProcess) {
-        this.workItemProcess = workItemProcess;
+    public VersionHandler() {
+        String temp = getClass().getPackage().getImplementationVersion();
+        if (temp == null) {
+            version = "unknown";
+        } else {
+            version = temp;
+        }
+        versionBytes = version.getBytes();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        workItemProcess.processCallback(Util.fromJson(request, CallbackData.class));
         response.setStatus(200);
+        response.getOutputStream().write(versionBytes);
         request.setHandled(true);
     }
 

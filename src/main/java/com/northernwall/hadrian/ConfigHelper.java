@@ -1,14 +1,23 @@
 package com.northernwall.hadrian;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Network;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigHelper implements ParameterChangeListener {
+    private final static Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
+
     private final Parameters parameters;
     private final AtomicReference<Config> config;
 
@@ -39,12 +48,12 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
-        loadConfig(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT, newConfig.networks);
         loadConfig(Const.CONFIG_ENVS, Const.CONFIG_ENVS_DEFAULT, newConfig.envs);
         loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, newConfig.sizes);
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, newConfig.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, newConfig.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, newConfig.artifactTypes);
+        loadNetwork(newConfig);
 
         newConfig.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
         newConfig.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
@@ -63,6 +72,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.moduleTypes.add(ModuleType.Library);
         newConfig.moduleTypes.add(ModuleType.Test);
         
+        logger.info("Config loaded");
         return newConfig;
     }
 
@@ -77,6 +87,17 @@ public class ConfigHelper implements ParameterChangeListener {
             if (!part.isEmpty()) {
                 target.add(part);
             }
+        }
+    }
+    
+    private void loadNetwork(Config newConfig) {
+        String temp = parameters.getString(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT);
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<Network>>(){}.getType();
+        newConfig.networks = gson.fromJson(temp, listType);
+        for (Network network : newConfig.networks) {
+            newConfig.networkNames.add(network.name);
+            logger.info("Network {} loaded with pattern '{}'", network.name, network.pattern);
         }
     }
 

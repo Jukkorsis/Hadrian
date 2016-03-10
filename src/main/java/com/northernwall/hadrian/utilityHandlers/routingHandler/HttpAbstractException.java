@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
-package com.northernwall.hadrian.service.dao;
+public class HttpAbstractException extends RuntimeException {
+    private final int status;
 
-import java.util.HashMap;
-import java.util.Map;
+    public HttpAbstractException(int status, String message) {
+        super(message);
+        this.status = status;
+    }
 
-/**
- *
- * @author Richard Thurston
- */
-public class PutRestartHostData {
-    public String serviceId;
-    public String moduleId;
-    public String network;
-    public Map<String, String> hosts = new HashMap<>();
+    public int getStatus() {
+        return status;
+    }
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.utilityHandlers;
+package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -37,25 +37,37 @@ public class RoutingHandler extends AbstractHandler {
         routes = new LinkedList<>();
     }
 
-    public void addRoute(String method, RouteType type, String target, Handler handler) {
-        routes.add(new RouteEntry(method, type, target, handler));
+    public void addRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
+        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler));
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         for (RouteEntry entry : routes) {
-            if (entry.method.equals(request.getMethod())) {
-                if ((entry.type == RouteType.equals && entry.target.equals(target))
-                        || (entry.type == RouteType.startWith && entry.target.startsWith(target))
-                        || (entry.type == RouteType.matches && entry.target.matches(target))) {
-                    logger.info("{} handling {} request {}", entry.name, entry.method, target);
+            if (entry.methodRule.test(request.getMethod())
+                    && entry.targetRule.test(entry.targetPattern, target)) {
+                try {
+                    logger.info("{} handling {} request for {}", entry.name, entry.methodRule, target);
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {
                         return;
                     }
+                } catch (HttpAbstractException e) {
+                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, entry.methodRule, target);
+                    response.getWriter().print(e.getMessage());
+                    response.setStatus(e.getStatus());
+                    request.setHandled(true);
+                    return;
+                } catch (Exception e) {
+                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, entry.methodRule, target, e);
+                    response.getWriter().print("Internal Server Error.");
+                    response.setStatus(500);
+                    request.setHandled(true);
+                    return;
                 }
             }
         }
+        logger.info("Could not find a handler for {} {}", request.getMethod(), target);
     }
 
 }

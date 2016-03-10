@@ -13,40 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.utilityHandlers;
+package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.calendar.CalendarHelper;
+import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemSender;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.service.dao.PutServiceData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class AvailabilityHandler extends AbstractHandler {
+public class ServiceModifyHandler extends BasicHandler {
 
+    private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
-    public AvailabilityHandler(DataAccess dataAccess) {
+    public ServiceModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
+        this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        if (dataAccess.getAvailability()) {
-            response.setStatus(200);
-        } else {
-            response.setStatus(500);
-        }
+        String id = target.substring(12, target.length());
+        PutServiceData putServiceData = Util.fromJson(request, PutServiceData.class);
+        Service service = getService(id, null);
+        
+        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
+
+        service.setServiceAbbr(putServiceData.serviceAbbr.toUpperCase());
+        service.setServiceName(putServiceData.serviceName);
+        service.setDescription(putServiceData.description);
+
+        dataAccess.updateService(service);
+        response.setStatus(200);
         request.setHandled(true);
     }
 

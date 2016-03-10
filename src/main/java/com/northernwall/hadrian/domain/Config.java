@@ -27,7 +27,8 @@ public class Config {
     public String stopCmd = "";
     public String gitUiURL = "";
     public List<String> dataCenters = new LinkedList<>();
-    public List<String> networks = new LinkedList<>();
+    public List<String> networkNames = new LinkedList<>();
+    public List<Network> networks = new LinkedList<>();
     public List<String> envs = new LinkedList<>();
     public List<String> sizes = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();

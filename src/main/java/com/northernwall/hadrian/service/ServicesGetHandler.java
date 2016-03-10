@@ -13,9 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.utilityHandlers;
+package com.northernwall.hadrian.service;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.service.dao.GetServiceData;
+import com.northernwall.hadrian.service.dao.GetServicesData;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,15 +35,29 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  *
  * @author Richard Thurston
  */
-public class RedirectHandler extends AbstractHandler {
+public class ServicesGetHandler extends AbstractHandler {
 
-    public RedirectHandler() {
+    private final DataAccess dataAccess;
+    private final Gson gson;
+
+    public ServicesGetHandler(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+        gson = new Gson();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        response.setContentType("text/html;charset=utf-8");
-        response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=/ui/\"></head><body></body></html>");
+        response.setContentType(Const.JSON);
+
+        List<Service> services = dataAccess.getServices();
+        GetServicesData getServicesData = new GetServicesData();
+        for (Service service : services) {
+            getServicesData.services.add(GetServiceData.create(service));
+        }
+
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(getServicesData, GetServicesData.class, jw);
+        }
         response.setStatus(200);
         request.setHandled(true);
     }
