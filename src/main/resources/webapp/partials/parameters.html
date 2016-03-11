@@ -12,9 +12,18 @@
     <uib-tab heading="Networks">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div ng-repeat="network in config.networks">
-                    {{network.name}} - {{network.pattern}} - {{network.allowUrl}}<br/>
-                </div>
+                <table class="table table-hover table-striped table-condensed">
+                    <tr>
+                        <th>Name</th>
+                        <th>Pattern</th>
+                        <th>Allow URL</th>
+                    </tr>
+                    <tr ng-repeat="network in config.networks">
+                        <td>{{network.name}}</td>
+                        <td>{{network.pattern}}</td>
+                        <td>{{network.allowUrl}}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </uib-tab>
