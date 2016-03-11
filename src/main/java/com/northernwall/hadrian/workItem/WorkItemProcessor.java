@@ -142,7 +142,12 @@ public class WorkItemProcessor {
                             break;
                         case deploy:
                             deploySoftware(workItem, callbackData.status);
-                            notes.put("version", workItem.getHost().version);
+                            if (workItem.getHost().version != null) {
+                                notes.put("version", workItem.getHost().version);
+                            }
+                            if (workItem.getHost().versionUrl != null) {
+                                notes.put("versionUrl", workItem.getHost().versionUrl);
+                            }
                             notes.put("reason", workItem.getHost().reason);
                             break;
                         case restart:

@@ -3,8 +3,6 @@
 </div>
 <div class="modal-body">
     <dl class="dl-horizontal">
-        <dt>Host:</dt>
-        <dd>{{formSaveHost.dataCenter}}-{{network}}-{{module.hostAbbr}}-###</dd>
         <dt>Data Center:</dt>
         <dd>
             <select ng-model="formSaveHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select>
@@ -22,13 +20,17 @@
             <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">
         </dd>
         <dt>Count:</dt>
-        <dd><input ng-model="formSaveHost.count" type="number" class="form-control"></dd>
+        <dd>
+            <input ng-model="formSaveHost.count" type="number" class="form-control">
+        </dd>
         <dt>Reason:</dt>
-        <dd><input ng-model="formSaveHost.reason" type="text" class="form-control"></dd>
+        <dd>
+            <input ng-model="formSaveHost.reason" type="text" class="form-control">
+        </dd>
     </dl>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
+    <button class="btn btn-primary" type="button" ng-click="save()">Provision Host</button>
     <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
 

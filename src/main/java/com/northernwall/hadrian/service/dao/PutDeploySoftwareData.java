@@ -32,6 +32,7 @@ public class PutDeploySoftwareData {
     public boolean all = false;
     public Map<String, String> hosts = new HashMap<>();
     public String version;
+    public String versionUrl;
     public String reason;
     public boolean wait = false;
 

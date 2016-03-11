@@ -97,7 +97,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.networks = gson.fromJson(temp, listType);
         for (Network network : newConfig.networks) {
             newConfig.networkNames.add(network.name);
-            logger.info("Network {} loaded with pattern '{}'", network.name, network.pattern);
+            logger.info("Network {} loaded with pattern '{}' and allowUrl '{}'", network.name, network.pattern, network.allowUrl);
         }
     }
 

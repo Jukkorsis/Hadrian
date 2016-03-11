@@ -183,8 +183,8 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/module/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/details", new HostGetHandler(dataAccess, hostDetailsHelper));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/host", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess));
-        routingHandler.addRoute(MethodRule.PUT, TargetRule.equals, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, dataAccess, workItemProcess));
-        routingHandler.addRoute(MethodRule.PUT, TargetRule.equals, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, configHelper, dataAccess, workItemProcess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+", new HostDeleteHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/backfill", new HostBackfillHandler(accessHelper, configHelper, dataAccess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/vips", new HostVipCreateHandler(accessHelper, dataAccess, workItemProcess));

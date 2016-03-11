@@ -23,9 +23,13 @@ public enum MethodRule {
     GET,
     PUT,
     POST, 
+    PUTPOST,
     DELETE;
     
     public boolean test(String method) {
+        if (this == PUTPOST) {
+            return (method.equals("POST") || method.equals("PUT"));
+        }
         return this.toString().equals(method);
     }
 

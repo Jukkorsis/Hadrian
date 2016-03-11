@@ -15,12 +15,14 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Network;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -29,6 +31,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutDeploySoftwareData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +47,14 @@ import org.eclipse.jetty.server.Request;
 public class HostDeploySoftwareHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
+    private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
-    public HostDeploySoftwareHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
+        this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
@@ -63,6 +68,25 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
         Module module = getModule(putDeployData.moduleId, putDeployData.moduleName, service);
 
+        Network network = null;
+        for (Network temp : configHelper.getConfig().networks) {
+            if (temp.name.equals(putDeployData.network)) {
+                network = temp;
+            }
+        }
+        if (network == null) {
+            throw new Http400BadRequestException("Unknown network " + putDeployData.network);
+        }
+        if (!network.allowUrl && putDeployData.versionUrl != null) {
+            throw new Http400BadRequestException(("Network " + network.name + " does not allow versionUrl"));
+        }
+        if (putDeployData.version != null && putDeployData.versionUrl != null) {
+            throw new Http400BadRequestException("Only one of version and versionUrl can be specified");
+        }
+        if ((putDeployData.version == null || putDeployData.version.isEmpty()) 
+                && (putDeployData.versionUrl == null || putDeployData.versionUrl.isEmpty())) {
+            throw new Http400BadRequestException("One of version and versionUrl must be specified");
+        }
         List<Host> hosts = dataAccess.getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
@@ -75,6 +99,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = putDeployData.version;
+                        workItem.getHost().versionUrl = putDeployData.versionUrl;
                         workItem.getHost().reason = putDeployData.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus("Deploying...");
