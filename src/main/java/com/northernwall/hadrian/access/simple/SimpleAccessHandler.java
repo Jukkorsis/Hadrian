@@ -19,6 +19,8 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SimpleAccessHandler extends AbstractHandler {
+
     private final static Logger logger = LoggerFactory.getLogger(SimpleAccessHandler.class);
-    
+
     private final SimpleSessionStore sessionStore;
 
     public SimpleAccessHandler(AccessHelper accessHelper) {
@@ -73,30 +76,42 @@ public class SimpleAccessHandler extends AbstractHandler {
 
     private void redirect(String url, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
-        response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url="+url+"\"></head><body></body></html>");
+        response.getOutputStream().print("<html><head><meta http-equiv=\"refresh\" content=\"1;url=" + url + "\"></head><body></body></html>");
     }
 
     private boolean checkAndStartSession(Request request, HttpServletResponse response) {
         String username = null;
         String password = null;
-        MultiMap<String> mm = new MultiMap<>();
-        request.extractFormParameters(mm);
-        for (String key : mm.keySet()) {
-            switch (key) {
-                case "username":
-                    username = mm.getValue(key, 0);
-                    break;
-                case "password":
-                    password = mm.getValue(key, 0);
-                    break;
+
+        final String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Basic")) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring("Basic".length()).trim();
+            String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
+            // credentials = username:password
+            final String[] values = credentials.split(":", 2);
+            username = values[0];
+            password = values[1];
+        } else {
+            MultiMap<String> mm = new MultiMap<>();
+            request.extractFormParameters(mm);
+            for (String key : mm.keySet()) {
+                switch (key) {
+                    case "username":
+                        username = mm.getValue(key, 0);
+                        break;
+                    case "password":
+                        password = mm.getValue(key, 0);
+                        break;
+                }
             }
         }
-        
+
         //check username and password
         if (!checkCreds(username, password)) {
             return false;
         }
-        
+
         String sessionId = sessionStore.createUserSession(username);
         Cookie cookie = new Cookie(Const.COOKIE_SESSION, sessionId);
         cookie.setMaxAge(Const.COOKIE_EXPRIY);
@@ -104,7 +119,7 @@ public class SimpleAccessHandler extends AbstractHandler {
         return true;
     }
 
-    private boolean checkCreds(String username, String password) {
+    protected boolean checkCreds(String username, String password) {
         return username != null && !username.isEmpty();
     }
 
