@@ -64,7 +64,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
+                alert("Request to remove dependence has failed!");
                 $route.reload();
             });
         };
@@ -251,7 +251,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new host has failed!");
+                alert("Request to restart hosts has failed!");
                 $route.reload();
             });
         };
@@ -296,7 +296,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
+                alert("Request to remove host from Vip has failed!");
                 $route.reload();
             });
         };
@@ -367,7 +367,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
+                alert("Request to delete custom function has failed!");
                 $route.reload();
             });
         };
@@ -403,7 +403,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 }
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
+                alert("Request to search audit records has failed!");
                 $route.reload();
             });
         };
@@ -459,7 +459,7 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new vip has failed!");
+                alert("Request to add dependence has failed!");
             });
         };
 
@@ -533,7 +533,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new vip has failed!");
+                alert("Request to create new module has failed!");
             });
         };
 
@@ -796,7 +796,7 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update hosts has failed!");
+                alert("Request to add hosts to Vip has failed!");
             });
         };
 
@@ -820,7 +820,6 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
                 name: $scope.formSaveCF.name,
                 method: $scope.formSaveCF.method,
                 url: $scope.formSaveCF.url,
-                helpText: $scope.formSaveCF.helpText,
                 teamOnly: $scope.formSaveCF.teamOnly
             };
 
@@ -830,7 +829,7 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update hosts has failed!");
+                alert("Request to create custom function has failed!");
             });
         };
 
@@ -839,39 +838,37 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateCustomFunctionCtrl',
-        function ($scope, $http, $modalInstance, $route, service, cf) {
-            $scope.service = service;
-            $scope.cf = cf;
+hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'cf',
+    function ($scope, $http, $modalInstance, $route, service, cf) {
+        $scope.service = service;
+        $scope.cf = cf;
 
-            $scope.formUpdateCF = {};
-            $scope.formUpdateCF.name = cf.name;
-            $scope.formUpdateCF.method = cf.method;
-            $scope.formUpdateCF.url = cf.url;
-            $scope.formUpdateCF.helpText = cf.helpText;
-            $scope.formUpdateCF.teamOnly = cf.teamOnly;
+        $scope.formUpdateCF = {};
+        $scope.formUpdateCF.name = cf.name;
+        $scope.formUpdateCF.method = cf.method;
+        $scope.formUpdateCF.url = cf.url;
+        $scope.formUpdateCF.teamOnly = cf.teamOnly;
 
-            $scope.save = function () {
-                var dataObject = {
-                    serviceId: $scope.service.serviceId,
-                    name: $scope.formUpdateCF.name,
-                    method: $scope.formUpdateCF.method,
-                    url: $scope.formUpdateCF.url,
-                    helpText: $scope.formUpdateCF.helpText,
-                    teamOnly: $scope.formUpdateCF.teamOnly
-                };
-
-                var responsePromise = $http.put("/v1/cf/" + $scope.cf.customFunctionId, dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update hosts has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                name: $scope.formUpdateCF.name,
+                method: $scope.formUpdateCF.method,
+                url: $scope.formUpdateCF.url,
+                teamOnly: $scope.formUpdateCF.teamOnly
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.put("/v1/cf/" + $scope.cf.customFunctionId, dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update custom function has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);

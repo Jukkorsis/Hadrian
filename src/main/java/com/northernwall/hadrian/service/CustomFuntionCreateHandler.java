@@ -58,7 +58,6 @@ public class CustomFuntionCreateHandler extends AbstractHandler {
                 postCFData.name,
                 postCFData.method,
                 postCFData.url,
-                postCFData.helpText,
                 postCFData.teamOnly);
         dataAccess.saveCustomFunction(customFunction);
 

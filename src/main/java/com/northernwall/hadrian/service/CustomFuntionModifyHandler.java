@@ -61,7 +61,6 @@ public class CustomFuntionModifyHandler extends AbstractHandler {
         customFunction.setName(postCFData.name);
         customFunction.setMethod(postCFData.method);
         customFunction.setUrl(postCFData.url);
-        customFunction.setHelpText(postCFData.helpText);
 
         dataAccess.updateCustomFunction(customFunction);
 

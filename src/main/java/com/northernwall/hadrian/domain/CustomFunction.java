@@ -9,7 +9,6 @@ public class CustomFunction implements Comparable<CustomFunction> {
     private String name;
     private String method;
     private String url;
-    private String helpText;
     private boolean teamOnly;
 
     public CustomFunction() {
@@ -19,18 +18,16 @@ public class CustomFunction implements Comparable<CustomFunction> {
         this.name = null;
         this.method = null;
         this.url = null;
-        this.helpText = null;
         this.teamOnly = true;
     }
 
-    public CustomFunction(String serviceId, String moduleId, String name, String method, String url, String helpText, boolean teamOnly) {
+    public CustomFunction(String serviceId, String moduleId, String name, String method, String url, boolean teamOnly) {
         this.customFunctionId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.moduleId = moduleId;
         this.name = name;
         this.method = method;
         this.url = url;
-        this.helpText = helpText;
         this.teamOnly = teamOnly;
     }
 
@@ -80,14 +77,6 @@ public class CustomFunction implements Comparable<CustomFunction> {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getHelpText() {
-        return helpText;
-    }
-
-    public void setHelpText(String helpText) {
-        this.helpText = helpText;
     }
 
     public boolean isTeamOnly() {

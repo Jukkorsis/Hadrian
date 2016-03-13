@@ -21,7 +21,6 @@ public class PostCustomFunctionData {
     public String name;
     public String method;
     public String url;
-    public String helpText;
     public boolean teamOnly;
 
 }
