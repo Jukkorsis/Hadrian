@@ -15,29 +15,24 @@
  */
 package com.northernwall.hadrian.calendar.google;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.Calendar.Builder;
-import com.google.api.services.calendar.CalendarScopes;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
-import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,26 +40,30 @@ import org.slf4j.LoggerFactory;
 public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(GoogleCalendarHelperFactory.class);
-    private static final String APPLICATION_NAME = "";
 
     @Override
     public CalendarHelper create(Parameters parameters, OkHttpClient client) {
         try {
+            String appName = parameters.getString(Const.CALENDAR_GOOGLE_APP_NAME, "service-delivery-tool");
+            String accountId = parameters.getString(Const.CALENDAR_GOOGLE_ACCOUNT_ID, null);
+            String privateKeyId = parameters.getString(Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID, null);
+            
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            File dataStoreDir = new File(parameters.getString(Const.CALENDAR_GOOGLE_DATA_STORE_DIR, null));
-            FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
+
             // load client secrets
-            Reader reader = new StringReader(parameters.getString(Const.CALENDAR_GOOGLE_CLIENT_SECRETS, null));
-            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, reader);
-            // set up authorization code flow
-            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, Collections.singleton(CalendarScopes.CALENDAR))
-                    .setDataStoreFactory(dataStoreFactory)
+            GoogleCredential credential = new GoogleCredential.Builder()
+                    .setTransport(httpTransport)
+                    .setJsonFactory(jsonFactory)
+                    .setServiceAccountId(accountId)
+                    .setServiceAccountPrivateKeyId(privateKeyId)
+                    .setServiceAccountPrivateKey(getPemPrivateKey(parameters))
+                    .setServiceAccountScopes(Collections.singleton("https://www.googleapis.com/auth/calendar"))
                     .build();
-            Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+
             //build calendar client
             Calendar calendarClient = new Builder(httpTransport, jsonFactory, credential)
-                    .setApplicationName(APPLICATION_NAME)
+                    .setApplicationName(appName)
                     .build();
             logger.info("Finished building GoogleCalendarHelper successfully");
             return new GoogleCalendarHelper(calendarClient, parameters);
@@ -75,4 +74,12 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
         }
     }
 
+    public PrivateKey getPemPrivateKey(Parameters parameters) throws GeneralSecurityException {
+        String temp = parameters.getString(Const.CALENDAR_GOOGLE_PEM_FILE, "");
+        byte[] decoded = Base64.getDecoder().decode(temp);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePrivate(spec);
+    }
+    
 }
