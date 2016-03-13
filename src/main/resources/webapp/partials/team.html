@@ -1,4 +1,19 @@
-<h3>{{team.teamName}}</h3>
+<h3>{{team.teamName}}
+    <div class="btn-group" uib-dropdown ng-if="team.canModify" is-open="status.isopen">
+        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+            Options <span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+            <li role="menuitem"><a ng-click="openUpdateTeamModal();">Update {{team.teamName}}</a></li>
+            <li role="menuitem"><a ng-click="openAddServiceModal();">Add a service to {{team.teamName}}</a></li>
+            <li class="divider"></li>
+            <li role="menuitem"><a ng-click="openAddUserModal();">Add a team member</a></li>
+            <li role="menuitem" ng-repeat="username in team.usernames">
+                <a ng-click="removeUserFromTeam(username);">Remove {{username}} from {{team.teamName}}</a>
+            </li>
+        </ul>
+    </div>
+</h3>
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
@@ -19,19 +34,8 @@
             <dt>Members:</dt>
             <dd>
                 <div ng-repeat="username in team.usernames">
-                    {{username}}                     
-                    <span ng-if="team.canModify">
-                        <a ng-click="removeUserFromTeam(username);" class="btn btn-info btn-xs" uib-popover="Remove the user from the team." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                    </span>
-                    <br/>
+                    {{username}}<br/>
                 </div>
             </dd>
-    </div>
-</div>
-<div align="center">
-    <div ng-if="team.canModify">
-        <a ng-click="openUpdateTeamModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil"></span> Update Team</a>
-        <a ng-click="openAddServiceModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Service</a>
-        <a ng-click="openAddUserModal();" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Team Member</a>
     </div>
 </div>

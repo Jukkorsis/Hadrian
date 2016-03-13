@@ -1,4 +1,20 @@
-<h3>{{service.serviceName}}</h3>
+<h3>{{service.serviceName}}
+    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+            Options <span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+            <li role="menuitem"><a ng-click="openUpdateServiceModal();">Update {{service.serviceName}}</a></li>
+            <li role="menuitem"><a ng-click="">Move {{service.serviceName}} to a different team</a></li>
+            <li role="menuitem"><a ng-click="">Delete {{service.serviceName}}</a></li>
+            <li class="divider"></li>
+            <li role="menuitem"><a ng-click="openAddUsesModal();">Add service dependence</a></li>
+            <li role="menuitem"ng-repeat="sr in service.uses">
+                <a ng-click="deleteServiceRef(service.serviceId, sr.serverServiceId);">Remove dependence on {{sr.serviceName}}</a>
+            </li>
+        </ul>
+    </div>
+</h3>
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
@@ -37,32 +53,26 @@
             <dd>
                 <div ng-repeat="sr in service.uses">
                     <a href="#/Service/{{sr.serverServiceId}}">{{sr.serviceName}}</a>
-                    <span ng-if="service.canModify">
-                        <a ng-click="deleteServiceRef(service.serviceId, sr.serverServiceId);" class="btn btn-info btn-xs" uib-popover="Remove the service relationship." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                    </span>
                     <br/>
                 </div>
             </dd>
         </dl>
     </div>            
 </div> 
-<div align="center">
-    <span ng-if="service.canModify">
-        <a ng-click="openUpdateServiceModal();" class="btn btn-info btn-xs" uib-popover="Update {{service.serviceName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Update Service</a>
-        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Move {{service.serviceName}} to a different team." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Move Service</a>
-        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{service.serviceName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Delete Service</a>
-        <a ng-click="openAddUsesModal();" class="btn btn-info btn-xs" uib-popover="Add services that {{service.serviceName}} uses." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Uses Service</a>
-    </span>
-</div>
 <uib-tabset type="pills">
     <uib-tab heading="Modules">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div align="center">
-                    <span ng-if="service.canModify">
-                        <a ng-click="openAddModuleModal();" class="btn btn-info btn-xs" uib-popover="Add a new Module to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Module</a>
-                    </span>
-                </div>
+                <h4>Modules
+                    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                            Options <span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a ng-click="openAddModuleModal();">Add module to {{service.serviceName}}</a></li>
+                        </ul>
+                    </div>
+                </h4>
                 <table class="table table-hover table-striped table-condensed">
                     <tr>
                         <th></th>
@@ -81,7 +91,7 @@
                             {{m.moduleName}}
                             <span ng-if="service.canModify">
                                 <a ng-click="openUpdateModuleModal(m);" class="btn btn-info btn-xs" uib-popover="Update Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a ng-click="deleteModule(m.moduleId);" class="btn btn-info btn-xs" uib-popover="Delete Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a ng-click="deleteModule(m.moduleId);" class="btn btn-danger btn-xs" uib-popover="Delete Module {{m.moduleName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </span>
                         </td>
                         <td>{{m.order}}</td>
@@ -157,21 +167,41 @@
                                 <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
                                 <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
                                 {{m.moduleName}} in {{mn.network}}
-                            </h4>
-                            <div ng-if="!mn.collapsed">
-                                <div align="center">
-                                    <span ng-if="service.canModify">
-                                        <a ng-click="openAddHostModal(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Add a new Host to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts</a>
-                                        <a ng-click="openDeploySoftwareModal(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Deploy software to the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span> Deploy Software</a>
-                                        <a ng-click="restartHost(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Restarts the selected Hosts one at a time." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Restart Hosts</a>
-                                        <a ng-click="openAddHostToVipModal(mn);" class="btn btn-info btn-xs" uib-popover="Adds the selected Hosts to a VIP." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Hosts to VIPs</a>
-                                    </span>
-                                    <span ng-repeat="cf in m.customFunctions">
-                                        <span ng-if="service.canModify || !cf.teamOnly">
-                                            <a ng-click="openDoCustomFunctionModal(mn, cf)" class="btn btn-primary btn-xs" uib-popover="{{cf.helpText}}" popover-trigger="mouseenter">{{cf.name}}</a>
-                                        </span>
-                                    </span>
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        Options <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
+                                    </ul>
                                 </div>
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        Options <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
+                                        <li role="menuitem"><a ng-click="openDeploySoftwareModal(mn.network, m);">Deploy software to selected hosts</a></li>
+                                        <li role="menuitem"><a ng-click="restartHost(mn.network, m);">Restart selected hosts</a></li>
+                                        <li role="menuitem"><a ng-click="openAddHostToVipModal(mn);">Add selected hosts to VIPs</a></li>
+                                        <li class="divider"></li>
+                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                            <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group" uib-dropdown ng-if="!service.canModify" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        Options <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
+                                            <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </h4>
+                            <div ng-if="!mn.collapsed && mn.hosts.length > 0">
                                 <table class="table table-hover table-striped table-condensed">
                                     <tr>
                                         <th width="5%"></th>
@@ -224,7 +254,7 @@
                                         <td>
                                             {{i.hostName}}
                                             <span ng-if="i.status === '-' && service.canModify">
-                                                <a ng-click="deleteHost(i.hostId);" class="btn btn-info btn-xs" uib-popover="Delete host {{i.hostName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                                <a ng-click="deleteHost(i.hostId);" class="btn btn-danger btn-xs" uib-popover="Delete host {{i.hostName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                                             </span>
                                             <span ng-if="i.status !== '-'">
                                                 <span class="label label-warning">{{i.status}}</span>
@@ -278,7 +308,6 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <br/>
                             </div>
                         </div>
                     </div>
@@ -296,13 +325,16 @@
                                 <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
                                 <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
                                 {{m.moduleName}} in {{mn.network}}
-                            </h4>
-                            <div ng-if="!mn.collapsed">
-                                <div align="center">
-                                    <span ng-if="service.canModify">
-                                        <a ng-click="openAddVipModal(mn.network, m);" class="btn btn-info btn-xs" uib-popover="Add a new VIP to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add VIP</a>
-                                    </span>
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        Options <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openAddVipModal(mn.network, m);">Add a VIP to {{m.moduleName}} in {{mn.network}}</a></li>
+                                    </ul>
                                 </div>
+                            </h4>
+                            <div ng-if="!mn.collapsed && mn.vips.length > 0">
                                 <table class="table table-hover table-striped table-condensed">
                                     <tr>
                                         <th width="25%">VIP</th>
@@ -317,7 +349,7 @@
                                             {{ep.vipName}}
                                             <span ng-if="ep.status === '-' && service.canModify">
                                                 <a ng-click="openUpdateVipModal(ep);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                                <a ng-click="deleteVip(ep.vipId);" class="btn btn-info btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                                <a ng-click="deleteVip(ep.vipId);" class="btn btn-danger btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                                             </span>
                                             <span ng-if="ep.status !== '-'">
                                                 <span class="label label-warning">{{ep.status}}</span>
@@ -340,11 +372,16 @@
     <uib-tab heading="Data Stores" ng-if="service.serviceType === 'Service'">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div align="center">
-                    <span ng-if="service.canModify">
-                        <a ng-click="" class="btn btn-info btn-xs" uib-popover="Add a new Data Store to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Data Store</a>
-                    </span>
-                </div>
+                <h4>Data Stores
+                    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                            Options <span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a ng-click="">Add data store to {{service.serviceName}}</a></li>
+                        </ul>
+                    </div>
+                </h4>
                 <table class="table table-hover table-striped table-condensed">
                     <tr>
                         <th>Name</th>
@@ -356,7 +393,7 @@
                             {{ds.name}}
                             <span ng-if="service.canModify">
                                 <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a ng-click="" class="btn btn-danger btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                             </span>
                         </td>
                         <td>{{ds.type}}</td>
@@ -375,13 +412,16 @@
                             <span ng-if="!m.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="m.collapsed = true"></span>
                             <span ng-if="m.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="m.collapsed = false"></span>
                             {{m.moduleName}}
-                        </h4>
-                        <div ng-if="!m.collapsed">
-                            <div align="center">
-                                <span ng-if="service.canModify">
-                                    <a ng-click="openAddCustomFunctionModal(m)" class="btn btn-info btn-xs" uib-popover="Add new custom function to this service." popover-trigger="mouseenter"><span class="glyphicon glyphicon-plus"></span> Add Custom Function</a>
-                                </span>
+                            <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                    Options <span class="caret"></span>
+                                </button>
+                                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                    <li role="menuitem"><a ng-click="openAddCustomFunctionModal(m)">Add custom function to {{m.moduleName}}</a></li>
+                                </ul>
                             </div>
+                        </h4>
+                        <div ng-if="!m.collapsed && m.customFunctions.length > 0">
                             <table class="table table-hover table-striped table-condensed">
                                 <tr>
                                     <th width="20%">Name</th>
@@ -395,7 +435,7 @@
                                         {{cf.name}}
                                         <span ng-if="service.canModify">
                                             <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                            <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-info btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                            <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-danger btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                                         </span>
                                     </td>
                                     <td>{{cf.method}}</td>
@@ -413,7 +453,7 @@
     <uib-tab heading="Audit">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div align="center">
+                <div>
                     <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
                     <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
                     <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
