@@ -16,7 +16,7 @@
 
 package com.northernwall.hadrian.service.dao;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class PostHostVipData {
     public String serviceId;
-    public Map<String, String> vips;
-    public Map<String, String> hosts;
+    public String vipId;
+    public List<String> hostNames;
 
 }

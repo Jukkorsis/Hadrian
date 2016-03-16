@@ -29,16 +29,13 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutRestartHostData;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,8 +74,7 @@ public class HostRestartHandler extends BasicHandler {
         List<WorkItem> workItems = new ArrayList<>(hosts.size());
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(putRestartHostData.network)) {
-                String checked = putRestartHostData.hosts.get(host.getHostId());
-                if (checked != null && !checked.isEmpty() && checked.equalsIgnoreCase("true")) {
+                if (putRestartHostData.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
                         if (workItems.isEmpty()) {

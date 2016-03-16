@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'Config', 'Team', 'Service', 'HostDetails',
-    function ($scope, $route, $http, $routeParams, $uibModal, Config, Team, Service, HostDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'HostDetails',
+    function ($scope, $route, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, HostDetails) {
         selectTreeNode($routeParams.serviceId);
 
         $scope.hostSortType = 'hostName';
@@ -209,7 +209,16 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openDeploySoftwareModal = function (network, module) {
+        $scope.openDeploySoftwareHostsModal = function (moduleNetwork, module) {
+            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+            var hostNames = [];
+            for (var i in filteredArray) {
+                for (var ii in $scope.formSelectHost) {
+                    if (filteredArray[i].hostId === ii && $scope.formSelectHost[ii]) {
+                        hostNames.push(filteredArray[i].hostName);
+                    }
+                }
+            }
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/deploySoftware.html',
@@ -218,11 +227,11 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     service: function () {
                         return $scope.service;
                     },
-                    hosts: function () {
-                        return $scope.formSelectHost;
+                    hostNames: function () {
+                        return hostNames;
                     },
                     network: function () {
-                        return network;
+                        return moduleNetwork.network;
                     },
                     module: function () {
                         return module;
@@ -238,12 +247,72 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.restartHost = function (network, module) {
+        $scope.openDeploySoftwareHostModal = function (host, moduleNetwork, module) {
+            var hostNames = [];
+            hostNames.push(host.hostName);
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/deploySoftware.html',
+                controller: 'ModalDeploySoftwareCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    hostNames: function () {
+                        return hostNames;
+                    },
+                    network: function () {
+                        return moduleNetwork.network;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.restartHosts = function (moduleNetwork, module) {
+            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+            var hostNames = [];
+            for (var i in filteredArray) {
+                for (var ii in $scope.formSelectHost) {
+                    if (filteredArray[i].hostId === ii && $scope.formSelectHost[ii]) {
+                        hostNames.push(filteredArray[i].hostName);
+                    }
+                }
+            }
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 moduleId: module.moduleId,
-                network: network,
-                hosts: $scope.formSelectHost
+                network: moduleNetwork.network,
+                hostNames: hostNames
+            };
+
+            var responsePromise = $http.put("/v1/host/restart", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to restart hosts has failed!");
+                $route.reload();
+            });
+        };
+
+        $scope.restartHost = function (host, moduleNetwork, module) {
+            var hostNames = [];
+            hostNames.push(host.hostName);
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: module.moduleId,
+                network: moduleNetwork.network,
+                hostNames: hostNames
             };
 
             var responsePromise = $http.put("/v1/host/restart", dataObject, {});
@@ -267,7 +336,16 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openAddHostToVipModal = function (moduleNetwork) {
+        $scope.openAddHostsToVipModal = function (moduleNetwork) {
+            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+            var hostNames = [];
+            for (var i in filteredArray) {
+                for (var ii in $scope.formSelectHost) {
+                    if (filteredArray[i].hostId === ii && $scope.formSelectHost[ii]) {
+                        hostNames.push(filteredArray[i].hostName);
+                    }
+                }
+            }
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addHostToVip.html',
@@ -279,8 +357,33 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     moduleNetwork: function () {
                         return moduleNetwork;
                     },
-                    hosts: function () {
-                        return $scope.formSelectHost;
+                    hostNames: function () {
+                        return hostNames;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openAddHostToVipModal = function (host,moduleNetwork) {
+            var hostNames = [];
+            hostNames.push(host.hostName);
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addHostToVip.html',
+                controller: 'ModalAddHostToVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    moduleNetwork: function () {
+                        return moduleNetwork;
+                    },
+                    hostNames: function () {
+                        return hostNames;
                     }
                 }
             });
@@ -330,15 +433,20 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openDoCustomFunctionModal = function (mn, cf) {
-            for (var key in mn.hosts) {
-                var h = mn.hosts[key];
+        $scope.openDoCustomFunctionHostsModal = function (moduleNetwork, cf) {
+            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+            for (var key in filteredArray) {
+                var h = filteredArray[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId === key2 && $scope.formSelectHost[key2]) {
                         window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + h.hostId, '_blank');
                     }
                 }
             }
+        };
+
+        $scope.openDoCustomFunctionHostModal = function (hostId, cf) {
+            window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + hostId, '_blank');
         };
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
@@ -727,10 +835,10 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hosts', 'network', 'module',
-    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hosts, network, module) {
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hostNames', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hostNames, network, module) {
         $scope.service = service;
-        $scope.hosts = hosts;
+        $scope.hostNames = hostNames;
         $scope.network = network;
         $scope.module = module;
         $scope.config = config;
@@ -754,7 +862,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 moduleId: $scope.module.moduleId,
                 network: $scope.network,
                 all: false,
-                hosts: $scope.hosts,
+                hostNames: $scope.hostNames,
                 version: $scope.formUpdateHost.version,
                 reason: $scope.formUpdateHost.reason,
                 wait: false
@@ -775,19 +883,20 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         };
     }]);
 
-hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hosts',
-    function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hosts) {
+hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hostNames',
+    function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hostNames) {
         $scope.service = service;
         $scope.moduleNetwork = moduleNetwork;
-        $scope.hosts = hosts;
+        $scope.hostNames = hostNames;
 
-        $scope.formSelectVip = {};
+        $scope.formAddHostVip = {};
+        $scope.formAddHostVip.vip = moduleNetwork.vips[0];
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                vips: $scope.formSelectVip,
-                hosts: $scope.hosts
+                vipId: $scope.formAddHostVip.vip.vipId,
+                hostNames: $scope.hostNames
             };
 
             var responsePromise = $http.post("/v1/host/vips", dataObject, {});

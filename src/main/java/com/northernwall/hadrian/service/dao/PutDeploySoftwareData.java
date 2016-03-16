@@ -16,8 +16,8 @@
 
 package com.northernwall.hadrian.service.dao;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -30,7 +30,7 @@ public class PutDeploySoftwareData {
     public String moduleName;
     public String network;
     public boolean all = false;
-    public Map<String, String> hosts = new HashMap<>();
+    public List<String> hostNames = new LinkedList<>();
     public String version;
     public String versionUrl;
     public String reason;

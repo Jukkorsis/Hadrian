@@ -16,8 +16,8 @@
 
 package com.northernwall.hadrian.service.dao;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -27,6 +27,6 @@ public class PutRestartHostData {
     public String serviceId;
     public String moduleId;
     public String network;
-    public Map<String, String> hosts = new HashMap<>();
+    public List<String> hostNames = new LinkedList<>();
 
 }

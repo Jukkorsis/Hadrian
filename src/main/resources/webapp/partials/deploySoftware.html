@@ -7,6 +7,10 @@
         <dd>{{module.moduleName}}</dd>
         <dt>Network:</dt>
         <dd>{{network}}</dd>
+        <dt>Hosts:</dt>
+        <dd>
+            <span ng-repeat="hostName in hostNames">{{hostName}} </span>
+        </dd>
         <dt>Version:</dt>
         <dd>
             <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">

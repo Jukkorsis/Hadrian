@@ -94,8 +94,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         List<WorkItem> workItems = new ArrayList<>(hosts.size());
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(putDeployData.network)) {
-                String checked = putDeployData.hosts.get(host.getHostId());
-                if (putDeployData.all || (checked != null && !checked.isEmpty() && checked.equalsIgnoreCase("true"))) {
+                if (putDeployData.all || putDeployData.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = putDeployData.version;

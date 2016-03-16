@@ -69,51 +69,32 @@ public class HostVipCreateHandler extends AbstractHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
         Team team = dataAccess.getTeam(service.getTeamId());
         List<Host> hosts = dataAccess.getHosts(data.serviceId);
-        List<Vip> vips = dataAccess.getVips(data.serviceId);
+        Vip vip = dataAccess.getVip(data.serviceId, data.vipId);
+        if (vip == null) {
+            throw new RuntimeException("Could not find vip");
+        }
         Module module = null;
-        for (Map.Entry<String, String> entry : data.hosts.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase("true")) {
-                boolean found = false;
-                for (Host host : hosts) {
-                    if (entry.getKey().equals(host.getHostId())) {
-                        found = true;
-                        for (Map.Entry<String, String> entry2 : data.vips.entrySet()) {
-                            if (entry2.getValue().equalsIgnoreCase("true")) {
-                                boolean found2 = false;
-                                for (Vip vip : vips) {
-                                    if (entry2.getKey().equals(vip.getVipId())) {
-                                        found2 = true;
-                                        if (host.getNetwork().equals(vip.getNetwork())) {
-                                            if (module == null || host.getModuleId().equals(module.getModuleId())) {
-                                                for (Module temp : dataAccess.getModules(host.getServiceId())) {
-                                                    if (temp.getModuleId().equals(host.getModuleId())) {
-                                                        module = temp;
-                                                    }
-                                                }
-                                            }
-                                            dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
-                                            WorkItem workItem = new WorkItem(Type.hostvip, Operation.create, user, team, service, module, host, vip);
-                                            dataAccess.saveWorkItem(workItem);
-                                            workItemProcess.sendWorkItem(workItem);
-                                        } else {
-                                            logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
-                                        }
-                                    }
-                                }
-                                if (!found2) {
-                                    logger.error("Asked to add host(s) to vip {}, but vip is not on service {}", entry2.getKey(), data.serviceId);
-                                }
+        for (Host host : hosts) {
+            if (data.hostNames.contains(host.getHostName())) {
+                if (host.getNetwork().equals(vip.getNetwork())) {
+                    if (module == null || host.getModuleId().equals(module.getModuleId())) {
+                        for (Module temp : dataAccess.getModules(host.getServiceId())) {
+                            if (temp.getModuleId().equals(host.getModuleId())) {
+                                module = temp;
                             }
                         }
                     }
-                }
-                if (!found) {
-                    logger.error("Asked to add vip(s) to host {}, but host is not on service {}", entry.getKey(), data.serviceId);
+                    dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
+                    WorkItem workItem = new WorkItem(Type.hostvip, Operation.create, user, team, service, module, host, vip);
+                    dataAccess.saveWorkItem(workItem);
+                    workItemProcess.sendWorkItem(workItem);
+                } else {
+                    logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());
                 }
             }
         }
-                response.setStatus(200);
-                request.setHandled(true);
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }
