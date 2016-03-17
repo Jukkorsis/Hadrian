@@ -38,7 +38,11 @@ public class RoutingHandler extends AbstractHandler {
     }
 
     public void addRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
-        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler));
+        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler, true));
+    }
+
+    public void addUtilityRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
+        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler, false));
     }
 
     @Override
@@ -47,7 +51,9 @@ public class RoutingHandler extends AbstractHandler {
             if (entry.methodRule.test(request.getMethod())
                     && entry.targetRule.test(entry.targetPattern, target)) {
                 try {
-                    logger.info("{} handling {} request for {}", entry.name, entry.methodRule, target);
+                    if (entry.logAccess) {
+                        logger.info("{} handling {} request for {}", entry.name, entry.methodRule, target);
+                    }
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {
                         return;

@@ -44,10 +44,10 @@ public class AccessHelper {
             List<User> users = dataAccess.getUsers();
             if (users == null || users.isEmpty()) {
                 logger.info("No users found. So creating {} as the first user", username);
-                user = new User(username, username, true, true);
+                user = new User(username, username, true, true, false);
             } else {
                 logger.info("User {} not found, creating", username);
-                user = new User(username, username, false, false);
+                user = new User(username, username, false, false, false);
             }
             dataAccess.saveUser(user);
         }
@@ -78,6 +78,25 @@ public class AccessHelper {
         }
         if (!team.getUsernames().contains(username)) {
             throw new Http401UnauthorizedException(username + " attempted to " + action + " on team " + team.getTeamName());
+        }
+        return user;
+    }
+
+    public User checkIfUserCanDeploy(Request request, String teamId) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new Http404NotFoundException("unknown user attempted to deploy software to host");
+        }
+        if (user.isAutomation()) {
+            return user;
+        }
+        String username = user.getUsername();
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new Http404NotFoundException(username + " attempted to deploy software to host on team " + teamId + " but could not find team");
+        }
+        if (!team.getUsernames().contains(username)) {
+            throw new Http401UnauthorizedException(username + " attempted to deploy software to host on team " + team.getTeamName());
         }
         return user;
     }

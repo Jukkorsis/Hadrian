@@ -145,20 +145,20 @@ public class Hadrian {
         HandlerList handlers = new HandlerList();
         
         RoutingHandler routingPreHandler = new RoutingHandler();
-        routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/availability", new AvailabilityHandler(dataAccess));
+        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/availability", new AvailabilityHandler(dataAccess));
         routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/version", new VersionHandler());
         routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemProcess.getWorkItemSender()));
-        routingPreHandler.addRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webcontent"));
+        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webcontent"));
         routingPreHandler.addRoute(MethodRule.POST, TargetRule.startWith, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess));
         routingPreHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/audit", new AuditHandler(dataAccess));
-        routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/favicon.ico", new FaviconHandler());
+        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/favicon.ico", new FaviconHandler());
         handlers.addHandler(routingPreHandler);
         
         handlers.addHandler(accessHandler);
         
         RoutingHandler routingHandler = new RoutingHandler();
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/config", new ConfigGetHandler(configHelper));
-        routingHandler.addRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webapp"));
+        routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webapp"));
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/tree", new TreeHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/users", new UserGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.PUT, TargetRule.startWith, "/v1/user/", new UserModifyHandler(accessHelper, dataAccess));
