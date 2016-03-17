@@ -46,18 +46,20 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
     public CalendarHelper create(Parameters parameters, OkHttpClient client) {
         try {
             String appName = parameters.getString(Const.CALENDAR_GOOGLE_APP_NAME, "service-delivery-tool");
-            String accountId = parameters.getString(Const.CALENDAR_GOOGLE_ACCOUNT_ID, null);
-            String privateKeyId = parameters.getString(Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID, null);
-            PrivateKey privateKey = getPemPrivateKey(parameters);
 
+            String accountId = parameters.getString(Const.CALENDAR_GOOGLE_ACCOUNT_ID, null);
             if (accountId == null || accountId.isEmpty()) {
                 logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_ACCOUNT_ID);
                 return new SimpleCalendarHelper();
             }
+
+            String privateKeyId = parameters.getString(Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID, null);
             if (privateKeyId == null || privateKeyId.isEmpty()) {
                 logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID);
                 return new SimpleCalendarHelper();
             }
+            
+            PrivateKey privateKey = getPemPrivateKey(parameters);
             if (privateKey == null) {
                 logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PEM_FILE);
                 return new SimpleCalendarHelper();
