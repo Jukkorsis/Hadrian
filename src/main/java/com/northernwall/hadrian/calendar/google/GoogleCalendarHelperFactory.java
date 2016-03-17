@@ -25,6 +25,7 @@ import com.google.api.services.calendar.Calendar.Builder;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.calendar.CalendarHelperFactory;
+import com.northernwall.hadrian.calendar.simple.SimpleCalendarHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
@@ -47,7 +48,21 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
             String appName = parameters.getString(Const.CALENDAR_GOOGLE_APP_NAME, "service-delivery-tool");
             String accountId = parameters.getString(Const.CALENDAR_GOOGLE_ACCOUNT_ID, null);
             String privateKeyId = parameters.getString(Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID, null);
-            
+            PrivateKey privateKey = getPemPrivateKey(parameters);
+
+            if (accountId == null || accountId.isEmpty()) {
+                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_ACCOUNT_ID);
+                return new SimpleCalendarHelper();
+            }
+            if (privateKeyId == null || privateKeyId.isEmpty()) {
+                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID);
+                return new SimpleCalendarHelper();
+            }
+            if (privateKey == null) {
+                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PEM_FILE);
+                return new SimpleCalendarHelper();
+            }
+
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
@@ -57,7 +72,7 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
                     .setJsonFactory(jsonFactory)
                     .setServiceAccountId(accountId)
                     .setServiceAccountPrivateKeyId(privateKeyId)
-                    .setServiceAccountPrivateKey(getPemPrivateKey(parameters))
+                    .setServiceAccountPrivateKey(privateKey)
                     .setServiceAccountScopes(Collections.singleton("https://www.googleapis.com/auth/calendar"))
                     .build();
 
@@ -68,18 +83,23 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
             logger.info("Finished building GoogleCalendarHelper successfully");
             return new GoogleCalendarHelper(calendarClient, parameters);
         } catch (IOException ex) {
-            throw new RuntimeException("IO Exception while building GoogleCalendarHelper", ex);
+            logger.error("IO Exception while building GoogleCalendarHelper", ex);
+            return new SimpleCalendarHelper();
         } catch (GeneralSecurityException ex) {
-            throw new RuntimeException("General Security Exception while building GoogleCalendarHelper", ex);
+            logger.error("General Security Exception while building GoogleCalendarHelper", ex);
+            return new SimpleCalendarHelper();
         }
     }
 
     public PrivateKey getPemPrivateKey(Parameters parameters) throws GeneralSecurityException {
-        String temp = parameters.getString(Const.CALENDAR_GOOGLE_PEM_FILE, "");
+        String temp = parameters.getString(Const.CALENDAR_GOOGLE_PEM_FILE, null);
+        if (temp == null || temp.isEmpty()) {
+            return null;
+        }
         byte[] decoded = Base64.getDecoder().decode(temp);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(spec);
     }
-    
+
 }
