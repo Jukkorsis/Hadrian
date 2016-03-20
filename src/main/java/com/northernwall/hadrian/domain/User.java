@@ -5,14 +5,16 @@ public class User implements Comparable<User> {
     private String fullName;
     private boolean ops = false;
     private boolean admin = false;
-    private boolean automation = false;
+    private boolean deploy = false;
+    private boolean audit = false;
 
-    public User(String username, String fullName, boolean ops, boolean admin, boolean automation) {
+    public User(String username, String fullName, boolean ops, boolean admin, boolean deploy, boolean audit) {
         this.username = username;
         this.fullName = fullName;
         this.ops = ops;
         this.admin = admin;
-        this.automation = automation;
+        this.deploy = deploy;
+        this.audit = audit;
     }
 
     public String getUsername() {
@@ -47,12 +49,20 @@ public class User implements Comparable<User> {
         this.admin = admin;
     }
 
-    public boolean isAutomation() {
-        return automation;
+    public boolean isDeploy() {
+        return deploy;
     }
 
-    public void setAutomation(boolean automation) {
-        this.automation = automation;
+    public void setDeploy(boolean deploy) {
+        this.deploy = deploy;
+    }
+
+    public boolean isAudit() {
+        return audit;
+    }
+
+    public void setAudit(boolean audit) {
+        this.audit = audit;
     }
 
     @Override

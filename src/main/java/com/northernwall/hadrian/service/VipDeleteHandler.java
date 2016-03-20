@@ -57,7 +57,7 @@ public class VipDeleteHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String serviceId = target.substring(8, 44);
         String vipId = target.substring(45);
-        Service service = getService(serviceId, null);
+        Service service = getService(serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
         Team team = dataAccess.getTeam(service.getTeamId());
 

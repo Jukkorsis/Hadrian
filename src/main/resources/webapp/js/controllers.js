@@ -240,7 +240,8 @@ hadrianControllers.controller('ModalUpdateUserCtrl',
             $scope.formUpdateUser.fullName = user.fullName;
             $scope.formUpdateUser.ops = user.ops;
             $scope.formUpdateUser.admin = user.admin;
-            $scope.formUpdateUser.automation = user.automation;
+            $scope.formUpdateUser.deploy = user.deploy;
+            $scope.formUpdateUser.audit = user.audit;
 
             $scope.save = function () {
                 var dataObject = {
@@ -248,7 +249,8 @@ hadrianControllers.controller('ModalUpdateUserCtrl',
                     fullName: $scope.formUpdateUser.fullName,
                     ops: $scope.formUpdateUser.ops,
                     admin: $scope.formUpdateUser.admin,
-                    automation: $scope.formUpdateUser.automation
+                    deploy: $scope.formUpdateUser.deploy,
+                    audit: $scope.formUpdateUser.audit
                 };
 
                 var responsePromise = $http.put("/v1/user/" + $scope.user.username, dataObject, {});

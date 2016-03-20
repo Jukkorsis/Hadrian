@@ -61,7 +61,7 @@ public class ModuleDeleteHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String serviceId = target.substring(11, 47);
         String moduleId = target.substring(48);
-        Service service = getService(serviceId, null);
+        Service service = getService(serviceId, null, null);
         Module module = getModule(moduleId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
         Team team = dataAccess.getTeam(service.getTeamId());

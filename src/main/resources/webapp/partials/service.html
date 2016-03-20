@@ -209,8 +209,8 @@
                             <div ng-if="!mn.collapsed && mn.hosts.length > 0">
                                 <table class="table table-hover table-striped table-condensed">
                                     <tr>
-                                        <th width="5%"></th>
-                                        <th width="25%">
+                                        <th width="7%"></th>
+                                        <th width="23%">
                                             <a ng-click="hostSortType = 'hostName';
                                                                 hostSortReverse = !hostSortReverse">
                                                 Host
@@ -249,7 +249,7 @@
                                         </th>
                                     </tr>
                                     <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
-                                        <td>
+                                        <td>&nbsp;
                                             <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
                                             <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
                                             <span ng-if="i.status === '-'">

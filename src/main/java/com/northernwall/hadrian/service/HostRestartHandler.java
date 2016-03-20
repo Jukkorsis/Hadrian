@@ -61,7 +61,7 @@ public class HostRestartHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutRestartHostData putRestartHostData = Util.fromJson(request, PutRestartHostData.class);
-        Service service = getService(putRestartHostData.serviceId, null);
+        Service service = getService(putRestartHostData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "restart host");
         Team team = dataAccess.getTeam(service.getTeamId());
 

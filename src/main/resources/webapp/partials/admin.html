@@ -14,7 +14,8 @@
         <th>Full Name</th>
         <th>Is Ops</th>
         <th>Is Admin</th>
-        <th>Is Automation</th>
+        <th>Can Deploy</th>
+        <th>Can Audit</th>
     </tr>
     <tr ng-repeat="u in users.users">
         <td>
@@ -24,6 +25,7 @@
         <td>{{u.fullName}}</td>
         <td>{{u.ops}}</td>
         <td>{{u.admin}}</td>
-        <td>{{u.automation}}</td>
+        <td>{{u.deploy}}</td>
+        <td>{{u.audit}}</td>
     </tr>
 </table>

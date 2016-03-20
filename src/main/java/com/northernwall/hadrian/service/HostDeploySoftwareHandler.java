@@ -62,7 +62,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutDeploySoftwareData putDeployData = Util.fromJson(request, PutDeploySoftwareData.class);
-        Service service = getService(putDeployData.serviceId, putDeployData.serviceName);
+        Service service = getService(putDeployData.serviceId, putDeployData.serviceName, putDeployData.serviceAbbr);
         User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
         Team team = dataAccess.getTeam(service.getTeamId());
 

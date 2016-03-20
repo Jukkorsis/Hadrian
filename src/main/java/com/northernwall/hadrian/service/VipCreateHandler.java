@@ -56,7 +56,7 @@ public class VipCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostVipData postVipData = Util.fromJson(request, PostVipData.class);
 
-        Service service = getService(postVipData.serviceId, null);
+        Service service = getService(postVipData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
         Team team = dataAccess.getTeam(service.getTeamId());
 

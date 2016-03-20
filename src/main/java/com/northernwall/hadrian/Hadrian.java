@@ -144,19 +144,17 @@ public class Hadrian {
 
         HandlerList handlers = new HandlerList();
         
-        RoutingHandler routingPreHandler = new RoutingHandler();
-        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/availability", new AvailabilityHandler(dataAccess));
-        routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/version", new VersionHandler());
-        routingPreHandler.addRoute(MethodRule.GET, TargetRule.equals, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemProcess.getWorkItemSender()));
-        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webcontent"));
-        routingPreHandler.addRoute(MethodRule.POST, TargetRule.startWith, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess));
-        routingPreHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/audit", new AuditHandler(dataAccess));
-        routingPreHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/favicon.ico", new FaviconHandler());
-        handlers.addHandler(routingPreHandler);
-        
-        handlers.addHandler(accessHandler);
-        
         RoutingHandler routingHandler = new RoutingHandler();
+        //These urls do not require a login
+        routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/availability", new AvailabilityHandler(dataAccess));
+        routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/version", new VersionHandler());
+        routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemProcess.getWorkItemSender()));
+        routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webcontent"));
+        routingHandler.addRoute(MethodRule.POST, TargetRule.startWith, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess));
+        routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/favicon.ico", new FaviconHandler());
+        //Accees Handler
+        routingHandler.addRoute(MethodRule.ANY, TargetRule.any, "/", accessHandler);
+        //These urls require a login
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/config", new ConfigGetHandler(configHelper));
         routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webapp"));
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/tree", new TreeHandler(dataAccess));
@@ -199,9 +197,10 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/graph/all", new GraphAllHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess));
+        routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/audit", new AuditHandler(dataAccess, accessHelper));
+        //Catch all handler
+        routingHandler.addRoute(MethodRule.ANY, TargetRule.any, "/", new RedirectHandler());
         handlers.addHandler(routingHandler);
-        
-        handlers.addHandler(new RedirectHandler());
 
         MetricHandler metricHandler = new MetricHandler(handlers, metricRegistry);
 

@@ -86,7 +86,7 @@ public class ServiceGetHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String id = target.substring(12, target.length());
         response.setContentType(Const.JSON);
-        Service service = getService(id, null);
+        Service service = getService(id, null, null);
 
         GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());

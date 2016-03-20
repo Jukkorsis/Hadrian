@@ -22,7 +22,6 @@ public class PostAudit {
     public String serviceId;
     public String serviceAbbr;
     public String serviceName;
-    public String username;
     public Type type;
     public Operation operation;
     public String hostName;

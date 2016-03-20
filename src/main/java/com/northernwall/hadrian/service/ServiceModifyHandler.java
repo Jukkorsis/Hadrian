@@ -45,7 +45,7 @@ public class ServiceModifyHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String id = target.substring(12, target.length());
         PutServiceData putServiceData = Util.fromJson(request, PutServiceData.class);
-        Service service = getService(id, null);
+        Service service = getService(id, null, null);
         
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
 

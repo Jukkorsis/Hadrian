@@ -59,7 +59,7 @@ public class VipModifyHandler extends BasicHandler {
         if (vip == null) {
             throw new RuntimeException("Could not find vip");
         }
-        Service service = getService(vip.getServiceId(), null);
+        Service service = getService(vip.getServiceId(), null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
         Team team = dataAccess.getTeam(service.getTeamId());
 

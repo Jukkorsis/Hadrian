@@ -22,7 +22,8 @@ package com.northernwall.hadrian.utilityHandlers.routingHandler;
 public enum TargetRule {
     equals,
     startWith,
-    matches;
+    matches,
+    any;
     
     public boolean test(String pattern, String target) {
         switch (this) {
@@ -32,6 +33,8 @@ public enum TargetRule {
                 return target.startsWith(pattern);
             case matches:
                 return target.matches(pattern);
+            case any:
+                return true;
         }
         return false;
     }

@@ -54,8 +54,8 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         String clientId = target.substring(12, target.length() - 42);
         String serverId = target.substring(54, target.length());
         
-        Service clientService = getService(clientId, null);
-        Service serverService = getService(serverId, null);
+        Service clientService = getService(clientId, null, null);
+        Service serverService = getService(serverId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
         dataAccess.deleteServiceRef(clientId, serverId);

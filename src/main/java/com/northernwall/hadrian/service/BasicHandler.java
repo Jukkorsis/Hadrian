@@ -14,16 +14,24 @@ public abstract class BasicHandler extends AbstractHandler {
         this.dataAccess = dataAccess;
     }
 
-    protected Service getService(String serviceId, String serviceName) {
+    protected Service getService(String serviceId, String serviceName, String serviceAbbr) {
         if (serviceId != null && !serviceId.isEmpty()) {
             Service service = dataAccess.getService(serviceId);
             if (service != null) {
                 return service;
             }
+            throw new Http404NotFoundException("Could not find service with ID " + serviceId);
         }
         if (serviceName != null && !serviceName.isEmpty()) {
             for (Service service : dataAccess.getServices()) {
                 if (service.getServiceName().equalsIgnoreCase(serviceName)) {
+                    return service;
+                }
+            }
+        }
+        if (serviceAbbr != null && !serviceAbbr.isEmpty()) {
+            for (Service service : dataAccess.getServices()) {
+                if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
                     return service;
                 }
             }

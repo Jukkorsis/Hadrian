@@ -57,7 +57,7 @@ public class ServiceRefCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String clientId = target.substring(12, target.length() - 4);
         PostServiceRefData postServiceRefData = Util.fromJson(request, PostServiceRefData.class);
-        Service clientService = getService(clientId, null);
+        Service clientService = getService(clientId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {

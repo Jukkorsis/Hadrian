@@ -16,43 +16,41 @@
 package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.PostAudit;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class AuditHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(AuditHandler.class);
+public class AuditHandler extends BasicHandler {
 
     private final DataAccess dataAccess;
+    private final AccessHelper accessHelper;
 
-    public AuditHandler(DataAccess dataAccess) {
+    public AuditHandler(DataAccess dataAccess, AccessHelper accessHelper) {
+        super(dataAccess);
         this.dataAccess = dataAccess;
+        this.accessHelper = accessHelper;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostAudit postAudit = Util.fromJson(request, PostAudit.class);
 
-        Service service = findService(postAudit);
+        Service service = getService(postAudit.serviceId, postAudit.serviceName, postAudit.serviceAbbr);
+        User user = accessHelper.checkIfUserCanAudit(request, service.getTeamId());
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
         audit.timePerformed = Util.getGmt();
         audit.timeRequested = Util.getGmt();
-        audit.requestor = postAudit.username;
+        audit.requestor = user.getUsername();
         audit.type = postAudit.type;
         audit.operation = postAudit.operation;
         if (postAudit.hostName != null) {
@@ -66,31 +64,6 @@ public class AuditHandler extends AbstractHandler {
 
         response.setStatus(200);
         request.setHandled(true);
-    }
-
-    private Service findService(PostAudit postAudit) {
-        List<Service> services = dataAccess.getServices();
-        for (Service service : services) {
-            if (postAudit.serviceId != null && !postAudit.serviceId.isEmpty() && service.getServiceId().equals(postAudit.serviceId)) {
-                return service;
-            }
-            if (postAudit.serviceAbbr != null && !postAudit.serviceAbbr.isEmpty() && service.getServiceAbbr().equals(postAudit.serviceAbbr)) {
-                return service;
-            }
-            if (postAudit.serviceName != null && !postAudit.serviceName.isEmpty() && service.getServiceName().equals(postAudit.serviceName)) {
-                return service;
-            }
-        }
-        if (postAudit.serviceId != null && !postAudit.serviceId.isEmpty()) {
-            throw new Http404NotFoundException("Could not find service "+postAudit.serviceId+", so can not record audit");
-        }
-        if (postAudit.serviceAbbr != null && !postAudit.serviceAbbr.isEmpty()) {
-            throw new Http404NotFoundException("Could not find service "+postAudit.serviceAbbr+", so can not record audit");
-        }
-        if (postAudit.serviceName != null && !postAudit.serviceId.isEmpty()) {
-            throw new Http404NotFoundException("Could not find service "+postAudit.serviceName+", so can not record audit");
-        }
-        throw new Http400BadRequestException("No service Id, abbr, or name provided");
     }
 
 }
