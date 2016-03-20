@@ -31,41 +31,91 @@ public class RoutingHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(RoutingHandler.class);
 
-    private final List<RouteEntry> routes;
+    private final List<RouteEntry> getRoutes;
+    private final List<RouteEntry> putRoutes;
+    private final List<RouteEntry> postRoutes;
+    private final List<RouteEntry> deleteRoutes;
 
     public RoutingHandler() {
-        routes = new LinkedList<>();
+        getRoutes = new LinkedList<>();
+        putRoutes = new LinkedList<>();
+        postRoutes = new LinkedList<>();
+        deleteRoutes = new LinkedList<>();
     }
 
     public void addRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
-        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler, true));
+        add(methodRule, targetRule, targetPattern, handler, true);
     }
 
     public void addUtilityRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
-        routes.add(new RouteEntry(methodRule, targetRule, targetPattern, handler, false));
+        add(methodRule, targetRule, targetPattern, handler, false);
+    }
+
+    private void add(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler, boolean logAccess) {
+        RouteEntry entry = new RouteEntry(targetRule, targetPattern, handler, logAccess);
+        switch (methodRule) {
+            case GET:
+                getRoutes.add(entry);
+                break;
+            case PUT:
+                putRoutes.add(entry);
+                break;
+            case POST:
+                postRoutes.add(entry);
+                break;
+            case DELETE:
+                deleteRoutes.add(entry);
+                break;
+            case PUTPOST:
+                putRoutes.add(entry);
+                postRoutes.add(entry);
+                break;
+            case ANY:
+                getRoutes.add(entry);
+                putRoutes.add(entry);
+                postRoutes.add(entry);
+                deleteRoutes.add(entry);
+                break;
+        }
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
+        List<RouteEntry> routes;
+        switch (request.getMethod()) {
+            case "GET":
+                routes = getRoutes;
+                break;
+            case "PUT":
+                routes = putRoutes;
+                break;
+            case "POST":
+                routes = postRoutes;
+                break;
+            case "DELETE":
+                routes = deleteRoutes;
+                break;
+            default:
+                return;
+        }
         for (RouteEntry entry : routes) {
-            if (entry.methodRule.test(request.getMethod())
-                    && entry.targetRule.test(entry.targetPattern, target)) {
+            if (entry.targetRule.test(entry.targetPattern, target)) {
                 try {
                     if (entry.logAccess) {
-                        logger.info("{} handling {} request for {}", entry.name, entry.methodRule, target);
+                        logger.info("{} handling {} request for {}", entry.name, request.getMethod(), target);
                     }
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {
                         return;
                     }
                 } catch (HttpAbstractException e) {
-                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, entry.methodRule, target);
+                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target);
                     response.getWriter().print(e.getMessage());
                     response.setStatus(e.getStatus());
                     request.setHandled(true);
                     return;
                 } catch (Exception e) {
-                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, entry.methodRule, target, e);
+                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target, e);
                     response.getWriter().print("Internal Server Error.");
                     response.setStatus(500);
                     request.setHandled(true);

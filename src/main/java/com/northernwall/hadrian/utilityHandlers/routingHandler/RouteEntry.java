@@ -4,15 +4,13 @@ import org.eclipse.jetty.server.Handler;
 
 public class RouteEntry {
 
-    public final MethodRule methodRule;
     public final TargetRule targetRule;
     public final String targetPattern;
     public final Handler handler;
     public final String name;
     public final boolean logAccess;
 
-    public RouteEntry(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler, boolean logAccess) {
-        this.methodRule = methodRule;
+    public RouteEntry(TargetRule targetRule, String targetPattern, Handler handler, boolean logAccess) {
         this.targetRule = targetRule;
         this.targetPattern = targetPattern;
         this.handler = handler;

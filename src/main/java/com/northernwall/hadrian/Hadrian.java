@@ -153,7 +153,7 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.POST, TargetRule.startWith, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess));
         routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.equals, "/favicon.ico", new FaviconHandler());
         //Accees Handler
-        routingHandler.addRoute(MethodRule.ANY, TargetRule.any, "/", accessHandler);
+        routingHandler.addUtilityRoute(MethodRule.ANY, TargetRule.any, "/", accessHandler);
         //These urls require a login
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/config", new ConfigGetHandler(configHelper));
         routingHandler.addUtilityRoute(MethodRule.GET, TargetRule.startWith, "/ui/", new ContentHandler("/webapp"));
