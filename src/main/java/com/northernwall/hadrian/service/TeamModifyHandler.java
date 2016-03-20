@@ -52,7 +52,7 @@ public class TeamModifyHandler extends AbstractHandler {
         team.setTeamName(putTeamData.teamName);
         team.setTeamEmail(putTeamData.teamEmail);
         team.setTeamIrc(putTeamData.teamIrc);
-        team.setGitRepo(putTeamData.gitRepo);
+        team.setGitGroup(putTeamData.gitGroup);
         team.setCalendarId(putTeamData.calendarId);
 
         dataAccess.saveTeam(team);

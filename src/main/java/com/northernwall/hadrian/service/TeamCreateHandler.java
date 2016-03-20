@@ -62,7 +62,7 @@ public class TeamCreateHandler extends AbstractHandler {
             }
         }
 
-        Team team = new Team(postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.gitRepo, postTeamData.calendarId);
+        Team team = new Team(postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.gitGroup, postTeamData.calendarId);
         if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
             throw new Http404NotFoundException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
         }

@@ -18,7 +18,6 @@ package com.northernwall.hadrian.service.dao;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.domain.Network;
 import java.util.LinkedList;
 import java.util.List;
 

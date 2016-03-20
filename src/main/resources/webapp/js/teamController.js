@@ -84,7 +84,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl',
             $scope.formUpdateTeam.name = team.teamName;
             $scope.formUpdateTeam.email = team.teamEmail;
             $scope.formUpdateTeam.irc = team.teamIrc;
-            $scope.formUpdateTeam.gitRepo = team.gitRepo;
+            $scope.formUpdateTeam.gitGroup = team.gitGroup;
             $scope.formUpdateTeam.calendarId = team.calendarId;
 
             $scope.save = function () {
@@ -92,7 +92,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl',
                     teamName: $scope.formUpdateTeam.name,
                     teamEmail: $scope.formUpdateTeam.email,
                     teamIrc: $scope.formUpdateTeam.irc,
-                    gitRepo: $scope.formUpdateTeam.gitRepo,
+                    gitGroup: $scope.formUpdateTeam.gitGroup,
                     calendarId: $scope.formUpdateTeam.calendarId
                 };
 

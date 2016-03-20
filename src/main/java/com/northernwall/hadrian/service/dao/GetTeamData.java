@@ -23,7 +23,7 @@ public class GetTeamData {
     public String teamName;
     public String teamEmail;
     public String teamIrc;
-    public String gitRepo;
+    public String gitGroup;
     public String calendarId;
     public List<String> usernames;
     public boolean canModify;
@@ -34,7 +34,7 @@ public class GetTeamData {
         temp.teamName = team.getTeamName();
         temp.teamEmail = team.getTeamEmail();
         temp.teamIrc = team.getTeamIrc();
-        temp.gitRepo = team.getGitRepo();
+        temp.gitGroup = team.getGitGroup();
         temp.calendarId = team.getCalendarId();
         temp.usernames = team.getUsernames();
         return temp;

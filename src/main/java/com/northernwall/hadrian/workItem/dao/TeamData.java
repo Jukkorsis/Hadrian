@@ -21,7 +21,7 @@ public class TeamData {
     public String teamName;
     public String teamEmail;
     public String teamIrc;
-    public String gitRepo;
+    public String gitGroup;
 
     public static TeamData create(Team team) {
         if (team == null) {
@@ -31,7 +31,7 @@ public class TeamData {
         temp.teamName = team.getTeamName();
         temp.teamEmail = team.getTeamEmail();
         temp.teamIrc = team.getTeamIrc();
-        temp.gitRepo = team.getGitRepo();
+        temp.gitGroup = team.getGitGroup();
         return temp;
     }
 

@@ -21,7 +21,7 @@ public class PostTeamData {
     public String teamName;
     public String teamEmail;
     public String teamIrc;
-    public String gitRepo;
+    public String gitGroup;
     public String calendarId;
     public User user;
 

@@ -46,9 +46,9 @@ public class Const {
     public static final String GIT_UI_URL = "gitUiUrl";
     public static final String GIT_UI_URL_DEFAULT = "http://127.0.0.1/";
     public static final String GIT_PATH_URL = "gitPathUrl";
-    public static final String GIT_PATH_PATTERN_REPO = "{repo}";
+    public static final String GIT_PATH_PATTERN_GROUP = "{group}";
     public static final String GIT_PATH_PATTERN_PROJECT = "{project}";
-    public static final String GIT_PATH_URL_DETAULT = "git@github.com:"+GIT_PATH_PATTERN_REPO+"/"+GIT_PATH_PATTERN_PROJECT+".git";
+    public static final String GIT_PATH_URL_DETAULT = "git@github.com:"+GIT_PATH_PATTERN_GROUP+"/"+GIT_PATH_PATTERN_PROJECT+".git";
 
     //Properties file constants
     public static final String PROPERTIES_FILENAME = "hadrian.properties";

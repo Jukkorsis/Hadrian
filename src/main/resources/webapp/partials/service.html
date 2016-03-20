@@ -30,7 +30,7 @@
                 <div ng-if="service.gitMode === 'Consolidated'">
                     <dt>Git Project</dt>
                     <dd>
-                        <a href="{{config.gitUiURL}}{{team.gitRepo}}/{{service.gitProject}}" target="_blank">{{team.gitRepo}}/{{service.gitProject}}.git</a>
+                        <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a>
                     </dd>
                 </div>
             </span>
@@ -102,7 +102,7 @@
                         <td>{{m.order}}</td>
                         <td>{{m.moduleType}}</td>
                         <td>
-                            <a href="{{config.gitUiURL}}{{team.gitRepo}}/{{m.gitProject}}" target="_blank">{{team.gitRepo}}/{{m.gitProject}}.git</a>
+                            <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{m.gitProject}}" target="_blank">{{team.gitGroup}}/{{m.gitProject}}.git</a>
                         </td>
                         <td>/{{m.gitFolder}}</td>
                     </tr>
