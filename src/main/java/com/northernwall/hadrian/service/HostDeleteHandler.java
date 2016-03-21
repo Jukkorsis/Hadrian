@@ -15,39 +15,39 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.service.dao.DeleteHostData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class HostDeleteHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(HostDeleteHandler.class);
+public class HostDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
@@ -55,23 +55,31 @@ public class HostDeleteHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(9, 45);
-        String hostId = target.substring(46);
-        Host host = dataAccess.getHost(serviceId, hostId);
-        if (host == null) {
-            throw new Http404NotFoundException("Could not find host with id " + hostId);
-        }
-        Service service = dataAccess.getService(host.getServiceId());
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
-        }
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a host");
+        DeleteHostData deleteHostData = Util.fromJson(request, DeleteHostData.class);
+        Service service = getService(deleteHostData.serviceId, deleteHostData.serviceName, deleteHostData.serviceAbbr);
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
         Team team = dataAccess.getTeam(service.getTeamId());
-        host.setStatus("Deleting...");
-        dataAccess.updateHost(host);
-        WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, null, host, null);
-        dataAccess.saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+
+        Module module = getModule(deleteHostData.moduleId, deleteHostData.moduleName, service);
+
+        List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+        if (hosts == null || hosts.isEmpty()) {
+            return;
+        }
+        for (Host host : hosts) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(deleteHostData.network)) {
+                if (deleteHostData.hostNames.contains(host.getHostName())) {
+                    if (host.getStatus().equals(Const.NO_STATUS)) {
+                        host.setStatus("Deleting...");
+                        dataAccess.updateHost(host);
+                        WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
+                        workItem.getHost().reason = deleteHostData.reason;
+                        dataAccess.saveWorkItem(workItem);
+                        workItemProcess.sendWorkItem(workItem);
+                    }
+                }
+            }
+        }
 
         response.setStatus(200);
         request.setHandled(true);

@@ -87,6 +87,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                 && (putDeployData.versionUrl == null || putDeployData.versionUrl.isEmpty())) {
             throw new Http400BadRequestException("One of version and versionUrl must be specified");
         }
+        
         List<Host> hosts = dataAccess.getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;

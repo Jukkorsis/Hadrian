@@ -278,7 +278,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.restartHosts = function (moduleNetwork, module) {
+        $scope.openRestartHostsModal = function (moduleNetwork, module) {
             var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
             var hostNames = [];
             for (var i in filteredArray) {
@@ -288,51 +288,90 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                     }
                 }
             }
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                moduleId: module.moduleId,
-                network: moduleNetwork.network,
-                hostNames: hostNames
-            };
-
-            var responsePromise = $http.put("/v1/host/restart", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/restartHost.html',
+                controller: 'ModalRestartHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    hostNames: function () {
+                        return hostNames;
+                    },
+                    network: function () {
+                        return moduleNetwork.network;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to restart hosts has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 
-        $scope.restartHost = function (host, moduleNetwork, module) {
+        $scope.openRestartHostModal = function (host, moduleNetwork, module) {
             var hostNames = [];
             hostNames.push(host.hostName);
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                moduleId: module.moduleId,
-                network: moduleNetwork.network,
-                hostNames: hostNames
-            };
-
-            var responsePromise = $http.put("/v1/host/restart", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/restartHost.html',
+                controller: 'ModalRestartHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    hostNames: function () {
+                        return hostNames;
+                    },
+                    network: function () {
+                        return moduleNetwork.network;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to restart hosts has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 
-        $scope.deleteHost = function (id) {
-            var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + id, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
+        $scope.openDeleteHostModal = function (host, moduleNetwork, module) {
+            var hostNames = [];
+            hostNames.push(host.hostName);
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/deleteHost.html',
+                controller: 'ModalDeleteHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    hostNames: function () {
+                        return hostNames;
+                    },
+                    network: function () {
+                        return moduleNetwork.network;
+                    },
+                    module: function () {
+                        return module;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 
@@ -875,6 +914,78 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
             });
             responsePromise.error(function (data, status, headers, config) {
                 alert("Request to deploy software to hosts has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, network, module) {
+        $scope.service = service;
+        $scope.hostNames = hostNames;
+        $scope.network = network;
+        $scope.module = module;
+        $scope.config = config;
+
+        $scope.formUpdateHost = {};
+        $scope.formUpdateHost.reason = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                network: $scope.network,
+                all: false,
+                hostNames: $scope.hostNames,
+                reason: $scope.formUpdateHost.reason,
+                wait: false
+            };
+
+            var responsePromise = $http.put("/v1/host/restart", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to restart hosts has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'hostNames', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, service, hostNames, network, module) {
+        $scope.service = service;
+        $scope.hostNames = hostNames;
+        $scope.network = network;
+        $scope.module = module;
+
+        $scope.formDeleteHost = {};
+        $scope.formDeleteHost.reason = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                network: $scope.network,
+                hostNames: $scope.hostNames,
+                reason: $scope.formDeleteHost.reason
+            };
+
+            var responsePromise = $http.post("/v1/host/delete", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete host has failed!");
+                $route.reload();
             });
         };
 

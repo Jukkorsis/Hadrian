@@ -152,9 +152,11 @@ public class WorkItemProcessor {
                             break;
                         case restart:
                             restartHost(workItem, callbackData.status);
+                            notes.put("reason", workItem.getHost().reason);
                             break;
                         case delete:
                             deleteHost(workItem, callbackData.status);
+                            notes.put("reason", workItem.getHost().reason);
                             break;
                         default:
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());

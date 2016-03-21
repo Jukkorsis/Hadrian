@@ -183,10 +183,10 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/host", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, configHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess));
-        routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+", new HostDeleteHandler(accessHelper, dataAccess, workItemProcess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/host/delete", new HostDeleteHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/backfill", new HostBackfillHandler(accessHelper, configHelper, dataAccess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/host/vips", new HostVipCreateHandler(accessHelper, dataAccess, workItemProcess));
-        routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/", new HostVipDeleteHandler(accessHelper, dataAccess, workItemProcess));
+        routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/host/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+", new HostVipDeleteHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+-\\w+-\\w+-\\w+-\\w+", new CustomFuntionGetHandler(accessHelper, dataAccess, client));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/cf/cf", new CustomFuntionCreateHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUT, TargetRule.matches, "/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+", new CustomFuntionModifyHandler(accessHelper, dataAccess));

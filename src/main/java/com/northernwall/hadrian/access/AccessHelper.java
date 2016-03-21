@@ -101,10 +101,29 @@ public class AccessHelper {
         return user;
     }
 
+    public User checkIfUserCanRestart(Request request, String teamId) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new Http404NotFoundException("unknown user attempted to restart host");
+        }
+        if (user.isDeploy() || user.isAdmin()) {
+            return user;
+        }
+        String username = user.getUsername();
+        Team team = dataAccess.getTeam(teamId);
+        if (team == null) {
+            throw new Http404NotFoundException(username + " attempted to restart host on team " + teamId + " but could not find team");
+        }
+        if (!team.getUsernames().contains(username)) {
+            throw new Http401UnauthorizedException(username + " attempted to restart host on team " + team.getTeamName());
+        }
+        return user;
+    }
+
     public User checkIfUserCanAudit(Request request, String teamId) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {
-            throw new Http404NotFoundException("unknown user attempted to deploy software to host");
+            throw new Http404NotFoundException("unknown user attempted to add audit record");
         }
         if (user.isAudit()) {
             return user;
@@ -112,10 +131,10 @@ public class AccessHelper {
         String username = user.getUsername();
         Team team = dataAccess.getTeam(teamId);
         if (team == null) {
-            throw new Http404NotFoundException(username + " attempted to deploy software to host on team " + teamId + " but could not find team");
+            throw new Http404NotFoundException(username + " attempted to add audit record on team " + teamId + " but could not find team");
         }
         if (!team.getUsernames().contains(username)) {
-            throw new Http401UnauthorizedException(username + " attempted to deploy software to host on team " + team.getTeamName());
+            throw new Http401UnauthorizedException(username + " attempted to add audit record on team " + team.getTeamName());
         }
         return user;
     }

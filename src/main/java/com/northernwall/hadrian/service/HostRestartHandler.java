@@ -36,16 +36,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class HostRestartHandler extends BasicHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(HostRestartHandler.class);
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
@@ -61,11 +57,11 @@ public class HostRestartHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutRestartHostData putRestartHostData = Util.fromJson(request, PutRestartHostData.class);
-        Service service = getService(putRestartHostData.serviceId, null, null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "restart host");
+        Service service = getService(putRestartHostData.serviceId, putRestartHostData.serviceName, putRestartHostData.serviceAbbr);
+        User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
         Team team = dataAccess.getTeam(service.getTeamId());
 
-        Module module = getModule(putRestartHostData.moduleId, null, service);
+        Module module = getModule(putRestartHostData.moduleId, putRestartHostData.moduleName, service);
 
         List<Host> hosts = dataAccess.getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
@@ -74,9 +70,10 @@ public class HostRestartHandler extends BasicHandler {
         List<WorkItem> workItems = new ArrayList<>(hosts.size());
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(putRestartHostData.network)) {
-                if (putRestartHostData.hostNames.contains(host.getHostName())) {
+                if (putRestartHostData.all || putRestartHostData.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
+                        workItem.getHost().reason = putRestartHostData.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus("Restarting...");
                         } else {
@@ -99,6 +96,21 @@ public class HostRestartHandler extends BasicHandler {
                 dataAccess.saveWorkItem(workItem);
             }
             workItemProcess.sendWorkItem(workItems.get(0));
+            if (putRestartHostData.wait) {
+                String lastId = workItems.get(size - 1).getId();
+                for (int i = 0; i < 30; i++) {
+                    try {
+                        Thread.sleep(20_000);
+                    } catch (InterruptedException ex) {
+                    }
+                    WorkItem workItem = dataAccess.getWorkItem(lastId);
+                    if (workItem == null) {
+                        response.setStatus(200);
+                        request.setHandled(true);
+                        return;
+                    }
+                }
+            }
         }
 
         response.setStatus(200);

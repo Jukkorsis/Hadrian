@@ -23,16 +23,14 @@ import java.util.List;
  *
  * @author Richard Thurston
  */
-public class PutRestartHostData {
+public class DeleteHostData {
     public String serviceId;
     public String serviceName;
     public String serviceAbbr;
     public String moduleId;
     public String moduleName;
     public String network;
-    public boolean all = false;
     public List<String> hostNames = new LinkedList<>();
     public String reason;
-    public boolean wait = false;
 
 }
