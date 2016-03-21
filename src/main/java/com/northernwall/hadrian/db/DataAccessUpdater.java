@@ -10,13 +10,19 @@ public class DataAccessUpdater {
     private final static Logger logger = LoggerFactory.getLogger(DataAccessUpdater.class);
 
     public static void update(DataAccess dataAccess) {
-        List<Team> teams = dataAccess.getTeams();
-        for (Team team : teams) {
-            if (team.getGitGroup() == null || team.getGitGroup().isEmpty()) {
-                team.setGitGroup(team.getGitRepo());
-                dataAccess.saveTeam(team);
-                logger.info("Upgrading team {} to have Git Group '{}'", team.getTeamName(), team.getGitGroup());
+        String version = dataAccess.getVersion();
+        if (version == null) {
+            logger.info("Upgrading to 1.4");
+            List<Team> teams = dataAccess.getTeams();
+            for (Team team : teams) {
+                if (team.getGitGroup() == null || team.getGitGroup().isEmpty()) {
+                    team.setGitGroup(team.getGitRepo());
+                    dataAccess.saveTeam(team);
+                    logger.info("Upgrading team {} to have Git Group '{}'", team.getTeamName(), team.getGitGroup());
+                }
             }
+            dataAccess.setVersion("1.4");
+            logger.info("Upgraded to 1.4");
         }
     }
 

@@ -62,6 +62,9 @@ public class CassandraDataAccess implements DataAccess {
 
     private final PreparedStatement auditSelect;
     private final PreparedStatement auditInsert;
+    private final PreparedStatement versionSelect;
+    private final PreparedStatement versionInsert;
+    private final PreparedStatement versionUpdate;
     private final PreparedStatement customFunctionSelect;
     private final PreparedStatement customFunctionSelect2;
     private final PreparedStatement customFunctionInsert;
@@ -122,6 +125,14 @@ public class CassandraDataAccess implements DataAccess {
         this.username = username;
         this.dataCenter = dataCenter;
         session = cluster.connect(keyspace);
+
+        logger.info("Praparing version statements...");
+        versionSelect = session.prepare("SELECT * FROM version WHERE component = ?;");
+        versionSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        versionInsert = session.prepare("INSERT INTO version (component, version) VALUES (?, ?);");
+        versionInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        versionUpdate = session.prepare("UPDATE version SET version = ? WHERE component = ? ;");
+        versionUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing customFunction statements...");
         customFunctionSelect = session.prepare("SELECT * FROM customFunction WHERE serviceId = ?;");
@@ -298,6 +309,27 @@ public class CassandraDataAccess implements DataAccess {
             i++;
         }
         return health;
+    }
+
+    @Override
+    public String getVersion() {
+        BoundStatement boundStatement = new BoundStatement(versionSelect);
+        ResultSet results = session.execute(boundStatement.bind("datastore"));
+        for (Row row : results) {
+            return row.getString("version");
+        }
+        return null;
+    }
+
+    @Override
+    public void setVersion(String version) {
+        if (getVersion() == null) {
+            BoundStatement boundStatement = new BoundStatement(versionInsert);
+            session.execute(boundStatement.bind("datastore", version));
+        } else {
+            BoundStatement boundStatement = new BoundStatement(versionUpdate);
+            session.execute(boundStatement.bind(version, "datastore"));
+        }
     }
 
     @Override

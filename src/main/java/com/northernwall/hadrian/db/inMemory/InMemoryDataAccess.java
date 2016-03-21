@@ -44,6 +44,7 @@ import java.util.function.Predicate;
  */
 public class InMemoryDataAccess implements DataAccess {
     
+    private String version;
     private final Map<String, Team> teams;
     private final Map<String, Service> services;
     private final Map<String, Host> hosts;
@@ -58,6 +59,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final List<Audit> audits;
 
     public InMemoryDataAccess() {
+        version = null;
         teams = new ConcurrentHashMap<>();
         services = new ConcurrentHashMap<>();
         hosts = new ConcurrentHashMap<>();
@@ -83,6 +85,16 @@ public class InMemoryDataAccess implements DataAccess {
         return health;
     }
 
+    @Override
+    public String getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    
     @Override
     public List<Team> getTeams() {
         List<Team> temp = new LinkedList<>(teams.values());

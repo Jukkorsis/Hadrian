@@ -95,6 +95,8 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             logger.info("Not calling create keyspace for {}", keyspace);
         }
 
+        //Version tables
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".version (component text, version text, PRIMARY KEY (component));");
         //Data tables
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".service (id text, data text, PRIMARY KEY (id));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".team (id text, data text, PRIMARY KEY (id));");

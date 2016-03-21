@@ -37,6 +37,8 @@ import java.util.Map;
  * @author Richard Thurston
  */
 public interface DataAccess {
+    String getVersion();
+    void setVersion(String version);
     
     Map<String, String> getHealth();
 
