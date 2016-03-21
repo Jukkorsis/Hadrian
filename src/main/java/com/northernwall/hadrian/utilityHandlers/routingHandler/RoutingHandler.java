@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
+import com.northernwall.hadrian.Const;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,16 +84,16 @@ public class RoutingHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         List<RouteEntry> routes;
         switch (request.getMethod()) {
-            case "GET":
+            case Const.HTTP_GET:
                 routes = getRoutes;
                 break;
-            case "PUT":
+            case Const.HTTP_PUT:
                 routes = putRoutes;
                 break;
-            case "POST":
+            case Const.HTTP_POST:
                 routes = postRoutes;
                 break;
-            case "DELETE":
+            case Const.HTTP_DELETE:
                 routes = deleteRoutes;
                 break;
             default:

@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.utilityHandlers.routingHandler;
 
+import com.northernwall.hadrian.Const;
+
 /**
  *
  * @author rthursto
@@ -32,7 +34,7 @@ public enum MethodRule {
             return true;
         }
         if (this == PUTPOST) {
-            return (method.equals("POST") || method.equals("PUT"));
+            return (method.equals(Const.HTTP_POST) || method.equals(Const.HTTP_PUT));
         }
         return this.toString().equals(method);
     }
