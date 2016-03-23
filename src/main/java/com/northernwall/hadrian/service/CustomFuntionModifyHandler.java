@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
@@ -27,18 +26,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class CustomFuntionModifyHandler extends AbstractHandler {
+public class CustomFuntionModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
     public CustomFuntionModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
@@ -46,7 +45,7 @@ public class CustomFuntionModifyHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String customFunctionId = target.substring(7, target.length());
-        PostCustomFunctionData postCFData = Util.fromJson(request, PostCustomFunctionData.class);
+        PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
 
         CustomFunction customFunction = dataAccess.getCustomFunction(postCFData.serviceId, customFunctionId);
         if (customFunction == null) {

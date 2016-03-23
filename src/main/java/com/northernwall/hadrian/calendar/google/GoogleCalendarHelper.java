@@ -21,15 +21,16 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.domain.CalendarEntry;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class GoogleCalendarHelper extends CalendarHelper {
     }
 
     private void getEntriesForCalendar(String calendarId, List<CalendarEntry> entries) {
-        long now = Util.getGmt().getTime();
+        long now = getGmt().getTime();
         try {
             DateTime timeMin = new DateTime(now, 0);
             DateTime timeMax = new DateTime(now + ONE_DAY + ONE_HOUR, 0);
@@ -127,4 +128,8 @@ public class GoogleCalendarHelper extends CalendarHelper {
         return 0;
     }
 
+    private Date getGmt() {
+        return java.util.Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+    }
+    
 }

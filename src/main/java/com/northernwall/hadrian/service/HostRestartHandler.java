@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -56,7 +55,7 @@ public class HostRestartHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutRestartHostData putRestartHostData = Util.fromJson(request, PutRestartHostData.class);
+        PutRestartHostData putRestartHostData = fromJson(request, PutRestartHostData.class);
         Service service = getService(putRestartHostData.serviceId, putRestartHostData.serviceName, putRestartHostData.serviceAbbr);
         User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
         Team team = dataAccess.getTeam(service.getTeamId());

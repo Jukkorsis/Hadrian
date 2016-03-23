@@ -26,7 +26,6 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Session.State;
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
@@ -305,10 +304,19 @@ public class CassandraDataAccess implements DataAccess {
             temp.append(state.getOpenConnections(host));
             temp.append("  trashed=");
             temp.append(state.getTrashedConnections(host));
-            health.put("Cassandra - Host " + Util.formatInt(i, 2), temp.toString());
+            health.put("Cassandra - Host " + formatInt(i, 2), temp.toString());
             i++;
         }
         return health;
+    }
+    
+    private String formatInt(int i, int len) {
+        StringBuilder temp = new StringBuilder();
+        temp.append(i);
+        while (temp.length() < len) {
+            temp.insert(0, "0");
+        }
+        return temp.toString();
     }
 
     @Override

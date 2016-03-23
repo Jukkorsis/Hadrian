@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
@@ -28,14 +27,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
-public class TeamCreateHandler extends AbstractHandler {
+public class TeamCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
     public TeamCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
@@ -44,7 +43,7 @@ public class TeamCreateHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         accessHelper.checkIfUserIsAdmin(request, "create team");
 
-        PostTeamData postTeamData = Util.fromJson(request, PostTeamData.class);
+        PostTeamData postTeamData = fromJson(request, PostTeamData.class);
 
         if (postTeamData.user == null) {
             throw new Http400BadRequestException("Failed to create new team, as user is null");

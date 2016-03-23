@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -55,7 +54,7 @@ public class HostDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteHostData deleteHostData = Util.fromJson(request, DeleteHostData.class);
+        DeleteHostData deleteHostData = fromJson(request, DeleteHostData.class);
         Service service = getService(deleteHostData.serviceId, deleteHostData.serviceName, deleteHostData.serviceAbbr);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
         Team team = dataAccess.getTeam(service.getTeamId());

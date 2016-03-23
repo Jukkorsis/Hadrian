@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
@@ -40,7 +39,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class HostCreateHandler extends AbstractHandler {
+public class HostCreateHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(HostCreateHandler.class);
 
@@ -58,6 +56,7 @@ public class HostCreateHandler extends AbstractHandler {
     private final WorkItemProcessor workItemProcess;
 
     public HostCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.dataAccess = dataAccess;
@@ -66,7 +65,7 @@ public class HostCreateHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostHostData postHostData = Util.fromJson(request, PostHostData.class);
+        PostHostData postHostData = fromJson(request, PostHostData.class);
         Service service = dataAccess.getService(postHostData.serviceId);
         if (service == null) {
             throw new Http404NotFoundException("Could not find service");

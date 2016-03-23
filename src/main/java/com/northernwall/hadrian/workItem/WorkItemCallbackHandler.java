@@ -15,30 +15,30 @@
  */
 package com.northernwall.hadrian.workItem;
 
-import com.northernwall.hadrian.Util;
+import com.northernwall.hadrian.service.BasicHandler;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class WorkItemCallbackHandler extends AbstractHandler {
+public class WorkItemCallbackHandler extends BasicHandler {
 
     private final WorkItemProcessor workItemProcess;
 
     public WorkItemCallbackHandler(WorkItemProcessor workItemProcess) {
+        super(null);
         this.workItemProcess = workItemProcess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        workItemProcess.processCallback(Util.fromJson(request, CallbackData.class));
+        workItemProcess.processCallback(fromJson(request, CallbackData.class));
         response.setStatus(200);
         request.setHandled(true);
     }

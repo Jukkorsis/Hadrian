@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -61,7 +60,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutDeploySoftwareData putDeployData = Util.fromJson(request, PutDeploySoftwareData.class);
+        PutDeploySoftwareData putDeployData = fromJson(request, PutDeploySoftwareData.class);
         Service service = getService(putDeployData.serviceId, putDeployData.serviceName, putDeployData.serviceAbbr);
         User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
         Team team = dataAccess.getTeam(service.getTeamId());

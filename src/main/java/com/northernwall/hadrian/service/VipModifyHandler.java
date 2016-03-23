@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Operation;
@@ -53,7 +52,7 @@ public class VipModifyHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String vipId = target.substring(8, target.length());
-        PutVipData putVipData = Util.fromJson(request, PutVipData.class);
+        PutVipData putVipData = fromJson(request, PutVipData.class);
 
         Vip vip = dataAccess.getVip(putVipData.serviceId, vipId);
         if (vip == null) {

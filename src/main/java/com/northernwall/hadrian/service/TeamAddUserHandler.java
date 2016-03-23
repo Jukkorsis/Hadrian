@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
@@ -26,21 +25,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
-public class TeamAddUserHandler extends AbstractHandler {
+public class TeamAddUserHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
     public TeamAddUserHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostTeamAddUser postTeamAddUser = Util.fromJson(request, PostTeamAddUser.class);
+        PostTeamAddUser postTeamAddUser = fromJson(request, PostTeamAddUser.class);
 
         Team team = dataAccess.getTeam(postTeamAddUser.teamId);
         if (team == null) {

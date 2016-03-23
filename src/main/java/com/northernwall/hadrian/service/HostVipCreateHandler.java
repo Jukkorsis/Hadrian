@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Vip;
@@ -32,12 +31,10 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PostHostVipData;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class HostVipCreateHandler extends AbstractHandler {
+public class HostVipCreateHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(HostVipCreateHandler.class);
 
@@ -54,6 +51,7 @@ public class HostVipCreateHandler extends AbstractHandler {
     private final WorkItemProcessor workItemProcess;
 
     public HostVipCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
@@ -61,11 +59,8 @@ public class HostVipCreateHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostHostVipData data = Util.fromJson(request, PostHostVipData.class);
-        Service service = dataAccess.getService(data.serviceId);
-        if (service == null) {
-            throw new RuntimeException("Could not find service");
-        }
+        PostHostVipData data = fromJson(request, PostHostVipData.class);
+        Service service = getService(data.serviceId,  null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
         Team team = dataAccess.getTeam(service.getTeamId());
         List<Host> hosts = dataAccess.getHosts(data.serviceId);

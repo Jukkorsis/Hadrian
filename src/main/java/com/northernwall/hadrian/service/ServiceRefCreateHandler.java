@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -56,7 +55,7 @@ public class ServiceRefCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String clientId = target.substring(12, target.length() - 4);
-        PostServiceRefData postServiceRefData = Util.fromJson(request, PostServiceRefData.class);
+        PostServiceRefData postServiceRefData = fromJson(request, PostServiceRefData.class);
         Service clientService = getService(clientId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.User;
@@ -24,18 +23,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class UserModifyHandler extends AbstractHandler {
+public class UserModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
     public UserModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
@@ -44,7 +43,7 @@ public class UserModifyHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         accessHelper.checkIfUserIsAdmin(request, "update user");
 
-        User temp = Util.fromJson(request, User.class);
+        User temp = fromJson(request, User.class);
         dataAccess.updateUser(temp);
         
         response.setStatus(200);

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
@@ -26,14 +25,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
-public class TeamModifyHandler extends AbstractHandler {
+public class TeamModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final DataAccess dataAccess;
 
     public TeamModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
     }
@@ -47,7 +46,7 @@ public class TeamModifyHandler extends AbstractHandler {
             throw new Http404NotFoundException("Can not find team " + teamId + ", could not update team");
         }
 
-        PutTeamData putTeamData = Util.fromJson(request, PutTeamData.class);
+        PutTeamData putTeamData = fromJson(request, PutTeamData.class);
 
         team.setTeamName(putTeamData.teamName);
         team.setTeamEmail(putTeamData.teamEmail);

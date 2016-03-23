@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
@@ -66,7 +65,7 @@ public class ModuleModifyHandler extends BasicHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
         Team team = dataAccess.getTeam(service.getTeamId());
 
-        PutModuleData putModuleData = Util.fromJson(request, PutModuleData.class);
+        PutModuleData putModuleData = fromJson(request, PutModuleData.class);
         List<Module> modules = dataAccess.getModules(serviceId);
         List<Module> zeroModules = new LinkedList<>();
         Module module = null;

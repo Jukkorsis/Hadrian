@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
@@ -54,7 +53,7 @@ public class VipCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostVipData postVipData = Util.fromJson(request, PostVipData.class);
+        PostVipData postVipData = fromJson(request, PostVipData.class);
 
         Service service = getService(postVipData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");

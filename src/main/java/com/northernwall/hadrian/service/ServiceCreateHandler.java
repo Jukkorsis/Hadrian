@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -35,7 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class ServiceCreateHandler extends AbstractHandler {
+public class ServiceCreateHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceCreateHandler.class);
 
@@ -52,6 +50,7 @@ public class ServiceCreateHandler extends AbstractHandler {
     private final Gson gson;
 
     public ServiceCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.dataAccess = dataAccess;
         gson = new Gson();
@@ -59,7 +58,7 @@ public class ServiceCreateHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostServiceData postServiceData = Util.fromJson(request, PostServiceData.class);
+        PostServiceData postServiceData = fromJson(request, PostServiceData.class);
         User user = accessHelper.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
         postServiceData.serviceAbbr = postServiceData.serviceAbbr.toUpperCase();
         if (!postServiceData.serviceAbbr.matches("\\w+")) {

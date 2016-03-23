@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
@@ -44,7 +43,7 @@ public class ServiceModifyHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String id = target.substring(12, target.length());
-        PutServiceData putServiceData = Util.fromJson(request, PutServiceData.class);
+        PutServiceData putServiceData = fromJson(request, PutServiceData.class);
         Service service = getService(id, null, null);
         
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
