@@ -67,7 +67,12 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         };
 
         $scope.removeUserFromTeam = function (username) {
-            var responsePromise = $http.delete("/v1/team/" + $scope.team.teamId + "/" + username, {}, {});
+            var dataObject = {
+                teamId: $scope.team.teamId,
+                username: username
+            };
+
+            var responsePromise = $http.post("/v1/team/removeUser", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
@@ -163,7 +168,12 @@ hadrianControllers.controller('ModalAddUserToTeamCtrl',
             $scope.formAddUserToTeam.user = users.users[0];
 
             $scope.save = function () {
-                var responsePromise = $http.put("/v1/team/" + $scope.team.teamId + "/" + $scope.formAddUserToTeam.user.username, {}, {});
+                var dataObject = {
+                    teamId: $scope.team.teamId,
+                    username: $scope.formAddUserToTeam.user.username
+                };
+
+                var responsePromise = $http.put("/v1/team/addUser", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();

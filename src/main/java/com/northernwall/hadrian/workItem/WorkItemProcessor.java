@@ -399,7 +399,7 @@ public class WorkItemProcessor {
             vipRef.setStatus(Const.NO_STATUS);
             dataAccess.updateVipRef(vipRef);
         } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result);
+            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result.toString());
             dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
         }
     }
@@ -413,7 +413,7 @@ public class WorkItemProcessor {
         if (result == Result.success) {
             dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
         } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result);
+            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result.toString());
             vipRef.setStatus(Const.NO_STATUS);
             dataAccess.updateVipRef(vipRef);
         }

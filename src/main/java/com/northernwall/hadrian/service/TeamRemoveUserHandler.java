@@ -15,9 +15,11 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.service.dao.DeleteTeamRemoveUser;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http405NotAllowedException;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
@@ -39,20 +41,24 @@ public class TeamRemoveUserHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String temp = target.substring(9, target.length());
-        int i = temp.indexOf("/");
-        String teamId = temp.substring(0, i);
-        String username = temp.substring(i + 1);
-        accessHelper.checkIfUserCanModify(request, teamId, "add user to team");
-        Team team = dataAccess.getTeam(teamId);
+        DeleteTeamRemoveUser deleteTeamAddUser = Util.fromJson(request, DeleteTeamRemoveUser.class);
+
+        Team team = dataAccess.getTeam(deleteTeamAddUser.teamId);
         if (team == null) {
-            throw new Http404NotFoundException("Failed to add user " + username + " to team " + teamId + ", could not find team");
+            throw new Http404NotFoundException("Failed to add user " + deleteTeamAddUser.username + " to team " + deleteTeamAddUser.teamId + ", could not find team");
         }
+
+        accessHelper.checkIfUserCanModify(request, deleteTeamAddUser.teamId, "remove user from team");
+
         if (team.getUsernames().size() < 2) {
             throw new Http405NotAllowedException("Can not remove the last user from team " + team.getTeamName());
         }
-        team.getUsernames().remove(username);
-        dataAccess.updateTeam(team);
+
+        if (team.getUsernames().contains(deleteTeamAddUser.username)) {
+            team.getUsernames().remove(deleteTeamAddUser.username);
+            dataAccess.updateTeam(team);
+        }
+
         response.setStatus(200);
         request.setHandled(true);
     }

@@ -15,9 +15,11 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Util;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.service.dao.PostTeamAddUser;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -38,20 +40,24 @@ public class TeamAddUserHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String temp = target.substring(9, target.length());
-        int i = temp.indexOf("/");
-        String teamId = temp.substring(0, i);
-        String username = temp.substring(i + 1);
-        accessHelper.checkIfUserCanModify(request, teamId, "add user to team");
-        if (dataAccess.getUser(username) == null) {
-            throw new Http404NotFoundException("Failed to add user " + username + " to team " + teamId + ", could not find user");
-        }
-        Team team = dataAccess.getTeam(teamId);
+        PostTeamAddUser postTeamAddUser = Util.fromJson(request, PostTeamAddUser.class);
+
+        Team team = dataAccess.getTeam(postTeamAddUser.teamId);
         if (team == null) {
-            throw new Http404NotFoundException("Failed to add user " + username + " to team " + teamId + ", could not find team");
+            throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find team");
         }
-        team.getUsernames().add(username);
-        dataAccess.updateTeam(team);
+        
+        accessHelper.checkIfUserCanModify(request, postTeamAddUser.teamId, "add user to team");
+        
+        if (dataAccess.getUser(postTeamAddUser.username) == null) {
+            throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find user");
+        }
+
+        if (!team.getUsernames().contains(postTeamAddUser.username)) {
+            team.getUsernames().add(postTeamAddUser.username);
+            dataAccess.updateTeam(team);
+        }
+        
         response.setStatus(200);
         request.setHandled(true);
     }

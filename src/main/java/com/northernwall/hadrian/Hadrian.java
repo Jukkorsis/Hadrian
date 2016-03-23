@@ -163,8 +163,8 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+", new TeamGetHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/team", new TeamCreateHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUT, TargetRule.matches, "/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+", new TeamModifyHandler(accessHelper, dataAccess));
-        routingHandler.addRoute(MethodRule.PUT, TargetRule.matches, "/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+", new TeamAddUserHandler(accessHelper, dataAccess));
-        routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/team/\\w+-\\w+-\\w+-\\w+-\\w+/\\w+", new TeamRemoveUserHandler(accessHelper, dataAccess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/team/addUser", new TeamAddUserHandler(accessHelper, dataAccess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/team/removeUser", new TeamRemoveUserHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.equals, "/v1/service", new ServicesGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/notuses", new ServiceNotUsesGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/audit", new ServiceAuditGetHandler(dataAccess));

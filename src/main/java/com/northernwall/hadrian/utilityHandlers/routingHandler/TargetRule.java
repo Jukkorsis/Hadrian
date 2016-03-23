@@ -28,7 +28,7 @@ public enum TargetRule {
     public boolean test(String pattern, String target) {
         switch (this) {
             case equals:
-                return pattern.equals(target);
+                return pattern.equalsIgnoreCase(target);
             case startWith:
                 return target.startsWith(pattern);
             case matches:
