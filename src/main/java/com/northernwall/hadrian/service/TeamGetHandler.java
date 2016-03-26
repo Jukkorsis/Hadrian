@@ -51,7 +51,7 @@ public class TeamGetHandler extends AbstractHandler {
             throw new Http404NotFoundException("Could not find team with id '" + teamId + "'");
         }
 
-        GetTeamData getTeamData = GetTeamData.create(team);
+        GetTeamData getTeamData = GetTeamData.create(team, dataAccess);
         getTeamData.canModify = accessHelper.canUserModify(request, teamId);
 
         response.setContentType(Const.JSON);

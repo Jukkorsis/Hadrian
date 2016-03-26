@@ -15,7 +15,10 @@
  */
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.User;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GetTeamData {
@@ -25,10 +28,10 @@ public class GetTeamData {
     public String teamIrc;
     public String gitGroup;
     public String calendarId;
-    public List<String> usernames;
+    public List<User> users;
     public boolean canModify;
 
-    public static GetTeamData create(Team team) {
+    public static GetTeamData create(Team team, DataAccess dataAccess) {
         GetTeamData temp = new GetTeamData();
         temp.teamId = team.getTeamId();
         temp.teamName = team.getTeamName();
@@ -36,7 +39,10 @@ public class GetTeamData {
         temp.teamIrc = team.getTeamIrc();
         temp.gitGroup = team.getGitGroup();
         temp.calendarId = team.getCalendarId();
-        temp.usernames = team.getUsernames();
+        temp.users = new LinkedList<>();
+        for (String username : team.getUsernames()) {
+            temp.users.add(dataAccess.getUser(username));
+        }
         return temp;
     }
 

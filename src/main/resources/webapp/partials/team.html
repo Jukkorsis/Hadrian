@@ -8,8 +8,8 @@
             <li role="menuitem"><a ng-click="openAddServiceModal();">Add a service to {{team.teamName}}</a></li>
             <li class="divider"></li>
             <li role="menuitem"><a ng-click="openAddUserModal();">Add a team member</a></li>
-            <li role="menuitem" ng-repeat="username in team.usernames">
-                <a ng-click="removeUserFromTeam(username);">Remove {{username}} from {{team.teamName}}</a>
+            <li role="menuitem" ng-repeat="user in team.users">
+                <a ng-click="removeUserFromTeam(user.username);">Remove {{user.fullName}} from {{team.teamName}}</a>
             </li>
         </ul>
     </div>
@@ -33,8 +33,8 @@
         <dl class="dl-horizontal">
             <dt>Members:</dt>
             <dd>
-                <div ng-repeat="username in team.usernames">
-                    {{username}}<br/>
+                <div ng-repeat="user in team.users">
+                    {{user.fullName}}<br/>
                 </div>
             </dd>
     </div>
