@@ -15,20 +15,18 @@
  */
 package com.northernwall.hadrian.graph;
 
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Service;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import javax.servlet.http.HttpServletResponse;
 
 public class Graph {
 
     private final BufferedWriter writer;
 
-    public Graph(HttpServletResponse response) throws IOException {
-        response.setContentType(Const.TEXT);
-        writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+    public Graph(OutputStream outputStream) throws IOException {
+        writer = new BufferedWriter(new OutputStreamWriter(outputStream));
         writer.append("digraph G {");
         writer.newLine();
     }

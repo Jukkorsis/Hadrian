@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.graph;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -43,7 +44,8 @@ public class GraphFanInHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String serviceId = target.substring(16);
 
-        Graph graph = new Graph(response);
+        response.setContentType(Const.TEXT);
+        Graph graph = new Graph(response.getOutputStream());
 
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();

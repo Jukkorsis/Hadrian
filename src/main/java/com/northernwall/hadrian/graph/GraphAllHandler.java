@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.graph;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -46,7 +47,8 @@ public class GraphAllHandler extends AbstractHandler {
         List<ServiceRef> serverRefs;
         List<ServiceRef> clientRefs;
 
-        Graph graph = new Graph(response);
+        response.setContentType(Const.TEXT);
+        Graph graph = new Graph(response.getOutputStream());
 
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
