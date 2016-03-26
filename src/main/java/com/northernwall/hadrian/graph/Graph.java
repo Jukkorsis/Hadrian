@@ -25,14 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 public class Graph {
 
     private final BufferedWriter writer;
-    private final boolean brief;
 
-    public Graph(HttpServletResponse response, boolean brief) throws IOException {
+    public Graph(HttpServletResponse response) throws IOException {
         response.setContentType(Const.TEXT);
         writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
         writer.append("digraph G {");
         writer.newLine();
-        this.brief = brief;
     }
 
     public void startSubGraph(int c) throws IOException {
@@ -60,7 +58,11 @@ public class Graph {
         writer.newLine();
     }
 
-    public void writeService(Service service, String shape) throws IOException {
+    public void writeService(Service service, String shape, boolean brief) throws IOException {
+        writeService(service, shape, brief, null);
+    }
+
+    public void writeService(Service service, String shape, boolean brief, String toolTip) throws IOException {
         writer.append(service.getServiceAbbr());
         writer.append(" [shape=");
         writer.append(shape);
@@ -74,6 +76,11 @@ public class Graph {
             writer.append(service.getServiceName());
         }
         writer.append(">");
+        if (toolTip != null && !toolTip.isEmpty()) {
+            writer.append(" tooltip=<");
+            writer.append(toolTip);
+            writer.append(">");
+        }
         writer.append("];");
         writer.newLine();
     }

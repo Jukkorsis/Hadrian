@@ -43,9 +43,10 @@ public class GraphAllHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         List<Team> teams;
         List<Service> services;
-        List<ServiceRef> serviceRefs;
+        List<ServiceRef> serverRefs;
+        List<ServiceRef> clientRefs;
 
-        Graph graph = new Graph(response, true);
+        Graph graph = new Graph(response);
 
         teams = dataAccess.getTeams();
         if (teams != null && !teams.isEmpty()) {
@@ -55,7 +56,14 @@ public class GraphAllHandler extends AbstractHandler {
                 if (services != null && !services.isEmpty()) {
                     graph.startSubGraph(c);
                     for (Service service : services) {
-                        graph.writeService(service, "ellipse");
+                        serverRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
+                        clientRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
+                        String toolTip = writeToolTip(service, serverRefs, clientRefs);
+                        if (serverRefs != null && serverRefs.size() > 5) {
+                            graph.writeService(service, "rectangle", true, toolTip);
+                        } else {
+                            graph.writeService(service, "ellipse", true, toolTip);
+                        }
                     }
                     graph.finishSubGraph(team.getTeamName());
                 }
@@ -65,11 +73,13 @@ public class GraphAllHandler extends AbstractHandler {
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
                     for (Service service : services) {
-                        serviceRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
-                        if (serviceRefs != null && !serviceRefs.isEmpty()) {
-                            for (ServiceRef serviceRef : serviceRefs) {
-                                Service temp = dataAccess.getService(serviceRef.getServerServiceId());
-                                graph.writeLink(service.getServiceAbbr(), temp.getServiceAbbr());
+                        serverRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
+                        if (serverRefs != null && !serverRefs.isEmpty()) {
+                            if (serverRefs.size() <= 5) {
+                                for (ServiceRef serviceRef : serverRefs) {
+                                    Service temp = dataAccess.getService(serviceRef.getClientServiceId());
+                                    graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
+                                }
                             }
                         }
                     }
@@ -81,6 +91,28 @@ public class GraphAllHandler extends AbstractHandler {
 
         request.setHandled(true);
         response.setStatus(200);
+    }
+
+    private String writeToolTip(Service service, List<ServiceRef> serverRefs, List<ServiceRef> clientRefs) {
+        StringBuilder temp = new StringBuilder();
+        if (clientRefs != null && !clientRefs.isEmpty()) {
+            temp.append(service.getServiceAbbr());
+            temp.append(" uses ");
+            temp.append(clientRefs.size());
+            temp.append(" services");
+        }
+        if (clientRefs != null && !clientRefs.isEmpty() && serverRefs != null && !serverRefs.isEmpty()) {
+            temp.append(" and ");
+        }
+        if (serverRefs != null && !serverRefs.isEmpty()) {
+            temp.append(serverRefs.size());
+            temp.append(" services use ");
+            temp.append(service.getServiceAbbr());
+        }
+        if ((clientRefs != null && !clientRefs.isEmpty()) || (serverRefs != null && !serverRefs.isEmpty())) {
+            temp.append(".");
+        }
+        return temp.toString();
     }
 
 }

@@ -43,7 +43,7 @@ public class GraphFanInHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String serviceId = target.substring(16);
 
-        Graph graph = new Graph(response, true);
+        Graph graph = new Graph(response);
 
         List<Service> services = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
@@ -54,7 +54,7 @@ public class GraphFanInHandler extends AbstractHandler {
             fanIn(services.remove(0), graph, services, foundIds);
         }
         graph.newLine();
-        graph.writeService(service, "rectangle");
+        graph.writeService(service, "rectangle", false);
         graph.close();
 
         request.setHandled(true);
@@ -69,7 +69,7 @@ public class GraphFanInHandler extends AbstractHandler {
                 if (!foundIds.contains(serviceRef.getClientServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getClientServiceId());
                     graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
-                    graph.writeService(temp, "ellipse");
+                    graph.writeService(temp, "ellipse", true);
                     services.add(temp);
                     foundIds.add(temp.getServiceId());
                 }
