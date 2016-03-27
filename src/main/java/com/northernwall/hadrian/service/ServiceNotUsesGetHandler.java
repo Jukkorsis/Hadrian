@@ -24,6 +24,8 @@ import com.northernwall.hadrian.service.dao.GetNotUsesData;
 import com.northernwall.hadrian.service.dao.GetServiceRefData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,6 +72,13 @@ public class ServiceNotUsesGetHandler extends AbstractHandler {
             }
         }
 
+        Collections.sort(notUses.refs, new Comparator<GetServiceRefData>() {
+            @Override
+            public int compare(GetServiceRefData o1, GetServiceRefData o2) {
+                return o1.serviceName.compareTo(o2.serviceName);
+            }
+        });
+        
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(notUses, GetNotUsesData.class, jw);
         }

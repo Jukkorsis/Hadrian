@@ -45,6 +45,7 @@ import com.northernwall.hadrian.service.helper.ReadVersionRunnable;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -155,12 +156,26 @@ public class ServiceGetHandler extends BasicHandler {
             getServiceData.uses.add(tempRef);
         }
 
+        Collections.sort(getServiceData.uses, new Comparator<GetServiceRefData>() {
+            @Override
+            public int compare(GetServiceRefData o1, GetServiceRefData o2) {
+                return o1.serviceName.compareTo(o2.serviceName);
+            }
+        });
+        
         for (ServiceRef ref : dataAccess.getServiceRefsByServer(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
             tempRef.serviceName = dataAccess.getService(ref.getClientServiceId()).getServiceName();
             getServiceData.usedBy.add(tempRef);
         }
 
+        Collections.sort(getServiceData.usedBy, new Comparator<GetServiceRefData>() {
+            @Override
+            public int compare(GetServiceRefData o1, GetServiceRefData o2) {
+                return o1.serviceName.compareTo(o2.serviceName);
+            }
+        });
+        
         List<CustomFunction> customFunctions = dataAccess.getCustomFunctions(id);
         Collections.sort(customFunctions);
         for (CustomFunction customFunction : customFunctions) {
