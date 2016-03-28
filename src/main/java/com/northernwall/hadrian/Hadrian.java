@@ -46,6 +46,7 @@ import com.northernwall.hadrian.service.ModuleDeleteHandler;
 import com.northernwall.hadrian.service.ModuleModifyHandler;
 import com.northernwall.hadrian.service.ServiceCreateHandler;
 import com.northernwall.hadrian.service.ServiceAuditGetHandler;
+import com.northernwall.hadrian.service.ServiceDeleteHandler;
 import com.northernwall.hadrian.service.ServiceGetHandler;
 import com.northernwall.hadrian.service.ServiceNotUsesGetHandler;
 import com.northernwall.hadrian.service.ServiceModifyHandler;
@@ -170,6 +171,7 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/audit", new ServiceAuditGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+", new ServiceGetHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper));
         routingHandler.addRoute(MethodRule.POST, TargetRule.equals, "/v1/service/service", new ServiceCreateHandler(accessHelper, dataAccess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.equals, "/v1/service/delete", new ServiceDeleteHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.POST, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/ref", new ServiceRefCreateHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUT, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+", new ServiceModifyHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.DELETE, TargetRule.matches, "/v1/service/\\w+-\\w+-\\w+-\\w+-\\w+/uses/\\w+-\\w+-\\w+-\\w+-\\w+", new ServiceRefDeleteHandler(accessHelper, dataAccess));

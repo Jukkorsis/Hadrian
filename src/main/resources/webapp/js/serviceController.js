@@ -41,6 +41,23 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
+        $scope.openDeleteServiceModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/deleteService.html',
+                controller: 'ModalDeleteServiceCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.openAddUsesModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -572,6 +589,36 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
             };
 
             var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to update service has failed!");
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
+    function ($scope, $route, $http, $modalInstance, service) {
+        $scope.service = service;
+        $scope.formDeleteService = {};
+        $scope.formDeleteService.serviceAbbr = service.serviceAbbr;
+        $scope.formDeleteService.serviceName = service.serviceName;
+        $scope.formDeleteService.description = service.description;
+        $scope.formDeleteService.reason = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                reason: $scope.formDeleteService.reason
+            };
+
+            var responsePromise = $http.put("/v1/service/delete", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

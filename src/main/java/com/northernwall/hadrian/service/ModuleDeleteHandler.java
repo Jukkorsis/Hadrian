@@ -35,8 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -44,16 +42,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ModuleDeleteHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ModuleDeleteHandler.class);
-
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public ModuleDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -64,20 +58,20 @@ public class ModuleDeleteHandler extends BasicHandler {
         Service service = getService(serviceId, null, null);
         Module module = getModule(moduleId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        for (Host host : dataAccess.getHosts(serviceId)) {
+        for (Host host : getDataAccess().getHosts(serviceId)) {
             if (host.getModuleId().equals(moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active host");
             }
         }
-        for (Vip vip : dataAccess.getVips(serviceId)) {
+        for (Vip vip : getDataAccess().getVips(serviceId)) {
             if (vip.getModuleId().equals(moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active vip");
             }
         }
 
-        List<Module> modules = dataAccess.getModules(serviceId);
+        List<Module> modules = getDataAccess().getModules(serviceId);
         Collections.sort(modules);
 
         modules.remove(module.getOrder() - 1);
@@ -85,17 +79,17 @@ public class ModuleDeleteHandler extends BasicHandler {
         for (Module temp : modules) {
             if (temp.getOrder() != i) {
                 temp.setOrder(i);
-                dataAccess.saveModule(temp);
+                getDataAccess().saveModule(temp);
             }
             i++;
         }
-        dataAccess.deleteModule(serviceId, moduleId);
+        getDataAccess().deleteModule(serviceId, moduleId);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
 
         response.setStatus(200);

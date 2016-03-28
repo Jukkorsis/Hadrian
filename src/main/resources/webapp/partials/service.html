@@ -6,7 +6,7 @@
         <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
             <li role="menuitem"><a ng-click="openUpdateServiceModal();">Update {{service.serviceName}}</a></li>
             <li role="menuitem"><a ng-click="">Move {{service.serviceName}} to a different team</a></li>
-            <li role="menuitem"><a ng-click="">Delete {{service.serviceName}}</a></li>
+            <li role="menuitem"><a ng-click="openDeleteServiceModal();">Delete {{service.serviceName}}</a></li>
             <li class="divider"></li>
             <li role="menuitem"><a ng-click="openAddUsesModal();">Add service dependence</a></li>
             <li role="menuitem"ng-repeat="sr in service.uses">

@@ -42,13 +42,11 @@ import org.eclipse.jetty.server.Request;
 public class HostDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -57,11 +55,11 @@ public class HostDeleteHandler extends BasicHandler {
         DeleteHostData deleteHostData = fromJson(request, DeleteHostData.class);
         Service service = getService(deleteHostData.serviceId, deleteHostData.serviceName, deleteHostData.serviceAbbr);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         Module module = getModule(deleteHostData.moduleId, deleteHostData.moduleName, service);
 
-        List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
@@ -70,10 +68,10 @@ public class HostDeleteHandler extends BasicHandler {
                 if (deleteHostData.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         host.setStatus("Deleting...");
-                        dataAccess.updateHost(host);
+                        getDataAccess().updateHost(host);
                         WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
                         workItem.getHost().reason = deleteHostData.reason;
-                        dataAccess.saveWorkItem(workItem);
+                        getDataAccess().saveWorkItem(workItem);
                         workItemProcess.sendWorkItem(workItem);
                     }
                 }

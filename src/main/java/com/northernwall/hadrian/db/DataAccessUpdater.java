@@ -11,8 +11,9 @@ public class DataAccessUpdater {
 
     public static void update(DataAccess dataAccess) {
         String version = dataAccess.getVersion();
-        if (version == null) {
-            logger.info("Upgrading to 1.4");
+        
+        if (version == null || version.equals("1.3")) {
+            logger.info("Upgrading to 1.4 from {}", version);
             List<Team> teams = dataAccess.getTeams();
             for (Team team : teams) {
                 if (team.getGitGroup() == null || team.getGitGroup().isEmpty()) {
@@ -22,7 +23,9 @@ public class DataAccessUpdater {
                 }
             }
             dataAccess.setVersion("1.4");
-            logger.info("Upgraded to 1.4");
+            update(dataAccess);
+        } else {
+            logger.info("Current version is {}, no upgrade required.", version);
         }
     }
 
