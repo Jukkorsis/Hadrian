@@ -31,8 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -40,16 +38,12 @@ import org.slf4j.LoggerFactory;
  */
 public class VipDeleteHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(VipDeleteHandler.class);
-
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public VipDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -59,18 +53,18 @@ public class VipDeleteHandler extends BasicHandler {
         String vipId = target.substring(45);
         Service service = getService(serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Vip vip = dataAccess.getVip(serviceId, vipId);
+        Vip vip = getDataAccess().getVip(serviceId, vipId);
         if (vip == null) {
             throw new Http404NotFoundException("Could not find vip with id " + vipId);
         }
 
         vip.setStatus("Deleting...");
-        dataAccess.updateVip(vip);
+        getDataAccess().updateVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.delete, user, team, service, null, null, vip);
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);
         request.setHandled(true);

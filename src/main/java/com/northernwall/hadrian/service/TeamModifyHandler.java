@@ -29,19 +29,17 @@ import org.eclipse.jetty.server.Request;
 public class TeamModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public TeamModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String teamId = target.substring(9, target.length());
         accessHelper.checkIfUserCanModify(request, teamId, "update team");
-        Team team = dataAccess.getTeam(teamId);
+        Team team = getDataAccess().getTeam(teamId);
         if (team == null) {
             throw new Http404NotFoundException("Can not find team " + teamId + ", could not update team");
         }
@@ -54,7 +52,7 @@ public class TeamModifyHandler extends BasicHandler {
         team.setGitGroup(putTeamData.gitGroup);
         team.setCalendarId(putTeamData.calendarId);
 
-        dataAccess.saveTeam(team);
+        getDataAccess().saveTeam(team);
         response.setStatus(200);
         request.setHandled(true);
     }

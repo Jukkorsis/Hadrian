@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.maven.MavenHelper;
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
@@ -64,21 +63,17 @@ import org.eclipse.jetty.server.Request;
 public class ServiceGetHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final ConfigHelper configHelper;
     private final MavenHelper mavenHelper;
     private final InfoHelper infoHelper;
-    private final Gson gson;
     private final ExecutorService executorService;
 
     public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, MavenHelper mavenHelper, InfoHelper infoHelper) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.configHelper = configHelper;
         this.mavenHelper = mavenHelper;
         this.infoHelper = infoHelper;
-        gson = new Gson();
 
         executorService = Executors.newFixedThreadPool(20);
     }
@@ -94,7 +89,7 @@ public class ServiceGetHandler extends BasicHandler {
 
         List<Future> futures = new LinkedList<>();
 
-        List<Module> modules = dataAccess.getModules(id);
+        List<Module> modules = getDataAccess().getModules(id);
         Collections.sort(modules);
         for (Module module : modules) {
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
@@ -102,7 +97,7 @@ public class ServiceGetHandler extends BasicHandler {
             getServiceData.modules.add(getModuleData);
         }
 
-        List<Vip> vips = dataAccess.getVips(id);
+        List<Vip> vips = getDataAccess().getVips(id);
         Collections.sort(vips);
         for (Vip vip : vips) {
             GetModuleData getModuleData = null;
@@ -117,7 +112,7 @@ public class ServiceGetHandler extends BasicHandler {
             }
         }
 
-        List<Host> hosts = dataAccess.getHosts(id);
+        List<Host> hosts = getDataAccess().getHosts(id);
         Collections.sort(hosts);
         for (Host host : hosts) {
             GetModuleData getModuleData = null;
@@ -130,7 +125,7 @@ public class ServiceGetHandler extends BasicHandler {
                 GetHostData getHostData = GetHostData.create(host);
                 futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
                 futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
-                for (VipRef vipRef : dataAccess.getVipRefsByHost(getHostData.hostId)) {
+                for (VipRef vipRef : getDataAccess().getVipRefsByHost(getHostData.hostId)) {
                     GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
                     for (GetVipData vip : getModuleData.getVips(host.getNetwork())) {
                         if (vip.vipId.equals(getVipRefData.vipId)) {
@@ -143,16 +138,16 @@ public class ServiceGetHandler extends BasicHandler {
             }
         }
 
-        List<DataStore> dataStores = dataAccess.getDataStores(id);
+        List<DataStore> dataStores = getDataAccess().getDataStores(id);
         Collections.sort(dataStores);
         for (DataStore dataStore : dataStores) {
             GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
             getServiceData.dataStores.add(getDataStoreData);
         }
 
-        for (ServiceRef ref : dataAccess.getServiceRefsByClient(id)) {
+        for (ServiceRef ref : getDataAccess().getServiceRefsByClient(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = dataAccess.getService(ref.getServerServiceId()).getServiceName();
+            tempRef.serviceName = getDataAccess().getService(ref.getServerServiceId()).getServiceName();
             getServiceData.uses.add(tempRef);
         }
 
@@ -163,9 +158,9 @@ public class ServiceGetHandler extends BasicHandler {
             }
         });
         
-        for (ServiceRef ref : dataAccess.getServiceRefsByServer(id)) {
+        for (ServiceRef ref : getDataAccess().getServiceRefsByServer(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = dataAccess.getService(ref.getClientServiceId()).getServiceName();
+            tempRef.serviceName = getDataAccess().getService(ref.getClientServiceId()).getServiceName();
             getServiceData.usedBy.add(tempRef);
         }
 
@@ -176,7 +171,7 @@ public class ServiceGetHandler extends BasicHandler {
             }
         });
         
-        List<CustomFunction> customFunctions = dataAccess.getCustomFunctions(id);
+        List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(id);
         Collections.sort(customFunctions);
         for (CustomFunction customFunction : customFunctions) {
             for (GetModuleData temp : getServiceData.modules) {
@@ -190,7 +185,7 @@ public class ServiceGetHandler extends BasicHandler {
         waitForFutures(futures);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(getServiceData, GetServiceData.class, jw);
+            getGson().toJson(getServiceData, GetServiceData.class, jw);
         }
         response.setStatus(200);
         request.setHandled(true);

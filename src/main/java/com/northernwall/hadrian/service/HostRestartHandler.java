@@ -43,13 +43,11 @@ import org.eclipse.jetty.server.Request;
 public class HostRestartHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostRestartHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -58,11 +56,11 @@ public class HostRestartHandler extends BasicHandler {
         PutRestartHostData putRestartHostData = fromJson(request, PutRestartHostData.class);
         Service service = getService(putRestartHostData.serviceId, putRestartHostData.serviceName, putRestartHostData.serviceAbbr);
         User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         Module module = getModule(putRestartHostData.moduleId, putRestartHostData.moduleName, service);
 
-        List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
@@ -78,7 +76,7 @@ public class HostRestartHandler extends BasicHandler {
                         } else {
                             host.setStatus("Restart Queued");
                         }
-                        dataAccess.updateHost(host);
+                        getDataAccess().updateHost(host);
                         workItems.add(workItem);
                     }
                 }
@@ -92,7 +90,7 @@ public class HostRestartHandler extends BasicHandler {
                 WorkItem workItem = workItems.get(size - i - 1);
                 workItem.setNextId(prevId);
                 prevId = workItem.getId();
-                dataAccess.saveWorkItem(workItem);
+                getDataAccess().saveWorkItem(workItem);
             }
             workItemProcess.sendWorkItem(workItems.get(0));
             if (putRestartHostData.wait) {
@@ -102,7 +100,7 @@ public class HostRestartHandler extends BasicHandler {
                         Thread.sleep(20_000);
                     } catch (InterruptedException ex) {
                     }
-                    WorkItem workItem = dataAccess.getWorkItem(lastId);
+                    WorkItem workItem = getDataAccess().getWorkItem(lastId);
                     if (workItem == null) {
                         response.setStatus(200);
                         request.setHandled(true);

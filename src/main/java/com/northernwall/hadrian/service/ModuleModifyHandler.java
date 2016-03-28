@@ -46,13 +46,11 @@ public class ModuleModifyHandler extends BasicHandler {
     private final static Logger logger = LoggerFactory.getLogger(ModuleModifyHandler.class);
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -63,10 +61,10 @@ public class ModuleModifyHandler extends BasicHandler {
         Service service = getService(serviceId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         PutModuleData putModuleData = fromJson(request, PutModuleData.class);
-        List<Module> modules = dataAccess.getModules(serviceId);
+        List<Module> modules = getDataAccess().getModules(serviceId);
         List<Module> zeroModules = new LinkedList<>();
         Module module = null;
         for (Module temp : modules) {
@@ -121,12 +119,12 @@ public class ModuleModifyHandler extends BasicHandler {
             for (Module temp : modules) {
                 if (temp.getOrder() != i) {
                     temp.setOrder(i);
-                    dataAccess.saveModule(temp);
+                    getDataAccess().saveModule(temp);
                 }
                 i++;
             }
         }
-        dataAccess.saveModule(module);
+        getDataAccess().saveModule(module);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null);
         for (Module temp : zeroModules) {
@@ -135,7 +133,7 @@ public class ModuleModifyHandler extends BasicHandler {
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
 
         response.setStatus(200);

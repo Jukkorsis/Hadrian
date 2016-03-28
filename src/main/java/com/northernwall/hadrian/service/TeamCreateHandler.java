@@ -31,12 +31,10 @@ import org.eclipse.jetty.server.Request;
 public class TeamCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public TeamCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
@@ -55,19 +53,19 @@ public class TeamCreateHandler extends BasicHandler {
         if (postTeamData.teamName.isEmpty()) {
             throw new Http400BadRequestException("Failed to create new team, as team name is empty");
         }
-        for (Team temp : dataAccess.getTeams()) {
+        for (Team temp : getDataAccess().getTeams()) {
             if (temp.getTeamName().equals(postTeamData.teamName)) {
                 throw new Http405NotAllowedException("Failed to create new team, as team with name " + postTeamData.teamName + " already exists");
             }
         }
 
         Team team = new Team(postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.gitGroup, postTeamData.calendarId);
-        if (dataAccess.getUser(postTeamData.user.getUsername()) == null) {
+        if (getDataAccess().getUser(postTeamData.user.getUsername()) == null) {
             throw new Http404NotFoundException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
         }
         team.getUsernames().add(postTeamData.user.getUsername());
 
-        dataAccess.saveTeam(team);
+        getDataAccess().saveTeam(team);
         response.setStatus(200);
         request.setHandled(true);
     }

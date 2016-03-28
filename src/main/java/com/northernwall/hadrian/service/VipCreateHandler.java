@@ -41,13 +41,11 @@ import org.eclipse.jetty.server.Request;
 public class VipCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public VipCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -57,10 +55,10 @@ public class VipCreateHandler extends BasicHandler {
 
         Service service = getService(postVipData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         //Check for duplicate VIP
-        List<Vip> vips = dataAccess.getVips(postVipData.serviceId);
+        List<Vip> vips = getDataAccess().getVips(postVipData.serviceId);
         for (Vip temp : vips) {
             if (temp.getVipName().equals(postVipData.vipName)) {
                 return;
@@ -86,10 +84,10 @@ public class VipCreateHandler extends BasicHandler {
                 postVipData.protocol,
                 postVipData.vipPort,
                 postVipData.servicePort);
-        dataAccess.saveVip(vip);
+        getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);
         request.setHandled(true);

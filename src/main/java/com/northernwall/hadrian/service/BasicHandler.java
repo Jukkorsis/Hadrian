@@ -30,6 +30,10 @@ public abstract class BasicHandler extends AbstractHandler {
         return dataAccess;
     }
 
+    public static Gson getGson() {
+        return gson;
+    }
+
     protected final <T> T fromJson(org.eclipse.jetty.server.Request request, Class<T> classOfT) throws IOException {
         Reader reader = new InputStreamReader(request.getInputStream());
         T temp = gson.fromJson(reader, classOfT);

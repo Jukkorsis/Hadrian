@@ -34,18 +34,16 @@ import org.eclipse.jetty.server.Request;
 public class CustomFuntionCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public CustomFuntionCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
-        Service service = dataAccess.getService(postCFData.serviceId);
+        Service service = getDataAccess().getService(postCFData.serviceId);
         if (service == null) {
             throw new Http404NotFoundException("Could not find service");
         }
@@ -58,7 +56,7 @@ public class CustomFuntionCreateHandler extends BasicHandler {
                 postCFData.method,
                 postCFData.url,
                 postCFData.teamOnly);
-        dataAccess.saveCustomFunction(customFunction);
+        getDataAccess().saveCustomFunction(customFunction);
 
         response.setStatus(200);
         request.setHandled(true);

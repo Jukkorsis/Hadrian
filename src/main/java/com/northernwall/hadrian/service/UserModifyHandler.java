@@ -31,12 +31,10 @@ import org.eclipse.jetty.server.Request;
 public class UserModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public UserModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class UserModifyHandler extends BasicHandler {
         accessHelper.checkIfUserIsAdmin(request, "update user");
 
         User temp = fromJson(request, User.class);
-        dataAccess.updateUser(temp);
+        getDataAccess().updateUser(temp);
         
         response.setStatus(200);
         request.setHandled(true);

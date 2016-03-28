@@ -47,13 +47,11 @@ public class HostVipCreateHandler extends BasicHandler {
     private final static Logger logger = LoggerFactory.getLogger(HostVipCreateHandler.class);
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostVipCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -62,9 +60,9 @@ public class HostVipCreateHandler extends BasicHandler {
         PostHostVipData data = fromJson(request, PostHostVipData.class);
         Service service = getService(data.serviceId,  null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
-        Team team = dataAccess.getTeam(service.getTeamId());
-        List<Host> hosts = dataAccess.getHosts(data.serviceId);
-        Vip vip = dataAccess.getVip(data.serviceId, data.vipId);
+        Team team = getDataAccess().getTeam(service.getTeamId());
+        List<Host> hosts = getDataAccess().getHosts(data.serviceId);
+        Vip vip = getDataAccess().getVip(data.serviceId, data.vipId);
         if (vip == null) {
             throw new RuntimeException("Could not find vip");
         }
@@ -73,15 +71,15 @@ public class HostVipCreateHandler extends BasicHandler {
             if (data.hostNames.contains(host.getHostName())) {
                 if (host.getNetwork().equals(vip.getNetwork())) {
                     if (module == null || host.getModuleId().equals(module.getModuleId())) {
-                        for (Module temp : dataAccess.getModules(host.getServiceId())) {
+                        for (Module temp : getDataAccess().getModules(host.getServiceId())) {
                             if (temp.getModuleId().equals(host.getModuleId())) {
                                 module = temp;
                             }
                         }
                     }
-                    dataAccess.saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
+                    getDataAccess().saveVipRef(new VipRef(host.getHostId(), vip.getVipId(), "Adding..."));
                     WorkItem workItem = new WorkItem(Type.hostvip, Operation.create, user, team, service, module, host, vip);
-                    dataAccess.saveWorkItem(workItem);
+                    getDataAccess().saveWorkItem(workItem);
                     workItemProcess.sendWorkItem(workItem);
                 } else {
                     logger.warn("Request to add {} to {} reject because they are not on the same network", host.getHostName(), vip.getVipName());

@@ -39,13 +39,11 @@ import org.eclipse.jetty.server.Request;
 public class VipModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public VipModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -54,21 +52,21 @@ public class VipModifyHandler extends BasicHandler {
         String vipId = target.substring(8, target.length());
         PutVipData putVipData = fromJson(request, PutVipData.class);
 
-        Vip vip = dataAccess.getVip(putVipData.serviceId, vipId);
+        Vip vip = getDataAccess().getVip(putVipData.serviceId, vipId);
         if (vip == null) {
             throw new RuntimeException("Could not find vip");
         }
         Service service = getService(vip.getServiceId(), null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         vip.setStatus("Updating...");
-        dataAccess.saveVip(vip);
+        getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
         workItem.getVip().external = putVipData.external;
         workItem.getVip().servicePort = putVipData.servicePort;
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);
         request.setHandled(true);

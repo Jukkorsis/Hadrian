@@ -47,14 +47,12 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -63,7 +61,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         PutDeploySoftwareData putDeployData = fromJson(request, PutDeploySoftwareData.class);
         Service service = getService(putDeployData.serviceId, putDeployData.serviceName, putDeployData.serviceAbbr);
         User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         Module module = getModule(putDeployData.moduleId, putDeployData.moduleName, service);
 
@@ -87,7 +85,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             throw new Http400BadRequestException("One of version and versionUrl must be specified");
         }
         
-        List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
@@ -105,7 +103,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         } else {
                             host.setStatus("Deploy Queued");
                         }
-                        dataAccess.updateHost(host);
+                        getDataAccess().updateHost(host);
                         workItems.add(workItem);
                     }
                 }
@@ -119,7 +117,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                 WorkItem workItem = workItems.get(size - i - 1);
                 workItem.setNextId(prevId);
                 prevId = workItem.getId();
-                dataAccess.saveWorkItem(workItem);
+                getDataAccess().saveWorkItem(workItem);
             }
             workItemProcess.sendWorkItem(workItems.get(0));
             if (putDeployData.wait) {
@@ -129,7 +127,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         Thread.sleep(20_000);
                     } catch (InterruptedException ex) {
                     }
-                    WorkItem workItem = dataAccess.getWorkItem(lastId);
+                    WorkItem workItem = getDataAccess().getWorkItem(lastId);
                     if (workItem == null) {
                         response.setStatus(200);
                         request.setHandled(true);

@@ -34,12 +34,10 @@ import org.eclipse.jetty.server.Request;
 public class CustomFuntionModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public CustomFuntionModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
@@ -47,11 +45,11 @@ public class CustomFuntionModifyHandler extends BasicHandler {
         String customFunctionId = target.substring(7, target.length());
         PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
 
-        CustomFunction customFunction = dataAccess.getCustomFunction(postCFData.serviceId, customFunctionId);
+        CustomFunction customFunction = getDataAccess().getCustomFunction(postCFData.serviceId, customFunctionId);
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
         }
-        Service service = dataAccess.getService(customFunction.getServiceId());
+        Service service = getDataAccess().getService(customFunction.getServiceId());
         if (service == null) {
             throw new Http404NotFoundException("Could not find service");
         }
@@ -61,7 +59,7 @@ public class CustomFuntionModifyHandler extends BasicHandler {
         customFunction.setMethod(postCFData.method);
         customFunction.setUrl(postCFData.url);
 
-        dataAccess.updateCustomFunction(customFunction);
+        getDataAccess().updateCustomFunction(customFunction);
 
         response.setStatus(200);
         request.setHandled(true);

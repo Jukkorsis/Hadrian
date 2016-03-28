@@ -53,14 +53,12 @@ public class ModuleCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public ModuleCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
@@ -69,7 +67,7 @@ public class ModuleCreateHandler extends BasicHandler {
         PostModuleData postModuleData = fromJson(request, PostModuleData.class);
         Service service = getService(postModuleData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         Config config = configHelper.getConfig();
         if (!config.moduleTypes.contains(postModuleData.moduleType)) {
@@ -129,7 +127,7 @@ public class ModuleCreateHandler extends BasicHandler {
             postModuleData.gitFolder = "";
         }
 
-        List<Module> modules = dataAccess.getModules(postModuleData.serviceId);
+        List<Module> modules = getDataAccess().getModules(postModuleData.serviceId);
         List<Module> zeroModules = new LinkedList<>();
         for (Module temp : modules) {
             if (postModuleData.moduleName.equalsIgnoreCase(temp.getModuleName())) {
@@ -156,7 +154,7 @@ public class ModuleCreateHandler extends BasicHandler {
             for (Module temp : modules) {
                 if (temp.getOrder() >= postModuleData.order) {
                     temp.setOrder(temp.getOrder() + 1);
-                    dataAccess.updateModule(temp);
+                    getDataAccess().updateModule(temp);
                 }
             }
         }
@@ -181,7 +179,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 postModuleData.startTimeOut,
                 postModuleData.stopCmdLine,
                 postModuleData.stopTimeOut);
-        dataAccess.saveModule(module);
+        getDataAccess().saveModule(module);
         if (module.getOrder() > 0) {
             modules.add(module.getOrder() - 1, module);
         } else {
@@ -197,7 +195,7 @@ public class ModuleCreateHandler extends BasicHandler {
             workItem.addModule(temp);
         }
 
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
 
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);

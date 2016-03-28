@@ -32,12 +32,10 @@ import org.eclipse.jetty.server.Request;
 public class ServiceModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public ServiceModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
 
-        dataAccess.updateService(service);
+        getDataAccess().updateService(service);
         response.setStatus(200);
         request.setHandled(true);
     }

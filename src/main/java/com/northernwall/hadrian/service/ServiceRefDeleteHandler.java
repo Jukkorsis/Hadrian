@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -39,14 +38,10 @@ import org.eclipse.jetty.server.Request;
 public class ServiceRefDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
-    private final Gson gson;
 
     public ServiceRefDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
-        gson = new Gson();
     }
 
     @Override
@@ -58,7 +53,7 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         Service serverService = getService(serverId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
-        dataAccess.deleteServiceRef(clientId, serverId);
+        getDataAccess().deleteServiceRef(clientId, serverId);
         Map<String, String> notes = new HashMap<>();
         notes.put("uses", serverService.getServiceAbbr());
         createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.delete, notes);
@@ -77,8 +72,8 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         audit.requestor = requestor;
         audit.type = type;
         audit.operation = operation;
-        audit.notes = gson.toJson(notes);
-        dataAccess.saveAudit(audit, " ");
+        audit.notes = getGson().toJson(notes);
+        getDataAccess().saveAudit(audit, " ");
     }
 
 }

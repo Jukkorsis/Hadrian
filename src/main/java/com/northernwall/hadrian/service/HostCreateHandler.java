@@ -52,26 +52,24 @@ public class HostCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostHostData postHostData = fromJson(request, PostHostData.class);
-        Service service = dataAccess.getService(postHostData.serviceId);
+        Service service = getDataAccess().getService(postHostData.serviceId);
         if (service == null) {
             throw new Http404NotFoundException("Could not find service");
         }
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
-        Team team = dataAccess.getTeam(service.getTeamId());
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
         if (postHostData.count < 1) {
             throw new Http400BadRequestException("count must to at least 1");
@@ -94,7 +92,7 @@ public class HostCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Unknown size");
         }
 
-        List<Module> modules = dataAccess.getModules(postHostData.serviceId);
+        List<Module> modules = getDataAccess().getModules(postHostData.serviceId);
         Module module = null;
         for (Module temp : modules) {
             if (temp.getModuleId().equals(postHostData.moduleId)) {
@@ -109,7 +107,7 @@ public class HostCreateHandler extends BasicHandler {
         String prefix = buildPrefix(postHostData.network, config, postHostData.dataCenter, module.getHostAbbr());
         int len = prefix.length();
         int num = 0;
-        List<Host> hosts = dataAccess.getHosts(postHostData.serviceId);
+        List<Host> hosts = getDataAccess().getHosts(postHostData.serviceId);
         for (Host existingHost : hosts) {
             String existingHostName = existingHost.getHostName();
             if (existingHostName.startsWith(prefix) && existingHostName.length() > len) {
@@ -137,7 +135,7 @@ public class HostCreateHandler extends BasicHandler {
                     postHostData.network,
                     postHostData.env,
                     postHostData.size);
-            dataAccess.saveHost(host);
+            getDataAccess().saveHost(host);
 
             WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
             WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
@@ -148,8 +146,8 @@ public class HostCreateHandler extends BasicHandler {
             workItemDeploy.getHost().version = postHostData.version;
             workItemDeploy.getHost().reason = postHostData.reason;
 
-            dataAccess.saveWorkItem(workItemCreate);
-            dataAccess.saveWorkItem(workItemDeploy);
+            getDataAccess().saveWorkItem(workItemCreate);
+            getDataAccess().saveWorkItem(workItemDeploy);
 
             workItemProcess.sendWorkItem(workItemCreate);
         }

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -46,14 +45,10 @@ public class ServiceCreateHandler extends BasicHandler {
     private final static Logger logger = LoggerFactory.getLogger(ServiceCreateHandler.class);
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
-    private final Gson gson;
 
     public ServiceCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
-        gson = new Gson();
     }
 
     @Override
@@ -66,7 +61,7 @@ public class ServiceCreateHandler extends BasicHandler {
             return;
         }
 
-        for (Service temp : dataAccess.getServices(postServiceData.teamId)) {
+        for (Service temp : getDataAccess().getServices(postServiceData.teamId)) {
             if (temp.getServiceAbbr().equals(postServiceData.serviceAbbr)) {
                 logger.warn("A service already exists with that abbreviation, {}", postServiceData.serviceAbbr);
                 return;
@@ -86,7 +81,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 postServiceData.gitMode,
                 postServiceData.gitProject);
 
-        dataAccess.saveService(service);
+        getDataAccess().saveService(service);
 
         Map<String, String> notes = new HashMap<>();
         notes.put("name", service.getServiceName());
@@ -104,8 +99,8 @@ public class ServiceCreateHandler extends BasicHandler {
         audit.requestor = requestor;
         audit.type = type;
         audit.operation = operation;
-        audit.notes = gson.toJson(notes);
-        dataAccess.saveAudit(audit, " ");
+        audit.notes = getGson().toJson(notes);
+        getDataAccess().saveAudit(audit, " ");
     }
 
 }

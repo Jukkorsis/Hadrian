@@ -29,32 +29,30 @@ import org.eclipse.jetty.server.Request;
 public class TeamAddUserHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public TeamAddUserHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostTeamAddUser postTeamAddUser = fromJson(request, PostTeamAddUser.class);
 
-        Team team = dataAccess.getTeam(postTeamAddUser.teamId);
+        Team team = getDataAccess().getTeam(postTeamAddUser.teamId);
         if (team == null) {
             throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find team");
         }
         
         accessHelper.checkIfUserCanModify(request, postTeamAddUser.teamId, "add user to team");
         
-        if (dataAccess.getUser(postTeamAddUser.username) == null) {
+        if (getDataAccess().getUser(postTeamAddUser.username) == null) {
             throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find user");
         }
 
         if (!team.getUsernames().contains(postTeamAddUser.username)) {
             team.getUsernames().add(postTeamAddUser.username);
-            dataAccess.updateTeam(team);
+            getDataAccess().updateTeam(team);
         }
         
         response.setStatus(200);

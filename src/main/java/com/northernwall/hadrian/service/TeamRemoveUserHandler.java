@@ -30,19 +30,17 @@ import org.eclipse.jetty.server.Request;
 public class TeamRemoveUserHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public TeamRemoveUserHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteTeamRemoveUser deleteTeamAddUser = fromJson(request, DeleteTeamRemoveUser.class);
 
-        Team team = dataAccess.getTeam(deleteTeamAddUser.teamId);
+        Team team = getDataAccess().getTeam(deleteTeamAddUser.teamId);
         if (team == null) {
             throw new Http404NotFoundException("Failed to add user " + deleteTeamAddUser.username + " to team " + deleteTeamAddUser.teamId + ", could not find team");
         }
@@ -55,7 +53,7 @@ public class TeamRemoveUserHandler extends BasicHandler {
 
         if (team.getUsernames().contains(deleteTeamAddUser.username)) {
             team.getUsernames().remove(deleteTeamAddUser.username);
-            dataAccess.updateTeam(team);
+            getDataAccess().updateTeam(team);
         }
 
         response.setStatus(200);

@@ -29,12 +29,10 @@ import org.eclipse.jetty.server.Request;
 
 public class AuditHandler extends BasicHandler {
 
-    private final DataAccess dataAccess;
     private final AccessHelper accessHelper;
 
     public AuditHandler(DataAccess dataAccess, AccessHelper accessHelper) {
         super(dataAccess);
-        this.dataAccess = dataAccess;
         this.accessHelper = accessHelper;
     }
 
@@ -59,7 +57,7 @@ public class AuditHandler extends BasicHandler {
             audit.vipName = postAudit.vipName;
         }
         audit.notes = postAudit.notes;
-        dataAccess.saveAudit(audit, "");
+        getDataAccess().saveAudit(audit, "");
 
         response.setStatus(200);
         request.setHandled(true);

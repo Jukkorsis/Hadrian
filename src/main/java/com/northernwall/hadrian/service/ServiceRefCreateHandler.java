@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -42,14 +41,10 @@ import org.eclipse.jetty.server.Request;
 public class ServiceRefCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
-    private final Gson gson;
 
     public ServiceRefCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
-        gson = new Gson();
     }
 
     @Override
@@ -62,10 +57,10 @@ public class ServiceRefCreateHandler extends BasicHandler {
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 String serverId = entry.getKey();
-                Service serverService = dataAccess.getService(serverId);
+                Service serverService = getDataAccess().getService(serverId);
                 if (serverService != null) {
                     ServiceRef ref = new ServiceRef(clientId, serverId);
-                    dataAccess.saveServiceRef(ref);
+                    getDataAccess().saveServiceRef(ref);
                     Map<String, String> notes = new HashMap<>();
                     notes.put("uses", serverService.getServiceAbbr());
                     createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.create, notes);
@@ -87,8 +82,8 @@ public class ServiceRefCreateHandler extends BasicHandler {
         audit.requestor = requestor;
         audit.type = type;
         audit.operation = operation;
-        audit.notes = gson.toJson(notes);
-        dataAccess.saveAudit(audit, " ");
+        audit.notes = getGson().toJson(notes);
+        getDataAccess().saveAudit(audit, " ");
     }
 
 }
