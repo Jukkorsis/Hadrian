@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -39,7 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,20 +45,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class HostBackfillHandler extends AbstractHandler {
+public class HostBackfillHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(HostBackfillHandler.class);
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final DataAccess dataAccess;
-    private final Gson gson;
 
     public HostBackfillHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.dataAccess = dataAccess;
-        gson = new Gson();
     }
 
     @Override
@@ -93,9 +88,9 @@ public class HostBackfillHandler extends AbstractHandler {
                 && config.networkNames.contains(network)
                 && config.envs.contains(env)
                 && config.sizes.contains(size)) {
-            for (Service service : dataAccess.getServices()) {
+            for (Service service : getDataAccess().getServices()) {
                 if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
-                    List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+                    List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
                     for (Host host : hosts) {
                         if (host.getHostName().equalsIgnoreCase(hostName)) {
                             logger.warn("There already exists host '{}' on service '{}'", hostName, serviceAbbr);
@@ -103,7 +98,7 @@ public class HostBackfillHandler extends AbstractHandler {
                         }
                     }
                     Module module = null;
-                    List<Module> modules = dataAccess.getModules(service.getServiceId());
+                    List<Module> modules = getDataAccess().getModules(service.getServiceId());
                     for (Module temp : modules) {
                         if (temp.getModuleName().equalsIgnoreCase(moduleName)) {
                             module = temp;
@@ -121,7 +116,7 @@ public class HostBackfillHandler extends AbstractHandler {
                             network,
                             env,
                             size);
-                    dataAccess.saveHost(host);
+                    getDataAccess().saveHost(host);
 
                     Audit audit = new Audit();
                     audit.serviceId = service.getServiceId();
@@ -134,8 +129,8 @@ public class HostBackfillHandler extends AbstractHandler {
                     audit.hostName = hostName;
                     Map<String, String> notes = new HashMap<>();
                     notes.put("reason", "Backfill via OPS tool.");
-                    audit.notes = gson.toJson(notes);
-                    dataAccess.saveAudit(audit, "");
+                    audit.notes = getGson().toJson(notes);
+                    getDataAccess().saveAudit(audit);
 
                     return;
                 }

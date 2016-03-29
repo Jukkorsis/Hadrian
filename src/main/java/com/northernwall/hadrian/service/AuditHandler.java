@@ -57,7 +57,7 @@ public class AuditHandler extends BasicHandler {
             audit.vipName = postAudit.vipName;
         }
         audit.notes = postAudit.notes;
-        getDataAccess().saveAudit(audit, "");
+        getDataAccess().saveAudit(audit);
 
         response.setStatus(200);
         request.setHandled(true);

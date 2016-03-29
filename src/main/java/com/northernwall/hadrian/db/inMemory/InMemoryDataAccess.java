@@ -481,7 +481,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void saveAudit(Audit audit, String output) {
+    public void saveAudit(Audit audit) {
         synchronized (audits) {
             audits.add(audit);
             if (audits.size() > 1000) {

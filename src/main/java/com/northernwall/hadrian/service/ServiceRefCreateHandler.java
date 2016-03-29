@@ -83,7 +83,7 @@ public class ServiceRefCreateHandler extends BasicHandler {
         audit.type = type;
         audit.operation = operation;
         audit.notes = getGson().toJson(notes);
-        getDataAccess().saveAudit(audit, " ");
+        getDataAccess().saveAudit(audit);
     }
 
 }

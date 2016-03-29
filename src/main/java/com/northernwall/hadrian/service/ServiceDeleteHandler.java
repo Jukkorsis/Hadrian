@@ -72,7 +72,7 @@ public class ServiceDeleteHandler extends BasicHandler {
         Map<String, String> notes = new HashMap<>();
         notes.put("reason", deleteServiceData.reason);
         audit.notes = getGson().toJson(notes);
-        getDataAccess().saveAudit(audit, "");
+        getDataAccess().saveAudit(audit);
     }
 
 }

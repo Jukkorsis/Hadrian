@@ -27,6 +27,10 @@ public class Audit implements Comparable<Audit> {
     public String moduleName;
     public String hostName;
     public String vipName;
+    
+    /**
+     * notes is a string which contains a json encoded Map<String, String> of note/attributes.
+     */
     public String notes;
 
     @Override

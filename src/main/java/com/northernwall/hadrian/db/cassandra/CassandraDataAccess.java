@@ -264,7 +264,7 @@ public class CassandraDataAccess implements DataAccess {
         logger.info("Praparing audit statements...");
         logger.info("Audit TTL {}", auditTimeToLive);
         auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
-        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data, output) VALUES (?, now(), ?, ?) USING TTL " + auditTimeToLive + ";");
+        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data) VALUES (?, now(), ?) USING TTL " + auditTimeToLive + ";");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Prapared statements created");
@@ -710,9 +710,9 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void saveAudit(Audit audit, String output) {
+    public void saveAudit(Audit audit) {
         BoundStatement boundStatement = new BoundStatement(auditInsert);
-        session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit), output));
+        session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit)));
     }
 
     @Override
