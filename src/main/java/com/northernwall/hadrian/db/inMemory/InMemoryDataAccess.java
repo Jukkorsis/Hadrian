@@ -121,7 +121,9 @@ public class InMemoryDataAccess implements DataAccess {
     public List<Service> getServices() {
         List<Service> temp = new LinkedList<>();
         for (Service service : services.values()) {
-            temp.add(service);
+            if (service.isActive()) {
+                temp.add(service);
+            }
         }
         Collections.sort(temp);
         return temp;
@@ -131,7 +133,19 @@ public class InMemoryDataAccess implements DataAccess {
     public List<Service> getServices(String teamId) {
         List<Service> temp = new LinkedList<>();
         for (Service service : services.values()) {
-            if (service.getTeamId().equals(teamId)) {
+            if (service.getTeamId().equals(teamId) && service.isActive()) {
+                temp.add(service);
+            }
+        }
+        Collections.sort(temp);
+        return temp;
+    }
+
+    @Override
+    public List<Service> getDeletedServices(String teamId) {
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services.values()) {
+            if (service.getTeamId().equals(teamId) && !service.isActive()) {
                 temp.add(service);
             }
         }

@@ -49,6 +49,7 @@ public interface DataAccess {
 
     List<Service> getServices();
     List<Service> getServices(String teamId);
+    List<Service> getDeletedServices(String teamId);
     Service getService(String serviceId);
     void saveService(Service service);
     void updateService(Service service);

@@ -33,8 +33,9 @@ public class Service implements Comparable<Service>{
     private GitMode gitMode;
     private String gitProject;
     private Date creationDate;
+    private boolean active;
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject) {
+    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
@@ -44,6 +45,7 @@ public class Service implements Comparable<Service>{
         this.gitMode = gitMode;
         this.gitProject = gitProject;
         this.creationDate = new Date();
+        this.active = active;
     }
 
     public String getServiceId() {
@@ -72,6 +74,10 @@ public class Service implements Comparable<Service>{
 
     public String getTeamId() {
         return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
     public String getDescription() {
@@ -112,6 +118,14 @@ public class Service implements Comparable<Service>{
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

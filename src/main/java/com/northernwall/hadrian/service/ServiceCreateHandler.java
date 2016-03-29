@@ -79,7 +79,8 @@ public class ServiceCreateHandler extends BasicHandler {
                 postServiceData.description,
                 postServiceData.serviceType,
                 postServiceData.gitMode,
-                postServiceData.gitProject);
+                postServiceData.gitProject,
+                true);
 
         getDataAccess().saveService(service);
 

@@ -39,12 +39,12 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,19 +362,41 @@ public class CassandraDataAccess implements DataAccess {
 
     @Override
     public List<Service> getServices() {
-        return getData("service", Service.class);
+        List<Service> services = getData("service", Service.class);
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services) {
+            if (service.isActive()) {
+                temp.add(service);
+            }
+        }
+        Collections.sort(temp);
+        return temp;
     }
 
     @Override
     public List<Service> getServices(String teamId) {
         List<Service> services = getData("service", Service.class);
-        services.removeIf(new Predicate<Service>() {
-            @Override
-            public boolean test(Service service) {
-                return !service.getTeamId().equals(teamId);
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services) {
+            if (service.getTeamId().equals(teamId) && service.isActive()) {
+                temp.add(service);
             }
-        });
-        return services;
+        }
+        Collections.sort(temp);
+        return temp;
+    }
+
+    @Override
+    public List<Service> getDeletedServices(String teamId) {
+        List<Service> services = getData("service", Service.class);
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services) {
+            if (service.getTeamId().equals(teamId) && !service.isActive()) {
+                temp.add(service);
+            }
+        }
+        Collections.sort(temp);
+        return temp;
     }
 
     @Override
