@@ -216,7 +216,7 @@ hadrianControllers.controller('ModalAddTeamCtrl',
                     user: $scope.formSaveTeam.user
                 };
 
-                var responsePromise = $http.post("/v1/team", dataObject, {});
+                var responsePromise = $http.post("/v1/team/create", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $window.location.reload();
@@ -253,7 +253,7 @@ hadrianControllers.controller('ModalUpdateUserCtrl',
                     audit: $scope.formUpdateUser.audit
                 };
 
-                var responsePromise = $http.put("/v1/user/" + $scope.user.username, dataObject, {});
+                var responsePromise = $http.put("/v1/user/modify", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();

@@ -22,8 +22,8 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.service.dao.DeleteServiceRefData;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -46,32 +46,33 @@ public class ServiceRefDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String clientId = target.substring(12, target.length() - 42);
-        String serverId = target.substring(54, target.length());
+        DeleteServiceRefData deleteServiceRefData = fromJson(request, DeleteServiceRefData.class);
         
-        Service clientService = getService(clientId, null, null);
-        Service serverService = getService(serverId, null, null);
+        Service clientService = getService(deleteServiceRefData.clientId, null, null);
+        Service serverService = getService(deleteServiceRefData.serverId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
-        getDataAccess().deleteServiceRef(clientId, serverId);
+        
+        getDataAccess().deleteServiceRef(deleteServiceRefData.clientId, deleteServiceRefData.serverId);
+        
         Map<String, String> notes = new HashMap<>();
         notes.put("uses", serverService.getServiceAbbr());
-        createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.delete, notes);
+        createAudit(deleteServiceRefData.clientId, user.getUsername(), notes);
         notes = new HashMap<>();
         notes.put("use_by", clientService.getServiceAbbr());
-        createAudit(serverId, user.getUsername(), Type.serviceRef, Operation.delete, notes);
+        createAudit(deleteServiceRefData.serverId, user.getUsername(), notes);
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
+    private void createAudit(String serviceId, String requestor, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
-        audit.timePerformed = new Date();
-        audit.timeRequested = new Date();
+        audit.timePerformed = getGmt();
+        audit.timeRequested = getGmt();
         audit.requestor = requestor;
-        audit.type = type;
-        audit.operation = operation;
+        audit.type = Type.serviceRef;
+        audit.operation = Operation.delete;
         audit.notes = getGson().toJson(notes);
         getDataAccess().saveAudit(audit);
     }

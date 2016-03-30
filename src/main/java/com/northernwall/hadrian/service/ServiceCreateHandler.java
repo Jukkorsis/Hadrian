@@ -95,8 +95,8 @@ public class ServiceCreateHandler extends BasicHandler {
     private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
-        audit.timePerformed = new Date();
-        audit.timeRequested = new Date();
+        audit.timePerformed = getGmt();
+        audit.timeRequested = getGmt();
         audit.requestor = requestor;
         audit.type = type;
         audit.operation = operation;

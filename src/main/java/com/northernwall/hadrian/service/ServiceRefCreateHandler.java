@@ -25,7 +25,6 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.PostServiceRefData;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,9 +48,8 @@ public class ServiceRefCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String clientId = target.substring(12, target.length() - 4);
         PostServiceRefData postServiceRefData = fromJson(request, PostServiceRefData.class);
-        Service clientService = getService(clientId, null, null);
+        Service clientService = getService(postServiceRefData.clientId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
@@ -59,14 +57,14 @@ public class ServiceRefCreateHandler extends BasicHandler {
                 String serverId = entry.getKey();
                 Service serverService = getDataAccess().getService(serverId);
                 if (serverService != null) {
-                    ServiceRef ref = new ServiceRef(clientId, serverId);
+                    ServiceRef ref = new ServiceRef(postServiceRefData.clientId, serverId);
                     getDataAccess().saveServiceRef(ref);
                     Map<String, String> notes = new HashMap<>();
                     notes.put("uses", serverService.getServiceAbbr());
-                    createAudit(clientId, user.getUsername(), Type.serviceRef, Operation.create, notes);
+                    createAudit(postServiceRefData.clientId, user.getUsername(), notes);
                     notes = new HashMap<>();
                     notes.put("use_by", clientService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), Type.serviceRef, Operation.create, notes);
+                    createAudit(serverId, user.getUsername(), notes);
                 }
             }
         }
@@ -74,14 +72,14 @@ public class ServiceRefCreateHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
+    private void createAudit(String serviceId, String requestor, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
-        audit.timePerformed = new Date();
-        audit.timeRequested = new Date();
+        audit.timePerformed = getGmt();
+        audit.timeRequested = getGmt();
         audit.requestor = requestor;
-        audit.type = type;
-        audit.operation = operation;
+        audit.type = Type.serviceRef;
+        audit.operation = Operation.create;
         audit.notes = getGson().toJson(notes);
         getDataAccess().saveAudit(audit);
     }

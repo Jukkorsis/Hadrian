@@ -23,6 +23,7 @@ import java.util.Map;
  * @author Richard Thurston
  */
 public class PostServiceRefData {
+    public String clientId;
     public Map<String, String> uses;
 
 }

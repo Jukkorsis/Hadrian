@@ -21,6 +21,7 @@ package com.northernwall.hadrian.service.dao;
  * @author Richard Thurston
  */
 public class PutServiceData {
+    public String serviceId;
     public String serviceAbbr;
     public String serviceName;
     public String description;

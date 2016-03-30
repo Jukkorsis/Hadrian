@@ -20,20 +20,20 @@ package com.northernwall.hadrian.utilityHandlers.routingHandler;
  * @author rthursto
  */
 public enum TargetRule {
-    equals,
-    startWith,
-    matches,
-    any;
+    EQUALS,
+    STARTS_WITH,
+    MATCHES,
+    ANY;
     
     public boolean test(String pattern, String target) {
         switch (this) {
-            case equals:
+            case EQUALS:
                 return pattern.equalsIgnoreCase(target);
-            case startWith:
+            case STARTS_WITH:
                 return target.startsWith(pattern);
-            case matches:
+            case MATCHES:
                 return target.matches(pattern);
-            case any:
+            case ANY:
                 return true;
         }
         return false;

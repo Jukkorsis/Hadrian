@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Richard Thurston.
+ * Copyright 2015 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.northernwall.hadrian.service.dao;
 
-public class PutTeamData {
-    public String teamId;
-    public String teamName;
-    public String teamEmail;
-    public String teamIrc;
-    public String gitGroup;
-    public String calendarId;
+/**
+ *
+ * @author Richard Thurston
+ */
+public class DeleteServiceRefData {
+    public String clientId;
+    public String serverId;
 
 }

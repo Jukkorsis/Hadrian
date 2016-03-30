@@ -75,8 +75,13 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.deleteServiceRef = function (clientId, serviceId) {
-            var responsePromise = $http.delete("/v1/service/" + clientId + "/uses/" + serviceId, {});
+        $scope.deleteServiceRef = function (clientId, serverId) {
+            var dataObject = {
+                clientId: clientId,
+                serverId: serverId
+            };
+
+            var responsePromise = $http.post("/v1/service/deleteRef", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
@@ -583,12 +588,13 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
 
         $scope.save = function () {
             var dataObject = {
+                serviceId: $scope.formUpdateService.serviceId,
                 serviceAbbr: $scope.formUpdateService.serviceAbbr,
                 serviceName: $scope.formUpdateService.serviceName,
                 description: $scope.formUpdateService.description
             };
 
-            var responsePromise = $http.put("/v1/service/" + $scope.formUpdateService.serviceId, dataObject, {});
+            var responsePromise = $http.put("/v1/service/modify", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -644,10 +650,11 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
 
         $scope.save = function () {
             var dataObject = {
+                clientId: $scope.service.serviceId,
                 uses: $scope.formSelectUses
             };
 
-            var responsePromise = $http.post("/v1/service/" + $scope.service.serviceId + "/ref", dataObject, {});
+            var responsePromise = $http.post("/v1/service/createRef", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -721,7 +728,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 stopTimeOut: $scope.formSaveModule.stopTimeOut
             };
 
-            var responsePromise = $http.post("/v1/module", dataObject, {});
+            var responsePromise = $http.post("/v1/module/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -824,7 +831,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 servicePort: $scope.formSaveVip.servicePort
             };
 
-            var responsePromise = $http.post("/v1/vip/vip", dataObject, {});
+            var responsePromise = $http.post("/v1/vip/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -906,7 +913,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 reason: $scope.formSaveHost.reason
             };
 
-            var responsePromise = $http.post("/v1/host/host", dataObject, {});
+            var responsePromise = $http.post("/v1/host/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

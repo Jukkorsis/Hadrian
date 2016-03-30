@@ -94,6 +94,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl',
 
             $scope.save = function () {
                 var dataObject = {
+                    teamId: team.teamId,
                     teamName: $scope.formUpdateTeam.name,
                     teamEmail: $scope.formUpdateTeam.email,
                     teamIrc: $scope.formUpdateTeam.irc,
@@ -101,7 +102,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl',
                     calendarId: $scope.formUpdateTeam.calendarId
                 };
 
-                var responsePromise = $http.put("/v1/team/" + team.teamId, dataObject, {});
+                var responsePromise = $http.put("/v1/team/modify", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $route.reload();
@@ -143,7 +144,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     gitProject: $scope.formSaveService.gitProject
                 };
 
-                var responsePromise = $http.post("/v1/service/service", dataObject, {});
+                var responsePromise = $http.post("/v1/service/create", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
                     $window.location.reload();

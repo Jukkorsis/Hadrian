@@ -120,8 +120,8 @@ public class HostBackfillHandler extends BasicHandler {
 
                     Audit audit = new Audit();
                     audit.serviceId = service.getServiceId();
-                    audit.timePerformed = new Date();
-                    audit.timeRequested = new Date();
+                    audit.timePerformed = getGmt();
+                    audit.timeRequested = getGmt();
                     audit.requestor = user.getUsername();
                     audit.type = Type.host;
                     audit.operation = Operation.create;

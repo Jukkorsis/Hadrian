@@ -37,14 +37,13 @@ public class TeamModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String teamId = target.substring(9, target.length());
-        accessHelper.checkIfUserCanModify(request, teamId, "update team");
-        Team team = getDataAccess().getTeam(teamId);
+        PutTeamData putTeamData = fromJson(request, PutTeamData.class);
+        accessHelper.checkIfUserCanModify(request, putTeamData.teamId, "update team");
+        Team team = getDataAccess().getTeam(putTeamData.teamId);
         if (team == null) {
-            throw new Http404NotFoundException("Can not find team " + teamId + ", could not update team");
+            throw new Http404NotFoundException("Can not find team " + putTeamData.teamId + ", could not update team");
         }
 
-        PutTeamData putTeamData = fromJson(request, PutTeamData.class);
 
         team.setTeamName(putTeamData.teamName);
         team.setTeamEmail(putTeamData.teamEmail);

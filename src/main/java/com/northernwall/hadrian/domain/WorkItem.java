@@ -20,9 +20,11 @@ import com.northernwall.hadrian.workItem.dao.ModuleData;
 import com.northernwall.hadrian.workItem.dao.ServiceData;
 import com.northernwall.hadrian.workItem.dao.TeamData;
 import com.northernwall.hadrian.workItem.dao.VipData;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -52,7 +54,7 @@ public class WorkItem {
         this.nextId = null;
         this.username = user.getUsername();
         this.fullname = user.getFullName();
-        this.requestDate = new Date();
+        this.requestDate = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
         this.mainModule = ModuleData.create(module);
