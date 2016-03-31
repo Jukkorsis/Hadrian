@@ -189,9 +189,9 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(accessHelper, configHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/hostvip/create", new HostVipCreateHandler(accessHelper, dataAccess, workItemProcess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/hostvip/delete", new HostVipDeleteHandler(accessHelper, dataAccess, workItemProcess));
-        routingHandler.addRoute(MethodRule.GET, TargetRule.MATCHES, "/v1/cf/exec", new CustomFuntionExecHandler(accessHelper, dataAccess, client));
-        routingHandler.addRoute(MethodRule.POST, TargetRule.EQUALS, "/v1/cf/cf", new CustomFuntionCreateHandler(accessHelper, dataAccess));
-        routingHandler.addRoute(MethodRule.PUT, TargetRule.MATCHES, "/v1/cf/\\w+-\\w+-\\w+-\\w+-\\w+", new CustomFuntionModifyHandler(accessHelper, dataAccess));
+        routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(accessHelper, dataAccess, client));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(accessHelper, dataAccess));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/modify", new CustomFuntionModifyHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/delete", new CustomFuntionDeleteHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler());

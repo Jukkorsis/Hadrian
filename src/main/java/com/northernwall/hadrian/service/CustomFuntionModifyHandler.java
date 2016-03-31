@@ -42,19 +42,18 @@ public class CustomFuntionModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String customFunctionId = target.substring(7, target.length());
-        PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
+        PostCustomFunctionData data = fromJson(request, PostCustomFunctionData.class);
 
-        CustomFunction customFunction = getDataAccess().getCustomFunction(postCFData.serviceId, customFunctionId);
+        CustomFunction customFunction = getDataAccess().getCustomFunction(data.serviceId, data.cfId);
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
         }
         Service service = getService(customFunction.getServiceId(), null, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify custom function");
 
-        customFunction.setName(postCFData.name);
-        customFunction.setMethod(postCFData.method);
-        customFunction.setUrl(postCFData.url);
+        customFunction.setName(data.name);
+        customFunction.setMethod(data.method);
+        customFunction.setUrl(data.url);
 
         getDataAccess().updateCustomFunction(customFunction);
 

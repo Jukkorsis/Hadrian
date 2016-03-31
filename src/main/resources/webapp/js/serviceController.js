@@ -1123,7 +1123,7 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
                 teamOnly: $scope.formSaveCF.teamOnly
             };
 
-            var responsePromise = $http.post("/v1/cf/cf", dataObject, {});
+            var responsePromise = $http.post("/v1/cf/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -1151,6 +1151,7 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
 
         $scope.save = function () {
             var dataObject = {
+                cfId: $scope.cf.customFunctionId,
                 serviceId: $scope.service.serviceId,
                 name: $scope.formUpdateCF.name,
                 method: $scope.formUpdateCF.method,
@@ -1158,7 +1159,7 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
                 teamOnly: $scope.formUpdateCF.teamOnly
             };
 
-            var responsePromise = $http.put("/v1/cf/" + $scope.cf.customFunctionId, dataObject, {});
+            var responsePromise = $http.put("/v1/cf/modify", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

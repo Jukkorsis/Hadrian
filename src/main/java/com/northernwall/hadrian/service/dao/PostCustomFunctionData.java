@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.service.dao;
 
 public class PostCustomFunctionData {
+    public String cfId;
     public String serviceId;
     public String moduleId;
     public String name;
