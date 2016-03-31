@@ -361,6 +361,13 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public List<Service> getAllServices() {
+        List<Service> services = getData("service", Service.class);
+        Collections.sort(services);
+        return services;
+    }
+
+    @Override
     public List<Service> getServices() {
         List<Service> services = getData("service", Service.class);
         List<Service> temp = new LinkedList<>();

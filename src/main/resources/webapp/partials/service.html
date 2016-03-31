@@ -1,395 +1,478 @@
-<h3>{{service.serviceName}}
-    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
-        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-        </button>
-        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-            <li role="menuitem"><a ng-click="openUpdateServiceModal();">Update {{service.serviceName}}</a></li>
-            <!--
-            <li role="menuitem"><a ng-click="">Move {{service.serviceName}} to a different team</a></li>
-            -->
-            <li role="menuitem"><a ng-click="openDeleteServiceModal();">Delete {{service.serviceName}}</a></li>
-            <li class="divider"></li>
-            <li role="menuitem"><a ng-click="openAddUsesModal();">Add service dependence</a></li>
-            <li role="menuitem"ng-repeat="sr in service.uses">
-                <a ng-click="deleteServiceRef(service.serviceId, sr.serverServiceId);">Remove dependence on {{sr.serviceName}}</a>
-            </li>
-        </ul>
-    </div>
-</h3>
-<div class="row">
-    <div class="col-md-6">
-        <dl class="dl-horizontal">
-            <dt>Abbreviation:</dt>
-            <dd>{{service.serviceAbbr}}</dd>
-            <dt>Name:</dt>
-            <dd>{{service.serviceName}}</dd>
-            <dt>Type:</dt>
-            <dd>{{service.serviceType}}</dd>
-            <span ng-if="service.serviceType === 'Service'">
-                <dt>Git Mode:</dt>
-                <dd>{{service.gitMode}}</dd>
-                <div ng-if="service.gitMode === 'Consolidated'">
-                    <dt>Git Project</dt>
-                    <dd>
-                        <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a>
-                    </dd>
-                </div>
-            </span>
-            <dt>Description:</dt>
-            <dd>{{service.description}}</dd>
-        </dl>
-    </div>
-    <div class="col-md-6">
-        <dl class="dl-horizontal">
-            <dt>Creation Date:</dt>
-            <dd>{{service.creationDate}}</dd>
-            <dt>Used By:</dt>
-            <dd>
-                <div ng-repeat="sr in service.usedBy">
-                    <a href="#/Service/{{sr.clientServiceId}}">{{sr.serviceName}}</a>
-                    <br/>
-                </div>
-            </dd>
-            <dt>Uses:</dt>
-            <dd>
-                <div ng-repeat="sr in service.uses">
-                    <a href="#/Service/{{sr.serverServiceId}}">{{sr.serviceName}}</a>
-                    <br/>
-                </div>
-            </dd>
-        </dl>
-    </div>            
-</div> 
-<uib-tabset type="pills">
-    <uib-tab heading="Modules">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h4>Modules
-                    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
-                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                        </button>
-                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                            <li role="menuitem"><a ng-click="openAddModuleModal();">Add module to {{service.serviceName}}</a></li>
-                        </ul>
-                    </div>
-                </h4>
-                <table class="table table-hover table-striped table-condensed">
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Build Order</th>
-                        <th>Type</th>
-                        <th>Git Project</th>
-                        <th>Git Folder</th>
-                    </tr>
-                    <tr ng-repeat-start="m in service.modules">
-                        <td>
-                            <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
-                            <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
-                        </td>
-                        <td>
-                            {{m.moduleName}}
-                            <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
-                                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                </button>
-                                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                    <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module {{m.moduleName}}</a></li>
-                                    <li role="menuitem"><a ng-click="deleteModule(m.moduleId);">Delete module {{m.moduleName}}</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td>{{m.order}}</td>
-                        <td>{{m.moduleType}}</td>
-                        <td>
-                            <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{m.gitProject}}" target="_blank">{{team.gitGroup}}/{{m.gitProject}}.git</a>
-                        </td>
-                        <td>/{{m.gitFolder}}</td>
-                    </tr>
-                    <tr ng-if="m.expanded" ng-repeat-end="">
-                        <td colspan="9">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <dt>Maven Group ID:</dt>
-                                        <dd>{{m.mavenGroupId}}</dd>
-                                        <dt>Maven Artifact ID:</dt>
-                                        <dd>{{m.mavenArtifactId}}</dd>
-                                        <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Host Abbr:</dt>
-                                            <dd>{{m.hostAbbr}}</dd>
-                                            <dt>Availability URL:</dt>
-                                            <dd>{{m.availabilityUrl}}</dd>
-                                            <dt>Version URL:</dt>
-                                            <dd>{{m.versionUrl}}</dd>
-                                            <dt>Run As:</dt>
-                                            <dd>{{m.runAs}}</dd>
-                                            <dt>Deployment Folder:</dt>
-                                            <dd>{{m.deploymentFolder}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <dt>Artifact Type:</dt>
-                                        <dd>{{m.artifactType}}</dd>
-                                        <dt>Artifact Suffix:</dt>
-                                        <dd>{{m.artifactSuffix}}</dd>
-                                        <div ng-if="m.moduleType === 'Deployable'">
-                                            <dt>Start Cmd Line:</dt>
-                                            <dd>{{m.startCmdLine}}</dd>
-                                            <dt>Start Timeout:</dt>
-                                            <dd>{{m.startTimeOut}}</dd>
-                                            <dt>Stop Cmd Line:</dt>
-                                            <dd>{{m.stopCmdLine}}</dd>
-                                            <dt>Stop Timeout:</dt>
-                                            <dd>{{m.stopTimeOut}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+<div ng-if="loading">Loading...</div>
+<div ng-if="!loading">
+    <h3>{{service.serviceName}}
+        <div class="btn-group" uib-dropdown ng-if="service.canModify && service.active" is-open="status.isopen">
+            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+            </button>
+            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                <li role="menuitem"><a ng-click="openUpdateServiceModal();">Update {{service.serviceName}}</a></li>
+                <!--
+                <li role="menuitem"><a ng-click="">Move {{service.serviceName}} to a different team</a></li>
+                -->
+                <li role="menuitem"><a ng-click="openDeleteServiceModal();">Delete {{service.serviceName}}</a></li>
+                <li class="divider"></li>
+                <li role="menuitem"><a ng-click="openAddUsesModal();">Add service dependence</a></li>
+                <li role="menuitem"ng-repeat="sr in service.uses">
+                    <a ng-click="deleteServiceRef(service.serviceId, sr.serverServiceId);">Remove dependence on {{sr.serviceName}}</a>
+                </li>
+            </ul>
         </div>
-    </uib-tab>
-    <uib-tab heading="Hosts" ng-if="service.serviceType === 'Service'">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <form>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-                            <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
-                        </div>      
+    </h3>
+    <span ng-if="!service.active">Service has been Deleted</span>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Abbreviation:</dt>
+                <dd>{{service.serviceAbbr}}</dd>
+                <dt>Name:</dt>
+                <dd>{{service.serviceName}}</dd>
+                <dt>Type:</dt>
+                <dd>{{service.serviceType}}</dd>
+                <span ng-if="service.serviceType === 'Service'">
+                    <dt>Git Mode:</dt>
+                    <dd>{{service.gitMode}}</dd>
+                    <div ng-if="service.gitMode === 'Consolidated'">
+                        <dt>Git Project</dt>
+                        <dd>
+                            <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a>
+                        </dd>
                     </div>
-                </form>
-                <div ng-repeat="m in service.modules">
-                    <div ng-if="m.moduleType === 'Deployable'">
-                        <div ng-repeat="mn in m.networks">
-                            <h4>
-                                <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
-                                <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
-                                {{m.moduleName}} in {{mn.network}}
-                                <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
-                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                        <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
-                                    </ul>
-                                </div>
-                                <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
-                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                        <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
-                                        <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
-                                        <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
-                                        <li role="menuitem"><a ng-click="openAddHostsToVipModal(mn);">Add selected hosts to VIP</a></li>
-                                        <li class="divider"></li>
-                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                            <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="btn-group" uib-dropdown ng-if="!service.canModify" is-open="status.isopen">
-                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                        <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
-                                            <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </h4>
-                            <div ng-if="!mn.collapsed && mn.hosts.length > 0">
-                                <table class="table table-hover table-striped table-condensed">
-                                    <tr>
-                                        <th width="7%"></th>
-                                        <th width="23%">
-                                            <a ng-click="hostSortType = 'hostName';
-                                                                hostSortReverse = !hostSortReverse">
-                                                Host
-                                            </a>
-                                        </th>
-                                        <th width="5%">
-                                            <a ng-click="hostSortType = 'dataCenter';
-                                                                hostSortReverse = !hostSortReverse">
-                                                DC
-                                            </a>
-                                        </th>
-                                        <th width="15%">VIP</th>
-                                        <th width="10%">
-                                            <a ng-click="hostSortType = 'env';
-                                                                hostSortReverse = !hostSortReverse">
-                                                Env.
-                                            </a>
-                                        </th>
-                                        <th width="5%">
-                                            <a ng-click="hostSortType = 'size';
-                                                                hostSortReverse = !hostSortReverse">
-                                                Size
-                                            </a>
-                                        </th>
-                                        <th width="15%">
-                                            <a ng-click="hostSortType = 'version';
-                                                                hostSortReverse = !hostSortReverse">
-                                                Ver.
-                                            </a>
-                                        </th>
-                                        <th width="10%">
-                                            <a ng-click="hostSortType = 'availability';
-                                                                hostSortReverse = !hostSortReverse">
-                                                Avail.
-                                            </a>
-                                        </th>
-                                    </tr>
-                                    <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
-                                        <td>&nbsp;
-                                            <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
-                                            <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
-                                            <span ng-if="i.status === '-'">
-                                                <input ng-model="formSelectHost[i.hostId]" type="checkbox">
-                                            </span>
-                                        </td>
-                                        <td>
-                                            {{i.hostName}}
-                                            <div class="btn-group" uib-dropdown ng-if="i.status === '-' && service.canModify" is-open="status.isopen">
-                                                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                                </button>
-                                                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                                    <li role="menuitem"><a ng-click="openDeploySoftwareHostModal(i, mn, m);">Deploy software to {{i.hostName}}</a></li>
-                                                    <li role="menuitem"><a ng-click="openRestartHostModal(i, mn, m);">Restart {{i.hostName}}</a></li>
-                                                    <li role="menuitem"><a ng-click="openAddHostToVipModal(i, mn);">Add {{i.hostName}} to VIP</a></li>
-                                                    <li class="divider"></li>
-                                                    <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn, m);">Decommission {{i.hostName}}</a></li>
-                                                    <li role="menuitem" ng-repeat="epr in i.vipRefs| filter:{ status: '-' }">
-                                                        <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);">Remove {{i.hostName}} from the VIP {{epr.vipName}}</a>
-                                                    </li>
-                                                    <li class="divider"></li>
-                                                    <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                        <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="btn-group" uib-dropdown ng-if="i.status === '-' && !service.canModify" is-open="status.isopen">
-                                                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                                </button>
-                                                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                                    <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                        <a ng-click="openDoCustomFunctionHostModal(i.hostId, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <span ng-if="i.status !== '-'">
-                                                <span class="label label-warning">{{i.status}}</span>
-                                            </span>
-                                        </td>
-                                        <td>{{i.dataCenter}}</td>
-                                        <td>
-                                            <div ng-repeat="epr in i.vipRefs">
-                                                {{epr.vipName}}
-                                                <span ng-if="epr.status !== '-'">
-                                                    <span class="label label-warning">{{epr.status}}</span>
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td>{{i.env}}</td>
-                                        <td>{{i.size}}</td>
-                                        <td>{{i.version}}</td>
-                                        <td>
-                                            <span ng-if="i.availability === -1">
-                                                <span class="label label-danger">Time Out</span>
-                                            </span>
-                                            <span ng-if="i.availability < 300 && i.availability > 99">
-                                                <span class="label label-success">{{i.availability}}</span>
-                                            </span>
-                                            <span ng-if="i.availability > 299">
-                                                <span class="label label-danger">{{i.availability}}</span>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="i.expanded" ng-repeat-end="">
-                                        <td colspan="9">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <dl class="dl-horizontal">
-                                                        <div ng-repeat="d in i.left">
-                                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                        </div>
-                                                    </dl>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <dl class="dl-horizontal">
-                                                        <div ng-repeat="d in i.right">
-                                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                        </div>
-                                                    </dl>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                </span>
+                <dt>Description:</dt>
+                <dd>{{service.description}}</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Creation Date:</dt>
+                <dd>{{service.creationDate}}</dd>
+                <dt>Used By:</dt>
+                <dd>
+                    <div ng-repeat="sr in service.usedBy">
+                        <a href="#/Service/{{sr.clientServiceId}}">{{sr.serviceName}}</a>
+                        <br/>
+                    </div>
+                </dd>
+                <dt>Uses:</dt>
+                <dd>
+                    <div ng-repeat="sr in service.uses">
+                        <a href="#/Service/{{sr.serverServiceId}}">{{sr.serviceName}}</a>
+                        <br/>
+                    </div>
+                </dd>
+            </dl>
+        </div>            
+    </div> 
+    <uib-tabset type="pills">
+        <uib-tab heading="Modules" ng-if="service.active">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Modules
+                        <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                            </button>
+                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                <li role="menuitem"><a ng-click="openAddModuleModal();">Add module to {{service.serviceName}}</a></li>
+                            </ul>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="VIPs" ng-if="service.serviceType === 'Service'">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="m in service.modules">
-                    <div ng-if="m.moduleType === 'Deployable'">
-                        <div ng-repeat="mn in m.networks">
-                            <h4>
-                                <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
-                                <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
-                                {{m.moduleName}} in {{mn.network}}
+                    </h4>
+                    <table class="table table-hover table-striped table-condensed">
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Build Order</th>
+                            <th>Type</th>
+                            <th>Git Project</th>
+                            <th>Git Folder</th>
+                        </tr>
+                        <tr ng-repeat-start="m in service.modules">
+                            <td>
+                                <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
+                                <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
+                            </td>
+                            <td>
+                                {{m.moduleName}}
                                 <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
                                     <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                         <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                     </button>
                                     <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                        <li role="menuitem"><a ng-click="openAddVipModal(mn.network, m);">Add a VIP to {{m.moduleName}} in {{mn.network}}</a></li>
+                                        <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module {{m.moduleName}}</a></li>
+                                        <li role="menuitem"><a ng-click="deleteModule(m.moduleId);">Delete module {{m.moduleName}}</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>{{m.order}}</td>
+                            <td>{{m.moduleType}}</td>
+                            <td>
+                                <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{m.gitProject}}" target="_blank">{{team.gitGroup}}/{{m.gitProject}}.git</a>
+                            </td>
+                            <td>/{{m.gitFolder}}</td>
+                        </tr>
+                        <tr ng-if="m.expanded" ng-repeat-end="">
+                            <td colspan="9">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <dt>Maven Group ID:</dt>
+                                            <dd>{{m.mavenGroupId}}</dd>
+                                            <dt>Maven Artifact ID:</dt>
+                                            <dd>{{m.mavenArtifactId}}</dd>
+                                            <div ng-if="m.moduleType === 'Deployable'">
+                                                <dt>Host Abbr:</dt>
+                                                <dd>{{m.hostAbbr}}</dd>
+                                                <dt>Availability URL:</dt>
+                                                <dd>{{m.availabilityUrl}}</dd>
+                                                <dt>Version URL:</dt>
+                                                <dd>{{m.versionUrl}}</dd>
+                                                <dt>Run As:</dt>
+                                                <dd>{{m.runAs}}</dd>
+                                                <dt>Deployment Folder:</dt>
+                                                <dd>{{m.deploymentFolder}}</dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <dt>Artifact Type:</dt>
+                                            <dd>{{m.artifactType}}</dd>
+                                            <dt>Artifact Suffix:</dt>
+                                            <dd>{{m.artifactSuffix}}</dd>
+                                            <div ng-if="m.moduleType === 'Deployable'">
+                                                <dt>Start Cmd Line:</dt>
+                                                <dd>{{m.startCmdLine}}</dd>
+                                                <dt>Start Timeout:</dt>
+                                                <dd>{{m.startTimeOut}}</dd>
+                                                <dt>Stop Cmd Line:</dt>
+                                                <dd>{{m.stopCmdLine}}</dd>
+                                                <dt>Stop Timeout:</dt>
+                                                <dd>{{m.stopTimeOut}}</dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="Hosts" ng-if="service.serviceType === 'Service' && service.active">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                                <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
+                            </div>      
+                        </div>
+                    </form>
+                    <div ng-repeat="m in service.modules">
+                        <div ng-if="m.moduleType === 'Deployable'">
+                            <div ng-repeat="mn in m.networks">
+                                <h4>
+                                    <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
+                                    <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
+                                    {{m.moduleName}} in {{mn.network}}
+                                    <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
+                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                            <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
+                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                            <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Add hosts to {{m.moduleName}} in {{mn.network}}</a></li>
+                                            <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
+                                            <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
+                                            <li role="menuitem"><a ng-click="openAddHostsToVipModal(mn);">Add selected hosts to VIP</a></li>
+                                            <li class="divider"></li>
+                                            <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="btn-group" uib-dropdown ng-if="!service.canModify" is-open="status.isopen">
+                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                            <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
+                                                <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </h4>
+                                <div ng-if="!mn.collapsed && mn.hosts.length > 0">
+                                    <table class="table table-hover table-striped table-condensed">
+                                        <tr>
+                                            <th width="7%"></th>
+                                            <th width="23%">
+                                                <a ng-click="hostSortType = 'hostName';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    Host
+                                                </a>
+                                            </th>
+                                            <th width="5%">
+                                                <a ng-click="hostSortType = 'dataCenter';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    DC
+                                                </a>
+                                            </th>
+                                            <th width="15%">VIP</th>
+                                            <th width="10%">
+                                                <a ng-click="hostSortType = 'env';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    Env.
+                                                </a>
+                                            </th>
+                                            <th width="5%">
+                                                <a ng-click="hostSortType = 'size';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    Size
+                                                </a>
+                                            </th>
+                                            <th width="15%">
+                                                <a ng-click="hostSortType = 'version';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    Ver.
+                                                </a>
+                                            </th>
+                                            <th width="10%">
+                                                <a ng-click="hostSortType = 'availability';
+                                                                    hostSortReverse = !hostSortReverse">
+                                                    Avail.
+                                                </a>
+                                            </th>
+                                        </tr>
+                                        <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
+                                            <td>&nbsp;
+                                                <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
+                                                <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
+                                                <span ng-if="i.status === '-'">
+                                                    <input ng-model="formSelectHost[i.hostId]" type="checkbox">
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {{i.hostName}}
+                                                <div class="btn-group" uib-dropdown ng-if="i.status === '-' && service.canModify" is-open="status.isopen">
+                                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                                    </button>
+                                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                        <li role="menuitem"><a ng-click="openDeploySoftwareHostModal(i, mn, m);">Deploy software to {{i.hostName}}</a></li>
+                                                        <li role="menuitem"><a ng-click="openRestartHostModal(i, mn, m);">Restart {{i.hostName}}</a></li>
+                                                        <li role="menuitem"><a ng-click="openAddHostToVipModal(i, mn);">Add {{i.hostName}} to VIP</a></li>
+                                                        <li class="divider"></li>
+                                                        <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn, m);">Decommission {{i.hostName}}</a></li>
+                                                        <li role="menuitem" ng-repeat="epr in i.vipRefs| filter:{ status: '-' }">
+                                                            <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);">Remove {{i.hostName}} from the VIP {{epr.vipName}}</a>
+                                                        </li>
+                                                        <li class="divider"></li>
+                                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                            <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group" uib-dropdown ng-if="i.status === '-' && !service.canModify" is-open="status.isopen">
+                                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                                    </button>
+                                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                            <a ng-click="openDoCustomFunctionHostModal(i.hostId, cf)">{{cf.name}} on {{i.hostName}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <span ng-if="i.status !== '-'">
+                                                    <span class="label label-warning">{{i.status}}</span>
+                                                </span>
+                                            </td>
+                                            <td>{{i.dataCenter}}</td>
+                                            <td>
+                                                <div ng-repeat="epr in i.vipRefs">
+                                                    {{epr.vipName}}
+                                                    <span ng-if="epr.status !== '-'">
+                                                        <span class="label label-warning">{{epr.status}}</span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>{{i.env}}</td>
+                                            <td>{{i.size}}</td>
+                                            <td>{{i.version}}</td>
+                                            <td>
+                                                <span ng-if="i.availability === -1">
+                                                    <span class="label label-danger">Time Out</span>
+                                                </span>
+                                                <span ng-if="i.availability < 300 && i.availability > 99">
+                                                    <span class="label label-success">{{i.availability}}</span>
+                                                </span>
+                                                <span ng-if="i.availability > 299">
+                                                    <span class="label label-danger">{{i.availability}}</span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="i.expanded" ng-repeat-end="">
+                                            <td colspan="9">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <dl class="dl-horizontal">
+                                                            <div ng-repeat="d in i.left">
+                                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                                            </div>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <dl class="dl-horizontal">
+                                                            <div ng-repeat="d in i.right">
+                                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                                            </div>
+                                                        </dl>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="VIPs" ng-if="service.serviceType === 'Service' && service.active">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div ng-repeat="m in service.modules">
+                        <div ng-if="m.moduleType === 'Deployable'">
+                            <div ng-repeat="mn in m.networks">
+                                <h4>
+                                    <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
+                                    <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
+                                    {{m.moduleName}} in {{mn.network}}
+                                    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                            <li role="menuitem"><a ng-click="openAddVipModal(mn.network, m);">Add a VIP to {{m.moduleName}} in {{mn.network}}</a></li>
+                                        </ul>
+                                    </div>
+                                </h4>
+                                <div ng-if="!mn.collapsed && mn.vips.length > 0">
+                                    <table class="table table-hover table-striped table-condensed">
+                                        <tr>
+                                            <th width="25%">VIP</th>
+                                            <th width="10%">External</th>
+                                            <th width="10%">Protocol</th>
+                                            <th width="30%">DNS</th>
+                                            <th width="10%">VIP Port</th>
+                                            <th width="15%">Service Port</th>
+                                        </tr>
+                                        <tr ng-repeat="ep in mn.vips">
+                                            <td>
+                                                {{ep.vipName}}
+                                                <span ng-if="ep.status === '-' && service.canModify">
+                                                    <a ng-click="openUpdateVipModal(ep);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                                    <a ng-click="deleteVip(ep.vipId);" class="btn btn-danger btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                                </span>
+                                                <span ng-if="ep.status !== '-'">
+                                                    <span class="label label-warning">{{ep.status}}</span>
+                                                </span>
+                                            </td>
+                                            <td>{{ep.external}}</td>
+                                            <td>{{ep.protocol}}</td>
+                                            <td>{{ep.dns}}.{{ep.domain}}</td>
+                                            <td>{{ep.vipPort}}</td>
+                                            <td>{{ep.servicePort}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="Data Stores" ng-if="service.serviceType === 'Service' && service.active">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Data Stores
+                        <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                            </button>
+                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                <li role="menuitem"><a ng-click="">Add data store to {{service.serviceName}}</a></li>
+                            </ul>
+                        </div>
+                    </h4>
+                    <table class="table table-hover table-striped table-condensed">
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Network</th>
+                        </tr>
+                        <tr ng-repeat="ds in service.dataStores">
+                            <td>
+                                {{ds.name}}
+                                <span ng-if="service.canModify">
+                                    <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    <a ng-click="" class="btn btn-danger btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
+                                </span>
+                            </td>
+                            <td>{{ds.type}}</td>
+                            <td>{{ds.network}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="Custom Functions" ng-if="service.serviceType === 'Service' && service.canModify && service.active">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div ng-repeat="m in service.modules">
+                        <div ng-if="m.moduleType === 'Deployable'">
+                            <h4>
+                                <span ng-if="!m.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="m.collapsed = true"></span>
+                                <span ng-if="m.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="m.collapsed = false"></span>
+                                {{m.moduleName}}
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openAddCustomFunctionModal(m)">Add custom function to {{m.moduleName}}</a></li>
                                     </ul>
                                 </div>
                             </h4>
-                            <div ng-if="!mn.collapsed && mn.vips.length > 0">
+                            <div ng-if="!m.collapsed && m.customFunctions.length > 0">
                                 <table class="table table-hover table-striped table-condensed">
                                     <tr>
-                                        <th width="25%">VIP</th>
-                                        <th width="10%">External</th>
-                                        <th width="10%">Protocol</th>
-                                        <th width="30%">DNS</th>
-                                        <th width="10%">VIP Port</th>
-                                        <th width="15%">Service Port</th>
+                                        <th width="30%">Name</th>
+                                        <th width="10%">Method</th>
+                                        <th width="50%">URL</th>
+                                        <th width="10%">Team Only</th>
                                     </tr>
-                                    <tr ng-repeat="ep in mn.vips">
+                                    <tr ng-repeat="cf in m.customFunctions">
                                         <td>
-                                            {{ep.vipName}}
-                                            <span ng-if="ep.status === '-' && service.canModify">
-                                                <a ng-click="openUpdateVipModal(ep);" class="btn btn-info btn-xs" uib-popover="Update VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                                <a ng-click="deleteVip(ep.vipId);" class="btn btn-danger btn-xs" uib-popover="Delete VIP {{ep.vipName}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                                            </span>
-                                            <span ng-if="ep.status !== '-'">
-                                                <span class="label label-warning">{{ep.status}}</span>
+                                            {{cf.name}}
+                                            <span ng-if="service.canModify">
+                                                <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
+                                                <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-danger btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
                                             </span>
                                         </td>
-                                        <td>{{ep.external}}</td>
-                                        <td>{{ep.protocol}}</td>
-                                        <td>{{ep.dns}}.{{ep.domain}}</td>
-                                        <td>{{ep.vipPort}}</td>
-                                        <td>{{ep.servicePort}}</td>
+                                        <td>{{cf.method}}</td>
+                                        <td>{{cf.url}}</td>
+                                        <td>{{cf.teamOnly}}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -397,150 +480,71 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Data Stores" ng-if="service.serviceType === 'Service'">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h4>Data Stores
-                    <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
-                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                        </button>
-                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                            <li role="menuitem"><a ng-click="">Add data store to {{service.serviceName}}</a></li>
-                        </ul>
+        </uib-tab>
+        <uib-tab heading="Audit">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div>
+                        <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
+                        <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
+                        <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
                     </div>
-                </h4>
-                <table class="table table-hover table-striped table-condensed">
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Network</th>
-                    </tr>
-                    <tr ng-repeat="ds in service.dataStores">
-                        <td>
-                            {{ds.name}}
-                            <span ng-if="service.canModify">
-                                <a ng-click="" class="btn btn-info btn-xs" uib-popover="Update {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a ng-click="" class="btn btn-danger btn-xs" uib-popover="Delete {{ds.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                            </span>
-                        </td>
-                        <td>{{ds.type}}</td>
-                        <td>{{ds.network}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Custom Functions" ng-if="service.serviceType === 'Service' && service.canModify">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ng-repeat="m in service.modules">
-                    <div ng-if="m.moduleType === 'Deployable'">
-                        <h4>
-                            <span ng-if="!m.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="m.collapsed = true"></span>
-                            <span ng-if="m.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="m.collapsed = false"></span>
-                            {{m.moduleName}}
-                            <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
-                                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                </button>
-                                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                    <li role="menuitem"><a ng-click="openAddCustomFunctionModal(m)">Add custom function to {{m.moduleName}}</a></li>
-                                </ul>
-                            </div>
-                        </h4>
-                        <div ng-if="!m.collapsed && m.customFunctions.length > 0">
-                            <table class="table table-hover table-striped table-condensed">
-                                <tr>
-                                    <th width="30%">Name</th>
-                                    <th width="10%">Method</th>
-                                    <th width="50%">URL</th>
-                                    <th width="10%">Team Only</th>
-                                </tr>
-                                <tr ng-repeat="cf in m.customFunctions">
-                                    <td>
-                                        {{cf.name}}
-                                        <span ng-if="service.canModify">
-                                            <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                            <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-danger btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                                        </span>
-                                    </td>
-                                    <td>{{cf.method}}</td>
-                                    <td>{{cf.url}}</td>
-                                    <td>{{cf.teamOnly}}</td>
-                                </tr>
-                            </table>
+                    <form>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                                <input type="text" class="form-control" placeholder="Filter audit records" ng-model="auditFilter">
+                            </div>      
                         </div>
-                    </div>
+                    </form>       
+                    <table class="table table-hover table-striped table-condensed">
+                        <tr>
+                            <th>Requestor</th>
+                            <th>Performed</th>
+                            <th>Requested</th>
+                            <th>Type</th>
+                            <th>Operation</th>
+                            <th>Module</th>
+                            <th>Host</th>
+                            <th>VIP</th>
+                        </tr>
+                        <tr ng-repeat-start="a in audits| filter:auditFilter">
+                            <td>
+                                <span ng-if="a.expanded" class="glyphicon glyphicon-chevron-down" ng-click="a.expanded = false"></span>
+                                <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="a.expanded = true"></span>
+                                {{a.requestor}}
+                            </td>
+                            <td>{{a.timePerformed}}</td>
+                            <td>{{a.timeRequested}}</td>
+                            <td>{{a.type}}</td>
+                            <td>{{a.operation}}</td>
+                            <td>{{a.moduleName}}</td>
+                            <td>{{a.hostName}}</td>
+                            <td>{{a.vipName}}</td>
+                        </tr>
+                        <tr ng-if="a.expanded" ng-repeat-end="">
+                            <td colspan="8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <div ng-repeat="d in a.left">
+                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <div ng-repeat="d in a.right">
+                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-        </div>
-    </uib-tab>
-    <uib-tab heading="Audit">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div>
-                    <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
-                    <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
-                    <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
-                </div>
-                <form>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-                            <input type="text" class="form-control" placeholder="Filter audit records" ng-model="auditFilter">
-                        </div>      
-                    </div>
-                </form>       
-                <table class="table table-hover table-striped table-condensed">
-                    <tr>
-                        <th>Requestor</th>
-                        <th>Performed</th>
-                        <th>Requested</th>
-                        <th>Type</th>
-                        <th>Operation</th>
-                        <th>Module</th>
-                        <th>Host</th>
-                        <th>VIP</th>
-                    </tr>
-                    <tr ng-repeat-start="a in audits| filter:auditFilter">
-                        <td>
-                            <span ng-if="a.expanded" class="glyphicon glyphicon-chevron-down" ng-click="a.expanded = false"></span>
-                            <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="a.expanded = true"></span>
-                            {{a.requestor}}
-                        </td>
-                        <td>{{a.timePerformed}}</td>
-                        <td>{{a.timeRequested}}</td>
-                        <td>{{a.type}}</td>
-                        <td>{{a.operation}}</td>
-                        <td>{{a.moduleName}}</td>
-                        <td>{{a.hostName}}</td>
-                        <td>{{a.vipName}}</td>
-                    </tr>
-                    <tr ng-if="a.expanded" ng-repeat-end="">
-                        <td colspan="8">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <div ng-repeat="d in a.left">
-                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="col-md-6">
-                                    <dl class="dl-horizontal">
-                                        <div ng-repeat="d in a.right">
-                                            <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </uib-tab>
-</uib-tabset>
+        </uib-tab>
+    </uib-tabset>
+</div>

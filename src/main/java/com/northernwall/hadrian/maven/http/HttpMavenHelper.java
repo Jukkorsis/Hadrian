@@ -64,8 +64,9 @@ public class HttpMavenHelper extends MavenHelper {
                 Request request = builder.build();
                 Response response = client.newCall(request).execute();
 
-                InputStream inputStream = response.body().byteStream();
-                versions = processMavenStream(inputStream);
+                try (InputStream inputStream = response.body().byteStream()) {
+                    versions = processMavenStream(inputStream);
+                }
             } catch (Exception ex) {
                 logger.error("Error reading maven version from {} {}, {}", groupId, artifactId, ex.getMessage());
             }

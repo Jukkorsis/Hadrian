@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import java.util.List;
 import org.slf4j.Logger;
@@ -23,6 +24,15 @@ public class DataAccessUpdater {
                 }
             }
             dataAccess.setVersion("1.4");
+            update(dataAccess);
+        } else if (version.equals("1.4")) {
+            logger.info("Upgrading to 1.5 from {}", version);
+            List<Service> services = dataAccess.getAllServices();
+            for (Service service : services) {
+                service.setActive(true);
+                dataAccess.saveService(service);
+            }
+            dataAccess.setVersion("1.5");
             update(dataAccess);
         } else {
             logger.info("Current version is {}, no upgrade required.", version);

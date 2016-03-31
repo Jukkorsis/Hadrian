@@ -33,7 +33,7 @@ public class Service implements Comparable<Service>{
     private GitMode gitMode;
     private String gitProject;
     private Date creationDate;
-    private boolean active;
+    private boolean active = true;
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
         this.serviceId = UUID.randomUUID().toString();

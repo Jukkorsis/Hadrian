@@ -15,9 +15,9 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.maven.MavenHelper;
-import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -86,92 +86,94 @@ public class ServiceGetHandler extends BasicHandler {
         GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
-        List<Future> futures = new LinkedList<>();
+        if (service.isActive()) {
+            List<Future> futures = new LinkedList<>();
 
-        List<Module> modules = getDataAccess().getModules(id);
-        Collections.sort(modules);
-        for (Module module : modules) {
-            GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
-            futures.add(executorService.submit(new ReadMavenVersionsRunnable(getModuleData, mavenHelper)));
-            getServiceData.modules.add(getModuleData);
-        }
+            List<Module> modules = getDataAccess().getModules(id);
+            Collections.sort(modules);
+            for (Module module : modules) {
+                GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
+                futures.add(executorService.submit(new ReadMavenVersionsRunnable(getModuleData, mavenHelper)));
+                getServiceData.modules.add(getModuleData);
+            }
 
-        List<Vip> vips = getDataAccess().getVips(id);
-        Collections.sort(vips);
-        for (Vip vip : vips) {
-            GetModuleData getModuleData = null;
-            for (GetModuleData temp : getServiceData.modules) {
-                if (vip.getModuleId().equals(temp.moduleId)) {
-                    getModuleData = temp;
-                }
-            }
-            if (getModuleData != null) {
-                GetVipData getVipData = GetVipData.create(vip);
-                getModuleData.addVip(getVipData);
-            }
-        }
-
-        List<Host> hosts = getDataAccess().getHosts(id);
-        Collections.sort(hosts);
-        for (Host host : hosts) {
-            GetModuleData getModuleData = null;
-            for (GetModuleData temp : getServiceData.modules) {
-                if (host.getModuleId().equals(temp.moduleId)) {
-                    getModuleData = temp;
-                }
-            }
-            if (getModuleData != null) {
-                GetHostData getHostData = GetHostData.create(host);
-                futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
-                futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
-                for (VipRef vipRef : getDataAccess().getVipRefsByHost(getHostData.hostId)) {
-                    GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
-                    for (GetVipData vip : getModuleData.getVips(host.getNetwork())) {
-                        if (vip.vipId.equals(getVipRefData.vipId)) {
-                            getVipRefData.vipName = vip.vipName;
-                        }
+            List<Vip> vips = getDataAccess().getVips(id);
+            Collections.sort(vips);
+            for (Vip vip : vips) {
+                GetModuleData getModuleData = null;
+                for (GetModuleData temp : getServiceData.modules) {
+                    if (vip.getModuleId().equals(temp.moduleId)) {
+                        getModuleData = temp;
                     }
-                    getHostData.vipRefs.add(getVipRefData);
                 }
-                getModuleData.addHost(getHostData);
-            }
-        }
-
-        List<DataStore> dataStores = getDataAccess().getDataStores(id);
-        Collections.sort(dataStores);
-        for (DataStore dataStore : dataStores) {
-            GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
-            getServiceData.dataStores.add(getDataStoreData);
-        }
-
-        for (ServiceRef ref : getDataAccess().getServiceRefsByClient(id)) {
-            GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getService(ref.getServerServiceId(), null, null).getServiceName();
-            getServiceData.uses.add(tempRef);
-        }
-
-        Collections.sort(getServiceData.uses);
-        
-        for (ServiceRef ref : getDataAccess().getServiceRefsByServer(id)) {
-            GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getService(ref.getClientServiceId(), null, null).getServiceName();
-            getServiceData.usedBy.add(tempRef);
-        }
-
-        Collections.sort(getServiceData.usedBy);
-        
-        List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(id);
-        Collections.sort(customFunctions);
-        for (CustomFunction customFunction : customFunctions) {
-            for (GetModuleData temp : getServiceData.modules) {
-                if (customFunction.getModuleId().equals(temp.moduleId)) {
-                    GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
-                    temp.customFunctions.add(getCustomFunctionData);
+                if (getModuleData != null) {
+                    GetVipData getVipData = GetVipData.create(vip);
+                    getModuleData.addVip(getVipData);
                 }
             }
-        }
 
-        waitForFutures(futures);
+            List<Host> hosts = getDataAccess().getHosts(id);
+            Collections.sort(hosts);
+            for (Host host : hosts) {
+                GetModuleData getModuleData = null;
+                for (GetModuleData temp : getServiceData.modules) {
+                    if (host.getModuleId().equals(temp.moduleId)) {
+                        getModuleData = temp;
+                    }
+                }
+                if (getModuleData != null) {
+                    GetHostData getHostData = GetHostData.create(host);
+                    futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
+                    futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
+                    for (VipRef vipRef : getDataAccess().getVipRefsByHost(getHostData.hostId)) {
+                        GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
+                        for (GetVipData vip : getModuleData.getVips(host.getNetwork())) {
+                            if (vip.vipId.equals(getVipRefData.vipId)) {
+                                getVipRefData.vipName = vip.vipName;
+                            }
+                        }
+                        getHostData.vipRefs.add(getVipRefData);
+                    }
+                    getModuleData.addHost(getHostData);
+                }
+            }
+
+            List<DataStore> dataStores = getDataAccess().getDataStores(id);
+            Collections.sort(dataStores);
+            for (DataStore dataStore : dataStores) {
+                GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
+                getServiceData.dataStores.add(getDataStoreData);
+            }
+
+            for (ServiceRef ref : getDataAccess().getServiceRefsByClient(id)) {
+                GetServiceRefData tempRef = GetServiceRefData.create(ref);
+                tempRef.serviceName = getService(ref.getServerServiceId(), null, null).getServiceName();
+                getServiceData.uses.add(tempRef);
+            }
+
+            Collections.sort(getServiceData.uses);
+
+            for (ServiceRef ref : getDataAccess().getServiceRefsByServer(id)) {
+                GetServiceRefData tempRef = GetServiceRefData.create(ref);
+                tempRef.serviceName = getService(ref.getClientServiceId(), null, null).getServiceName();
+                getServiceData.usedBy.add(tempRef);
+            }
+
+            Collections.sort(getServiceData.usedBy);
+
+            List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(id);
+            Collections.sort(customFunctions);
+            for (CustomFunction customFunction : customFunctions) {
+                for (GetModuleData temp : getServiceData.modules) {
+                    if (customFunction.getModuleId().equals(temp.moduleId)) {
+                        GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
+                        temp.customFunctions.add(getCustomFunctionData);
+                    }
+                }
+            }
+
+            waitForFutures(futures);
+        }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             getGson().toJson(getServiceData, GetServiceData.class, jw);

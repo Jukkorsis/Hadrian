@@ -47,6 +47,7 @@ public interface DataAccess {
     void saveTeam(Team team);
     void updateTeam(Team team);
 
+    List<Service> getAllServices();
     List<Service> getServices();
     List<Service> getServices(String teamId);
     List<Service> getDeletedServices(String teamId);

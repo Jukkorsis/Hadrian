@@ -73,6 +73,9 @@ public class ServiceDeleteHandler extends BasicHandler {
         notes.put("reason", deleteServiceData.reason);
         audit.notes = getGson().toJson(notes);
         getDataAccess().saveAudit(audit);
+        
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

@@ -118,6 +118,16 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public List<Service> getAllServices() {
+        List<Service> temp = new LinkedList<>();
+        for (Service service : services.values()) {
+            temp.add(service);
+        }
+        Collections.sort(temp);
+        return temp;
+    }
+
+    @Override
     public List<Service> getServices() {
         List<Service> temp = new LinkedList<>();
         for (Service service : services.values()) {
