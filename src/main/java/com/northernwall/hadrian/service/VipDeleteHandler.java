@@ -24,7 +24,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.service.dao.DeleteVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -49,16 +49,12 @@ public class VipDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(8, 44);
-        String vipId = target.substring(45);
-        Service service = getService(serviceId, null, null);
+        DeleteVipData deleteVipData = fromJson(request, DeleteVipData.class);
+        Service service = getService(deleteVipData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
         Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Vip vip = getDataAccess().getVip(serviceId, vipId);
-        if (vip == null) {
-            throw new Http404NotFoundException("Could not find vip with id " + vipId);
-        }
+        Vip vip = getVip(deleteVipData.vipId, null, service);
 
         vip.setStatus("Deleting...");
         getDataAccess().updateVip(vip);

@@ -26,6 +26,7 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.service.dao.DeleteModuleData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
@@ -53,25 +54,24 @@ public class ModuleDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(11, 47);
-        String moduleId = target.substring(48);
-        Service service = getService(serviceId, null, null);
-        Module module = getModule(moduleId, null, service);
+        DeleteModuleData deleteModuleData = fromJson(request, DeleteModuleData.class);
+        Service service = getService(deleteModuleData.serviceId, null, null);
+        Module module = getModule(deleteModuleData.moduleId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
         Team team = getDataAccess().getTeam(service.getTeamId());
 
-        for (Host host : getDataAccess().getHosts(serviceId)) {
-            if (host.getModuleId().equals(moduleId)) {
+        for (Host host : getDataAccess().getHosts(deleteModuleData.serviceId)) {
+            if (host.getModuleId().equals(deleteModuleData.moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active host");
             }
         }
-        for (Vip vip : getDataAccess().getVips(serviceId)) {
-            if (vip.getModuleId().equals(moduleId)) {
+        for (Vip vip : getDataAccess().getVips(deleteModuleData.serviceId)) {
+            if (vip.getModuleId().equals(deleteModuleData.moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active vip");
             }
         }
 
-        List<Module> modules = getDataAccess().getModules(serviceId);
+        List<Module> modules = getDataAccess().getModules(deleteModuleData.serviceId);
         Collections.sort(modules);
 
         modules.remove(module.getOrder() - 1);
@@ -83,7 +83,7 @@ public class ModuleDeleteHandler extends BasicHandler {
             }
             i++;
         }
-        getDataAccess().deleteModule(serviceId, moduleId);
+        getDataAccess().deleteModule(deleteModuleData.serviceId, deleteModuleData.moduleId);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
         for (Module temp : modules) {

@@ -20,10 +20,9 @@ package com.northernwall.hadrian.service.dao;
  *
  * @author Richard Thurston
  */
-public class PutVipData {
-    public String vipId;
+public class DeleteHostVipData {
     public String serviceId;
-    public boolean external;
-    public int servicePort;
+    public String hostId;
+    public String vipId;
 
 }

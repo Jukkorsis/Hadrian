@@ -44,7 +44,6 @@ import com.northernwall.hadrian.service.helper.ReadVersionRunnable;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -147,29 +146,19 @@ public class ServiceGetHandler extends BasicHandler {
 
         for (ServiceRef ref : getDataAccess().getServiceRefsByClient(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getDataAccess().getService(ref.getServerServiceId()).getServiceName();
+            tempRef.serviceName = getService(ref.getServerServiceId(), null, null).getServiceName();
             getServiceData.uses.add(tempRef);
         }
 
-        Collections.sort(getServiceData.uses, new Comparator<GetServiceRefData>() {
-            @Override
-            public int compare(GetServiceRefData o1, GetServiceRefData o2) {
-                return o1.serviceName.compareTo(o2.serviceName);
-            }
-        });
+        Collections.sort(getServiceData.uses);
         
         for (ServiceRef ref : getDataAccess().getServiceRefsByServer(id)) {
             GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getDataAccess().getService(ref.getClientServiceId()).getServiceName();
+            tempRef.serviceName = getService(ref.getClientServiceId(), null, null).getServiceName();
             getServiceData.usedBy.add(tempRef);
         }
 
-        Collections.sort(getServiceData.usedBy, new Comparator<GetServiceRefData>() {
-            @Override
-            public int compare(GetServiceRefData o1, GetServiceRefData o2) {
-                return o1.serviceName.compareTo(o2.serviceName);
-            }
-        });
+        Collections.sort(getServiceData.usedBy);
         
         List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(id);
         Collections.sort(customFunctions);

@@ -49,10 +49,7 @@ public class CustomFuntionModifyHandler extends BasicHandler {
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
         }
-        Service service = getDataAccess().getService(customFunction.getServiceId());
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
-        }
+        Service service = getService(customFunction.getServiceId(), null, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify custom function");
 
         customFunction.setName(postCFData.name);

@@ -20,7 +20,6 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.service.dao.PostCustomFunctionData;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,10 +42,7 @@ public class CustomFuntionCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
-        Service service = getDataAccess().getService(postCFData.serviceId);
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
-        }
+        Service service = getService(postCFData.serviceId, null, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
 
         CustomFunction customFunction = new CustomFunction(

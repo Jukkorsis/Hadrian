@@ -2,8 +2,10 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +13,7 @@ import java.io.Reader;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,7 @@ public abstract class BasicHandler extends AbstractHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(BasicHandler.class);
     private final static Gson gson = new Gson();
-    
+
     private final DataAccess dataAccess;
 
     public BasicHandler(DataAccess dataAccess) {
@@ -39,6 +42,13 @@ public abstract class BasicHandler extends AbstractHandler {
         T temp = gson.fromJson(reader, classOfT);
         logger.info("Stream->Json {}", gson.toJson(temp));
         return temp;
+    }
+
+    protected Service getService(Request request) {
+        return getService(
+                request.getParameter("serviceId"),
+                request.getParameter("serviceName"),
+                request.getParameter("serviceAbbr"));
     }
 
     protected Service getService(String serviceId, String serviceName, String serviceAbbr) {
@@ -83,8 +93,49 @@ public abstract class BasicHandler extends AbstractHandler {
         throw new Http404NotFoundException("Could not find module");
     }
 
+    protected Host getHost(Request request, Service service) {
+        return getHost(
+                request.getParameter("hostId"),
+                request.getParameter("hostName"),
+                service);
+    }
+
+    protected Host getHost(String hostId, String hostName, Service service) {
+        if (hostId != null && !hostId.isEmpty()) {
+            Host host = dataAccess.getHost(service.getServiceId(), hostId);
+            if (host != null) {
+                return host;
+            }
+        }
+        if (hostName != null && !hostName.isEmpty()) {
+            for (Host host : dataAccess.getHosts(service.getServiceId())) {
+                if (host.getHostName().equalsIgnoreCase(hostName)) {
+                    return host;
+                }
+            }
+        }
+        throw new Http404NotFoundException("Could not find host");
+    }
+
+    protected Vip getVip(String vipId, String vipName, Service service) {
+        if (vipId != null && !vipId.isEmpty()) {
+            Vip vip = dataAccess.getVip(service.getServiceId(), vipId);
+            if (vip != null) {
+                return vip;
+            }
+        }
+        if (vipName != null && !vipName.isEmpty()) {
+            for (Vip vip : dataAccess.getVips(service.getServiceId())) {
+                if (vip.getVipName().equalsIgnoreCase(vipName)) {
+                    return vip;
+                }
+            }
+        }
+        throw new Http404NotFoundException("Could not find vip");
+    }
+
     protected Date getGmt() {
         return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
     }
-    
+
 }

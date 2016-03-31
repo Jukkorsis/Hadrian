@@ -17,7 +17,7 @@ package com.northernwall.hadrian.service.dao;
 
 import com.northernwall.hadrian.domain.ServiceRef;
 
-public class GetServiceRefData {
+public class GetServiceRefData implements Comparable<GetServiceRefData> {
     public String clientServiceId;
     public String serverServiceId;
     public String serviceName;
@@ -27,6 +27,11 @@ public class GetServiceRefData {
         temp.clientServiceId = ref.getClientServiceId();
         temp.serverServiceId = ref.getServerServiceId();
         return temp;
+    }
+
+    @Override
+    public int compareTo(GetServiceRefData o) {
+        return serviceName.compareTo(o.serviceName);
     }
 
 }

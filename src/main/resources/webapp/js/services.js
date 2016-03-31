@@ -35,8 +35,8 @@ hadrianServices.factory('ServiceNotUses', ['$resource', function($resource) {
     }]);
 
 hadrianServices.factory('HostDetails', ['$resource', function($resource) {
-        return $resource('/v1/host/:serviceId/:hostId/details', {}, {
-            query: {method: 'GET', params: {serviceId: 'services', hostId: 'services'}, isArray: false}
+        return $resource('/v1/host/details', {}, {
+            query: {method: 'GET', isArray: false}
         });
     }]);
 

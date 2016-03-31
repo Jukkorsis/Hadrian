@@ -62,10 +62,7 @@ public class HostVipCreateHandler extends BasicHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
         Team team = getDataAccess().getTeam(service.getTeamId());
         List<Host> hosts = getDataAccess().getHosts(data.serviceId);
-        Vip vip = getDataAccess().getVip(data.serviceId, data.vipId);
-        if (vip == null) {
-            throw new RuntimeException("Could not find vip");
-        }
+        Vip vip = getVip(data.vipId, null, service);
         Module module = null;
         for (Host host : hosts) {
             if (data.hostNames.contains(host.getHostName())) {

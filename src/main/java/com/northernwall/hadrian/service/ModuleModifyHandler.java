@@ -56,19 +56,17 @@ public class ModuleModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(11, 47);
-        String moduleId = target.substring(48);
-        Service service = getService(serviceId, null, null);
+        PutModuleData putModuleData = fromJson(request, PutModuleData.class);
+        Service service = getService(putModuleData.serviceId, null, null);
         
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
         Team team = getDataAccess().getTeam(service.getTeamId());
 
-        PutModuleData putModuleData = fromJson(request, PutModuleData.class);
-        List<Module> modules = getDataAccess().getModules(serviceId);
+        List<Module> modules = getDataAccess().getModules(putModuleData.serviceId);
         List<Module> zeroModules = new LinkedList<>();
         Module module = null;
         for (Module temp : modules) {
-            if (temp.getModuleId().equals(moduleId)) {
+            if (temp.getModuleId().equals(putModuleData.moduleId)) {
                 module = temp;
             }
             if (temp.getOrder() == 0) {
@@ -76,7 +74,7 @@ public class ModuleModifyHandler extends BasicHandler {
             }
         }
         if (module == null) {
-            logger.warn("Could not find module with id {} in service {}", moduleId, serviceId);
+            logger.warn("Could not find module with id {} in service {}", putModuleData.moduleId, putModuleData.serviceId);
             return;
         }
         modules.removeAll(zeroModules);

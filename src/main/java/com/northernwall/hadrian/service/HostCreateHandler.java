@@ -32,7 +32,6 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PostHostData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -64,10 +63,7 @@ public class HostCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostHostData postHostData = fromJson(request, PostHostData.class);
-        Service service = getDataAccess().getService(postHostData.serviceId);
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
-        }
+        Service service = getService(postHostData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
         Team team = getDataAccess().getTeam(service.getTeamId());
 

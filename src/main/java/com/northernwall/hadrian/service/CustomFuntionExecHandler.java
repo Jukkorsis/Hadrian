@@ -35,52 +35,44 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
-public class CustomFuntionGetHandler extends AbstractHandler {
-
-    private final static Logger logger = LoggerFactory.getLogger(CustomFuntionGetHandler.class);
+public class CustomFuntionExecHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final OkHttpClient client;
 
-    public CustomFuntionGetHandler(AccessHelper accessHelper, DataAccess dataAccess, OkHttpClient client) {
+    public CustomFuntionExecHandler(AccessHelper accessHelper, DataAccess dataAccess, OkHttpClient client) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.client = client;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(7, 43);
-        String customFunctionId = target.substring(44, 80);
-        String hostId = target.substring(81);
+        Service service = getService(request);
 
-        CustomFunction customFunction = dataAccess.getCustomFunction(serviceId, customFunctionId);
+        String customFunctionId = request.getParameter("cfId");
+        CustomFunction customFunction = getDataAccess().getCustomFunction(service.getServiceId(), customFunctionId);
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
-        }
-        Host host = dataAccess.getHost(serviceId, hostId);
-        if (host == null) {
-            throw new Http404NotFoundException("Could not find host");
-        }
-        Service service = dataAccess.getService(customFunction.getServiceId());
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
         }
         if (customFunction.isTeamOnly()) {
             accessHelper.checkIfUserCanModify(request, service.getTeamId(), "execute a private custom function");
         }
+
+        Host host = getHost(request, service);
+        
         if (!customFunction.getServiceId().equals(host.getServiceId())) {
             throw new Http400BadRequestException("Custom Function and Host do not belong to the same service");
         }
+        if (!customFunction.getModuleId().equals(host.getModuleId())) {
+            throw new Http400BadRequestException("Custom Function and Host do not belong to the same module");
+        }
+        
         Builder builder = new Builder();
         builder.url(Const.HTTP + customFunction.getUrl().replace(Const.HOST, host.getHostName()));
         if (customFunction.getMethod().equalsIgnoreCase("POST")) {

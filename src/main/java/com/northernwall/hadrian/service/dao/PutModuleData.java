@@ -21,8 +21,9 @@ package com.northernwall.hadrian.service.dao;
  * @author Richard Thurston
  */
 public class PutModuleData {
-    public String moduleName;
     public String serviceId;
+    public String moduleId;
+    public String moduleName;
     public int order;
     public String mavenGroupId;
     public String mavenArtifactId;

@@ -26,58 +26,47 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.service.dao.DeleteHostVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class HostVipDeleteHandler extends AbstractHandler {
+public class HostVipDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
     private final WorkItemProcessor workItemProcess;
 
     public HostVipDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
         this.workItemProcess = workItemProcess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(9, 45);
-        String hostId = target.substring(46, 82);
-        String vipId = target.substring(83);
+        DeleteHostVipData deleteHostVipData = fromJson(request, DeleteHostVipData.class);
 
-        Service service = dataAccess.getService(serviceId);
-        if (service == null) {
-            throw new RuntimeException("Could not find service");
-        }
+        Service service = getService(deleteHostVipData.serviceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
-        Team team = dataAccess.getTeam(service.getTeamId());
-        VipRef vipRef = dataAccess.getVipRef(hostId, vipId);
+        Team team = getDataAccess().getTeam(service.getTeamId());
+        VipRef vipRef = getDataAccess().getVipRef(deleteHostVipData.hostId, deleteHostVipData.vipId);
         if (vipRef == null) {
             return;
         }
-        Host host = dataAccess.getHost(serviceId, hostId);
-        if (host == null) {
-            throw new RuntimeException("Could not find host");
-        }
-        Vip vip = dataAccess.getVip(serviceId, vipId);
-        if (vip == null) {
-            throw new RuntimeException("Could not find vip");
-        }
+        Host host = getHost(deleteHostVipData.hostId, null, service);
+        Vip vip = getVip(deleteHostVipData.vipId, null, service);
+        
         vipRef.setStatus("Removing...");
-        dataAccess.updateVipRef(vipRef);
+        getDataAccess().updateVipRef(vipRef);
         WorkItem workItem = new WorkItem(Type.hostvip, Operation.delete, user, team, service, null, host, vip);
-        dataAccess.saveWorkItem(workItem);
+        getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
 
         response.setStatus(200);

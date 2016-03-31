@@ -19,44 +19,39 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.service.dao.DeleteCFData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
  * @author Richard Thurston
  */
-public class CustomFuntionDeleteHandler extends AbstractHandler {
+public class CustomFuntionDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final DataAccess dataAccess;
 
     public CustomFuntionDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+        super(dataAccess);
         this.accessHelper = accessHelper;
-        this.dataAccess = dataAccess;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = target.substring(7, 43);
-        String customFunctionId = target.substring(44);
+        DeleteCFData deleteCFData = fromJson(request, DeleteCFData.class);
 
-        CustomFunction customFunction = dataAccess.getCustomFunction(serviceId, customFunctionId);
+        CustomFunction customFunction = getDataAccess().getCustomFunction(deleteCFData.serviceId, deleteCFData.cfId);
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
         }
-        Service service = dataAccess.getService(customFunction.getServiceId());
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service");
-        }
+        Service service = getService(customFunction.getServiceId(), null, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
 
-        dataAccess.deleteCustomFunction(serviceId, customFunctionId);
+        getDataAccess().deleteCustomFunction(deleteCFData.serviceId, deleteCFData.cfId);
 
         response.setStatus(200);
         request.setHandled(true);

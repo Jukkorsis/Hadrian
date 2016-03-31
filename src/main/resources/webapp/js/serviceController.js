@@ -137,8 +137,13 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.deleteModule = function (id) {
-            var responsePromise = $http.delete("/v1/module/" + $scope.service.serviceId + "/" + id, {});
+        $scope.deleteModule = function (moduleId) {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: moduleId
+            };
+
+            var responsePromise = $http.post("/v1/module/delete", dataObject, {});
             responsePromise.success(function () {
                 $route.reload();
             });
@@ -194,8 +199,13 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.deleteVip = function (id) {
-            var responsePromise = $http.delete("/v1/vip/" + $scope.service.serviceId + "/" + id, {});
+        $scope.deleteVip = function (vipId) {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                vipId: vipId
+            };
+
+            var responsePromise = $http.post("/v1/vip/delete", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
@@ -455,7 +465,13 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
         };
 
         $scope.deleteHostFromVip = function (hostId, vipId) {
-            var responsePromise = $http.delete("/v1/host/" + $scope.service.serviceId + "/" + hostId + "/" + vipId, {});
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                hostId: hostId,
+                vipId: vipId
+            };
+
+            var responsePromise = $http.post("/v1/hostvip/delete", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
@@ -500,14 +516,14 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 var h = filteredArray[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId === key2 && $scope.formSelectHost[key2]) {
-                        window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + h.hostId, '_blank');
+                        window.open("/v1/cf/exec?serviceAbbr=" + $scope.service.serviceAbbr + "&hostName=" + h.hostName + "&cfId=" + cf.customFunctionId, '_blank');
                     }
                 }
             }
         };
 
-        $scope.openDoCustomFunctionHostModal = function (hostId, cf) {
-            window.open("/v1/cf/" + $scope.service.serviceId + "/" + cf.customFunctionId + "/" + hostId, '_blank');
+        $scope.openDoCustomFunctionHostModal = function (host, cf) {
+            window.open("/v1/cf/exec?serviceAbbr=" + $scope.service.serviceAbbr + "&hostName=" + host.hostName + "&cfId=" + cf.customFunctionId, '_blank');
         };
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
@@ -530,8 +546,13 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.deleteCustomFunction = function (id) {
-            var responsePromise = $http.delete("/v1/cf/" + $scope.service.serviceId + "/" + id, {});
+        $scope.deleteCustomFunction = function (cfId) {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                cfId: cfId
+            };
+
+            var responsePromise = $http.post("/v1/cf/delete", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
@@ -769,6 +790,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
                 moduleName: $scope.formUpdateModule.moduleName,
                 order: $scope.formUpdateModule.order,
                 mavenGroupId: $scope.formUpdateModule.mavenGroupId,
@@ -786,7 +808,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 stopTimeOut: $scope.formUpdateModule.stopTimeOut
             };
 
-            var responsePromise = $http.put("/v1/module/" + $scope.service.serviceId + "/" + $scope.module.moduleId, dataObject, {});
+            var responsePromise = $http.put("/v1/module/modify", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -857,12 +879,13 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
 
         $scope.save = function () {
             var dataObject = {
+                vipId: $scope.vip.vipId,
                 serviceId: $scope.service.serviceId,
                 external: $scope.formUpdateVip.external,
                 servicePort: $scope.formUpdateVip.servicePort
             };
 
-            var responsePromise = $http.put("/v1/vip/" + $scope.vip.vipId, dataObject, {});
+            var responsePromise = $http.put("/v1/vip/modify", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();
@@ -1064,7 +1087,7 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
                 hostNames: $scope.hostNames
             };
 
-            var responsePromise = $http.post("/v1/host/vips", dataObject, {});
+            var responsePromise = $http.post("/v1/hostvip/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -31,18 +30,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
-public class CalendarGetHandler extends AbstractHandler {
+public class CalendarGetHandler extends BasicHandler {
 
-    private final DataAccess dataAccess;
     private final CalendarHelper calendarHelper;
-    private final Gson gson;
 
     public CalendarGetHandler(DataAccess dataAccess, CalendarHelper calendarHelper) {
-        this.dataAccess = dataAccess;
+        super(dataAccess);
         this.calendarHelper = calendarHelper;
-        gson = new Gson();
     }
 
     @Override
@@ -51,11 +46,8 @@ public class CalendarGetHandler extends AbstractHandler {
 
         GetCalendarData getCalendarData = new GetCalendarData();
         if (serviceId != null && !serviceId.isEmpty()) {
-            Service service = dataAccess.getService(serviceId);
-            if (service == null) {
-                throw new Http404NotFoundException("Could not find service");
-            }
-            Team team = dataAccess.getTeam(service.getTeamId());
+            Service service = getService(serviceId, null ,null);
+            Team team = getDataAccess().getTeam(service.getTeamId());
             if (team == null) {
                 throw new Http404NotFoundException("Could not find team");
             }
@@ -75,7 +67,7 @@ public class CalendarGetHandler extends AbstractHandler {
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(getCalendarData, GetCalendarData.class, jw);
+            getGson().toJson(getCalendarData, GetCalendarData.class, jw);
         }
 
         response.setStatus(200);

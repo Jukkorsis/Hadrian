@@ -49,14 +49,10 @@ public class VipModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String vipId = target.substring(8, target.length());
         PutVipData putVipData = fromJson(request, PutVipData.class);
 
-        Vip vip = getDataAccess().getVip(putVipData.serviceId, vipId);
-        if (vip == null) {
-            throw new RuntimeException("Could not find vip");
-        }
-        Service service = getService(vip.getServiceId(), null, null);
+        Service service = getService(putVipData.serviceId, null, null);
+        Vip vip = getVip(putVipData.vipId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
         Team team = getDataAccess().getTeam(service.getTeamId());
 

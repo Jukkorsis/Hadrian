@@ -55,7 +55,7 @@ public class ServiceRefCreateHandler extends BasicHandler {
         for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true")) {
                 String serverId = entry.getKey();
-                Service serverService = getDataAccess().getService(serverId);
+                Service serverService = getService(serverId, null, null);
                 if (serverService != null) {
                     ServiceRef ref = new ServiceRef(postServiceRefData.clientId, serverId);
                     getDataAccess().saveServiceRef(ref);
