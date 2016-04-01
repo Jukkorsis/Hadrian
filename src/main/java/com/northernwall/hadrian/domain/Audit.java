@@ -29,7 +29,7 @@ public class Audit implements Comparable<Audit> {
     public String vipName;
     
     /**
-     * notes is a string which contains a json encoded Map<String, String> of attributes and values.
+     * notes is a string which contains a json encoded Map of attributes (String) and values (String).
      */
     public String notes;
 
