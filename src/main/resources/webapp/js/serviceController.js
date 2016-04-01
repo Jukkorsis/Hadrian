@@ -442,7 +442,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
             });
         };
 
-        $scope.openAddHostToVipModal = function (host,moduleNetwork) {
+        $scope.openAddHostToVipModal = function (host, moduleNetwork) {
             var hostNames = [];
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({

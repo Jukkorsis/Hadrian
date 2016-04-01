@@ -33,7 +33,7 @@
                     <dt>Git Mode:</dt>
                     <dd>{{service.gitMode}}</dd>
                     <div ng-if="service.gitMode === 'Consolidated'">
-                        <dt>Git Project</dt>
+                        <dt>Git Project:</dt>
                         <dd>
                             <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a>
                         </dd>
@@ -65,11 +65,11 @@
         </div>            
     </div> 
     <uib-tabset type="pills">
-        <uib-tab heading="Modules" ng-if="service.active">
+        <uib-tab heading="Modules" disable="!service.active">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h4>Modules
-                        <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                        <div class="btn-group" uib-dropdown ng-if="service.canModify && service.active" is-open="status.isopen">
                             <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                 <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                             </button>
@@ -159,7 +159,7 @@
                 </div>
             </div>
         </uib-tab>
-        <uib-tab heading="Hosts" ng-if="service.serviceType === 'Service' && service.active">
+        <uib-tab heading="Hosts" disable="service.serviceType !== 'Service' || !service.active">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <form>
@@ -348,7 +348,7 @@
                 </div>
             </div>
         </uib-tab>
-        <uib-tab heading="VIPs" ng-if="service.serviceType === 'Service' && service.active">
+        <uib-tab heading="VIPs" disable="service.serviceType !== 'Service' || !service.active">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div ng-repeat="m in service.modules">
@@ -402,7 +402,7 @@
                 </div>
             </div>
         </uib-tab>
-        <uib-tab heading="Data Stores" ng-if="service.serviceType === 'Service' && service.active">
+        <uib-tab heading="Data Stores" disable="service.serviceType !== 'Service' || !service.active">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h4>Data Stores
@@ -436,7 +436,7 @@
                 </div>
             </div>
         </uib-tab>
-        <uib-tab heading="Custom Functions" ng-if="service.serviceType === 'Service' && service.canModify && service.active">
+        <uib-tab heading="Custom Functions" disable="service.serviceType !== 'Service' || !service.canModify || !service.active">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div ng-repeat="m in service.modules">
