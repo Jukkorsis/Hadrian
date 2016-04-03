@@ -25,8 +25,9 @@ import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.PostServiceData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -53,33 +54,59 @@ public class ServiceCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostServiceData postServiceData = fromJson(request, PostServiceData.class);
-        User user = accessHelper.checkIfUserCanModify(request, postServiceData.teamId, "create a service");
-        postServiceData.serviceAbbr = postServiceData.serviceAbbr.toUpperCase();
-        if (!postServiceData.serviceAbbr.matches("\\w+")) {
-            logger.warn("Illegal service Abbr");
-            return;
+        PostServiceData data = fromJson(request, PostServiceData.class);
+        if (data.teamId == null || data.teamId.isEmpty()) {
+            throw new Http400BadRequestException("teamId attribute is mising");
+        }
+        User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
+        if (data.serviceAbbr == null || data.serviceAbbr.isEmpty()) {
+            throw new Http400BadRequestException("Service Abbr is mising or empty");
+        }
+        data.serviceAbbr = data.serviceAbbr.toUpperCase();
+        if (!data.serviceAbbr.matches("\\w+")) {
+            throw new Http400BadRequestException("Service Abbr can only have letters and numbers");
+        }
+        if (data.serviceAbbr.length() > 7) {
+            throw new Http400BadRequestException("Service Abbr is to long, max is 7");
+        }
+        if (data.serviceName == null || data.serviceName.isEmpty()) {
+            throw new Http400BadRequestException("Service Name is mising or empty");
+        }
+        if (data.serviceName.length() > 30) {
+            throw new Http400BadRequestException("Service Name is to long, max is 30");
+        }
+        if (data.description.length() > 500) {
+            throw new Http400BadRequestException("Description is to long, max is 500");
         }
 
-        for (Service temp : getDataAccess().getServices(postServiceData.teamId)) {
-            if (temp.getServiceAbbr().equals(postServiceData.serviceAbbr)) {
-                logger.warn("A service already exists with that abbreviation, {}", postServiceData.serviceAbbr);
-                return;
+        for (Service temp : getDataAccess().getServices(data.teamId)) {
+            if (temp.getServiceAbbr().equals(data.serviceAbbr)) {
+                throw new Http405NotAllowedException("A service already exists with that abbreviation, " + data.serviceAbbr);
             }
         }
 
-        if (postServiceData.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
-            postServiceData.gitMode = GitMode.Flat;
+        if (data.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
+            data.gitMode = GitMode.Flat;
+        }
+        if (data.gitMode == GitMode.Flat) {
+            data.gitProject = null;
+        } else {
+            if (data.gitProject == null || data.gitProject.isEmpty()) {
+                throw new Http400BadRequestException("Git Project is mising or empty");
+            }
+            if (data.gitProject.length() > 30) {
+                throw new Http400BadRequestException("Git Project is to long, max is 30");
+            }
         }
 
         Service service = new Service(
-                postServiceData.serviceAbbr,
-                postServiceData.serviceName,
-                postServiceData.teamId,
-                postServiceData.description,
-                postServiceData.serviceType,
-                postServiceData.gitMode,
-                postServiceData.gitProject,
+                data.serviceAbbr,
+                data.serviceName,
+                data.teamId,
+                data.description,
+                data.serviceType,
+                data.gitMode,
+                data.gitProject,
                 true);
 
         getDataAccess().saveService(service);

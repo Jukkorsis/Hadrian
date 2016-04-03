@@ -41,29 +41,43 @@ public class TeamCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         accessHelper.checkIfUserIsAdmin(request, "create team");
 
-        PostTeamData postTeamData = fromJson(request, PostTeamData.class);
+        PostTeamData data = fromJson(request, PostTeamData.class);
 
-        if (postTeamData.user == null) {
+        if (data.user == null) {
             throw new Http400BadRequestException("Failed to create new team, as user is null");
         }
-        if (postTeamData.teamName == null) {
-            throw new Http400BadRequestException("Failed to create new team, as team name is null");
+        if (data.teamName == null) {
+            throw new Http400BadRequestException("Team Name is mising or empty");
         }
-        postTeamData.teamName = postTeamData.teamName.trim();
-        if (postTeamData.teamName.isEmpty()) {
-            throw new Http400BadRequestException("Failed to create new team, as team name is empty");
+        data.teamName = data.teamName.trim();
+        if (data.teamName.isEmpty()) {
+            throw new Http400BadRequestException("Team Name is mising or empty");
+        }
+        if (data.teamName.length() > 30) {
+            throw new Http400BadRequestException("Team Name is to long, max is 30");
         }
         for (Team temp : getDataAccess().getTeams()) {
-            if (temp.getTeamName().equals(postTeamData.teamName)) {
-                throw new Http405NotAllowedException("Failed to create new team, as team with name " + postTeamData.teamName + " already exists");
+            if (temp.getTeamName().equals(data.teamName)) {
+                throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
             }
         }
 
-        Team team = new Team(postTeamData.teamName, postTeamData.teamEmail, postTeamData.teamIrc, postTeamData.gitGroup, postTeamData.calendarId);
-        if (getDataAccess().getUser(postTeamData.user.getUsername()) == null) {
-            throw new Http404NotFoundException("Failed to create new team, could not find initial user " + postTeamData.user.getUsername());
+        if (data.gitGroup == null || data.gitGroup.isEmpty()) {
+            throw new Http400BadRequestException("Git Group is mising or empty");
         }
-        team.getUsernames().add(postTeamData.user.getUsername());
+        if (data.gitGroup.length() > 30) {
+            throw new Http400BadRequestException("Git Group is to long, max is 30");
+        }
+
+        if (data.user == null) {
+            throw new Http400BadRequestException("Initial user is mising or empty");
+        }
+        if (getDataAccess().getUser(data.user.getUsername()) == null) {
+            throw new Http404NotFoundException("Failed to create new team, could not find initial user " + data.user.getUsername());
+        }
+
+        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.gitGroup, data.calendarId);
+        team.getUsernames().add(data.user.getUsername());
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

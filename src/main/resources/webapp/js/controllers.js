@@ -197,6 +197,7 @@ hadrianControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'Us
 hadrianControllers.controller('ModalAddTeamCtrl',
         function ($scope, $http, $modalInstance, $window, users) {
             $scope.users = users;
+            $scope.errorMsg = null;
 
             $scope.formSaveTeam = {};
             $scope.formSaveTeam.name = "";
@@ -222,7 +223,7 @@ hadrianControllers.controller('ModalAddTeamCtrl',
                     $window.location.reload();
                 });
                 responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new team has failed!");
+                    $scope.errorMsg = data;
                 });
             };
 

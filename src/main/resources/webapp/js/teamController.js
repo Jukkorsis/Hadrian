@@ -123,6 +123,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl',
 hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
     function ($scope, $http, $modalInstance, $window, Config, team) {
         $scope.team = team;
+        $scope.errorMsg = null;
         Config.get({}, function (config) {
             $scope.config = config;
 
@@ -153,7 +154,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     $window.location.reload();
                 });
                 responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new service has failed!");
+                    $scope.errorMsg = data;
                 });
             };
 
