@@ -18,7 +18,7 @@ package com.northernwall.hadrian.service;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.service.dao.PostTeamAddUser;
+import com.northernwall.hadrian.service.dao.PostTeamAddUserData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -37,21 +37,16 @@ public class TeamAddUserHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostTeamAddUser postTeamAddUser = fromJson(request, PostTeamAddUser.class);
-
-        Team team = getDataAccess().getTeam(postTeamAddUser.teamId);
-        if (team == null) {
-            throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find team");
-        }
+        PostTeamAddUserData data = fromJson(request, PostTeamAddUserData.class);
+        Team team = getTeam(data.teamId, null);
+        accessHelper.checkIfUserCanModify(request, data.teamId, "add user to team");
         
-        accessHelper.checkIfUserCanModify(request, postTeamAddUser.teamId, "add user to team");
-        
-        if (getDataAccess().getUser(postTeamAddUser.username) == null) {
-            throw new Http404NotFoundException("Failed to add user " + postTeamAddUser.username + " to team " + postTeamAddUser.teamId + ", could not find user");
+        if (getDataAccess().getUser(data.username) == null) {
+            throw new Http404NotFoundException("Failed to add user " + data.username + " to team " + data.teamId + ", could not find user");
         }
 
-        if (!team.getUsernames().contains(postTeamAddUser.username)) {
-            team.getUsernames().add(postTeamAddUser.username);
+        if (!team.getUsernames().contains(data.username)) {
+            team.getUsernames().add(data.username);
             getDataAccess().updateTeam(team);
         }
         

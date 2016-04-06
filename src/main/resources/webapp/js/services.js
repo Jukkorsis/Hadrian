@@ -11,26 +11,26 @@ hadrianServices.factory('Tree', ['$resource', function($resource) {
     }]);
 
 hadrianServices.factory('Team', ['$resource', function($resource) {
-        return $resource('/v1/team/:teamId', {}, {
-            query: {method: 'GET', params: {teamId: 'services'}, isArray: false}
+        return $resource('/v1/team', {}, {
+            query: {method: 'GET', isArray: false}
         });
     }]);
 
 hadrianServices.factory('Services', ['$resource', function($resource) {
-        return $resource('/v1/service', {}, {
+        return $resource('/v1/services', {}, {
             query: {method: 'GET', isArray: false}
         });
     }]);
 
 hadrianServices.factory('Service', ['$resource', function($resource) {
-        return $resource('/v1/service/:serviceId', {}, {
-            query: {method: 'GET', params: {serviceId: 'services'}, isArray: false}
+        return $resource('/v1/service', {}, {
+            query: {method: 'GET', isArray: false}
         });
     }]);
 
 hadrianServices.factory('ServiceNotUses', ['$resource', function($resource) {
-        return $resource('/v1/service/:serviceId/notuses', {}, {
-            query: {method: 'GET', params: {serviceId: 'services'}, isArray: false}
+        return $resource('/v1/service/notuses', {}, {
+            query: {method: 'GET', isArray: false}
         });
     }]);
 

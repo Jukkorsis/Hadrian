@@ -49,7 +49,7 @@ public class ServiceNotUsesGetHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String id = target.substring(12, target.length() - 8);
+        String id = request.getParameter("serviceId");
         List<Service> services = dataAccess.getServices();
         List<ServiceRef> refs = dataAccess.getServiceRefsByClient(id);
 

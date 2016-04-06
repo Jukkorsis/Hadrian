@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.service.dao;
 
-public class DeleteTeamRemoveUser {
+public class PostTeamAddUserData {
     public String teamId;
     public String username;
 

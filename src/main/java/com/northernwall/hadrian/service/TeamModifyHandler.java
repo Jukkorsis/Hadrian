@@ -40,14 +40,8 @@ public class TeamModifyHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutTeamData data = fromJson(request, PutTeamData.class);
-        if (data.teamId == null || data.teamId.isEmpty()) {
-            throw new Http400BadRequestException("teamId attribute is mising");
-        }
+        Team team = getTeam(data.teamId, null);
         accessHelper.checkIfUserCanModify(request, data.teamId, "update team");
-        Team team = getDataAccess().getTeam(data.teamId);
-        if (team == null) {
-            throw new Http404NotFoundException("Can not find team " + data.teamId + ", could not update team");
-        }
         data.teamName = data.teamName.trim();
         if (data.teamName.isEmpty()) {
             throw new Http400BadRequestException("Team Name is mising or empty");

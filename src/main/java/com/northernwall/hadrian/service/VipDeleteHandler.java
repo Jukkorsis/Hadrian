@@ -49,12 +49,12 @@ public class VipDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteVipData deleteVipData = fromJson(request, DeleteVipData.class);
-        Service service = getService(deleteVipData.serviceId, null, null);
+        DeleteVipData data = fromJson(request, DeleteVipData.class);
+        Service service = getService(data.serviceId, null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Vip vip = getVip(deleteVipData.vipId, null, service);
+        Vip vip = getVip(data.vipId, null, service);
 
         vip.setStatus("Deleting...");
         getDataAccess().updateVip(vip);

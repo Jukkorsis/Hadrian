@@ -51,17 +51,17 @@ public class HostVipDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteHostVipData deleteHostVipData = fromJson(request, DeleteHostVipData.class);
+        DeleteHostVipData data = fromJson(request, DeleteHostVipData.class);
 
-        Service service = getService(deleteHostVipData.serviceId, null, null);
+        Service service = getService(data.serviceId, null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host vip");
-        Team team = getDataAccess().getTeam(service.getTeamId());
-        VipRef vipRef = getDataAccess().getVipRef(deleteHostVipData.hostId, deleteHostVipData.vipId);
+        VipRef vipRef = getDataAccess().getVipRef(data.hostId, data.vipId);
         if (vipRef == null) {
             return;
         }
-        Host host = getHost(deleteHostVipData.hostId, null, service);
-        Vip vip = getVip(deleteHostVipData.vipId, null, service);
+        Host host = getHost(data.hostId, null, service);
+        Vip vip = getVip(data.vipId, null, service);
         
         vipRef.setStatus("Removing...");
         getDataAccess().updateVipRef(vipRef);

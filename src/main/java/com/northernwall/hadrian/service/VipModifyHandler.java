@@ -49,19 +49,19 @@ public class VipModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutVipData putVipData = fromJson(request, PutVipData.class);
+        PutVipData data = fromJson(request, PutVipData.class);
 
-        Service service = getService(putVipData.serviceId, null, null);
-        Vip vip = getVip(putVipData.vipId, null, service);
+        Service service = getService(data.serviceId, null, null);
+        Vip vip = getVip(data.vipId, null, service);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
         vip.setStatus("Updating...");
         getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
-        workItem.getVip().external = putVipData.external;
-        workItem.getVip().servicePort = putVipData.servicePort;
+        workItem.getVip().external = data.external;
+        workItem.getVip().servicePort = data.servicePort;
         getDataAccess().saveWorkItem(workItem);
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);

@@ -62,36 +62,36 @@ public class HostCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostHostData postHostData = fromJson(request, PostHostData.class);
-        Service service = getService(postHostData.serviceId, null, null);
+        PostHostData data = fromJson(request, PostHostData.class);
+        Service service = getService(data.serviceId, null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        if (postHostData.count < 1) {
+        if (data.count < 1) {
             throw new Http400BadRequestException("count must to at least 1");
-        } else if (postHostData.count > 10) {
-            logger.warn("Reducing count to 10, was {}", postHostData.count);
-            postHostData.count = 10;
+        } else if (data.count > 10) {
+            logger.warn("Reducing count to 10, was {}", data.count);
+            data.count = 10;
         }
 
         Config config = configHelper.getConfig();
-        if (!config.dataCenters.contains(postHostData.dataCenter)) {
+        if (!config.dataCenters.contains(data.dataCenter)) {
             throw new Http400BadRequestException("Unknown data center");
         }
-        if (!config.networkNames.contains(postHostData.network)) {
+        if (!config.networkNames.contains(data.network)) {
             throw new Http400BadRequestException("Unknown network");
         }
-        if (!config.envs.contains(postHostData.env)) {
+        if (!config.envs.contains(data.env)) {
             throw new Http400BadRequestException("Unknown env");
         }
-        if (!config.sizes.contains(postHostData.size)) {
+        if (!config.sizes.contains(data.size)) {
             throw new Http400BadRequestException("Unknown size");
         }
 
-        List<Module> modules = getDataAccess().getModules(postHostData.serviceId);
+        List<Module> modules = getDataAccess().getModules(data.serviceId);
         Module module = null;
         for (Module temp : modules) {
-            if (temp.getModuleId().equals(postHostData.moduleId)) {
+            if (temp.getModuleId().equals(data.moduleId)) {
                 module = temp;
             }
         }
@@ -100,10 +100,10 @@ public class HostCreateHandler extends BasicHandler {
         }
 
         //calc host name
-        String prefix = buildPrefix(postHostData.network, config, postHostData.dataCenter, module.getHostAbbr());
+        String prefix = buildPrefix(data.network, config, data.dataCenter, module.getHostAbbr());
         int len = prefix.length();
         int num = 0;
-        List<Host> hosts = getDataAccess().getHosts(postHostData.serviceId);
+        List<Host> hosts = getDataAccess().getHosts(data.serviceId);
         for (Host existingHost : hosts) {
             String existingHostName = existingHost.getHostName();
             if (existingHostName.startsWith(prefix) && existingHostName.length() > len) {
@@ -119,28 +119,28 @@ public class HostCreateHandler extends BasicHandler {
             }
         }
         num++;
-        for (int c = 0; c < postHostData.count; c++) {
+        for (int c = 0; c < data.count; c++) {
             String numStr = Integer.toString(num + c);
             numStr = "000".substring(numStr.length()) + numStr;
 
             Host host = new Host(prefix + numStr,
-                    postHostData.serviceId,
+                    data.serviceId,
                     "Creating...",
-                    postHostData.moduleId,
-                    postHostData.dataCenter,
-                    postHostData.network,
-                    postHostData.env,
-                    postHostData.size);
+                    data.moduleId,
+                    data.dataCenter,
+                    data.network,
+                    data.env,
+                    data.size);
             getDataAccess().saveHost(host);
 
             WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
             WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
 
-            workItemCreate.getHost().version = postHostData.version;
-            workItemCreate.getHost().reason = postHostData.reason;
+            workItemCreate.getHost().version = data.version;
+            workItemCreate.getHost().reason = data.reason;
             workItemCreate.setNextId(workItemDeploy.getId());
-            workItemDeploy.getHost().version = postHostData.version;
-            workItemDeploy.getHost().reason = postHostData.reason;
+            workItemDeploy.getHost().version = data.version;
+            workItemDeploy.getHost().reason = data.reason;
 
             getDataAccess().saveWorkItem(workItemCreate);
             getDataAccess().saveWorkItem(workItemDeploy);

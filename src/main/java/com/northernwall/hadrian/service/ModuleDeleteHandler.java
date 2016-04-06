@@ -54,24 +54,24 @@ public class ModuleDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteModuleData deleteModuleData = fromJson(request, DeleteModuleData.class);
-        Service service = getService(deleteModuleData.serviceId, null, null);
-        Module module = getModule(deleteModuleData.moduleId, null, service);
+        DeleteModuleData data = fromJson(request, DeleteModuleData.class);
+        Service service = getService(data.serviceId, null, null);
+        Module module = getModule(data.moduleId, null, service);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        for (Host host : getDataAccess().getHosts(deleteModuleData.serviceId)) {
-            if (host.getModuleId().equals(deleteModuleData.moduleId)) {
+        for (Host host : getDataAccess().getHosts(data.serviceId)) {
+            if (host.getModuleId().equals(data.moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active host");
             }
         }
-        for (Vip vip : getDataAccess().getVips(deleteModuleData.serviceId)) {
-            if (vip.getModuleId().equals(deleteModuleData.moduleId)) {
+        for (Vip vip : getDataAccess().getVips(data.serviceId)) {
+            if (vip.getModuleId().equals(data.moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active vip");
             }
         }
 
-        List<Module> modules = getDataAccess().getModules(deleteModuleData.serviceId);
+        List<Module> modules = getDataAccess().getModules(data.serviceId);
         Collections.sort(modules);
 
         modules.remove(module.getOrder() - 1);
@@ -83,7 +83,7 @@ public class ModuleDeleteHandler extends BasicHandler {
             }
             i++;
         }
-        getDataAccess().deleteModule(deleteModuleData.serviceId, deleteModuleData.moduleId);
+        getDataAccess().deleteModule(data.serviceId, data.moduleId);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
         for (Module temp : modules) {

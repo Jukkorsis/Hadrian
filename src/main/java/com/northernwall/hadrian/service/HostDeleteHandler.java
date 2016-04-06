@@ -52,25 +52,25 @@ public class HostDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteHostData deleteHostData = fromJson(request, DeleteHostData.class);
-        Service service = getService(deleteHostData.serviceId, deleteHostData.serviceName, deleteHostData.serviceAbbr);
+        DeleteHostData data = fromJson(request, DeleteHostData.class);
+        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Module module = getModule(deleteHostData.moduleId, deleteHostData.moduleName, service);
+        Module module = getModule(data.moduleId, data.moduleName, service);
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(deleteHostData.network)) {
-                if (deleteHostData.hostNames.contains(host.getHostName())) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+                if (data.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         host.setStatus("Deleting...");
                         getDataAccess().updateHost(host);
                         WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
-                        workItem.getHost().reason = deleteHostData.reason;
+                        workItem.getHost().reason = data.reason;
                         getDataAccess().saveWorkItem(workItem);
                         workItemProcess.sendWorkItem(workItem);
                     }

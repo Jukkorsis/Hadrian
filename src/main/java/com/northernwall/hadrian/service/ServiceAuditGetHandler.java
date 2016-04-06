@@ -58,7 +58,7 @@ public class ServiceAuditGetHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String start = request.getParameter("start");
         String end = request.getParameter("end");
-        String id = target.substring(12, target.length() - 6);
+        String id = request.getParameter("serviceId");
         GetAuditData auditData = new GetAuditData();
 
         Date startDate = null;

@@ -53,12 +53,12 @@ public class HostRestartHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutRestartHostData putRestartHostData = fromJson(request, PutRestartHostData.class);
-        Service service = getService(putRestartHostData.serviceId, putRestartHostData.serviceName, putRestartHostData.serviceAbbr);
+        PutRestartHostData data = fromJson(request, PutRestartHostData.class);
+        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Module module = getModule(putRestartHostData.moduleId, putRestartHostData.moduleName, service);
+        Module module = getModule(data.moduleId, data.moduleName, service);
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
@@ -66,11 +66,11 @@ public class HostRestartHandler extends BasicHandler {
         }
         List<WorkItem> workItems = new ArrayList<>(hosts.size());
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(putRestartHostData.network)) {
-                if (putRestartHostData.all || putRestartHostData.hostNames.contains(host.getHostName())) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+                if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
-                        workItem.getHost().reason = putRestartHostData.reason;
+                        workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus("Restarting...");
                         } else {
@@ -93,7 +93,7 @@ public class HostRestartHandler extends BasicHandler {
                 getDataAccess().saveWorkItem(workItem);
             }
             workItemProcess.sendWorkItem(workItems.get(0));
-            if (putRestartHostData.wait) {
+            if (data.wait) {
                 String lastId = workItems.get(size - 1).getId();
                 for (int i = 0; i < 30; i++) {
                     try {

@@ -58,30 +58,30 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutDeploySoftwareData putDeployData = fromJson(request, PutDeploySoftwareData.class);
-        Service service = getService(putDeployData.serviceId, putDeployData.serviceName, putDeployData.serviceAbbr);
+        PutDeploySoftwareData data = fromJson(request, PutDeploySoftwareData.class);
+        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        Module module = getModule(putDeployData.moduleId, putDeployData.moduleName, service);
+        Module module = getModule(data.moduleId, data.moduleName, service);
 
         Network network = null;
         for (Network temp : configHelper.getConfig().networks) {
-            if (temp.name.equals(putDeployData.network)) {
+            if (temp.name.equals(data.network)) {
                 network = temp;
             }
         }
         if (network == null) {
-            throw new Http400BadRequestException("Unknown network " + putDeployData.network);
+            throw new Http400BadRequestException("Unknown network " + data.network);
         }
-        if (!network.allowUrl && putDeployData.versionUrl != null) {
+        if (!network.allowUrl && data.versionUrl != null) {
             throw new Http400BadRequestException(("Network " + network.name + " does not allow versionUrl"));
         }
-        if (putDeployData.version != null && putDeployData.versionUrl != null) {
+        if (data.version != null && data.versionUrl != null) {
             throw new Http400BadRequestException("Only one of version and versionUrl can be specified");
         }
-        if ((putDeployData.version == null || putDeployData.version.isEmpty()) 
-                && (putDeployData.versionUrl == null || putDeployData.versionUrl.isEmpty())) {
+        if ((data.version == null || data.version.isEmpty()) 
+                && (data.versionUrl == null || data.versionUrl.isEmpty())) {
             throw new Http400BadRequestException("One of version and versionUrl must be specified");
         }
         
@@ -91,13 +91,13 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         }
         List<WorkItem> workItems = new ArrayList<>(hosts.size());
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(putDeployData.network)) {
-                if (putDeployData.all || putDeployData.hostNames.contains(host.getHostName())) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+                if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
-                        workItem.getHost().version = putDeployData.version;
-                        workItem.getHost().versionUrl = putDeployData.versionUrl;
-                        workItem.getHost().reason = putDeployData.reason;
+                        workItem.getHost().version = data.version;
+                        workItem.getHost().versionUrl = data.versionUrl;
+                        workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus("Deploying...");
                         } else {
@@ -120,7 +120,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                 getDataAccess().saveWorkItem(workItem);
             }
             workItemProcess.sendWorkItem(workItems.get(0));
-            if (putDeployData.wait) {
+            if (data.wait) {
                 String lastId = workItems.get(size - 1).getId();
                 for (int i = 0; i < 30; i++) {
                     try {

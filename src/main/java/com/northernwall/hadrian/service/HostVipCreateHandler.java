@@ -59,8 +59,8 @@ public class HostVipCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostHostVipData data = fromJson(request, PostHostVipData.class);
         Service service = getService(data.serviceId,  null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host vip");
-        Team team = getDataAccess().getTeam(service.getTeamId());
         List<Host> hosts = getDataAccess().getHosts(data.serviceId);
         Vip vip = getVip(data.vipId, null, service);
         Module module = null;

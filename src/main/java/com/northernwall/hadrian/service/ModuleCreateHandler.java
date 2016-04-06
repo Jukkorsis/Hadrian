@@ -64,78 +64,78 @@ public class ModuleCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostModuleData postModuleData = fromJson(request, PostModuleData.class);
-        Service service = getService(postModuleData.serviceId, null, null);
+        PostModuleData data = fromJson(request, PostModuleData.class);
+        Service service = getService(data.serviceId, null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
         Config config = configHelper.getConfig();
-        if (!config.moduleTypes.contains(postModuleData.moduleType)) {
+        if (!config.moduleTypes.contains(data.moduleType)) {
             throw new Http400BadRequestException("Unknown module type");
         }
         String template = null;
-        switch (postModuleData.moduleType) {
+        switch (data.moduleType) {
             case Deployable:
-                if (!config.deployableTemplates.contains(postModuleData.deployableTemplate)) {
+                if (!config.deployableTemplates.contains(data.deployableTemplate)) {
                     throw new Http400BadRequestException("Unknown deployable template");
                 }
-                template = postModuleData.deployableTemplate;
+                template = data.deployableTemplate;
                 break;
             case Library:
-                if (!config.libraryTemplates.contains(postModuleData.libraryTemplate)) {
+                if (!config.libraryTemplates.contains(data.libraryTemplate)) {
                     throw new Http400BadRequestException("Unknown library template");
                 }
-                template = postModuleData.libraryTemplate;
+                template = data.libraryTemplate;
                 break;
             case Test:
-                if (!config.testTemplates.contains(postModuleData.testTemplate)) {
+                if (!config.testTemplates.contains(data.testTemplate)) {
                     throw new Http400BadRequestException("Unknown test template");
                 }
-                template = postModuleData.testTemplate;
+                template = data.testTemplate;
                 break;
         }
-        if (!config.artifactTypes.contains(postModuleData.artifactType)) {
+        if (!config.artifactTypes.contains(data.artifactType)) {
             throw new Http400BadRequestException("Unknown artifact");
         }
 
         if (service.getServiceType().equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
-            postModuleData.moduleType = ModuleType.Library;
+            data.moduleType = ModuleType.Library;
         }
 
-        if (!postModuleData.moduleType.equals(ModuleType.Deployable)) {
-            postModuleData.hostAbbr = "";
-            postModuleData.versionUrl = "";
-            postModuleData.availabilityUrl = "";
-            postModuleData.runAs = "";
-            postModuleData.deploymentFolder = "";
-            postModuleData.startCmdLine = "";
-            postModuleData.startTimeOut = 0;
-            postModuleData.stopCmdLine = "";
-            postModuleData.stopTimeOut = 0;
+        if (!data.moduleType.equals(ModuleType.Deployable)) {
+            data.hostAbbr = "";
+            data.versionUrl = "";
+            data.availabilityUrl = "";
+            data.runAs = "";
+            data.deploymentFolder = "";
+            data.startCmdLine = "";
+            data.startTimeOut = 0;
+            data.stopCmdLine = "";
+            data.stopTimeOut = 0;
         } else {
-            if (postModuleData.hostAbbr.contains("-")) {
+            if (data.hostAbbr.contains("-")) {
                 throw new Http400BadRequestException("Can not have '-' in host abbr");
             }
         }
 
         if (service.getGitMode().equals(GitMode.Consolidated)) {
-            postModuleData.gitProject = service.getGitProject();
-            if (postModuleData.gitFolder.startsWith("/")) {
-                postModuleData.gitFolder = postModuleData.gitFolder.substring(1);
+            data.gitProject = service.getGitProject();
+            if (data.gitFolder.startsWith("/")) {
+                data.gitFolder = data.gitFolder.substring(1);
             }
         } else {
-            postModuleData.gitFolder = "";
+            data.gitFolder = "";
         }
 
-        List<Module> modules = getDataAccess().getModules(postModuleData.serviceId);
+        List<Module> modules = getDataAccess().getModules(data.serviceId);
         List<Module> zeroModules = new LinkedList<>();
         for (Module temp : modules) {
-            if (postModuleData.moduleName.equalsIgnoreCase(temp.getModuleName())) {
-                logger.warn("Error there already exists a module named {} on service {}", postModuleData.moduleName, postModuleData.serviceId);
+            if (data.moduleName.equalsIgnoreCase(temp.getModuleName())) {
+                logger.warn("Error there already exists a module named {} on service {}", data.moduleName, data.serviceId);
                 return;
             }
-            if (postModuleData.gitProject.equalsIgnoreCase(temp.getGitProject()) && postModuleData.gitFolder.equalsIgnoreCase(temp.getGitFolder())) {
-                logger.warn("Error there already exists a module with git project {} and folder {} on service {}", postModuleData.gitProject, postModuleData.gitFolder, postModuleData.serviceId);
+            if (data.gitProject.equalsIgnoreCase(temp.getGitProject()) && data.gitFolder.equalsIgnoreCase(temp.getGitFolder())) {
+                logger.warn("Error there already exists a module with git project {} and folder {} on service {}", data.gitProject, data.gitFolder, data.serviceId);
                 return;
             }
             if (temp.getOrder() == 0) {
@@ -144,15 +144,15 @@ public class ModuleCreateHandler extends BasicHandler {
         }
         modules.removeAll(zeroModules);
         Collections.sort(modules);
-        if (postModuleData.order < 0) {
-            postModuleData.order = 0;
+        if (data.order < 0) {
+            data.order = 0;
         }
-        if (postModuleData.order > 0) {
-            if (postModuleData.order > (modules.size() + 1)) {
-                postModuleData.order = modules.size() + 1;
+        if (data.order > 0) {
+            if (data.order > (modules.size() + 1)) {
+                data.order = modules.size() + 1;
             }
             for (Module temp : modules) {
-                if (temp.getOrder() >= postModuleData.order) {
+                if (temp.getOrder() >= data.order) {
                     temp.setOrder(temp.getOrder() + 1);
                     getDataAccess().updateModule(temp);
                 }
@@ -160,25 +160,25 @@ public class ModuleCreateHandler extends BasicHandler {
         }
 
         Module module = new Module(
-                postModuleData.moduleName,
-                postModuleData.serviceId,
-                postModuleData.order,
-                postModuleData.moduleType,
-                postModuleData.gitProject,
-                postModuleData.gitFolder,
-                postModuleData.mavenGroupId,
-                postModuleData.mavenArtifactId,
-                postModuleData.artifactType,
-                postModuleData.artifactSuffix,
-                postModuleData.hostAbbr.toLowerCase(),
-                postModuleData.versionUrl,
-                postModuleData.availabilityUrl,
-                postModuleData.runAs,
-                postModuleData.deploymentFolder,
-                postModuleData.startCmdLine,
-                postModuleData.startTimeOut,
-                postModuleData.stopCmdLine,
-                postModuleData.stopTimeOut);
+                data.moduleName,
+                data.serviceId,
+                data.order,
+                data.moduleType,
+                data.gitProject,
+                data.gitFolder,
+                data.mavenGroupId,
+                data.mavenArtifactId,
+                data.artifactType,
+                data.artifactSuffix,
+                data.hostAbbr.toLowerCase(),
+                data.versionUrl,
+                data.availabilityUrl,
+                data.runAs,
+                data.deploymentFolder,
+                data.startCmdLine,
+                data.startTimeOut,
+                data.stopCmdLine,
+                data.stopTimeOut);
         getDataAccess().saveModule(module);
         if (module.getOrder() > 0) {
             modules.add(module.getOrder() - 1, module);

@@ -56,17 +56,17 @@ public class ModuleModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutModuleData putModuleData = fromJson(request, PutModuleData.class);
-        Service service = getService(putModuleData.serviceId, null, null);
+        PutModuleData data = fromJson(request, PutModuleData.class);
+        Service service = getService(data.serviceId, null, null);
         
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        List<Module> modules = getDataAccess().getModules(putModuleData.serviceId);
+        List<Module> modules = getDataAccess().getModules(data.serviceId);
         List<Module> zeroModules = new LinkedList<>();
         Module module = null;
         for (Module temp : modules) {
-            if (temp.getModuleId().equals(putModuleData.moduleId)) {
+            if (temp.getModuleId().equals(data.moduleId)) {
                 module = temp;
             }
             if (temp.getOrder() == 0) {
@@ -74,42 +74,42 @@ public class ModuleModifyHandler extends BasicHandler {
             }
         }
         if (module == null) {
-            logger.warn("Could not find module with id {} in service {}", putModuleData.moduleId, putModuleData.serviceId);
+            logger.warn("Could not find module with id {} in service {}", data.moduleId, data.serviceId);
             return;
         }
         modules.removeAll(zeroModules);
         Collections.sort(modules);
-        if (putModuleData.order < 0) {
-            putModuleData.order = 0;
+        if (data.order < 0) {
+            data.order = 0;
         }
-        if (putModuleData.order > modules.size()) {
-            putModuleData.order = modules.size();
+        if (data.order > modules.size()) {
+            data.order = modules.size();
         }
 
-        module.setModuleName(putModuleData.moduleName);
-        module.setMavenGroupId(putModuleData.mavenGroupId);
-        module.setMavenArtifactId(putModuleData.mavenArtifactId);
-        module.setArtifactType(putModuleData.artifactType);
-        module.setArtifactSuffix(putModuleData.artifactSuffix);
-        module.setHostAbbr(putModuleData.hostAbbr.toLowerCase());
-        module.setVersionUrl(putModuleData.versionUrl);
-        module.setAvailabilityUrl(putModuleData.availabilityUrl);
-        module.setRunAs(putModuleData.runAs);
-        module.setDeploymentFolder(putModuleData.deploymentFolder);
-        module.setStartCmdLine(putModuleData.startCmdLine);
-        module.setStartTimeOut(putModuleData.startTimeOut);
-        module.setStopCmdLine(putModuleData.stopCmdLine);
-        module.setStopTimeOut(putModuleData.stopTimeOut);
+        module.setModuleName(data.moduleName);
+        module.setMavenGroupId(data.mavenGroupId);
+        module.setMavenArtifactId(data.mavenArtifactId);
+        module.setArtifactType(data.artifactType);
+        module.setArtifactSuffix(data.artifactSuffix);
+        module.setHostAbbr(data.hostAbbr.toLowerCase());
+        module.setVersionUrl(data.versionUrl);
+        module.setAvailabilityUrl(data.availabilityUrl);
+        module.setRunAs(data.runAs);
+        module.setDeploymentFolder(data.deploymentFolder);
+        module.setStartCmdLine(data.startCmdLine);
+        module.setStartTimeOut(data.startTimeOut);
+        module.setStopCmdLine(data.stopCmdLine);
+        module.setStopTimeOut(data.stopTimeOut);
 
-        if (module.getOrder() != putModuleData.order) {
+        if (module.getOrder() != data.order) {
             if (module.getOrder() > 0) {
                 modules.remove(module);
             } else {
                 zeroModules.remove(module);
             }
-            module.setOrder(putModuleData.order);
-            if (putModuleData.order > 0) {
-                modules.add(putModuleData.order - 1, module);
+            module.setOrder(data.order);
+            if (data.order > 0) {
+                modules.add(data.order - 1, module);
             } else {
                 zeroModules.add(module);
             }

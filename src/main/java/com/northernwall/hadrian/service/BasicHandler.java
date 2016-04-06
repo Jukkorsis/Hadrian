@@ -5,6 +5,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
@@ -47,6 +48,30 @@ public abstract class BasicHandler extends AbstractHandler {
         }
         logger.info("Stream->Json {}", gson.toJson(temp));
         return temp;
+    }
+
+    protected Team getTeam(Request request) {
+        return getTeam(
+                request.getParameter("teamId"),
+                request.getParameter("teamName"));
+    }
+
+    protected Team getTeam(String teamId, String teamName) {
+        if (teamId != null && !teamId.isEmpty()) {
+            Team team = dataAccess.getTeam(teamId);
+            if (team != null) {
+                return team;
+            }
+            throw new Http404NotFoundException("Could not find team with ID " + teamId);
+        }
+        if (teamName != null && !teamName.isEmpty()) {
+            for (Team team : dataAccess.getTeams()) {
+                if (team.getTeamName().equalsIgnoreCase(teamName)) {
+                    return team;
+                }
+            }
+        }
+        throw new Http404NotFoundException("Could not find team");
     }
 
     protected Service getService(Request request) {

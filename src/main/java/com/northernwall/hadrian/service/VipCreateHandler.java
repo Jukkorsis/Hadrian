@@ -51,39 +51,39 @@ public class VipCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostVipData postVipData = fromJson(request, PostVipData.class);
+        PostVipData data = fromJson(request, PostVipData.class);
 
-        Service service = getService(postVipData.serviceId, null, null);
+        Service service = getService(data.serviceId, null, null);
+        Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
-        Team team = getDataAccess().getTeam(service.getTeamId());
 
         //Check for duplicate VIP
-        List<Vip> vips = getDataAccess().getVips(postVipData.serviceId);
+        List<Vip> vips = getDataAccess().getVips(data.serviceId);
         for (Vip temp : vips) {
-            if (temp.getVipName().equals(postVipData.vipName)) {
+            if (temp.getVipName().equals(data.vipName)) {
                 return;
             }
-            if (temp.getDns().equals(postVipData.dns)
-                    && temp.getDomain().equals(postVipData.domain)
-                    && temp.getVipPort() == postVipData.vipPort) {
+            if (temp.getDns().equals(data.dns)
+                    && temp.getDomain().equals(data.domain)
+                    && temp.getVipPort() == data.vipPort) {
                 return;
             }
         }
 
-        Module module = getModule(postVipData.moduleId, null, service);
+        Module module = getModule(data.moduleId, null, service);
 
         Vip vip = new Vip(
-                postVipData.vipName,
-                postVipData.serviceId,
+                data.vipName,
+                data.serviceId,
                 "Creating...",
-                postVipData.moduleId,
-                postVipData.dns,
-                postVipData.domain,
-                postVipData.external,
-                postVipData.network,
-                postVipData.protocol,
-                postVipData.vipPort,
-                postVipData.servicePort);
+                data.moduleId,
+                data.dns,
+                data.domain,
+                data.external,
+                data.network,
+                data.protocol,
+                data.vipPort,
+                data.servicePort);
         getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);

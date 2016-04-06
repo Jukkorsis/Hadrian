@@ -79,9 +79,8 @@ public class ServiceGetHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String id = target.substring(12, target.length());
         response.setContentType(Const.JSON);
-        Service service = getService(id, null, null);
+        Service service = getService(request);
 
         GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
@@ -89,7 +88,7 @@ public class ServiceGetHandler extends BasicHandler {
         if (service.isActive()) {
             List<Future> futures = new LinkedList<>();
 
-            List<Module> modules = getDataAccess().getModules(id);
+            List<Module> modules = getDataAccess().getModules(service.getServiceId());
             Collections.sort(modules);
             for (Module module : modules) {
                 GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
@@ -97,7 +96,7 @@ public class ServiceGetHandler extends BasicHandler {
                 getServiceData.modules.add(getModuleData);
             }
 
-            List<Vip> vips = getDataAccess().getVips(id);
+            List<Vip> vips = getDataAccess().getVips(service.getServiceId());
             Collections.sort(vips);
             for (Vip vip : vips) {
                 GetModuleData getModuleData = null;
@@ -112,7 +111,7 @@ public class ServiceGetHandler extends BasicHandler {
                 }
             }
 
-            List<Host> hosts = getDataAccess().getHosts(id);
+            List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
             Collections.sort(hosts);
             for (Host host : hosts) {
                 GetModuleData getModuleData = null;
@@ -138,14 +137,14 @@ public class ServiceGetHandler extends BasicHandler {
                 }
             }
 
-            List<DataStore> dataStores = getDataAccess().getDataStores(id);
+            List<DataStore> dataStores = getDataAccess().getDataStores(service.getServiceId());
             Collections.sort(dataStores);
             for (DataStore dataStore : dataStores) {
                 GetDataStoreData getDataStoreData = GetDataStoreData.create(dataStore);
                 getServiceData.dataStores.add(getDataStoreData);
             }
 
-            for (ServiceRef ref : getDataAccess().getServiceRefsByClient(id)) {
+            for (ServiceRef ref : getDataAccess().getServiceRefsByClient(service.getServiceId())) {
                 GetServiceRefData tempRef = GetServiceRefData.create(ref);
                 tempRef.serviceName = getService(ref.getServerServiceId(), null, null).getServiceName();
                 getServiceData.uses.add(tempRef);
@@ -153,7 +152,7 @@ public class ServiceGetHandler extends BasicHandler {
 
             Collections.sort(getServiceData.uses);
 
-            for (ServiceRef ref : getDataAccess().getServiceRefsByServer(id)) {
+            for (ServiceRef ref : getDataAccess().getServiceRefsByServer(service.getServiceId())) {
                 GetServiceRefData tempRef = GetServiceRefData.create(ref);
                 tempRef.serviceName = getService(ref.getClientServiceId(), null, null).getServiceName();
                 getServiceData.usedBy.add(tempRef);
@@ -161,7 +160,7 @@ public class ServiceGetHandler extends BasicHandler {
 
             Collections.sort(getServiceData.usedBy);
 
-            List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(id);
+            List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(service.getServiceId());
             Collections.sort(customFunctions);
             for (CustomFunction customFunction : customFunctions) {
                 for (GetModuleData temp : getServiceData.modules) {

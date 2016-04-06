@@ -42,32 +42,26 @@ public class CalendarGetHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        String serviceId = request.getParameter("serviceId");
+        Service service = getService(request);
+        Team team = getDataAccess().getTeam(service.getTeamId());
 
-        GetCalendarData getCalendarData = new GetCalendarData();
-        if (serviceId != null && !serviceId.isEmpty()) {
-            Service service = getService(serviceId, null ,null);
-            Team team = getDataAccess().getTeam(service.getTeamId());
-            if (team == null) {
-                throw new Http404NotFoundException("Could not find team");
-            }
-            getCalendarData.entries = calendarHelper.getCalendarEntries(team);
+        GetCalendarData data = new GetCalendarData();
+        data.entries = calendarHelper.getCalendarEntries(team);
 
-            if (getCalendarData.entries == null) {
-                getCalendarData.entries = new LinkedList<>();
-            }
-            if (getCalendarData.entries.isEmpty()) {
-                CalendarEntry entry = new CalendarEntry();
-                entry.calendarName = "-";
-                entry.starts = "-";
-                entry.ends = "-";
-                entry.description = "-";
-                getCalendarData.entries.add(entry);
-            }
+        if (data.entries == null) {
+            data.entries = new LinkedList<>();
+        }
+        if (data.entries.isEmpty()) {
+            CalendarEntry entry = new CalendarEntry();
+            entry.calendarName = "-";
+            entry.starts = "-";
+            entry.ends = "-";
+            entry.description = "-";
+            data.entries.add(entry);
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getCalendarData, GetCalendarData.class, jw);
+            getGson().toJson(data, GetCalendarData.class, jw);
         }
 
         response.setStatus(200);
