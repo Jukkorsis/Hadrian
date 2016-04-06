@@ -2,6 +2,7 @@
     <h3 class="modal-title">Add Uses</h3>
 </div>
 <div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <div ng-repeat="ref in notUses.refs">
         <input ng-model="formSelectUses[ref.serverServiceId]" type="checkbox"> {{ref.serviceName}}
     </div>

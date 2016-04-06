@@ -604,6 +604,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
 
 hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
     function ($scope, $route, $http, $modalInstance, service) {
+        $scope.errorMsg = null;
         $scope.formUpdateService = {};
         $scope.formUpdateService.serviceId = service.serviceId;
         $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
@@ -624,7 +625,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update service has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -635,6 +636,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
 
 hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
     function ($scope, $route, $http, $modalInstance, service) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.formDeleteService = {};
         $scope.formDeleteService.serviceAbbr = service.serviceAbbr;
@@ -654,7 +656,7 @@ hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$h
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update service has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -665,6 +667,7 @@ hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$h
 
 hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
     function ($scope, $http, $modalInstance, $route, ServiceNotUses, service) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.formSelectUses = {};
 
@@ -684,7 +687,7 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to add dependence has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -695,6 +698,7 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
 
 hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'team', 'service',
     function ($scope, $http, $modalInstance, $route, config, team, service) {
+        $scope.errorMsg = null;
         $scope.team = team;
         $scope.service = service;
         $scope.config = config;
@@ -758,7 +762,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new module has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -769,6 +773,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
 
 hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module',
     function ($scope, $http, $modalInstance, $route, config, service, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.module = module;
         $scope.config = config;
@@ -817,7 +822,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update module has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -828,6 +833,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
 
 hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, config, service, network, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.network = network;
         $scope.module = module;
@@ -862,7 +868,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new vip has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -873,6 +879,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
 
 hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'vip',
     function ($scope, $http, $modalInstance, $route, service, vip) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.vip = vip;
 
@@ -894,7 +901,7 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update vip has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -905,6 +912,7 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
 
 hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, config, service, network, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.network = network;
         $scope.module = module;
@@ -945,7 +953,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new host has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -956,6 +964,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
 
 hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hostNames', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, config, Calendar, service, hostNames, network, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
         $scope.network = network;
@@ -993,7 +1002,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to deploy software to hosts has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -1004,6 +1013,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
 
 hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, config, service, hostNames, network, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
         $scope.network = network;
@@ -1030,7 +1040,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to restart hosts has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -1041,6 +1051,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
 
 hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'hostNames', 'network', 'module',
     function ($scope, $http, $modalInstance, $route, service, hostNames, network, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
         $scope.network = network;
@@ -1064,8 +1075,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete host has failed!");
-                $route.reload();
+        $scope.errorMsg = data;
             });
         };
 
@@ -1076,6 +1086,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
 
 hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hostNames',
     function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hostNames) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.moduleNetwork = moduleNetwork;
         $scope.hostNames = hostNames;
@@ -1096,7 +1107,7 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to add hosts to Vip has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -1108,6 +1119,7 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
 
 hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
     function ($scope, $http, $modalInstance, $route, service, module) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.module = module;
 
@@ -1129,7 +1141,7 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create custom function has failed!");
+        $scope.errorMsg = data;
             });
         };
 
@@ -1140,6 +1152,7 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
 
 hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'cf',
     function ($scope, $http, $modalInstance, $route, service, cf) {
+        $scope.errorMsg = null;
         $scope.service = service;
         $scope.cf = cf;
 
@@ -1165,7 +1178,7 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update custom function has failed!");
+        $scope.errorMsg = data;
             });
         };
 

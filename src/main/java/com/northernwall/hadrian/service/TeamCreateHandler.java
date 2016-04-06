@@ -56,17 +56,21 @@ public class TeamCreateHandler extends BasicHandler {
         if (data.teamName.length() > 30) {
             throw new Http400BadRequestException("Team Name is to long, max is 30");
         }
-        for (Team temp : getDataAccess().getTeams()) {
-            if (temp.getTeamName().equals(data.teamName)) {
-                throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
-            }
-        }
 
         if (data.gitGroup == null || data.gitGroup.isEmpty()) {
             throw new Http400BadRequestException("Git Group is mising or empty");
         }
         if (data.gitGroup.length() > 30) {
             throw new Http400BadRequestException("Git Group is to long, max is 30");
+        }
+
+        for (Team temp : getDataAccess().getTeams()) {
+            if (temp.getTeamName().equals(data.teamName)) {
+                throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
+            }
+            if (temp.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
+                throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
+            }
         }
 
         if (data.user == null) {

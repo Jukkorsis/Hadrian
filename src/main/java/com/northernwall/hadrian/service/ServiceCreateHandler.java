@@ -80,8 +80,11 @@ public class ServiceCreateHandler extends BasicHandler {
         }
 
         for (Service temp : getDataAccess().getServices(data.teamId)) {
-            if (temp.getServiceAbbr().equals(data.serviceAbbr)) {
+            if (temp.getServiceAbbr().equals(data.serviceAbbr) && temp.isActive()) {
                 throw new Http405NotAllowedException("A service already exists with that abbreviation, " + data.serviceAbbr);
+            }
+            if (temp.getServiceName().equalsIgnoreCase(data.serviceName) && temp.isActive()) {
+                throw new Http405NotAllowedException("A service already exists with that name, " + data.serviceAbbr);
             }
         }
 

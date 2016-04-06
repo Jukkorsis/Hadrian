@@ -86,39 +86,40 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateTeamCtrl',
-        function ($scope, $http, $modalInstance, $route, team) {
-            $scope.formUpdateTeam = {};
-            $scope.formUpdateTeam.name = team.teamName;
-            $scope.formUpdateTeam.email = team.teamEmail;
-            $scope.formUpdateTeam.irc = team.teamIrc;
-            $scope.formUpdateTeam.gitGroup = team.gitGroup;
-            $scope.formUpdateTeam.calendarId = team.calendarId;
+hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'team',
+    function ($scope, $http, $modalInstance, $route, team) {
+        $scope.errorMsg = null;
+        $scope.formUpdateTeam = {};
+        $scope.formUpdateTeam.name = team.teamName;
+        $scope.formUpdateTeam.email = team.teamEmail;
+        $scope.formUpdateTeam.irc = team.teamIrc;
+        $scope.formUpdateTeam.gitGroup = team.gitGroup;
+        $scope.formUpdateTeam.calendarId = team.calendarId;
 
-            $scope.save = function () {
-                var dataObject = {
-                    teamId: team.teamId,
-                    teamName: $scope.formUpdateTeam.name,
-                    teamEmail: $scope.formUpdateTeam.email,
-                    teamIrc: $scope.formUpdateTeam.irc,
-                    gitGroup: $scope.formUpdateTeam.gitGroup,
-                    calendarId: $scope.formUpdateTeam.calendarId
-                };
-
-                var responsePromise = $http.put("/v1/team/modify", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update team has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                teamId: team.teamId,
+                teamName: $scope.formUpdateTeam.name,
+                teamEmail: $scope.formUpdateTeam.email,
+                teamIrc: $scope.formUpdateTeam.irc,
+                gitGroup: $scope.formUpdateTeam.gitGroup,
+                calendarId: $scope.formUpdateTeam.calendarId
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.put("/v1/team/modify", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
 
 hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
     function ($scope, $http, $modalInstance, $window, Config, team) {
@@ -164,32 +165,32 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
         });
     }]);
 
-hadrianControllers.controller('ModalAddUserToTeamCtrl',
-        function ($scope, $http, $modalInstance, $route, users, team) {
-            $scope.users = users;
-            $scope.team = team;
+hadrianControllers.controller('ModalAddUserToTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'users', 'team',
+    function ($scope, $http, $modalInstance, $route, users, team) {
+        $scope.errorMsg = null;
+        $scope.users = users;
+        $scope.team = team;
 
-            $scope.formAddUserToTeam = {};
-            $scope.formAddUserToTeam.user = users.users[0];
+        $scope.formAddUserToTeam = {};
+        $scope.formAddUserToTeam.user = users.users[0];
 
-            $scope.save = function () {
-                var dataObject = {
-                    teamId: $scope.team.teamId,
-                    username: $scope.formAddUserToTeam.user.username
-                };
-
-                var responsePromise = $http.put("/v1/team/addUser", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to create new team has failed!");
-                });
+        $scope.save = function () {
+            var dataObject = {
+                teamId: $scope.team.teamId,
+                username: $scope.formAddUserToTeam.user.username
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+            var responsePromise = $http.put("/v1/team/addUser", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
 
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);

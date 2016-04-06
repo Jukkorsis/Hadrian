@@ -18,6 +18,7 @@ package com.northernwall.hadrian.service;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,19 @@ public class UserModifyHandler extends BasicHandler {
         accessHelper.checkIfUserIsAdmin(request, "update user");
 
         User temp = fromJson(request, User.class);
+        if (temp.getUsername() == null || temp.getUsername().isEmpty()) {
+            throw new Http400BadRequestException("User Name is mising or empty");
+        }
+        if (temp.getFullName() == null) {
+            throw new Http400BadRequestException("Full Name is mising or empty");
+        }
+        temp.setFullName(temp.getFullName().trim());
+        if (temp.getFullName().isEmpty()) {
+            throw new Http400BadRequestException("Full Name is mising or empty");
+        }
+        if (temp.getFullName().length() > 30) {
+            throw new Http400BadRequestException("Full Name is to long, max is 30");
+        }
         getDataAccess().updateUser(temp);
         
         response.setStatus(200);

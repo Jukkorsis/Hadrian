@@ -6,6 +6,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,6 +41,10 @@ public abstract class BasicHandler extends AbstractHandler {
     protected final <T> T fromJson(org.eclipse.jetty.server.Request request, Class<T> classOfT) throws IOException {
         Reader reader = new InputStreamReader(request.getInputStream());
         T temp = gson.fromJson(reader, classOfT);
+        if (temp == null) {
+            logger.warn("Stream->Json returned null");
+            throw new Http400BadRequestException("JSON payload is missing");
+        }
         logger.info("Stream->Json {}", gson.toJson(temp));
         return temp;
     }

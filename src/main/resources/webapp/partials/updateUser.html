@@ -2,11 +2,12 @@
     <h3 class="modal-title">Update Hosts</h3>
 </div>
 <div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>username:</dt>
         <dd>{{formUpdateUser.username}}</dd>
         <dt>Full Name:</dt>
-        <dd><input ng-model="formUpdateUser.fullName" type="text" class="form-control"></dd>
+        <dd><input ng-model="formUpdateUser.fullName" type="text" maxlength="30" class="form-control"></dd>
         <dt>Ops:</dt>
         <dd><input ng-model="formUpdateUser.ops" type="checkbox"></dd>
         <dt>Admin:</dt>

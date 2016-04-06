@@ -19,7 +19,9 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.PutTeamData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,19 +39,46 @@ public class TeamModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutTeamData putTeamData = fromJson(request, PutTeamData.class);
-        accessHelper.checkIfUserCanModify(request, putTeamData.teamId, "update team");
-        Team team = getDataAccess().getTeam(putTeamData.teamId);
+        PutTeamData data = fromJson(request, PutTeamData.class);
+        if (data.teamId == null || data.teamId.isEmpty()) {
+            throw new Http400BadRequestException("teamId attribute is mising");
+        }
+        accessHelper.checkIfUserCanModify(request, data.teamId, "update team");
+        Team team = getDataAccess().getTeam(data.teamId);
         if (team == null) {
-            throw new Http404NotFoundException("Can not find team " + putTeamData.teamId + ", could not update team");
+            throw new Http404NotFoundException("Can not find team " + data.teamId + ", could not update team");
+        }
+        data.teamName = data.teamName.trim();
+        if (data.teamName.isEmpty()) {
+            throw new Http400BadRequestException("Team Name is mising or empty");
+        }
+        if (data.teamName.length() > 30) {
+            throw new Http400BadRequestException("Team Name is to long, max is 30");
         }
 
+        if (data.gitGroup == null || data.gitGroup.isEmpty()) {
+            throw new Http400BadRequestException("Git Group is mising or empty");
+        }
+        if (data.gitGroup.length() > 30) {
+            throw new Http400BadRequestException("Git Group is to long, max is 30");
+        }
 
-        team.setTeamName(putTeamData.teamName);
-        team.setTeamEmail(putTeamData.teamEmail);
-        team.setTeamIrc(putTeamData.teamIrc);
-        team.setGitGroup(putTeamData.gitGroup);
-        team.setCalendarId(putTeamData.calendarId);
+        for (Team temp : getDataAccess().getTeams()) {
+            if (!temp.getTeamId().equals(data.teamId)) {
+                if (temp.getTeamName().equals(data.teamName)) {
+                    throw new Http405NotAllowedException("Can not chnage team name, as a team with name " + data.teamName + " already exists");
+                }
+                if (temp.getGitGroup().equals(data.gitGroup)) {
+                    throw new Http405NotAllowedException("Can not chnage team name, as a team with name " + data.teamName + " already exists");
+                }
+            }
+        }
+
+        team.setTeamName(data.teamName);
+        team.setTeamEmail(data.teamEmail);
+        team.setTeamIrc(data.teamIrc);
+        team.setGitGroup(data.gitGroup);
+        team.setCalendarId(data.calendarId);
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

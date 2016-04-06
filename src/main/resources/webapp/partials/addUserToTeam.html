@@ -2,6 +2,7 @@
     <h3 class="modal-title">Add User To Team</h3>
 </div>
 <div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>Team Member:</dt>
         <dd><select ng-model="formAddUserToTeam.user" ng-options="u.fullName for u in users.users" class="form-control"></select></dd>

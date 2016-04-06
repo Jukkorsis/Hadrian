@@ -96,7 +96,7 @@ public class HostCreateHandler extends BasicHandler {
             }
         }
         if (module == null) {
-            throw new RuntimeException("Unknown module");
+            throw new Http400BadRequestException("Unknown module");
         }
 
         //calc host name

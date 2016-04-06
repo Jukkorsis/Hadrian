@@ -45,26 +45,26 @@ hadrianControllers.controller('HomeCtrl', ['$scope',
 hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
     function ($scope, $http, Services) {
         selectTreeNode("-2");
-        
+
         $scope.services = Services.get();
-        
+
         $scope.formGraph = {};
         $scope.formGraph.style = "all";
         $scope.formGraph.service = null;
-        
-        $scope.doGraph = function() {
+
+        $scope.doGraph = function () {
             if ($scope.formGraph.style == "all") {
                 var responsePromise = $http.get("/v1/graph/all", {});
                 responsePromise.success(function (dot, status, headers, config) {
                     document.getElementById("viz").innerHTML = Viz(dot);
                 });
             } else if ($scope.formGraph.style == "fanIn") {
-                var responsePromise = $http.get("/v1/graph/fanin/"+$scope.formGraph.service.serviceId, {});
+                var responsePromise = $http.get("/v1/graph/fanin/" + $scope.formGraph.service.serviceId, {});
                 responsePromise.success(function (dot, status, headers, config) {
                     document.getElementById("viz").innerHTML = Viz(dot);
                 });
             } else if ($scope.formGraph.style == "fanOut") {
-                var responsePromise = $http.get("/v1/graph/fanout/"+$scope.formGraph.service.serviceId, {});
+                var responsePromise = $http.get("/v1/graph/fanout/" + $scope.formGraph.service.serviceId, {});
                 responsePromise.success(function (dot, status, headers, config) {
                     document.getElementById("viz").innerHTML = Viz(dot);
                 });
@@ -78,10 +78,10 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
         selectTreeNode("-8");
     }]);
 
-hadrianControllers.controller('CrossServiceCtrl', ['$scope', 'Services', 
+hadrianControllers.controller('CrossServiceCtrl', ['$scope', 'Services',
     function ($scope, Services) {
         selectTreeNode("-5");
-        
+
         $scope.services = Services.get();
     }]);
 
@@ -194,80 +194,81 @@ hadrianControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'Us
         };
     }]);
 
-hadrianControllers.controller('ModalAddTeamCtrl',
-        function ($scope, $http, $modalInstance, $window, users) {
-            $scope.users = users;
-            $scope.errorMsg = null;
+hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window', 'users',
+    function ($scope, $http, $modalInstance, $window, users) {
+        $scope.users = users;
+        $scope.errorMsg = null;
 
-            $scope.formSaveTeam = {};
-            $scope.formSaveTeam.name = "";
-            $scope.formSaveTeam.email = "";
-            $scope.formSaveTeam.irc = "";
-            $scope.formSaveTeam.gitGroup = "";
-            $scope.formSaveTeam.calendarId = "";
-            $scope.formSaveTeam.user = users.users[0];
+        $scope.formSaveTeam = {};
+        $scope.formSaveTeam.name = "";
+        $scope.formSaveTeam.email = "";
+        $scope.formSaveTeam.irc = "";
+        $scope.formSaveTeam.gitGroup = "";
+        $scope.formSaveTeam.calendarId = "";
+        $scope.formSaveTeam.user = users.users[0];
 
-            $scope.save = function () {
-                var dataObject = {
-                    teamName: $scope.formSaveTeam.name,
-                    teamEmail: $scope.formSaveTeam.email,
-                    teamIrc: $scope.formSaveTeam.irc,
-                    gitGroup: $scope.formSaveTeam.gitGroup,
-                    calendarId: $scope.formSaveTeam.calendarId,
-                    user: $scope.formSaveTeam.user
-                };
-
-                var responsePromise = $http.post("/v1/team/create", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $window.location.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    $scope.errorMsg = data;
-                });
+        $scope.save = function () {
+            var dataObject = {
+                teamName: $scope.formSaveTeam.name,
+                teamEmail: $scope.formSaveTeam.email,
+                teamIrc: $scope.formSaveTeam.irc,
+                gitGroup: $scope.formSaveTeam.gitGroup,
+                calendarId: $scope.formSaveTeam.calendarId,
+                user: $scope.formSaveTeam.user
             };
 
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+            var responsePromise = $http.post("/v1/team/create", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $window.location.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalUpdateUserCtrl', ['$scope', '$http', '$modalInstance', '$route', 'user',
+    function ($scope, $http, $modalInstance, $route, user) {
+        $scope.user = user;
+        $scope.errorMsg = null;
+
+        $scope.formUpdateUser = {};
+        $scope.formUpdateUser.username = user.username;
+        $scope.formUpdateUser.fullName = user.fullName;
+        $scope.formUpdateUser.ops = user.ops;
+        $scope.formUpdateUser.admin = user.admin;
+        $scope.formUpdateUser.deploy = user.deploy;
+        $scope.formUpdateUser.audit = user.audit;
+
+        $scope.save = function () {
+            var dataObject = {
+                username: $scope.user.username,
+                fullName: $scope.formUpdateUser.fullName,
+                ops: $scope.formUpdateUser.ops,
+                admin: $scope.formUpdateUser.admin,
+                deploy: $scope.formUpdateUser.deploy,
+                audit: $scope.formUpdateUser.audit
             };
-        });
 
-hadrianControllers.controller('ModalUpdateUserCtrl',
-        function ($scope, $http, $modalInstance, $route, user) {
-            $scope.user = user;
+            var responsePromise = $http.put("/v1/user/modify", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
 
-            $scope.formUpdateUser = {};
-            $scope.formUpdateUser.username = user.username;
-            $scope.formUpdateUser.fullName = user.fullName;
-            $scope.formUpdateUser.ops = user.ops;
-            $scope.formUpdateUser.admin = user.admin;
-            $scope.formUpdateUser.deploy = user.deploy;
-            $scope.formUpdateUser.audit = user.audit;
-
-            $scope.save = function () {
-                var dataObject = {
-                    username: $scope.user.username,
-                    fullName: $scope.formUpdateUser.fullName,
-                    ops: $scope.formUpdateUser.ops,
-                    admin: $scope.formUpdateUser.admin,
-                    deploy: $scope.formUpdateUser.deploy,
-                    audit: $scope.formUpdateUser.audit
-                };
-
-                var responsePromise = $http.put("/v1/user/modify", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
-                    $route.reload();
-                });
-                responsePromise.error(function (data, status, headers, config) {
-                    alert("Request to update hosts has failed!");
-                });
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-        });
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
 
 hadrianControllers.controller('HelpCtrl', ['$scope',
     function ($scope) {
