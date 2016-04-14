@@ -78,6 +78,7 @@ public class HostDetailsHelper implements ParameterChangeListener {
     
     public GetHostDetailsData getDetails(Host host) {
         GetHostDetailsData details = new GetHostDetailsData();
+        addPair("host id", host.getHostId(), details);
         if (urlTemplate != null) {
             String url = urlTemplate.replace(Const.HOST, host.getHostName());
             Request httpRequest = new Request.Builder().url(url).build();
