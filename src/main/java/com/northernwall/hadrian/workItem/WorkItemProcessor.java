@@ -23,6 +23,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -240,7 +241,17 @@ public class WorkItemProcessor {
         if (nextId != null) {
             WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
             deleteNextWorkItem(nextWorkItem.getNextId());
-            dataAccess.deleteWorkItem(nextId);
+            WorkItem workItem = dataAccess.getWorkItem(nextId);
+            if (workItem != null) {
+                if (workItem.getType() == Type.host) {
+                    Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+                    if (host != null) {
+                        host.setStatus(Const.NO_STATUS);
+                        dataAccess.updateHost(host);
+                    }
+                }
+                dataAccess.deleteWorkItem(nextId);
+            }
         }
     }
 
