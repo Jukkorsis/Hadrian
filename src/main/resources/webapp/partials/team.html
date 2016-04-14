@@ -46,9 +46,12 @@
             <th>Abbr</th>
             <th>Name</th>
             <th>Type</th>
-            <th>Active</th>
+            <th>
+                Active
+                <a ng-click="toggleFilter();"><span class="glyphicon glyphicon glyphicon-filter"></span></a>
+            </th>
         </tr>
-        <tr ng-repeat="s in team.services">
+        <tr ng-repeat="s in team.services| filter: {active:activeFilter}">
             <td><a href="#/Service/{{s.serviceId}}">{{s.serviceAbbr}}</a></td>
             <td>{{s.serviceName}}</td>
             <td>{{s.serviceType}}</td>

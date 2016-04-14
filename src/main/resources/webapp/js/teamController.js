@@ -15,6 +15,15 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
             $scope.loading = false;
         });
 
+        $scope.activeFilter = true;
+        $scope.toggleFilter = function () {
+            if ($scope.activeFilter) {
+                $scope.activeFilter = "";
+            } else {
+                $scope.activeFilter = true;
+            }
+        }
+
         $scope.openUpdateTeamModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
