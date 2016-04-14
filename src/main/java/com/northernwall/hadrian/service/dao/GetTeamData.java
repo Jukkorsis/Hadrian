@@ -19,6 +19,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class GetTeamData {
         for (String username : team.getUsernames()) {
             temp.users.add(dataAccess.getUser(username));
         }
+        Collections.sort(temp.users);
         temp.services = new LinkedList<>();
         for (Service service : dataAccess.getServices(team.getTeamId())) {
             temp.services.add(GetServiceData.create(service));
