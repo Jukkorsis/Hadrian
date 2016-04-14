@@ -15,13 +15,18 @@
  */
 package com.northernwall.hadrian.service.dao;
 
-public class GetPairData {
+public class GetPairData implements Comparable<GetPairData> {
     public String label;
     public String value;
 
     public GetPairData(String label, String value) {
         this.label = label;
         this.value = value;
+    }
+
+    @Override
+    public int compareTo(GetPairData o) {
+        return label.compareTo(o.label);
     }
     
 }
