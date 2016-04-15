@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'HostDetails',
-    function ($scope, $route, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, HostDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'HostDetails',
+    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, HostDetails) {
         $scope.loading = true;
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
@@ -600,6 +600,57 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$http', '$rou
                 $route.reload();
             });
         };
+
+        var stopRefresh = $interval(function () {
+            Service.get({serviceId: $routeParams.serviceId}, function (newService) {
+                $scope.service.serviceAbbr = newService.serviceAbbr;
+                $scope.service.serviceName = newService.serviceName;
+                $scope.service.description = newService.description;
+                for (var moduleIndex = 0; moduleIndex < $scope.service.modules.length; moduleIndex++) {
+                    var module = $scope.service.modules[moduleIndex];
+                    for (var newModuleIndex = 0; newModuleIndex < newService.modules.length; newModuleIndex++) {
+                        var newModule = newService.modules[newModuleIndex];
+                        if (module.moduleId === newModule.moduleId) {
+                            module.moduleName = newModule.moduleName;
+                            module.mavenGroupId = newModule.mavenGroupId;
+                            module.mavenArtifactId = newModule.mavenArtifactId;
+                            module.hostAbbr = newModule.hostAbbr;
+                            module.versionUrl = newModule.versionUrl;
+                            module.availabilityUrl = newModule.availabilityUrl;
+                            module.runAs = newModule.runAs;
+                            module.deploymentFolder = newModule.deploymentFolder;
+                            module.startCmdLine = newModule.startCmdLine;
+                            module.startTimeOut = newModule.startTimeOut;
+                            module.stopCmdLine = newModule.stopCmdLine;
+                            module.stopTimeOut = newModule.stopTimeOut;
+                            for (var networkIndex = 0; networkIndex < module.networks.length; networkIndex++) {
+                                var network = module.networks[networkIndex];
+                                for (var newNetworkIndex = 0; newNetworkIndex < newModule.networks.length; newNetworkIndex++) {
+                                    var newNetwork = newModule.networks[newNetworkIndex];
+                                    if (network.network === newNetwork.network) {
+                                        for (var hostIndex = 0; hostIndex < network.hosts.length; hostIndex++) {
+                                            var host = network.hosts[hostIndex];
+                                            for (var newHostIndex = 0; newHostIndex < newNetwork.hosts.length; newHostIndex++) {
+                                                var newHost = newNetwork.hosts[newHostIndex];
+                                                if (host.hostId === newHost.hostId) {
+                                                    host.status = newHost.status;
+                                                    host.version = newHost.version;
+                                                    host.availability = newHost.availability;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }, 15000);
+
+        $scope.$on('$destroy', function () {
+            $interval.cancel(stopRefresh);
+        });
     }]);
 
 hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
@@ -625,7 +676,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -656,7 +707,7 @@ hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$h
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -687,7 +738,7 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -762,7 +813,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -822,7 +873,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -868,7 +919,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -901,7 +952,7 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -953,7 +1004,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1002,7 +1053,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1040,7 +1091,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1075,7 +1126,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1107,7 +1158,7 @@ hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$mod
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1141,7 +1192,7 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
@@ -1178,7 +1229,7 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-        $scope.errorMsg = data;
+                $scope.errorMsg = data;
             });
         };
 
