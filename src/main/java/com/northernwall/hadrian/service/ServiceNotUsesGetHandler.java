@@ -17,6 +17,7 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
@@ -55,7 +56,7 @@ public class ServiceNotUsesGetHandler extends AbstractHandler {
 
         GetNotUsesData notUses = new GetNotUsesData();
         for (Service service : services) {
-            if (!service.getServiceId().equals(id)) {
+            if (!service.getServiceId().equals(id) && service.getServiceType().equals(Const.SERVICE_TYPE_SERVICE)) {
                 boolean found = false;
                 for (ServiceRef ref : refs) {
                     if (service.getServiceId().equals(ref.getServerServiceId())) {
