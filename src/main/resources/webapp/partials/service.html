@@ -499,6 +499,7 @@
                     </form>       
                     <table class="table table-hover table-striped table-condensed">
                         <tr>
+                            <th></th>
                             <th>Requestor</th>
                             <th>Performed</th>
                             <th>Requested</th>
@@ -511,9 +512,9 @@
                         <tr ng-repeat-start="a in audits| filter:auditFilter">
                             <td>
                                 <span ng-if="a.expanded" class="glyphicon glyphicon-chevron-down" ng-click="a.expanded = false"></span>
-                                <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="a.expanded = true"></span>
-                                {{a.requestor}}
+                                <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getAuditOutput(a);"></span>
                             </td>
+                            <td>{{a.requestor}}</td>
                             <td>{{a.timePerformed}}</td>
                             <td>{{a.timeRequested}}</td>
                             <td>{{a.type}}</td>
@@ -540,6 +541,7 @@
                                         </dl>
                                     </div>
                                 </div>
+                                <pre ng-if="a.output.length > 0">{{a.output}}</pre>
                             </td>
                         </tr>
                     </table>

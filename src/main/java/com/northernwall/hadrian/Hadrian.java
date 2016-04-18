@@ -24,7 +24,7 @@ import com.northernwall.hadrian.graph.GraphFanInHandler;
 import com.northernwall.hadrian.graph.GraphFanOutHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.service.AuditHandler;
+import com.northernwall.hadrian.service.AuditCreateHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.CalendarGetHandler;
 import com.northernwall.hadrian.service.ConfigGetHandler;
@@ -46,6 +46,7 @@ import com.northernwall.hadrian.service.ModuleDeleteHandler;
 import com.northernwall.hadrian.service.ModuleModifyHandler;
 import com.northernwall.hadrian.service.ServiceCreateHandler;
 import com.northernwall.hadrian.service.ServiceAuditGetHandler;
+import com.northernwall.hadrian.service.ServiceAuditOutputGetHandler;
 import com.northernwall.hadrian.service.ServiceDeleteHandler;
 import com.northernwall.hadrian.service.ServiceGetHandler;
 import com.northernwall.hadrian.service.ServiceNotUsesGetHandler;
@@ -170,6 +171,7 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper));
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new ServiceAuditGetHandler(dataAccess));
+        routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new ServiceAuditOutputGetHandler(dataAccess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/create", new ServiceCreateHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/modify", new ServiceModifyHandler(accessHelper, dataAccess));
         routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/delete", new ServiceDeleteHandler(accessHelper, dataAccess));
@@ -199,7 +201,7 @@ public class Hadrian {
         routingHandler.addRoute(MethodRule.GET, TargetRule.EQUALS, "/v1/graph/all", new GraphAllHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess));
         routingHandler.addRoute(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess));
-        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/audit", new AuditHandler(dataAccess, accessHelper));
+        routingHandler.addRoute(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/audit", new AuditCreateHandler(dataAccess, accessHelper));
         //Catch all handler
         routingHandler.addRoute(MethodRule.ANY, TargetRule.ANY, "/", new RedirectHandler());
         handlers.addHandler(routingHandler);

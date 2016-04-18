@@ -74,7 +74,7 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         audit.type = Type.serviceRef;
         audit.operation = Operation.delete;
         audit.notes = getGson().toJson(notes);
-        getDataAccess().saveAudit(audit);
+        getDataAccess().saveAudit(audit, null);
     }
 
 }

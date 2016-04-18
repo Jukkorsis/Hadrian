@@ -130,7 +130,7 @@ public class HostBackfillHandler extends BasicHandler {
                     Map<String, String> notes = new HashMap<>();
                     notes.put("reason", "Backfill via OPS tool.");
                     audit.notes = getGson().toJson(notes);
-                    getDataAccess().saveAudit(audit);
+                    getDataAccess().saveAudit(audit, null);
 
                     return;
                 }

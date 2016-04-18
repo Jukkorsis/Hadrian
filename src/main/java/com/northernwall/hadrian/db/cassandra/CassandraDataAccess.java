@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,8 @@ public class CassandraDataAccess implements DataAccess {
 
     private final PreparedStatement auditSelect;
     private final PreparedStatement auditInsert;
+    private final PreparedStatement auditOutputSelect;
+    private final PreparedStatement auditOutputInsert;
     private final PreparedStatement versionSelect;
     private final PreparedStatement versionInsert;
     private final PreparedStatement versionUpdate;
@@ -266,6 +269,9 @@ public class CassandraDataAccess implements DataAccess {
         auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
         auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data) VALUES (?, now(), ?) USING TTL " + auditTimeToLive + ";");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        auditOutputSelect = session.prepare("SELECT data FROM auditOutput WHERE serviceId = ? AND auditId = ?");
+        auditOutputInsert = session.prepare("INSERT INTO auditOutput (serviceId, auditId, data) VALUES (?, ?, ?) USING TTL " + auditTimeToLive + ";");
+        auditOutputInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Prapared statements created");
 
@@ -717,9 +723,20 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void saveAudit(Audit audit) {
+    public void saveAudit(Audit audit, String output) {
+        audit.auditId = UUID.randomUUID().toString();
         BoundStatement boundStatement = new BoundStatement(auditInsert);
         session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit)));
+        
+        if (output == null) {
+            return;
+        }
+        output = output.trim();
+        if (output.isEmpty()) {
+            return;
+        }
+        boundStatement = new BoundStatement(auditOutputInsert);
+        session.execute(boundStatement.bind(audit.serviceId, audit.auditId, output));
     }
 
     @Override
@@ -729,10 +746,24 @@ public class CassandraDataAccess implements DataAccess {
         List<Audit> audits = new LinkedList<>();
         for (Row row : results) {
             String data = row.getString("data");
-            audits.add(gson.fromJson(data, Audit.class));
+            Audit audit = gson.fromJson(data, Audit.class);
+            if (audit.auditId == null) {
+                audit.auditId = UUID.randomUUID().toString();
+            }
+            audits.add(audit);
         }
         logger.info("Got {} audit record for {} between {} and {}", audits.size(), serviceId, start, end);
         return audits;
+    }
+
+    @Override
+    public String getAuditOutput(String serviceId, String auditId) {
+        BoundStatement boundStatement = new BoundStatement(auditOutputSelect);
+        ResultSet results = session.execute(boundStatement.bind(serviceId, auditId));
+        for (Row row : results) {
+            return row.getString("data");
+        }
+        return null;
     }
 
     private <T extends Object> List<T> getData(String tableName, Class<T> classOfT) {

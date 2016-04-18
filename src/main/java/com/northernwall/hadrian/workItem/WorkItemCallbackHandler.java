@@ -38,7 +38,8 @@ public class WorkItemCallbackHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        workItemProcess.processCallback(fromJson(request, CallbackData.class));
+        CallbackData data = fromJson(request, CallbackData.class);
+        workItemProcess.processCallback(data);
         response.setStatus(200);
         request.setHandled(true);
     }

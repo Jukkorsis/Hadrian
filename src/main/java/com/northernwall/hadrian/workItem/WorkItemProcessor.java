@@ -90,6 +90,7 @@ public class WorkItemProcessor {
         callbackData.errorCode = 0;
         callbackData.errorDescription = " ";
         callbackData.status = result;
+        callbackData.output = null;
         processCallback(callbackData);
     }
 
@@ -224,7 +225,7 @@ public class WorkItemProcessor {
                 } else {
                     audit.notes = gson.toJson(notes);
                 }
-                dataAccess.saveAudit(audit);
+                dataAccess.saveAudit(audit, callbackData.output);
             } else {
                 deleteNextWorkItem(workItem.getNextId());
             }

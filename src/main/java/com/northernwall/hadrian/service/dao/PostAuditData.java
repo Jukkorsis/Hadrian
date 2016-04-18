@@ -18,7 +18,7 @@ package com.northernwall.hadrian.service.dao;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 
-public class PostAudit {
+public class PostAuditData {
     public String serviceId;
     public String serviceAbbr;
     public String serviceName;
@@ -27,5 +27,6 @@ public class PostAudit {
     public String hostName;
     public String vipName;
     public String notes;
+    public String output;
 
 }

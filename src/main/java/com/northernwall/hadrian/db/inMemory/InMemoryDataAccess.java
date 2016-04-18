@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.db.inMemory;
 
 import com.northernwall.hadrian.db.DataAccess;
@@ -35,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -43,7 +43,7 @@ import java.util.function.Predicate;
  * @author Richard Thurston
  */
 public class InMemoryDataAccess implements DataAccess {
-    
+
     private String version;
     private final Map<String, Team> teams;
     private final Map<String, Service> services;
@@ -94,7 +94,7 @@ public class InMemoryDataAccess implements DataAccess {
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     @Override
     public List<Team> getTeams() {
         List<Team> temp = new LinkedList<>(teams.values());
@@ -111,7 +111,7 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveTeam(Team team) {
         teams.put(team.getTeamId(), team);
     }
-    
+
     @Override
     public void updateTeam(Team team) {
         teams.put(team.getTeamId(), team);
@@ -199,12 +199,12 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveHost(Host host) {
         hosts.put(host.getHostId(), host);
     }
-    
+
     @Override
     public void updateHost(Host host) {
         hosts.put(host.getHostId(), host);
     }
-    
+
     @Override
     public void deleteHost(String serviceId, String hostId) {
         hosts.remove(hostId);
@@ -231,12 +231,12 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveVip(Vip vip) {
         vips.put(vip.getVipId(), vip);
     }
-    
+
     @Override
-    public void updateVip(Vip vip){
+    public void updateVip(Vip vip) {
         vips.put(vip.getVipId(), vip);
     }
-    
+
     @Override
     public void deleteVip(String serviceId, String vipId) {
         vips.remove(vipId);
@@ -253,7 +253,7 @@ public class InMemoryDataAccess implements DataAccess {
         for (ServiceRef serviceRef : serviceRefs) {
             if (serviceRef.getClientServiceId().equals(clientServiceId)) {
                 temp.add(serviceRef);
-            }            
+            }
         }
         return temp;
     }
@@ -264,7 +264,7 @@ public class InMemoryDataAccess implements DataAccess {
         for (ServiceRef serviceRef : serviceRefs) {
             if (serviceRef.getServerServiceId().equals(serverServiceId)) {
                 temp.add(serviceRef);
-            }            
+            }
         }
         return temp;
     }
@@ -290,7 +290,7 @@ public class InMemoryDataAccess implements DataAccess {
         for (VipRef vipRef : vipRefs) {
             if (vipRef.getHostId().equals(hostId)) {
                 temp.add(vipRef);
-            }            
+            }
         }
         return temp;
     }
@@ -300,7 +300,7 @@ public class InMemoryDataAccess implements DataAccess {
         for (VipRef vipRef : vipRefs) {
             if (vipRef.getHostId().equals(hostId) && vipRef.getVipId().equals(vipId)) {
                 return vipRef;
-            }            
+            }
         }
         return null;
     }
@@ -310,21 +310,21 @@ public class InMemoryDataAccess implements DataAccess {
         for (VipRef temp : vipRefs) {
             if (temp.getVipId().equals(vipRef.getVipId()) && temp.getHostId().equals(vipRef.getHostId())) {
                 return;
-            }            
+            }
         }
         vipRefs.add(vipRef);
     }
-    
+
     @Override
     public void updateVipRef(VipRef vipRef) {
         for (VipRef temp : vipRefs) {
             if (temp.getVipId().equals(vipRef.getVipId()) && temp.getHostId().equals(vipRef.getHostId())) {
                 temp.setStatus(vipRef.getStatus());
                 return;
-            }            
+            }
         }
     }
-    
+
     @Override
     public void deleteVipRef(final String hostId, final String vipId) {
         vipRefs.removeIf(new Predicate<VipRef>() {
@@ -356,27 +356,27 @@ public class InMemoryDataAccess implements DataAccess {
         Collections.sort(temp);
         return temp;
     }
-    
+
     @Override
     public CustomFunction getCustomFunction(String serviceId, String customFunctionId) {
         return customFunctions.get(customFunctionId);
     }
-    
+
     @Override
     public void saveCustomFunction(CustomFunction customFunction) {
         customFunctions.put(customFunction.getCustomFunctionId(), customFunction);
     }
-    
+
     @Override
     public void updateCustomFunction(CustomFunction customFunction) {
         customFunctions.put(customFunction.getCustomFunctionId(), customFunction);
     }
-    
+
     @Override
     public void deleteCustomFunction(String serviceId, String customFunctionId) {
         customFunctions.remove(customFunctionId);
     }
-    
+
     @Override
     public List<Module> getModules(String serviceId) {
         List<Module> temp = new LinkedList<>();
@@ -398,17 +398,17 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveModule(Module module) {
         modules.put(module.getModuleId(), module);
     }
-    
+
     @Override
     public void updateModule(Module module) {
         modules.put(module.getModuleId(), module);
     }
-    
+
     @Override
     public void deleteModule(String serviceId, String moduleId) {
         modules.remove(moduleId);
     }
-    
+
     @Override
     public List<DataStore> getDataStores(String serviceId) {
         List<DataStore> temp = new LinkedList<>();
@@ -456,11 +456,11 @@ public class InMemoryDataAccess implements DataAccess {
     public void saveWorkItem(WorkItem workItem) {
         workItems.put(workItem.getId(), workItem);
     }
-    
+
     @Override
     public void deleteWorkItem(String id) {
         workItems.remove(id);
-        
+
     }
 
     @Override
@@ -491,7 +491,8 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void saveAudit(Audit audit) {
+    public void saveAudit(Audit audit, String output) {
+        audit.auditId = UUID.randomUUID().toString();
         synchronized (audits) {
             audits.add(audit);
             if (audits.size() > 1000) {
@@ -505,10 +506,18 @@ public class InMemoryDataAccess implements DataAccess {
         List<Audit> temp = new LinkedList<>();
         for (Audit audit : audits) {
             if (audit.serviceId.equals(serviceId)) {
+                if (audit.auditId == null) {
+                    audit.auditId = UUID.randomUUID().toString();
+                }
                 temp.add(audit);
             }
         }
         return temp;
+    }
+
+    @Override
+    public String getAuditOutput(String serviceId, String auditId) {
+        return null;
     }
 
 }

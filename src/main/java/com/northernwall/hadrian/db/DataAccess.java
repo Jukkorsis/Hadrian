@@ -109,8 +109,9 @@ public interface DataAccess {
     void saveWorkItem(WorkItem workItem);
     void deleteWorkItem(String id);
 
-    void saveAudit(Audit audit);
+    void saveAudit(Audit audit, String output);
     List<Audit> getAudit(String serviceId, Date start, Date end);
+    public String getAuditOutput(String serviceId, String auditId);
 
     public boolean getAvailability();
 

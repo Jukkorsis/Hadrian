@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.service.dao.GetAuditData;
@@ -31,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,17 +37,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class ServiceAuditGetHandler extends AbstractHandler {
+public class ServiceAuditGetHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceAuditGetHandler.class);
 
-    private final DataAccess dataAccess;
-    private final Gson gson;
     private final DateFormat format;
 
     public ServiceAuditGetHandler(DataAccess dataAccess) {
-        this.dataAccess = dataAccess;
-        gson = new Gson();
+        super(dataAccess);
 
         format = new SimpleDateFormat("MM/dd/yyyy");
     }
@@ -84,11 +79,11 @@ public class ServiceAuditGetHandler extends AbstractHandler {
             endDate = now.getTime();
         }
         logger.info("Audit search from {} to {} on service {}", startDate.toString(), endDate.toString(), id);
-        auditData.audits = dataAccess.getAudit(id, startDate, endDate);
+        auditData.audits = getDataAccess().getAudit(id, startDate, endDate);
         Collections.sort(auditData.audits);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            gson.toJson(auditData, GetAuditData.class, jw);
+            getGson().toJson(auditData, GetAuditData.class, jw);
         }
         response.setStatus(200);
         request.setHandled(true);

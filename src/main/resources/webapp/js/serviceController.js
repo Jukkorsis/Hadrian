@@ -601,6 +601,19 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.getAuditOutput = function (audit) {
+            audit.expanded = true;
+
+            if (audit.outputDownloaded != true) {
+                audit.output = "Loading...";
+                var responsePromise = $http.get("/v1/service/auditOutput?serviceId=" + $scope.service.serviceId + "&auditId=" + audit.auditId, {});
+                responsePromise.success(function (output, status, headers, config) {
+                    audit.output = output;
+                    audit.outputDownloaded = true;
+                });
+            }
+        };
+
         var stopRefresh = $interval(function () {
             Service.get({serviceId: $routeParams.serviceId}, function (newService) {
                 $scope.service.serviceAbbr = newService.serviceAbbr;

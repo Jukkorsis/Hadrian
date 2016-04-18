@@ -18,6 +18,7 @@ package com.northernwall.hadrian.domain;
 import java.util.Date;
 
 public class Audit implements Comparable<Audit> {
+    public String auditId;
     public String serviceId;
     public Date timePerformed;
     public Date timeRequested;

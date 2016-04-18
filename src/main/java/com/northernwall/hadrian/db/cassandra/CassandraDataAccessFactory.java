@@ -115,6 +115,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
         //Audit table
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".audit (serviceId text, time timeuuid, data text, PRIMARY KEY (serviceId, time));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
         logger.info("Tables created");
 
         session.close();

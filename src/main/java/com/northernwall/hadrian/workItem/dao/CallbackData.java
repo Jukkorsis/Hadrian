@@ -38,4 +38,9 @@ public class CallbackData {
      * An optional description provide by the service to assist in diagnosis.
      */
     public String errorDescription;
+
+    /**
+     * The console output (stdout and stderr) provided by the deployment.
+     */
+    public String output;
 }

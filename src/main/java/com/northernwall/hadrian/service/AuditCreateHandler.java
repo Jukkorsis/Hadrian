@@ -20,27 +20,27 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.service.dao.PostAudit;
+import com.northernwall.hadrian.service.dao.PostAuditData;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
-public class AuditHandler extends BasicHandler {
+public class AuditCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public AuditHandler(DataAccess dataAccess, AccessHelper accessHelper) {
+    public AuditCreateHandler(DataAccess dataAccess, AccessHelper accessHelper) {
         super(dataAccess);
         this.accessHelper = accessHelper;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostAudit postAudit = fromJson(request, PostAudit.class);
+        PostAuditData data = fromJson(request, PostAuditData.class);
 
-        Service service = getService(postAudit.serviceId, postAudit.serviceName, postAudit.serviceAbbr);
+        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
         User user = accessHelper.checkIfUserCanAudit(request, service.getTeamId());
 
         Audit audit = new Audit();
@@ -48,16 +48,16 @@ public class AuditHandler extends BasicHandler {
         audit.timePerformed = getGmt();
         audit.timeRequested = getGmt();
         audit.requestor = user.getUsername();
-        audit.type = postAudit.type;
-        audit.operation = postAudit.operation;
-        if (postAudit.hostName != null) {
-            audit.hostName = postAudit.hostName;
+        audit.type = data.type;
+        audit.operation = data.operation;
+        if (data.hostName != null) {
+            audit.hostName = data.hostName;
         }
-        if (postAudit.vipName != null) {
-            audit.vipName = postAudit.vipName;
+        if (data.vipName != null) {
+            audit.vipName = data.vipName;
         }
-        audit.notes = postAudit.notes;
-        getDataAccess().saveAudit(audit);
+        audit.notes = data.notes;
+        getDataAccess().saveAudit(audit, data.output);
 
         response.setStatus(200);
         request.setHandled(true);
