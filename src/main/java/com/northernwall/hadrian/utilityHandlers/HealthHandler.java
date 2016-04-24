@@ -25,11 +25,8 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
-import java.text.SimpleDateFormat;
+import java.net.InetAddress;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,48 +78,25 @@ public class HealthHandler extends AbstractHandler {
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         
-        writeln(response, "<html>");
-        writeln(response, "<body>");
-        writeln(response, "<table>");
-        writeln(response, "Version", version);
-        writeln(response, "JVM Name", runtimeMXBean.getSpecName());
-        writeln(response, "JVM Version", runtimeMXBean.getSpecVersion());
-        writeln(response, "JVM Vendor", runtimeMXBean.getSpecVendor());
-        writeln(response, "JVM Threads", threadMXBean.getThreadCount());
-        writeln(response, "JVM Peak Threads", threadMXBean.getPeakThreadCount());
-        writeln(response, "Current Time", new Date());
-        writeln(response, "Start Time", new Date(runtimeMXBean.getStartTime()));
-        writeln(response, "Class - Access Handler", accessHandler.getClass().getCanonicalName());
-        writeln(response, "Class - Calendar Helper", calendarHelper.getClass().getCanonicalName());
-        writeln(response, "Class - Data Access", dataAccess.getClass().getCanonicalName());
-        writeln(response, "Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
-        writeln(response, "Class - Parameters", parameters.getClass().getCanonicalName());
-        writeln(response, "Class - Work Item Sender", workItemSender.getClass().getCanonicalName());
-        Map<String, String> healthMap = dataAccess.getHealth();
-        Set<String> keys = new TreeSet<>(healthMap.keySet());
-        for(String key : keys) {
-            writeln(response, key, healthMap.get(key));
-        }
-        writeln(response, "</table>");
-        writeln(response, "</body>");
-        writeln(response, "</html>");
-    }
-
-    private void writeln(HttpServletResponse response, String text) throws IOException {
-        response.getOutputStream().write(text.getBytes());
-    }
-
-    private void writeln(HttpServletResponse response, String label, Date value) throws IOException {
-        writeln(response, label, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value));
-    }
-
-    private void writeln(HttpServletResponse response, String label, int value) throws IOException {
-        writeln(response, label, Integer.toString(value));
-    }
-
-    private void writeln(HttpServletResponse response, String label, String value) throws IOException {
-        String text = "<tr><td>" + label + "</td><td>" + value + "</td></tr>";
-        response.getOutputStream().write(text.getBytes());
+        HealthWriter writer = new HealthWriter(response.getOutputStream());
+        writer.open();
+        writer.addLine("App Version", version);
+        writer.addLine("Host Name", InetAddress.getLocalHost().getHostName());
+        writer.addLine("JVM Name", runtimeMXBean.getSpecName());
+        writer.addLine("JVM Version", runtimeMXBean.getSpecVersion());
+        writer.addLine("JVM Vendor", runtimeMXBean.getSpecVendor());
+        writer.addLine("JVM Threads", threadMXBean.getThreadCount());
+        writer.addLine("JVM Peak Threads", threadMXBean.getPeakThreadCount());
+        writer.addLine("Current Time", new Date());
+        writer.addLine("Start Time", new Date(runtimeMXBean.getStartTime()));
+        writer.addLine("Class - Access Handler", accessHandler.getClass().getCanonicalName());
+        writer.addLine("Class - Calendar Helper", calendarHelper.getClass().getCanonicalName());
+        writer.addLine("Class - Data Access", dataAccess.getClass().getCanonicalName());
+        writer.addLine("Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
+        writer.addLine("Class - Parameters", parameters.getClass().getCanonicalName());
+        writer.addLine("Class - Work Item Sender", workItemSender.getClass().getCanonicalName());
+        dataAccess.getHealth(writer);
+        writer.close();
     }
 
 }

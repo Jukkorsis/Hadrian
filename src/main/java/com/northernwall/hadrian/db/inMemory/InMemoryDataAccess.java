@@ -28,9 +28,9 @@ import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -80,9 +80,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Map<String, String> getHealth() {
-        Map<String, String> health = new HashMap<>();
-        return health;
+    public void getHealth(HealthWriter writer) {
     }
 
     @Override

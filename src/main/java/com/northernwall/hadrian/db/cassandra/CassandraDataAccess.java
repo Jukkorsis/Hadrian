@@ -39,12 +39,12 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,45 +284,40 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public Map<String, String> getHealth() {
-        Map<String, String> health = new HashMap<>();
+    public void getHealth(HealthWriter writer) throws IOException {
         Metadata metadata = session.getCluster().getMetadata();
         State state = session.getState();
-        health.put("Cassandra - Username", username);
-        health.put("Cassandra - Cluster", metadata.getClusterName());
+        writer.addLine("Cassandra - Username", username);
+        writer.addLine("Cassandra - Cluster", metadata.getClusterName());
         if (dataCenter != null) {
-            health.put("Cassandra - Preferred DC", dataCenter);
+            writer.addLine("Cassandra - Preferred DC", dataCenter);
         }
-        health.put("Cassandra - Keyspace", session.getLoggedKeyspace());
-        int i = 1;
+        writer.addLine("Cassandra - Keyspace", session.getLoggedKeyspace());
+        List<String> dcs = new LinkedList<>();
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
-            StringBuilder temp = new StringBuilder();
-            temp.append(host.getDatacenter());
-            temp.append("  ");
-            temp.append(host.getAddress().getHostAddress());
-            temp.append("  ");
-            temp.append(host.getRack());
-            temp.append("  ");
-            temp.append(host.getState());
-            temp.append("  v");
-            temp.append(host.getCassandraVersion().toString());
-            temp.append("  open=");
-            temp.append(state.getOpenConnections(host));
-            temp.append("  trashed=");
-            temp.append(state.getTrashedConnections(host));
-            health.put("Cassandra - Host " + formatInt(i, 2), temp.toString());
-            i++;
+            if (!dcs.contains(host.getDatacenter())) {
+                dcs.add(host.getDatacenter());
+            }
         }
-        return health;
-    }
-    
-    private String formatInt(int i, int len) {
-        StringBuilder temp = new StringBuilder();
-        temp.append(i);
-        while (temp.length() < len) {
-            temp.insert(0, "0");
+        for (String dc : dcs) {
+            for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
+                if (dc.equals(host.getDatacenter())) {
+                    writer.addLine(
+                            "Cassandra - " + host.getDatacenter(),
+                            host.getAddress().getHostAddress()
+                            + "  "
+                            + host.getRack()
+                            + "  "
+                            + host.getState()
+                            + "  v"
+                            + host.getCassandraVersion().toString()
+                            + "  open="
+                            + state.getOpenConnections(host)
+                            + "  trashed="
+                            + state.getTrashedConnections(host));
+                }
+            }
         }
-        return temp.toString();
     }
 
     @Override
@@ -727,7 +722,7 @@ public class CassandraDataAccess implements DataAccess {
         audit.auditId = UUID.randomUUID().toString();
         BoundStatement boundStatement = new BoundStatement(auditInsert);
         session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit)));
-        
+
         if (output == null) {
             return;
         }

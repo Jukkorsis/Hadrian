@@ -28,9 +28,10 @@ import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -40,7 +41,7 @@ public interface DataAccess {
     String getVersion();
     void setVersion(String version);
     
-    Map<String, String> getHealth();
+    void getHealth(HealthWriter writer) throws IOException;
 
     List<Team> getTeams();
     Team getTeam(String teamId);
