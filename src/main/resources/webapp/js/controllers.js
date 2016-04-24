@@ -78,13 +78,6 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
         selectTreeNode("-8");
     }]);
 
-hadrianControllers.controller('CrossServiceCtrl', ['$scope', 'Services',
-    function ($scope, Services) {
-        selectTreeNode("-5");
-
-        $scope.services = Services.get();
-    }]);
-
 hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',
     function ($scope, $http, $route, WorkItem) {
         selectTreeNode("-6");
@@ -137,25 +130,9 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
 
     }]);
 
-hadrianControllers.controller('BackfillCtrl', ['$scope', '$http',
-    function ($scope, $http) {
-        selectTreeNode("-7");
-
-        $scope.backfillTextarea;
-        $scope.submitBackfill = function () {
-            var responsePromise = $http.post("/v1/host/backfill", $scope.backfillTextarea, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to update hosts has failed!");
-            });
-        };
-    }]);
-
-hadrianControllers.controller('AdminCtrl', ['$scope', '$route', '$uibModal', 'User',
+hadrianControllers.controller('UsersCtrl', ['$scope', '$route', '$uibModal', 'User',
     function ($scope, $route, $uibModal, User) {
-        selectTreeNode("-9");
+        selectTreeNode("-5");
 
         $scope.users = User.get();
 
@@ -240,7 +217,6 @@ hadrianControllers.controller('ModalUpdateUserCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateUser = {};
         $scope.formUpdateUser.username = user.username;
         $scope.formUpdateUser.fullName = user.fullName;
-        $scope.formUpdateUser.ops = user.ops;
         $scope.formUpdateUser.admin = user.admin;
         $scope.formUpdateUser.deploy = user.deploy;
         $scope.formUpdateUser.audit = user.audit;
@@ -249,7 +225,6 @@ hadrianControllers.controller('ModalUpdateUserCtrl', ['$scope', '$http', '$modal
             var dataObject = {
                 username: $scope.user.username,
                 fullName: $scope.formUpdateUser.fullName,
-                ops: $scope.formUpdateUser.ops,
                 admin: $scope.formUpdateUser.admin,
                 deploy: $scope.formUpdateUser.deploy,
                 audit: $scope.formUpdateUser.audit

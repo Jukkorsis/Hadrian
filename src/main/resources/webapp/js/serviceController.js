@@ -140,6 +140,29 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openBackfillModal = function (module) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/backfillModule.html',
+                controller: 'ModalBackfillModuleCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.deleteModule = function (moduleId) {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
@@ -881,6 +904,46 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
             };
 
             var responsePromise = $http.put("/v1/module/modify", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, module) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.module = module;
+        $scope.config = config;
+
+        $scope.formBackfillHost = {};
+        $scope.formBackfillHost.dataCenter = $scope.config.dataCenters[0];
+        $scope.formBackfillHost.network = $scope.config.networks[0];
+        $scope.formBackfillHost.env = $scope.config.envs[0];
+        $scope.formBackfillHost.size = $scope.config.sizes[0];
+        $scope.formBackfillHost.hosts = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                dataCenter: $scope.formBackfillHost.dataCenter,
+                network: $scope.formBackfillHost.network.name,
+                env: $scope.formBackfillHost.env,
+                size: $scope.formBackfillHost.size,
+                hosts: $scope.formBackfillHost.hosts
+            };
+
+            var responsePromise = $http.put("/v1/host/backfill", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

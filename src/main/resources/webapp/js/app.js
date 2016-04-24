@@ -35,10 +35,6 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/parameters.html',
                     controller: 'ParametersCtrl'
                 }).
-                when('/CrossService', {
-                    templateUrl: 'partials/crossService.html',
-                    controller: 'CrossServiceCtrl'
-                }).
                 when('/WorkItems', {
                     templateUrl: 'partials/workItems.html',
                     controller: 'WorkItemsCtrl'
@@ -47,9 +43,9 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/backfill.html',
                     controller: 'BackfillCtrl'
                 }).
-                when('/Admin', {
-                    templateUrl: 'partials/admin.html',
-                    controller: 'AdminCtrl'
+                when('/Users', {
+                    templateUrl: 'partials/users.html',
+                    controller: 'UsersCtrl'
                 }).
                 when('/Help', {
                     templateUrl: 'partials/help.html',

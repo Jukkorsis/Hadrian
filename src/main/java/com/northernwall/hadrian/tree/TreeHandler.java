@@ -57,9 +57,6 @@ public class TreeHandler extends AbstractHandler {
             jw.beginArray();
             listDevTeams(jw);
             listGraph(jw);
-            if (user.isOps()) {
-                listOpsTeam(jw);
-            }
             if (user.isAdmin()) {
                 listAdminTeam(jw);
             }
@@ -100,38 +97,26 @@ public class TreeHandler extends AbstractHandler {
         gson.toJson(graphTreenode, TreeNode.class, jw);
     }
 
-    private void listOpsTeam(final JsonWriter jw) throws JsonIOException {
-        TreeNode opsTeamTreenode = new TreeNode();
-        opsTeamTreenode.setLabel("Ops Team");
-        opsTeamTreenode.setData(new TreeNodeData("-4", "OpsTeam"));
-
-        TreeNode tasksTreenode = new TreeNode();
-        tasksTreenode.setLabel("Cross Service");
-        tasksTreenode.setData(new TreeNodeData("-5", "CrossService"));
-        opsTeamTreenode.getChildren().add(tasksTreenode);
-
-        TreeNode webhooksTreenode = new TreeNode();
-        webhooksTreenode.setLabel("Work Items");
-        webhooksTreenode.setData(new TreeNodeData("-6", "WorkItems"));
-        opsTeamTreenode.getChildren().add(webhooksTreenode);
-
-        TreeNode backfillTreenode = new TreeNode();
-        backfillTreenode.setLabel("Backfill");
-        backfillTreenode.setData(new TreeNodeData("-7", "Backfill"));
-        opsTeamTreenode.getChildren().add(backfillTreenode);
-
-        TreeNode optionsTreenode = new TreeNode();
-        optionsTreenode.setLabel("Parameters");
-        optionsTreenode.setData(new TreeNodeData("-8", "Parameters"));
-        opsTeamTreenode.getChildren().add(optionsTreenode);
-
-        gson.toJson(opsTeamTreenode, TreeNode.class, jw);
-    }
-
     private void listAdminTeam(final JsonWriter jw) throws JsonIOException {
         TreeNode adminTreenode = new TreeNode();
         adminTreenode.setLabel("Admin");
         adminTreenode.setData(new TreeNodeData("-9", "Admin"));
+
+        TreeNode usersTreenode = new TreeNode();
+        usersTreenode.setLabel("Users");
+        usersTreenode.setData(new TreeNodeData("-5", "Users"));
+        adminTreenode.getChildren().add(usersTreenode);
+
+        TreeNode workItemsTreenode = new TreeNode();
+        workItemsTreenode.setLabel("Work Items");
+        workItemsTreenode.setData(new TreeNodeData("-6", "WorkItems"));
+        adminTreenode.getChildren().add(workItemsTreenode);
+
+        TreeNode optionsTreenode = new TreeNode();
+        optionsTreenode.setLabel("Parameters");
+        optionsTreenode.setData(new TreeNodeData("-8", "Parameters"));
+        adminTreenode.getChildren().add(optionsTreenode);
+
         gson.toJson(adminTreenode, TreeNode.class, jw);
     }
 

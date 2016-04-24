@@ -105,8 +105,6 @@ public class WorkItemProcessor {
                 throw new RuntimeException("Callback is missing status, " + callbackData.requestId);
             }
             
-            dataAccess.deleteWorkItem(callbackData.requestId);
-
             switch (callbackData.status) {
                 case success:
                     meterSuccess.mark();
@@ -118,6 +116,8 @@ public class WorkItemProcessor {
                     logger.warn("ProcessCallback should never be called for WIP");
                     return;
             }
+
+            dataAccess.deleteWorkItem(callbackData.requestId);
 
             Map<String, String> notes = new HashMap<>();
             switch (workItem.getType()) {

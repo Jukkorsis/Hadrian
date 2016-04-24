@@ -23,14 +23,14 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
-import java.io.BufferedReader;
+import com.northernwall.hadrian.service.dao.PostBackfillHostData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,83 +60,73 @@ public class HostBackfillHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        User user = accessHelper.checkIfUserIsOps(request, "Backfill");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String s = reader.readLine();
-        while (s != null && !s.isEmpty()) {
-            String[] parts = s.split(",");
-            if (parts.length == 7) {
-                backfillHost(
-                        parts[0].trim(),
-                        parts[1].trim(),
-                        parts[2].trim(),
-                        parts[3].trim(),
-                        parts[4].trim(),
-                        parts[5].trim(),
-                        parts[6].trim(),
-                        user);
-            }
-            s = reader.readLine();
-        }
-        response.setStatus(200);
-        request.setHandled(true);
-    }
+        PostBackfillHostData data = fromJson(request, PostBackfillHostData.class);
+        Service service = getService(data.serviceId, null, null);
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "backfill host");
 
-    private void backfillHost(String serviceAbbr, String moduleName, String hostName, String dataCenter, String network, String env, String size, User user) {
         Config config = configHelper.getConfig();
-        if (config.dataCenters.contains(dataCenter)
-                && config.networkNames.contains(network)
-                && config.envs.contains(env)
-                && config.sizes.contains(size)) {
-            for (Service service : getDataAccess().getServices()) {
-                if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
-                    List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
+        if (!config.dataCenters.contains(data.dataCenter)) {
+            throw new Http400BadRequestException("unknown datacenter, " + data.dataCenter);
+        }
+        if (!config.networkNames.contains(data.network)) {
+            throw new Http400BadRequestException("unknown network, " + data.network);
+        }
+        if (!config.envs.contains(data.env)) {
+            throw new Http400BadRequestException("unknown env, " + data.env);
+        }
+        if (!config.sizes.contains(data.size)) {
+            throw new Http400BadRequestException("unknown size, " + data.size);
+        }
+
+        Module module = getModule(data.moduleId, null, service);
+        if (module.getModuleType() != ModuleType.Deployable) {
+            throw new Http400BadRequestException("Module must be a deployable");
+        }
+
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
+
+        String[] hostnames = data.hosts.split(",");
+        for (String hostname : hostnames) {
+            if (hostname != null && !hostname.isEmpty()) {
+                String temp = hostname.trim();
+                if (temp != null && !temp.isEmpty()) {
+                    boolean found = false;
                     for (Host host : hosts) {
-                        if (host.getHostName().equalsIgnoreCase(hostName)) {
-                            logger.warn("There already exists host '{}' on service '{}'", hostName, serviceAbbr);
-                            return;
+                        if (host.getHostName().equalsIgnoreCase(temp)) {
+                            found = true;
                         }
                     }
-                    Module module = null;
-                    List<Module> modules = getDataAccess().getModules(service.getServiceId());
-                    for (Module temp : modules) {
-                        if (temp.getModuleName().equalsIgnoreCase(moduleName)) {
-                            module = temp;
-                        }
-                    };
-                    if (module == null) {
-                        logger.warn("Could not find module with name {} in service {}", moduleName, serviceAbbr);
-                        return;
+                    if (!found) {
+                        Host host = new Host(temp,
+                                service.getServiceId(),
+                                Const.NO_STATUS,
+                                module.getModuleId(),
+                                data.dataCenter,
+                                data.network,
+                                data.env,
+                                data.size);
+                        getDataAccess().saveHost(host);
+
+                        Audit audit = new Audit();
+                        audit.serviceId = service.getServiceId();
+                        audit.timePerformed = getGmt();
+                        audit.timeRequested = getGmt();
+                        audit.requestor = user.getUsername();
+                        audit.type = Type.host;
+                        audit.operation = Operation.create;
+                        audit.moduleName = module.getModuleName();
+                        audit.hostName = temp;
+                        Map<String, String> notes = new HashMap<>();
+                        notes.put("reason", "Backfilled host.");
+                        audit.notes = getGson().toJson(notes);
+                        getDataAccess().saveAudit(audit, null);
                     }
-                    Host host = new Host(hostName,
-                            service.getServiceId(),
-                            Const.NO_STATUS,
-                            module.getModuleId(),
-                            dataCenter,
-                            network,
-                            env,
-                            size);
-                    getDataAccess().saveHost(host);
-
-                    Audit audit = new Audit();
-                    audit.serviceId = service.getServiceId();
-                    audit.timePerformed = getGmt();
-                    audit.timeRequested = getGmt();
-                    audit.requestor = user.getUsername();
-                    audit.type = Type.host;
-                    audit.operation = Operation.create;
-                    audit.moduleName = module.getModuleName();
-                    audit.hostName = hostName;
-                    Map<String, String> notes = new HashMap<>();
-                    notes.put("reason", "Backfill via OPS tool.");
-                    audit.notes = getGson().toJson(notes);
-                    getDataAccess().saveAudit(audit, null);
-
-                    return;
                 }
             }
-            logger.warn("Could not find a service with the abbr '{}'", serviceAbbr);
         }
+
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

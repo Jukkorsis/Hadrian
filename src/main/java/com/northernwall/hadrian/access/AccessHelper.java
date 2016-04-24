@@ -44,10 +44,10 @@ public class AccessHelper {
             List<User> users = dataAccess.getUsers();
             if (users == null || users.isEmpty()) {
                 logger.info("No users found. So creating {} as the first user", username);
-                user = new User(username, username, true, true, false, false);
+                user = new User(username, username, true, false, false);
             } else {
                 logger.info("User {} not found, creating", username);
-                user = new User(username, username, false, false, false, false);
+                user = new User(username, username, false, false, false);
             }
             dataAccess.saveUser(user);
         }
@@ -135,17 +135,6 @@ public class AccessHelper {
         }
         if (!team.getUsernames().contains(username)) {
             throw new Http401UnauthorizedException(username + " attempted to add audit record on team " + team.getTeamName());
-        }
-        return user;
-    }
-
-    public User checkIfUserIsOps(Request request, String action) {
-        User user = (User) request.getAttribute(Const.ATTR_USER);
-        if (user == null) {
-            throw new Http404NotFoundException("unknown users attempted to " + action + " but is not in ops group");
-        }
-        if (!user.isOps()) {
-            throw new Http401UnauthorizedException(user.getUsername() + " attempted to " + action + " but is not in ops group");
         }
         return user;
     }
