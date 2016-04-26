@@ -163,19 +163,26 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.deleteModule = function (moduleId) {
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                moduleId: moduleId
-            };
-
-            var responsePromise = $http.post("/v1/module/delete", dataObject, {});
-            responsePromise.success(function () {
-                $route.reload();
+        $scope.openDeleteModuleModal = function (module) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/deleteModule.html',
+                controller: 'ModalDeleteModuleCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to delete module has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 
@@ -944,6 +951,34 @@ hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$m
             };
 
             var responsePromise = $http.put("/v1/host/backfill", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalDeleteModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, module) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.module = module;
+        $scope.config = config;
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId
+            };
+
+            var responsePromise = $http.post("/v1/module/delete", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

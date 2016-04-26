@@ -32,6 +32,7 @@ import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.maven.MavenHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.WorkItemProcessorImpl;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
@@ -243,12 +244,12 @@ public class HadrianBuilder {
             workItemSender = workItemSenderFactory.create(parameters, client, metricRegistry);
         }
         
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(dataAccess, workItemSender, metricRegistry);
+        WorkItemProcessor workItemProcessor = new WorkItemProcessorImpl(dataAccess, workItemSender, metricRegistry);
         workItemSender.setWorkItemProcessor(workItemProcessor);
         
         DataAccessUpdater.update(dataAccess);
 
-        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, metricRegistry);
+        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
     }
     
     private String getHostname() {

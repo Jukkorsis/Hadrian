@@ -44,15 +44,7 @@ public class RoutingHandler extends AbstractHandler {
         deleteRoutes = new LinkedList<>();
     }
 
-    public void addRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
-        add(methodRule, targetRule, targetPattern, handler, true);
-    }
-
-    public void addUtilityRoute(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler) {
-        add(methodRule, targetRule, targetPattern, handler, false);
-    }
-
-    private void add(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler, boolean logAccess) {
+    public void add(MethodRule methodRule, TargetRule targetRule, String targetPattern, Handler handler, boolean logAccess) {
         RouteEntry entry = new RouteEntry(targetRule, targetPattern, handler, logAccess);
         switch (methodRule) {
             case GET:

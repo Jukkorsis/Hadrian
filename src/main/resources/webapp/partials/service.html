@@ -91,14 +91,23 @@
                             </td>
                             <td>
                                 {{m.moduleName}}
-                                <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Deployable'" is-open="status.isopen">
                                     <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                         <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                     </button>
                                     <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                        <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module {{m.moduleName}}</a></li>
-                                        <li role="menuitem"><a ng-click="openBackfillModal(m);">Backfill Hosts for module {{m.moduleName}}</a></li>
-                                        <li role="menuitem"><a ng-click="deleteModule(m.moduleId);">Delete module {{m.moduleName}}</a></li>
+                                        <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                                        <li role="menuitem"><a ng-click="openBackfillModal(m);">Backfill Hosts for module</a></li>
+                                        <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType !== 'Deployable'" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                                        <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                                     </ul>
                                 </div>
                             </td>
