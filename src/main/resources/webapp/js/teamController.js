@@ -180,6 +180,14 @@ hadrianControllers.controller('ModalAddUserToTeamCtrl', ['$scope', '$http', '$mo
         $scope.users = users;
         $scope.team = team;
 
+        $scope.modelOptions = {
+            debounce: {
+                default: 500,
+                blur: 250
+            },
+            getterSetter: true
+        };
+
         $scope.formAddUserToTeam = {};
         $scope.formAddUserToTeam.user = users.users[0];
 
