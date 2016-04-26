@@ -44,6 +44,7 @@ import com.northernwall.hadrian.service.HostVipCreateHandler;
 import com.northernwall.hadrian.service.ModuleCreateHandler;
 import com.northernwall.hadrian.service.ModuleDeleteHandler;
 import com.northernwall.hadrian.service.ModuleModifyHandler;
+import com.northernwall.hadrian.service.ModuleSecretHandler;
 import com.northernwall.hadrian.service.ServiceCreateHandler;
 import com.northernwall.hadrian.service.ServiceAuditGetHandler;
 import com.northernwall.hadrian.service.ServiceAuditOutputGetHandler;
@@ -185,6 +186,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(accessHelper, dataAccess, workItemProcess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/secret", new ModuleSecretHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/details", new HostGetDetailsHandler(dataAccess, hostDetailsHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/create", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess), true);

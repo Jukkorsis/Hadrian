@@ -140,6 +140,32 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openSecretModal = function (module, network) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/secretModule.html',
+                controller: 'ModalSecretModuleCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    module: function () {
+                        return module;
+                    },
+                    network: function () {
+                        return network;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.openBackfillModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -911,6 +937,42 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
             };
 
             var responsePromise = $http.put("/v1/module/modify", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalSecretModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module', 'network',
+    function ($scope, $http, $modalInstance, $route, config, service, module, network) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.module = module;
+        $scope.network = network;
+        $scope.config = config;
+
+        $scope.formSecret = {};
+        $scope.formSecret.fileName = "";
+        $scope.formSecret.contents = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.module.moduleId,
+                network: $scope.network.name,
+                fileName: $scope.formSecret.fileName,
+                contents: $scope.formSecret.contents
+            };
+
+            var responsePromise = $http.put("/v1/module/secret", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

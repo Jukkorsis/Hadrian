@@ -97,6 +97,9 @@
                                     </button>
                                     <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                         <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                                        <li role="menuitem"ng-repeat="network in config.networks">
+                                            <a ng-click="openSecretModal(m, network);">Manage secret for {{network.name}}</a>
+                                        </li>
                                         <li role="menuitem"><a ng-click="openBackfillModal(m);">Backfill Hosts for module</a></li>
                                         <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                                     </ul>
