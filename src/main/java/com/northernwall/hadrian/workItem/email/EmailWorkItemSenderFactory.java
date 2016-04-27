@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.workItem.email;
 
 import com.codahale.metrics.MetricRegistry;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
@@ -24,7 +25,7 @@ import com.squareup.okhttp.OkHttpClient;
 public class EmailWorkItemSenderFactory implements WorkItemSenderFactory {
 
     @Override
-    public WorkItemSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+    public WorkItemSender create(Parameters parameters, DataAccess dataAccess, OkHttpClient client, MetricRegistry metricRegistry) {
         return new EmailWorkItemSender(parameters, metricRegistry);
     }
 

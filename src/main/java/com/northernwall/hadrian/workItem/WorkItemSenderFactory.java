@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.workItem;
 
 import com.codahale.metrics.MetricRegistry;
+import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -24,6 +25,6 @@ import com.squareup.okhttp.OkHttpClient;
  * @author rthursto
  */
 public interface WorkItemSenderFactory {
-    public WorkItemSender create(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry);
+    public WorkItemSender create(Parameters parameters, DataAccess dataAccess, OkHttpClient client, MetricRegistry metricRegistry);
     
 }

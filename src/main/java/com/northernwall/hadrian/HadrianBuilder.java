@@ -241,7 +241,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access WorkItemSender class " + factoryName);
             }
-            workItemSender = workItemSenderFactory.create(parameters, client, metricRegistry);
+            workItemSender = workItemSenderFactory.create(parameters, dataAccess, client, metricRegistry);
         }
         
         WorkItemProcessor workItemProcessor = new WorkItemProcessorImpl(dataAccess, workItemSender, metricRegistry);

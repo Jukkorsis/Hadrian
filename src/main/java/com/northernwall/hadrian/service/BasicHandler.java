@@ -106,6 +106,13 @@ public abstract class BasicHandler extends AbstractHandler {
         throw new Http404NotFoundException("Could not find service");
     }
 
+    protected Module getModule(Request request, Service service) {
+        return getModule(
+                request.getParameter("moduleId"),
+                request.getParameter("moduleName"),
+                service);
+    }
+
     protected Module getModule(String moduleId, String moduleName, Service service) {
         if (moduleId != null && !moduleId.isEmpty()) {
             Module module = dataAccess.getModule(service.getServiceId(), moduleId);

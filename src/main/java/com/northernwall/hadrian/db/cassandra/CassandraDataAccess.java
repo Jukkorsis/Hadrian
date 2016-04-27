@@ -32,6 +32,7 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -87,6 +88,10 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement moduleInsert;
     private final PreparedStatement moduleUpdate;
     private final PreparedStatement moduleDelete;
+    private final PreparedStatement moduleFileSelect;
+    private final PreparedStatement moduleFileInsert;
+    private final PreparedStatement moduleFileUpdate;
+    private final PreparedStatement moduleFileDelete;
     private final PreparedStatement serviceSelect;
     private final PreparedStatement serviceInsert;
     private final PreparedStatement serviceUpdate;
@@ -183,6 +188,16 @@ public class CassandraDataAccess implements DataAccess {
         moduleUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleDelete = session.prepare("DELETE FROM module WHERE serviceId = ? AND id = ?;");
         moduleDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        logger.info("Praparing moduleFile statements...");
+        moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleFileInsert = session.prepare("INSERT INTO moduleFile (serviceId, moduleId, network, name, data) VALUES (?, ?, ?, ?, ?);");
+        moduleFileInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleFileUpdate = session.prepare("UPDATE moduleFile SET data = ? WHERE serviceId = ? AND moduleId = ? AND network = ? AND name = ?;");
+        moduleFileUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleFileDelete = session.prepare("DELETE FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing service statements...");
         serviceSelect = session.prepare("SELECT * FROM service WHERE id = ?;");
@@ -470,6 +485,49 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteModule(String serviceId, String moduleId) {
         deleteServiceData(serviceId, moduleId, moduleDelete);
+    }
+
+    @Override
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
+        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
+        for (Row row : results) {
+            return new ModuleFile(
+                    serviceId, 
+                    moduleId, 
+                    network,
+                    row.getString("name"),
+                    row.getString("data"));
+        }
+        return null;
+    }
+    
+    @Override
+    public void saveModuleFile(ModuleFile moduleFile) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileInsert);
+        session.execute(boundStatement.bind(
+                moduleFile.getServiceId(),
+                moduleFile.getModuleId(),
+                moduleFile.getNetwork(),
+                moduleFile.getName(),
+                moduleFile.getContents()));
+    }
+    
+    @Override
+    public void updateModuleFile(ModuleFile moduleFile) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileUpdate);
+        session.execute(boundStatement.bind(
+                moduleFile.getContents(),
+                moduleFile.getServiceId(),
+                moduleFile.getModuleId(),
+                moduleFile.getNetwork(),
+                moduleFile.getName()));
+    }
+    
+    @Override
+    public void deleteModuleFile(String serviceId, String moduleId, String network) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileDelete);
+        session.execute(boundStatement.bind(serviceId, moduleId, network));
     }
 
     @Override

@@ -140,11 +140,11 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openSecretModal = function (module, network) {
+        $scope.openModuleFileModal = function (module, network) {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'partials/secretModule.html',
-                controller: 'ModalSecretModuleCtrl',
+                templateUrl: 'partials/editModuleFile.html',
+                controller: 'ModalModuleFileCtrl',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -951,7 +951,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         };
     }]);
 
-hadrianControllers.controller('ModalSecretModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module', 'network',
+hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module', 'network',
     function ($scope, $http, $modalInstance, $route, config, service, module, network) {
         $scope.errorMsg = null;
         $scope.service = service;
@@ -959,20 +959,29 @@ hadrianControllers.controller('ModalSecretModuleCtrl', ['$scope', '$http', '$mod
         $scope.network = network;
         $scope.config = config;
 
-        $scope.formSecret = {};
-        $scope.formSecret.fileName = "";
-        $scope.formSecret.contents = "";
+        $scope.formFile = {};
+        $scope.formFile.name = "";
+        $scope.formFile.contents = "";
+        
+        $scope.loading = true;
+
+        var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId + "&network=" + $scope.network.name, {});
+        responsePromise.success(function (dataFromServer, status, headers, config) {
+            $scope.formFile.name = dataFromServer.name;
+            $scope.formFile.contents = dataFromServer.contents;
+            $scope.loading = false;
+        });
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 network: $scope.network.name,
-                fileName: $scope.formSecret.fileName,
-                contents: $scope.formSecret.contents
+                name: $scope.formFile.name,
+                contents: $scope.formFile.contents
             };
 
-            var responsePromise = $http.put("/v1/module/secret", dataObject, {});
+            var responsePromise = $http.put("/v1/module/file", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

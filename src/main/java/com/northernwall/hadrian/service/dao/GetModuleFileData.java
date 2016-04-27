@@ -16,11 +16,8 @@
 
 package com.northernwall.hadrian.service.dao;
 
-public class PostSecretModuleData {
-    public String serviceId;
-    public String moduleId;
-    public String network;
-    public String fileName;
+public class GetModuleFileData {
+    public String name;
     public String contents;
 
 }

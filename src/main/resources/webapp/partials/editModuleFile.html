@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h3 class="modal-title">Manage File of Module</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <dl class="dl-horizontal">
+        <dt>Name:</dt><dd>{{module.moduleName}}</dd>
+        <dt>Network:</dt><dd>{{network.name}}</dd>
+        <dt>File Name:</dt>
+        <dd>
+            <div ng-if="loading">Loading..</div>
+            <div ng-if="!loading"><input ng-model="formFile.name" type="text" maxlength="100" class="form-control"></div>
+        </dd>
+        <dt>Contents:</dt>
+        <dd>
+            <div ng-if="loading">Loading..</div>
+            <div ng-if="!loading"><textarea ng-model="formFile.contents" class="form-control"></textarea></div>
+        </dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Save File</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

@@ -23,6 +23,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -405,6 +406,23 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteModule(String serviceId, String moduleId) {
         modules.remove(moduleId);
+    }
+
+    @Override
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+        return null;
+    }
+    
+    @Override
+    public void saveModuleFile(ModuleFile moduleFile) {
+    }
+    
+    @Override
+    public void updateModuleFile(ModuleFile moduleFile) {
+    }
+    
+    @Override
+    public void deleteModuleFile(String serviceId, String moduleId, String network) {
     }
 
     @Override

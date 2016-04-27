@@ -23,6 +23,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.domain.Team;
@@ -93,6 +94,11 @@ public interface DataAccess {
     void updateModule(Module module);
     void deleteModule(String serviceId, String moduleId);
     
+    ModuleFile getModuleFile(String serviceId, String moduleId, String network);
+    void saveModuleFile(ModuleFile moduleFile);
+    void updateModuleFile(ModuleFile moduleFile);
+    void deleteModuleFile(String serviceId, String moduleId, String network);
+
     List<DataStore> getDataStores(String serviceId);
     DataStore getDataStore(String serviceId, String dataStoreId);
     void saveDataStore(DataStore dataStore);

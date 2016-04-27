@@ -107,6 +107,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         //Ref tables
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
