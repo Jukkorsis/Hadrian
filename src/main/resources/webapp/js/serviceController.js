@@ -145,6 +145,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 animation: true,
                 templateUrl: 'partials/editModuleFile.html',
                 controller: 'ModalModuleFileCtrl',
+                size: 'lg',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -166,14 +167,17 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openBackfillModal = function (module) {
+        $scope.openBackfillModal = function (network, module) {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'partials/backfillModule.html',
+                templateUrl: 'partials/backfillHost.html',
                 controller: 'ModalBackfillModuleCtrl',
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    network: function () {
+                        return network;
                     },
                     module: function () {
                         return module;
@@ -314,6 +318,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 animation: true,
                 templateUrl: 'partials/deploySoftware.html',
                 controller: 'ModalDeploySoftwareCtrl',
+                size: 'lg',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -345,6 +350,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 animation: true,
                 templateUrl: 'partials/deploySoftware.html',
                 controller: 'ModalDeploySoftwareCtrl',
+                size: 'lg',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -996,16 +1002,16 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
         };
     }]);
 
-hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module',
-    function ($scope, $http, $modalInstance, $route, config, service, module) {
+hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'network', 'module',
+    function ($scope, $http, $modalInstance, $route, config, service, network, module) {
         $scope.errorMsg = null;
         $scope.service = service;
+        $scope.network = network;
         $scope.module = module;
         $scope.config = config;
 
         $scope.formBackfillHost = {};
         $scope.formBackfillHost.dataCenter = $scope.config.dataCenters[0];
-        $scope.formBackfillHost.network = $scope.config.networks[0];
         $scope.formBackfillHost.env = $scope.config.envs[0];
         $scope.formBackfillHost.size = $scope.config.sizes[0];
         $scope.formBackfillHost.hosts = "";
@@ -1015,7 +1021,7 @@ hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$m
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 dataCenter: $scope.formBackfillHost.dataCenter,
-                network: $scope.formBackfillHost.network.name,
+                network: $scope.network,
                 env: $scope.formBackfillHost.env,
                 size: $scope.formBackfillHost.size,
                 hosts: $scope.formBackfillHost.hosts

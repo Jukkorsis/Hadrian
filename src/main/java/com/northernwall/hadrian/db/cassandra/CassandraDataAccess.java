@@ -89,6 +89,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement moduleUpdate;
     private final PreparedStatement moduleDelete;
     private final PreparedStatement moduleFileSelect;
+    private final PreparedStatement moduleFileSelect2;
     private final PreparedStatement moduleFileInsert;
     private final PreparedStatement moduleFileUpdate;
     private final PreparedStatement moduleFileDelete;
@@ -190,13 +191,15 @@ public class CassandraDataAccess implements DataAccess {
         moduleDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing moduleFile statements...");
-        moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ?;");
         moduleFileSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleFileSelect2 = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileSelect2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleFileInsert = session.prepare("INSERT INTO moduleFile (serviceId, moduleId, network, name, data) VALUES (?, ?, ?, ?, ?);");
         moduleFileInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleFileUpdate = session.prepare("UPDATE moduleFile SET data = ? WHERE serviceId = ? AND moduleId = ? AND network = ? AND name = ?;");
         moduleFileUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        moduleFileDelete = session.prepare("DELETE FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileDelete = session.prepare("DELETE FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ? AND name = ?;");
         moduleFileDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing service statements...");
@@ -488,8 +491,27 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
+        ResultSet results = session.execute(boundStatement.bind(serviceId));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        List<ModuleFile> moduleFiles = new LinkedList<>();
+        for (Row row : results) {
+            moduleFiles.add(new ModuleFile(
+                    serviceId, 
+                    row.getString("moduleId"), 
+                    row.getString("network"),
+                    row.getString("name"),
+                    row.getString("data")));
+        }
+        return moduleFiles;
+    }
+
+    @Override
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
         ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
         for (Row row : results) {
             return new ModuleFile(
@@ -525,9 +547,9 @@ public class CassandraDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteModuleFile(String serviceId, String moduleId, String network) {
+    public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileDelete);
-        session.execute(boundStatement.bind(serviceId, moduleId, network));
+        session.execute(boundStatement.bind(serviceId, moduleId, network, name));
     }
 
     @Override

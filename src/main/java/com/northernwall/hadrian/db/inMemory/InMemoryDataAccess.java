@@ -409,6 +409,11 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public List<ModuleFile> getModuleFiles(String serviceId) {
+        return null;
+    }
+
+    @Override
     public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
         return null;
     }
@@ -422,7 +427,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteModuleFile(String serviceId, String moduleId, String network) {
+    public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
     }
 
     @Override

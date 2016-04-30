@@ -8,10 +8,6 @@
         <dd>
             <select ng-model="formBackfillHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select>
         </dd>
-        <dt>Network:</dt>
-        <dd>
-            <select ng-model="formBackfillHost.network" ng-options="c.name for c in config.networks" class="form-control"></select>
-        </dd>
         <dt>Env:</dt>
         <dd>
             <select ng-model="formBackfillHost.env" ng-options="c for c in config.envs" class="form-control"></select>

@@ -20,7 +20,6 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.PostModuleFileData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
@@ -53,7 +52,10 @@ public class ModuleFileCreateHandler extends BasicHandler {
         }
 
         if (data.name == null || data.name.trim().isEmpty() || data.contents == null || data.contents.trim().isEmpty()) {
-            getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network);
+            ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), data.network);
+            if (moduleFile == null) {
+                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
+            }
         } else {
             ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), data.network);
             if (moduleFile == null) {
@@ -65,8 +67,8 @@ public class ModuleFileCreateHandler extends BasicHandler {
                     getDataAccess().updateModuleFile(moduleFile);
                 }
             } else {
-                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network);
-                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.name, data.name, data.contents);
+                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
+                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
                 getDataAccess().saveModuleFile(moduleFile);
             }
         }
