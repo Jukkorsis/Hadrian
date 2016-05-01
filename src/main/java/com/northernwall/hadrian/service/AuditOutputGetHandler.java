@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class ServiceAuditOutputGetHandler extends BasicHandler {
+public class AuditOutputGetHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServiceAuditOutputGetHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(AuditOutputGetHandler.class);
 
-    public ServiceAuditOutputGetHandler(DataAccess dataAccess) {
+    public AuditOutputGetHandler(DataAccess dataAccess) {
         super(dataAccess);
     }
 

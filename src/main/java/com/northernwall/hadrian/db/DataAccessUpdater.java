@@ -1,8 +1,14 @@
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.GMT;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.ModuleFile;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +59,23 @@ public class DataAccessUpdater {
                                 logger.info("MF: {} {} {}", service.getServiceAbbr(), moduleFile.getNetwork(), moduleFile.getName());
                             } else {
                                 dataAccess.deleteModuleFile(moduleFile.getServiceId(), moduleFile.getModuleId(), moduleFile.getNetwork(), moduleFile.getName());
-                                logger.info("MF: {} {} {} BOOM!!", service.getServiceAbbr(), moduleFile.getNetwork(), moduleFile.getName());
+                                logger.warn("MF: {} {} {} BOOM!!", service.getServiceAbbr(), moduleFile.getNetwork(), moduleFile.getName());
                             }
                         }
+                    }
+                    if (!service.isActive() && service.getDeletionDate() == null) {
+                        logger.warn("Found deleted service {} with no deletion date", service.getServiceAbbr());
+                        service.setDeletionDate(GMT.getGmtAsDate());
+                        Calendar now = Calendar.getInstance();
+                        now.add(Calendar.DATE, -300);
+                        List<Audit> audits = dataAccess.getAudit(service.getServiceId(), now.getTime(), new Date());
+                        for (Audit audit : audits) {
+                            if (audit.type == Type.service && audit.operation == Operation.delete) {
+                                logger.warn("Found audit, setting deletion date");
+                                service.setDeletionDate(audit.timePerformed);
+                            }
+                        }
+                        dataAccess.saveService(service);
                     }
                 }
             }

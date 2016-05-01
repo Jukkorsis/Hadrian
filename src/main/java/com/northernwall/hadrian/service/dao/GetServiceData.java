@@ -33,6 +33,7 @@ public class GetServiceData {
     public String gitProject;
     public boolean active;
     public Date creationDate;
+    public Date deletionDate;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
     public List<GetServiceRefData> uses;
@@ -51,6 +52,7 @@ public class GetServiceData {
         temp.gitProject = service.getGitProject();
         temp.active = service.isActive();
         temp.creationDate = service.getCreationDate();
+        temp.deletionDate = service.getDeletionDate();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
         temp.uses = new LinkedList<>();

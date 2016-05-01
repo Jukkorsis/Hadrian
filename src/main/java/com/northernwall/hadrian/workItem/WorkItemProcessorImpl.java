@@ -20,6 +20,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
@@ -32,11 +33,8 @@ import com.northernwall.hadrian.workItem.action.DeploySoftwareAction;
 import com.northernwall.hadrian.workItem.action.RestartHostAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,7 +212,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             if (callbackData.status == Result.success) {
                 Audit audit = new Audit();
                 audit.serviceId = workItem.getService().serviceId;
-                audit.timePerformed = getGmt();
+                audit.timePerformed = GMT.getGmtAsDate();
                 audit.timeRequested = workItem.getRequestDate();
                 audit.requestor = workItem.getUsername();
                 audit.type = workItem.getType();
@@ -242,10 +240,6 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
         }
     }
 
-    private Date getGmt() {
-        return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-    }
-    
     private void deleteNextWorkItem(String nextId) {
         if (nextId != null) {
             WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);

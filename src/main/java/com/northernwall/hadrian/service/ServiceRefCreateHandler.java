@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -75,8 +76,8 @@ public class ServiceRefCreateHandler extends BasicHandler {
     private void createAudit(String serviceId, String requestor, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
-        audit.timePerformed = getGmt();
-        audit.timeRequested = getGmt();
+        audit.timePerformed = GMT.getGmtAsDate();
+        audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;
         audit.type = Type.serviceRef;
         audit.operation = Operation.create;

@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.GMT;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,6 +34,7 @@ public class Service implements Comparable<Service>{
     private GitMode gitMode;
     private String gitProject;
     private Date creationDate;
+    private Date deletionDate;
     private boolean active = true;
 
     public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
@@ -44,7 +46,8 @@ public class Service implements Comparable<Service>{
         this.serviceType = serviceType;
         this.gitMode = gitMode;
         this.gitProject = gitProject;
-        this.creationDate = new Date();
+        this.creationDate = GMT.getGmtAsDate();
+        this.deletionDate = null;
         this.active = active;
     }
 
@@ -118,6 +121,14 @@ public class Service implements Comparable<Service>{
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Date getDeletionDate() {
+        return deletionDate;
+    }
+
+    public void setDeletionDate(Date deletionDate) {
+        this.deletionDate = deletionDate;
     }
 
     public boolean isActive() {

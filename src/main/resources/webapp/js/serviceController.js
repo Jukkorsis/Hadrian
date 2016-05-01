@@ -968,7 +968,7 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
         $scope.formFile = {};
         $scope.formFile.name = "";
         $scope.formFile.contents = "";
-        
+
         $scope.loading = true;
 
         var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId + "&network=" + $scope.network.name, {});

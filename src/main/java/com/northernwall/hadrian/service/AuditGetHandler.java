@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard Thurston
  */
-public class ServiceAuditGetHandler extends BasicHandler {
+public class AuditGetHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServiceAuditGetHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(AuditGetHandler.class);
 
     private final DateFormat format;
 
-    public ServiceAuditGetHandler(DataAccess dataAccess) {
+    public AuditGetHandler(DataAccess dataAccess) {
         super(dataAccess);
 
         format = new SimpleDateFormat("MM/dd/yyyy");

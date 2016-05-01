@@ -12,9 +12,6 @@ import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundEx
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -169,10 +166,6 @@ public abstract class BasicHandler extends AbstractHandler {
             }
         }
         throw new Http404NotFoundException("Could not find vip");
-    }
-
-    protected Date getGmt() {
-        return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
     }
 
 }

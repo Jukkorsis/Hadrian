@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
@@ -100,8 +101,8 @@ public class ModuleFileCreateHandler extends BasicHandler {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
         audit.moduleName = moduleName;
-        audit.timePerformed = getGmt();
-        audit.timeRequested = getGmt();
+        audit.timePerformed = GMT.getGmtAsDate();
+        audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;
         audit.type = Type.module;
         audit.operation = Operation.update;
