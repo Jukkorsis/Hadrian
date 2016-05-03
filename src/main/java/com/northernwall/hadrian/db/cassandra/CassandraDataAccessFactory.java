@@ -64,7 +64,10 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             throw new RuntimeException(Const.CASS_NODES + " is not defined");
         }
         if (dataCenter != null && !dataCenter.isEmpty()) {
-            builder.withLoadBalancingPolicy(new DCAwareRoundRobinPolicy(dataCenter));
+            DCAwareRoundRobinPolicy policy = DCAwareRoundRobinPolicy.builder()
+                    .withLocalDc(dataCenter)
+                    .build();
+            builder.withLoadBalancingPolicy(policy);
         }
         String[] nodeParts = nodes.split(",");
         for (String node : nodeParts) {
