@@ -54,6 +54,7 @@ import com.northernwall.hadrian.service.ServiceNotUsesGetHandler;
 import com.northernwall.hadrian.service.ServiceModifyHandler;
 import com.northernwall.hadrian.service.ServiceRefCreateHandler;
 import com.northernwall.hadrian.service.ServiceRefDeleteHandler;
+import com.northernwall.hadrian.service.ServiceRefreshHandler;
 import com.northernwall.hadrian.service.ServicesGetHandler;
 import com.northernwall.hadrian.service.TeamAddUserHandler;
 import com.northernwall.hadrian.service.TeamCreateHandler;
@@ -174,6 +175,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/removeUser", new TeamRemoveUserHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new AuditGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess), true);

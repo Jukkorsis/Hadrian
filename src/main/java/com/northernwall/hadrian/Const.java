@@ -135,10 +135,6 @@ public class Const {
     public static final String CONFIG_AVAILABILITY_URL_DEFAULT = HOST+".mydomain.com:9090/availability";
     public static final String CONFIG_DEPLOYMENT_FOLDER = "config.deploymentFolder";
     public static final String CONFIG_DEPLOYMENT_FOLDER_DEFAULT = "/home/app";
-    public static final String CONFIG_START_CMD = "config.startCmd";
-    public static final String CONFIG_START_CMD_DEFAULT = "screen -d -m java -jar serviceAbbr.jar";
-    public static final String CONFIG_STOP_CMD = "config.stopCmd";
-    public static final String CONFIG_STOP_CMD_DEFAULT = "pkill -f serviceAbbr.jar";
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";

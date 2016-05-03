@@ -23,8 +23,6 @@ public class Config {
     public String versionUrl = "";
     public String availabilityUrl = "";
     public String deploymentFolder = "";
-    public String startCmd = "";
-    public String stopCmd = "";
     public String gitUiURL = "";
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networkNames = new LinkedList<>();

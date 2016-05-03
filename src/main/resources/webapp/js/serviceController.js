@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'HostDetails',
-    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, HostDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails',
+    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails) {
         $scope.loading = true;
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
@@ -677,7 +677,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         var stopRefresh = $interval(function () {
-            Service.get({serviceId: $routeParams.serviceId}, function (newService) {
+            ServiceRefresh.get({serviceId: $routeParams.serviceId}, function (newService) {
                 $scope.service.serviceAbbr = newService.serviceAbbr;
                 $scope.service.serviceName = newService.serviceName;
                 $scope.service.description = newService.description;
@@ -851,9 +851,9 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.runAs = "";
         $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
-        $scope.formSaveModule.startCmdLine = $scope.config.startCmd;
+        $scope.formSaveModule.startCmdLine = "";
         $scope.formSaveModule.startTimeOut = 60;
-        $scope.formSaveModule.stopCmdLine = $scope.config.stopCmd;
+        $scope.formSaveModule.stopCmdLine = "";
         $scope.formSaveModule.stopTimeOut = 60;
 
         $scope.save = function () {

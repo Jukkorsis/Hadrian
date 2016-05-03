@@ -58,8 +58,6 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
         newConfig.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
         newConfig.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
-        newConfig.startCmd = parameters.getString(Const.CONFIG_START_CMD, Const.CONFIG_START_CMD_DEFAULT);
-        newConfig.stopCmd = parameters.getString(Const.CONFIG_STOP_CMD, Const.CONFIG_STOP_CMD_DEFAULT);
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);

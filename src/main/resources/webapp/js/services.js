@@ -28,6 +28,12 @@ hadrianServices.factory('Service', ['$resource', function($resource) {
         });
     }]);
 
+hadrianServices.factory('ServiceRefresh', ['$resource', function($resource) {
+        return $resource('/v1/service/refresh', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);
+
 hadrianServices.factory('ServiceNotUses', ['$resource', function($resource) {
         return $resource('/v1/service/notuses', {}, {
             query: {method: 'GET', isArray: false}
