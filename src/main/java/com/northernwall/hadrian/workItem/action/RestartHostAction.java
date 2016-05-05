@@ -66,6 +66,10 @@ public class RestartHostAction extends Action {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
+        
+        host.setStatus(Const.NO_STATUS);
+        dataAccess.updateHost(host);
+        
         logger.warn("Callback for {} recorded a failure", workItem.getHost().hostId);
     }
 
