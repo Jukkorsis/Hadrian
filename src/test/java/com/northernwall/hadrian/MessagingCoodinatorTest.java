@@ -38,6 +38,8 @@ public class MessagingCoodinatorTest {
         MessagingCoodinator mc = new MessagingCoodinator(new StubParameters());
         Map<String, String> data = new HashMap<>();
         data.put("A", "a");
+        data.put("B", "b");
+        data.put("C", null);
         mc.sendMessage("TEST", null, data);
         Assert.assertEquals("Hi a.", StubMessageProcessor.text);
     }

@@ -35,9 +35,11 @@ public abstract class MessageProcessor {
             return "";
         }
         for (Entry<String, String> entry : data.entrySet()) {
-            String target = "{"+entry.getKey()+"}";
-            if (pattern.contains(target)) {
-                pattern = pattern.replace(target, entry.getValue());
+            if (entry.getKey() != null && !entry.getKey().isEmpty() && entry.getValue() != null) {
+                String target = "{"+entry.getKey()+"}";
+                if (pattern.contains(target)) {
+                    pattern = pattern.replace(target, entry.getValue());
+                }
             }
         }
         return pattern;
