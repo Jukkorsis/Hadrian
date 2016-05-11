@@ -23,6 +23,7 @@ import com.northernwall.hadrian.graph.GraphAllHandler;
 import com.northernwall.hadrian.graph.GraphFanInHandler;
 import com.northernwall.hadrian.graph.GraphFanOutHandler;
 import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.service.AuditCreateHandler;
 import com.northernwall.hadrian.service.AuditGetHandler;
@@ -42,6 +43,7 @@ import com.northernwall.hadrian.service.HostGetDetailsHandler;
 import com.northernwall.hadrian.service.HostVipDeleteHandler;
 import com.northernwall.hadrian.service.HostRestartHandler;
 import com.northernwall.hadrian.service.HostVipCreateHandler;
+import com.northernwall.hadrian.service.MessageSendHandler;
 import com.northernwall.hadrian.service.ModuleCreateHandler;
 import com.northernwall.hadrian.service.ModuleDeleteHandler;
 import com.northernwall.hadrian.service.ModuleModifyHandler;
@@ -113,6 +115,7 @@ public class Hadrian {
     private final WorkItemSender workItemSender;
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
+    private final MessagingCoodinator messagingCoodinator;
     private int port;
     private Server server;
 
@@ -131,6 +134,7 @@ public class Hadrian {
         configHelper = new ConfigHelper(parameters);
         infoHelper = new InfoHelper(client);
         hostDetailsHelper = new HostDetailsHelper(client, parameters);
+        messagingCoodinator = new MessagingCoodinator(parameters);
 
         setupJetty();
     }
@@ -156,7 +160,7 @@ public class Hadrian {
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemSender), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemSender, messagingCoodinator), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webcontent"), false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/favicon.ico", new FaviconHandler(), false);
@@ -211,6 +215,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/audit", new AuditCreateHandler(dataAccess, accessHelper), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/sendMessage", new MessageSendHandler(dataAccess, accessHelper, messagingCoodinator), true);
         //Catch all handler
         routingHandler.add(MethodRule.ANY, TargetRule.ANY, "/", new RedirectHandler(), true);
         handlers.addHandler(routingHandler);

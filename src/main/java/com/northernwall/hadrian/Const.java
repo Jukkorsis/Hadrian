@@ -81,7 +81,10 @@ public class Const {
     public static final String EMAIL_WORK_ITEM_SMTP_USERNAME = "emailWorkItem.smtp.username";
     public static final String EMAIL_WORK_ITEM_SMTP_PASSWORD = "emailWorkItem.smtp.password";
     public static final String EMAIL_WORK_ITEM_EMAIL_TO = "emailWorkItem.emailTo";
-    public static final String EMAIL_WORK_ITEM_EMAIL_From = "emailWorkItem.emailFrom";
+    public static final String EMAIL_WORK_ITEM_EMAIL_FROM = "emailWorkItem.emailFrom";
+
+    public static final String MESSAGE_PROCESSORS = "messageProcessors";
+    public static final String MESSAGE_PROCESSORS_DEFAULT = "com.northernwall.hadrian.messaging.EmailMessageProcessor";
 
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME = "maven.factoryClassName";
     public static final String MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.maven.http.HttpMavenHelperFactory";

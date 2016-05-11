@@ -19,6 +19,7 @@ package com.northernwall.hadrian.utilityHandlers;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
@@ -50,15 +51,17 @@ public class HealthHandler extends AbstractHandler {
     private final MavenHelper mavenHelper;
     private final Parameters parameters;
     private final WorkItemSender workItemSender;
+    private final MessagingCoodinator messagingCoodinator;
     private final String version;
     
-    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, MavenHelper mavenHelper, Parameters parameters, WorkItemSender workItemSender) {
+    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, MavenHelper mavenHelper, Parameters parameters, WorkItemSender workItemSender, MessagingCoodinator messagingCoodinator) {
         this.accessHandler = accessHandler;
         this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
         this.mavenHelper = mavenHelper;
         this.parameters = parameters;
         this.workItemSender = workItemSender;
+        this.messagingCoodinator = messagingCoodinator;
         String temp = getClass().getPackage().getImplementationVersion();
         if (temp == null) {
             version = "unknown";
@@ -96,6 +99,7 @@ public class HealthHandler extends AbstractHandler {
         writer.addLine("Class - Parameters", parameters.getClass().getCanonicalName());
         writer.addLine("Class - Work Item Sender", workItemSender.getClass().getCanonicalName());
         dataAccess.getHealth(writer);
+        messagingCoodinator.getHealth(writer);
         writer.close();
     }
 

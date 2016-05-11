@@ -68,7 +68,7 @@ public class EmailWorkItemSender extends WorkItemSender {
         if (!emailTos.isEmpty()) {
             fromDefault = emailTos.get(0);
         }
-        emailFrom = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_From, fromDefault);
+        emailFrom = parameters.getString(Const.EMAIL_WORK_ITEM_EMAIL_FROM, fromDefault);
     }
 
     @Override
