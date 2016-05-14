@@ -15,8 +15,10 @@
  */
 package com.northernwall.hadrian.messaging;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.squareup.okhttp.OkHttpClient;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -26,7 +28,7 @@ import java.util.Map.Entry;
  */
 public abstract class MessageProcessor {
 
-    public abstract void init(Parameters parameters);
+    public abstract void init(Parameters parameters, Gson gson, OkHttpClient client);
     
     public abstract void process(MessageType messageType, Team team, Map<String, String> data);
     

@@ -134,7 +134,7 @@ public class Hadrian {
         configHelper = new ConfigHelper(parameters);
         infoHelper = new InfoHelper(client);
         hostDetailsHelper = new HostDetailsHelper(client, parameters);
-        messagingCoodinator = new MessagingCoodinator(parameters);
+        messagingCoodinator = new MessagingCoodinator(parameters, client);
 
         setupJetty();
     }

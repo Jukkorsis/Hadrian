@@ -1,10 +1,12 @@
 package com.northernwall.hadrian.messaging.email;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageProcessor;
 import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.squareup.okhttp.OkHttpClient;
 import java.util.Map;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
@@ -19,7 +21,7 @@ public class EmailMessageProcessor extends MessageProcessor {
     private DefaultAuthenticator authenticator = null;
 
     @Override
-    public void init(Parameters parameters) {
+    public void init(Parameters parameters, Gson gson, OkHttpClient client) {
         smtpHostname = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_HOSTNAME, null);
         smtpPort = parameters.getInt(Const.EMAIL_WORK_ITEM_SMTP_POST, Const.EMAIL_WORK_ITEM_SMTP_POST_DEFAULT);
         smtpSsl = parameters.getBoolean(Const.EMAIL_WORK_ITEM_SMTP_SSL, Const.EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT);

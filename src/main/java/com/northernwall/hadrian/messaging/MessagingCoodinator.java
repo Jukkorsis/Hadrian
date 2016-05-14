@@ -5,6 +5,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class MessagingCoodinator {
     private final List<MessageType> messageTypes;
     private final Gson gson;
 
-    public MessagingCoodinator(Parameters parameters) {
+    public MessagingCoodinator(Parameters parameters, OkHttpClient client) {
         this.parameters = parameters;
         messageProcessors = new LinkedList<>();
         messageTypes = new LinkedList<>();
@@ -33,7 +34,7 @@ public class MessagingCoodinator {
                 try {
                     Class c = Class.forName(part);
                     MessageProcessor processor = (MessageProcessor) c.newInstance();
-                    processor.init(parameters);
+                    processor.init(parameters, gson, client);
                     messageProcessors.add(processor);
                 } catch (ClassNotFoundException ex) {
                     logger.warn("Could not find MessageProcessor class {}", part);
