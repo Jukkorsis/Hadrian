@@ -28,6 +28,7 @@ public class GetTeamData {
     public String teamName;
     public String teamEmail;
     public String teamIrc;
+    public String teamSlack;
     public String gitGroup;
     public String calendarId;
     public List<User> users;
@@ -40,6 +41,7 @@ public class GetTeamData {
         temp.teamName = team.getTeamName();
         temp.teamEmail = team.getTeamEmail();
         temp.teamIrc = team.getTeamIrc();
+        temp.teamSlack = team.getTeamSlack();
         temp.gitGroup = team.getGitGroup();
         temp.calendarId = team.getCalendarId();
         temp.users = new LinkedList<>();

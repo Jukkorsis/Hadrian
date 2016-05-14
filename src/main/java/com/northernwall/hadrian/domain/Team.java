@@ -29,16 +29,18 @@ public class Team implements Comparable<Team> {
     private String teamName;
     private String teamEmail;
     private String teamIrc;
+    private String teamSlack;
     private String gitRepo;
     private String gitGroup;
     private String calendarId;
     private List<String> usernames;
 
-    public Team(String teamName, String teamEmail, String teamIrc, String gitGroup, String calendarId) {
+    public Team(String teamName, String teamEmail, String teamIrc, String teamSlack, String gitGroup, String calendarId) {
         this.teamId = UUID.randomUUID().toString();
         this.teamName = teamName;
         this.teamEmail = teamEmail;
         this.teamIrc = teamIrc;
+        this.teamSlack = teamSlack;
         this.gitRepo = gitGroup;
         this.gitGroup = gitGroup;
         this.calendarId = calendarId;
@@ -75,6 +77,14 @@ public class Team implements Comparable<Team> {
 
     public void setTeamIrc(String teamIrc) {
         this.teamIrc = teamIrc;
+    }
+
+    public String getTeamSlack() {
+        return teamSlack;
+    }
+
+    public void setTeamSlack(String teamSlack) {
+        this.teamSlack = teamSlack;
     }
 
     public String getGitRepo() {

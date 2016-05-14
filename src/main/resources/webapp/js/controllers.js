@@ -180,6 +180,7 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveTeam.name = "";
         $scope.formSaveTeam.email = "";
         $scope.formSaveTeam.irc = "";
+        $scope.formSaveTeam.slack = "";
         $scope.formSaveTeam.gitGroup = "";
         $scope.formSaveTeam.calendarId = "";
         $scope.formSaveTeam.user = users.users[0];
@@ -189,6 +190,7 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
                 teamName: $scope.formSaveTeam.name,
                 teamEmail: $scope.formSaveTeam.email,
                 teamIrc: $scope.formSaveTeam.irc,
+                teamSlack: $scope.formSaveTeam.slack,
                 gitGroup: $scope.formSaveTeam.gitGroup,
                 calendarId: $scope.formSaveTeam.calendarId,
                 user: $scope.formSaveTeam.user

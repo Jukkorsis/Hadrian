@@ -1,7 +1,9 @@
-package com.northernwall.hadrian.messaging;
+package com.northernwall.hadrian.messaging.email;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.messaging.MessageProcessor;
+import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.util.Map;
 import org.apache.commons.mail.DefaultAuthenticator;
