@@ -94,37 +94,31 @@ public class HadrianBuilder {
     }
 
     public Hadrian builder() {
-        try {
-            client = new OkHttpClient();
-            client.setConnectTimeout(2, TimeUnit.SECONDS);
-            client.setReadTimeout(2, TimeUnit.SECONDS);
-            client.setWriteTimeout(2, TimeUnit.SECONDS);
-            client.setFollowSslRedirects(false);
-            client.setFollowRedirects(false);
-            client.setConnectionPool(new ConnectionPool(5, 60 * 1000));
-        } catch (NumberFormatException nfe) {
-            throw new RuntimeException("Error Creating HTTPClient, could not parse property");
-        } catch (Exception e) {
-            throw new RuntimeException("Error Creating HTTPClient: ", e);
-        }
+        client = new OkHttpClient();
+        client.setConnectTimeout(2, TimeUnit.SECONDS);
+        client.setReadTimeout(2, TimeUnit.SECONDS);
+        client.setWriteTimeout(2, TimeUnit.SECONDS);
+        client.setFollowSslRedirects(false);
+        client.setFollowRedirects(false);
+        client.setConnectionPool(new ConnectionPool(5, 60 * 1000));
 
         if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
-            
-            final OperatingSystemMXBean osBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-            metricRegistry.register("jvm.processCpuLoad", new Gauge<Double>(){
+
+            final OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            metricRegistry.register("jvm.processCpuLoad", new Gauge<Double>() {
                 @Override
                 public Double getValue() {
                     return osBean.getProcessCpuLoad();
                 }
             });
-            metricRegistry.register("jvm.systemCpuLoad", new Gauge<Double>(){
+            metricRegistry.register("jvm.systemCpuLoad", new Gauge<Double>() {
                 @Override
                 public Double getValue() {
                     return osBean.getSystemCpuLoad();
                 }
             });
-            
+
             if (parameters.getBoolean("metrics.console", false)) {
                 ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
                         .convertRatesTo(TimeUnit.SECONDS)
@@ -132,13 +126,13 @@ public class HadrianBuilder {
                         .build();
                 reporter.start(1, TimeUnit.MINUTES);
             }
-            
+
             String graphiteUrl = parameters.getString("metrics.graphite.url", null);
             int graphitePort = parameters.getInt("metrics.graphite.port", -1);
             if (graphiteUrl != null && graphitePort > -1) {
                 Graphite graphite = new Graphite(new InetSocketAddress(graphiteUrl, graphitePort));
                 GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry)
-                        .prefixedWith("hadrian."+getHostname())
+                        .prefixedWith("hadrian." + getHostname())
                         .convertRatesTo(TimeUnit.SECONDS)
                         .convertDurationsTo(TimeUnit.MILLISECONDS)
                         .filter(MetricFilter.ALL)
@@ -205,7 +199,7 @@ public class HadrianBuilder {
             }
             accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
         }
-        
+
         if (calendarHelper == null) {
             String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -224,7 +218,7 @@ public class HadrianBuilder {
             }
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
-        
+
         if (workItemSender == null) {
             String factoryName = parameters.getString(Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME, Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -243,15 +237,15 @@ public class HadrianBuilder {
             }
             workItemSender = workItemSenderFactory.create(parameters, dataAccess, client, metricRegistry);
         }
-        
+
         WorkItemProcessor workItemProcessor = new WorkItemProcessorImpl(dataAccess, workItemSender, metricRegistry);
         workItemSender.setWorkItemProcessor(workItemProcessor);
-        
+
         DataAccessUpdater.update(dataAccess);
 
         return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
     }
-    
+
     private String getHostname() {
         try {
             String hostname = InetAddress.getLocalHost().getHostName();
