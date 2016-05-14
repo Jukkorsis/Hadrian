@@ -8,7 +8,6 @@ public class PostMessageData {
     public String serviceName;
     public String serviceAbbr;
     public String moduleName;
-    public String hostName;
     public Map<String, String> data;
 
 }

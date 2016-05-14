@@ -32,6 +32,13 @@ public class EmailMessageProcessor extends MessageProcessor {
 
     @Override
     public void process(MessageType messageType, Team team, Map<String, String> data) {
+        if (messageType == null
+                || messageType.emailSubject == null
+                || messageType.emailSubject.isEmpty()
+                || messageType.emailBody == null
+                || messageType.emailBody.isEmpty()) {
+            return;
+        }
         try {
             Email email = new SimpleEmail();
             if (smtpHostname != null) {

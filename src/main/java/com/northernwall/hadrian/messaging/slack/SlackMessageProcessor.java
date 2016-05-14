@@ -14,6 +14,14 @@ public class SlackMessageProcessor extends MessageProcessor {
 
     @Override
     public void process(MessageType messageType, Team team, Map<String, String> data) {
+        if (messageType == null
+                || messageType.slackBody == null
+                || messageType.slackBody.isEmpty()) {
+            return;
+        }
+        //todo send slack message
+        String channel = team.getTeamSlack();
+        String temp = replaceTerms(messageType.slackBody, data);
     }
 
 }

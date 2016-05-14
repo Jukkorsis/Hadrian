@@ -6,5 +6,6 @@ public class MessageType {
     public String emailSubject;
     public String emailBody;
     public String ircBody;
+    public String slackBody;
 
 }

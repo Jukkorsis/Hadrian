@@ -34,9 +34,10 @@ public class MessageSendHandler extends BasicHandler {
         data.data.put("serviceName", service.getServiceName());
         data.data.put("serviceAbbr", service.getServiceAbbr());
         data.data.put("moduleName", data.moduleName);
-        data.data.put("hostName", data.hostName);
         data.data.put("teamName", team.getTeamName());
         messagingCoodinator.sendMessage(data.messageTypeName, team, data.data);
+        
+        //todo look for dependant services and message those teams
     }
 
 }
