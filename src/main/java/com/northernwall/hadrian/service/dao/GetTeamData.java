@@ -50,10 +50,7 @@ public class GetTeamData {
         }
         Collections.sort(temp.users);
         temp.services = new LinkedList<>();
-        for (Service service : dataAccess.getServices(team.getTeamId())) {
-            temp.services.add(GetServiceData.create(service));
-        }
-        for (Service service : dataAccess.getDeletedServices(team.getTeamId())) {
+        for (Service service : Service.filterTeam(team.getTeamId(), dataAccess.getAllServices())) {
             temp.services.add(GetServiceData.create(service));
         }
         return temp;

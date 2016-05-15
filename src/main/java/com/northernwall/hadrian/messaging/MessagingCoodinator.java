@@ -47,18 +47,13 @@ public class MessagingCoodinator {
         }
     }
 
-    public void sendMessage(String messageTypeName, Team team, Map<String, String> data) {
-        MessageType messageType = getMessageType(messageTypeName);
-        if (messageType == null) {
-            logger.warn("Could not find MessageType {}", messageTypeName);
-            return;
-        }
+    public void sendMessage(MessageType messageType, Team team, Map<String, String> data) {
         for (MessageProcessor messageProcessor : messageProcessors) {
             messageProcessor.process(messageType, team, data);
         }
     }
 
-    private MessageType getMessageType(String messageTypeName) {
+    public MessageType getMessageType(String messageTypeName) {
         for (MessageType messageType : messageTypes) {
             if (messageType.name.equalsIgnoreCase(messageTypeName)) {
                 return messageType;
@@ -66,6 +61,7 @@ public class MessagingCoodinator {
         }
         String temp = parameters.getString("messageType."+messageTypeName, null);
         if (temp == null) {
+            logger.warn("Could not find MessageType {}", messageTypeName);
             return null;
         }
         MessageType messageType = gson.fromJson(temp, MessageType.class);

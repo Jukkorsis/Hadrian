@@ -36,8 +36,6 @@ public class GetServiceData {
     public Date deletionDate;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
-    public List<GetServiceRefData> uses;
-    public List<GetServiceRefData> usedBy;
     public boolean canModify;
 
     public static GetServiceData create(Service service) {
@@ -55,8 +53,6 @@ public class GetServiceData {
         temp.deletionDate = service.getDeletionDate();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
-        temp.uses = new LinkedList<>();
-        temp.usedBy = new LinkedList<>();
         return temp;
     }
 

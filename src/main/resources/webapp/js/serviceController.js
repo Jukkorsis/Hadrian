@@ -61,7 +61,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddUsesModal = function () {
+        $scope.openAddUsesModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addUses.html',
@@ -69,6 +69,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    module: function () {
+                        return module;
                     }
                 }
             });
@@ -78,10 +81,12 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.deleteServiceRef = function (clientId, serverId) {
+        $scope.deleteServiceRef = function (clientServiceId, clientModuleId, serverServiceId, serverModuleId) {
             var dataObject = {
-                clientId: clientId,
-                serverId: serverId
+                clientServiceId: clientServiceId,
+                clientModuleId: clientModuleId,
+                serverServiceId: serverServiceId,
+                serverModuleId: serverModuleId
             };
 
             var responsePromise = $http.post("/v1/service/deleteRef", dataObject, {});
@@ -791,20 +796,24 @@ hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$h
         };
     }]);
 
-hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service',
-    function ($scope, $http, $modalInstance, $route, ServiceNotUses, service) {
+hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalInstance', '$route', 'ServiceNotUses', 'service', 'module',
+    function ($scope, $http, $modalInstance, $route, ServiceNotUses, service, module) {
         $scope.errorMsg = null;
         $scope.service = service;
+        $scope.module = module;
         $scope.formSelectUses = {};
 
-        ServiceNotUses.get({serviceId: service.serviceId}, function (notUses) {
+        ServiceNotUses.get({serviceId: service.serviceId, moduleId: module.moduleId}, function (notUses) {
             $scope.notUses = notUses;
+            $scope.formSelectUses.ref = notUses.refs[0];
         });
 
         $scope.save = function () {
             var dataObject = {
-                clientId: $scope.service.serviceId,
-                uses: $scope.formSelectUses
+                clientServiceId: $scope.service.serviceId,
+                clientModuleId: $scope.module.moduleId,
+                serverServiceId: $scope.formSelectUses.ref.serverServiceId,
+                serverModuleId: $scope.formSelectUses.ref.serverModuleId
             };
 
             var responsePromise = $http.post("/v1/service/createRef", dataObject, {});

@@ -19,6 +19,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -69,6 +70,17 @@ public class ModuleDeleteHandler extends BasicHandler {
             if (vip.getModuleId().equals(data.moduleId)) {
                 throw new Http400BadRequestException("Can not delete module with an active vip");
             }
+        }
+
+        List<ModuleRef> refs;
+        refs = getDataAccess().getModuleRefsByClient(data.serviceId, data.moduleId);
+        if (refs != null && !refs.isEmpty()) {
+            throw new Http400BadRequestException("Can not delete a module which uses another module");
+        }
+
+        refs = getDataAccess().getModuleRefsByServer(data.serviceId, data.moduleId);
+        if (refs != null && !refs.isEmpty()) {
+            throw new Http400BadRequestException("Can not delete a module which is being used by anoter module");
         }
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);

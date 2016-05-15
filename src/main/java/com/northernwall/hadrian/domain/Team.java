@@ -18,6 +18,7 @@ package com.northernwall.hadrian.domain;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -113,6 +114,28 @@ public class Team implements Comparable<Team> {
 
     public List<String> getUsernames() {
         return usernames;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.teamId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Team other = (Team) obj;
+        if (!Objects.equals(this.teamId, other.teamId)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

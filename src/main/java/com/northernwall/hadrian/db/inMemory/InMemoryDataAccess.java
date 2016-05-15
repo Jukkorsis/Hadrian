@@ -25,7 +25,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -50,7 +50,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, Service> services;
     private final Map<String, Host> hosts;
     private final Map<String, Vip> vips;
-    private final List<ServiceRef> serviceRefs;
+    private final List<ModuleRef> moduleRefs;
     private final List<VipRef> vipRefs;
     private final Map<String, CustomFunction> customFunctions;
     private final Map<String, Module> modules;
@@ -65,7 +65,7 @@ public class InMemoryDataAccess implements DataAccess {
         services = new ConcurrentHashMap<>();
         hosts = new ConcurrentHashMap<>();
         vips = new ConcurrentHashMap<>();
-        serviceRefs = new LinkedList<>();
+        moduleRefs = new LinkedList<>();
         vipRefs = new LinkedList<>();
         customFunctions = new ConcurrentHashMap<>();
         modules = new ConcurrentHashMap<>();
@@ -127,34 +127,10 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Service> getServices() {
+    public List<Service> getActiveServices() {
         List<Service> temp = new LinkedList<>();
         for (Service service : services.values()) {
             if (service.isActive()) {
-                temp.add(service);
-            }
-        }
-        Collections.sort(temp);
-        return temp;
-    }
-
-    @Override
-    public List<Service> getServices(String teamId) {
-        List<Service> temp = new LinkedList<>();
-        for (Service service : services.values()) {
-            if (service.getTeamId().equals(teamId) && service.isActive()) {
-                temp.add(service);
-            }
-        }
-        Collections.sort(temp);
-        return temp;
-    }
-
-    @Override
-    public List<Service> getDeletedServices(String teamId) {
-        List<Service> temp = new LinkedList<>();
-        for (Service service : services.values()) {
-            if (service.getTeamId().equals(teamId) && !service.isActive()) {
                 temp.add(service);
             }
         }
@@ -242,45 +218,40 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ServiceRef> getServiceRefs() {
-        return serviceRefs;
+    public List<ModuleRef> getModuleRefs() {
+        return moduleRefs;
     }
 
     @Override
-    public List<ServiceRef> getServiceRefsByClient(String clientServiceId) {
-        List<ServiceRef> temp = new LinkedList<>();
-        for (ServiceRef serviceRef : serviceRefs) {
-            if (serviceRef.getClientServiceId().equals(clientServiceId)) {
-                temp.add(serviceRef);
+    public List<ModuleRef> getModuleRefsByClient(String clientServiceId, String clientModuleId) {
+        List<ModuleRef> temp = new LinkedList<>();
+        for (ModuleRef moduleRef : moduleRefs) {
+            if (moduleRef.getClientServiceId().equals(clientServiceId) && moduleRef.getClientModuleId().equals(clientModuleId)) {
+                temp.add(moduleRef);
             }
         }
         return temp;
     }
 
     @Override
-    public List<ServiceRef> getServiceRefsByServer(String serverServiceId) {
-        List<ServiceRef> temp = new LinkedList<>();
-        for (ServiceRef serviceRef : serviceRefs) {
-            if (serviceRef.getServerServiceId().equals(serverServiceId)) {
-                temp.add(serviceRef);
+    public List<ModuleRef> getModuleRefsByServer(String serverServiceId, String serverModuleId) {
+        List<ModuleRef> temp = new LinkedList<>();
+        for (ModuleRef moduleRef : moduleRefs) {
+            if (moduleRef.getServerServiceId().equals(serverServiceId) && moduleRef.getServerModuleId().equals(serverModuleId)) {
+                temp.add(moduleRef);
             }
         }
         return temp;
     }
 
     @Override
-    public void saveServiceRef(ServiceRef serviceRef) {
-        serviceRefs.add(serviceRef);
+    public void saveModuleRef(ModuleRef moduleRef) {
+        moduleRefs.add(moduleRef);
     }
 
     @Override
-    public void deleteServiceRef(final String clientId, final String serviceId) {
-        serviceRefs.removeIf(new Predicate<ServiceRef>() {
-            @Override
-            public boolean test(ServiceRef t) {
-                return t.getClientServiceId().equals(clientId) && t.getServerServiceId().equals(serviceId);
-            }
-        });
+    public void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId) {
+        moduleRefs.removeIf(new ModuleRefPredicate(clientServiceId, clientModuleId, serverServiceId, serverModuleId));
     }
 
     @Override

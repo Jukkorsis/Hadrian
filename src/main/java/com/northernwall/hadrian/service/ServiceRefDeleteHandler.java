@@ -19,6 +19,7 @@ import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
@@ -47,28 +48,31 @@ public class ServiceRefDeleteHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteServiceRefData deleteServiceRefData = fromJson(request, DeleteServiceRefData.class);
+        DeleteServiceRefData data = fromJson(request, DeleteServiceRefData.class);
         
-        Service clientService = getService(deleteServiceRefData.clientId, null, null);
-        Service serverService = getService(deleteServiceRefData.serverId, null, null);
+        Service clientService = getService(data.clientServiceId, null, null);
+        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a module ref");
+
+        Module clientModule = getModule(data.clientModuleId, null, clientService);
+        Service serverService = getService(data.serverServiceId, null, null);
+        Module serverModule = getModule(data.serverModuleId, null, serverService);
         
-        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a service ref");
-        
-        getDataAccess().deleteServiceRef(deleteServiceRefData.clientId, deleteServiceRefData.serverId);
+        getDataAccess().deleteModuleRef(data.clientServiceId, data.clientModuleId, data.serverServiceId, data.serverModuleId);
         
         Map<String, String> notes = new HashMap<>();
-        notes.put("uses", serverService.getServiceAbbr());
-        createAudit(deleteServiceRefData.clientId, user.getUsername(), notes);
+        notes.put("uses", serverService.getServiceAbbr() + " " + serverModule.getModuleName());
+        createAudit(data.clientServiceId, clientModule.getModuleName(), user.getUsername(), notes);
         notes = new HashMap<>();
-        notes.put("use_by", clientService.getServiceAbbr());
-        createAudit(deleteServiceRefData.serverId, user.getUsername(), notes);
+        notes.put("use_by", clientService.getServiceAbbr() + " " + clientModule.getModuleName());
+        createAudit(data.serverServiceId, serverModule.getModuleName(), user.getUsername(), notes);
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private void createAudit(String serviceId, String requestor, Map<String, String> notes) {
+    private void createAudit(String serviceId, String moduleName, String requestor, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
+        audit.moduleName = moduleName;
         audit.timePerformed = GMT.getGmtAsDate();
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;

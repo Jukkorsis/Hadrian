@@ -49,7 +49,7 @@ public class ServicesGetHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType(Const.JSON);
 
-        List<Service> services = dataAccess.getServices();
+        List<Service> services = dataAccess.getActiveServices();
         GetServicesData getServicesData = new GetServicesData();
         for (Service service : services) {
             getServicesData.services.add(GetServiceData.create(service));

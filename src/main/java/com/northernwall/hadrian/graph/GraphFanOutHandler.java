@@ -18,7 +18,7 @@ package com.northernwall.hadrian.graph;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,10 +64,11 @@ public class GraphFanOutHandler extends AbstractHandler {
     }
 
     private void fanOut(Service service, Graph graph, List<Service> services, List<String> foundIds) throws IOException {
-        List<ServiceRef> serviceRefs;
-        serviceRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
+        List<ModuleRef> serviceRefs;
+        /*
+        serviceRefs = dataAccess.getModuleRefsByClient(service.getServiceId());
         if (serviceRefs != null && !serviceRefs.isEmpty()) {
-            for (ServiceRef serviceRef : serviceRefs) {
+            for (ModuleRef serviceRef : serviceRefs) {
                 if (!foundIds.contains(serviceRef.getServerServiceId())) {
                     Service temp = dataAccess.getService(serviceRef.getServerServiceId());
                     graph.writeLink(service.getServiceAbbr(), temp.getServiceAbbr());
@@ -77,6 +78,7 @@ public class GraphFanOutHandler extends AbstractHandler {
                 }
             }
         }
+        */
     }
 
 }

@@ -87,14 +87,14 @@ public abstract class BasicHandler extends AbstractHandler {
             throw new Http404NotFoundException("Could not find service with ID " + serviceId);
         }
         if (serviceName != null && !serviceName.isEmpty()) {
-            for (Service service : dataAccess.getServices()) {
+            for (Service service : dataAccess.getActiveServices()) {
                 if (service.getServiceName().equalsIgnoreCase(serviceName)) {
                     return service;
                 }
             }
         }
         if (serviceAbbr != null && !serviceAbbr.isEmpty()) {
-            for (Service service : dataAccess.getServices()) {
+            for (Service service : dataAccess.getActiveServices()) {
                 if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
                     return service;
                 }

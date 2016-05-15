@@ -21,6 +21,7 @@ import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
@@ -113,8 +114,16 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
         //Ref tables
-        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".serviceRefClient (clientServiceId text, serverServiceId text, PRIMARY KEY (clientServiceId, serverServiceId));");
-        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".serviceRefServer (serverServiceId text, clientServiceId text, PRIMARY KEY (serverServiceId, clientServiceId));");
+        try {
+            session.execute("DROP TABLE " + keyspace + ".serviceRefClient;");
+        } catch (InvalidQueryException e) {
+        }
+        try {
+            session.execute("DROP TABLE " + keyspace + ".serviceRefServer;");
+        } catch (InvalidQueryException e) {
+        }
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
         //Audit table

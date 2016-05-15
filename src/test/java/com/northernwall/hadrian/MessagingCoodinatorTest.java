@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.stubs.StubMessageProcessor;
 import com.northernwall.hadrian.stubs.StubParameters;
@@ -47,11 +48,12 @@ public class MessagingCoodinatorTest {
     @Test
     public void sendMessageTest() {
         MessagingCoodinator mc = new MessagingCoodinator(new StubParameters(), client);
+        MessageType mt = mc.getMessageType("TEST");
         Map<String, String> data = new HashMap<>();
         data.put("A", "a");
         data.put("B", "b");
         data.put("C", null);
-        mc.sendMessage("TEST", null, data);
+        mc.sendMessage(mt, null, data);
         Assert.assertEquals("Hi a.", StubMessageProcessor.text);
     }
 

@@ -15,23 +15,32 @@
  */
 package com.northernwall.hadrian.service.dao;
 
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 
-public class GetServiceRefData implements Comparable<GetServiceRefData> {
+public class GetModuleRefData implements Comparable<GetModuleRefData> {
     public String clientServiceId;
+    public String clientModuleId;
     public String serverServiceId;
+    public String serverModuleId;
     public String serviceName;
+    public String moduleName;
 
-    public static GetServiceRefData create(ServiceRef ref) {
-        GetServiceRefData temp = new GetServiceRefData();
+    public static GetModuleRefData create(ModuleRef ref) {
+        GetModuleRefData temp = new GetModuleRefData();
         temp.clientServiceId = ref.getClientServiceId();
+        temp.clientModuleId = ref.getClientModuleId();
         temp.serverServiceId = ref.getServerServiceId();
+        temp.serverModuleId = ref.getServerModuleId();
         return temp;
     }
 
     @Override
-    public int compareTo(GetServiceRefData o) {
-        return serviceName.compareTo(o.serviceName);
+    public int compareTo(GetModuleRefData o) {
+        int temp = serviceName.compareTo(o.serviceName);
+        if (temp == 0) {
+            return moduleName.compareTo(o.moduleName);
+        }
+        return temp;
     }
 
 }

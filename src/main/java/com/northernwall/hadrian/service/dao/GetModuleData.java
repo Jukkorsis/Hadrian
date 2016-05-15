@@ -45,6 +45,8 @@ public class GetModuleData {
     public List<String> versions;
     public List<GetModuleNetworkData> networks;
     public List<GetCustomFunctionData> customFunctions;
+    public List<GetModuleRefData> uses;
+    public List<GetModuleRefData> usedBy;
     
     public static GetModuleData create(Module module, Config config) {
         GetModuleData temp = new GetModuleData();
@@ -73,6 +75,8 @@ public class GetModuleData {
             temp.networks.add(new GetModuleNetworkData(network));
         }
         temp.customFunctions = new LinkedList<>();
+        temp.uses = new LinkedList<>();
+        temp.usedBy = new LinkedList<>();
         return temp;
     }
 

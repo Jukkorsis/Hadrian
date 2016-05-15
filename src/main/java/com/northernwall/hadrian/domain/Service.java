@@ -18,6 +18,8 @@ package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.GMT;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -142,6 +144,18 @@ public class Service implements Comparable<Service>{
     @Override
     public int compareTo(Service o) {
         return serviceName.compareToIgnoreCase(o.serviceName);
+    }
+    
+    public static List<Service> filterTeam(String teamId, List<Service> services) {
+        List<Service> temp = new LinkedList<>();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                if (service.getTeamId().equals(teamId)) {
+                    temp.add(service);
+                }
+            }
+        }
+        return temp;
     }
 
 }

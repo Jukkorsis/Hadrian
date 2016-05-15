@@ -7,11 +7,13 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.maven.MavenHelper;
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
+import com.northernwall.hadrian.service.dao.GetModuleRefData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
 import com.northernwall.hadrian.service.dao.GetVipData;
 import com.northernwall.hadrian.service.dao.GetVipRefData;
@@ -78,16 +80,39 @@ public class ServiceRefreshHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    protected void getModuleInfo(Service service, GetServiceData getServiceData, boolean includeVersions, List<Future> futures) {
+    protected void getModuleInfo(Service service, GetServiceData getServiceData, boolean includeStuff, List<Future> futures) {
         List<Module> modules = getDataAccess().getModules(service.getServiceId());
         Collections.sort(modules);
         for (Module module : modules) {
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
-            if (includeVersions) {
+            if (includeStuff) {
                 futures.add(executorService.submit(new ReadMavenVersionsRunnable(getModuleData, mavenHelper)));
+                getModuleRefInfo(module, getModuleData);
             }
             getServiceData.modules.add(getModuleData);
         }
+    }
+
+    private void getModuleRefInfo(Module module, GetModuleData getModuleData) {
+        for (ModuleRef ref : getDataAccess().getModuleRefsByClient(module.getServiceId(), module.getModuleId())) {
+            GetModuleRefData tempRef = GetModuleRefData.create(ref);
+            Service serverService = getService(ref.getServerServiceId(), null, null);
+            tempRef.serviceName = serverService.getServiceName();
+            tempRef.moduleName = getModule(ref.getServerModuleId(), null, serverService).getModuleName();
+            getModuleData.uses.add(tempRef);
+        }
+        
+        Collections.sort(getModuleData.uses);
+        
+        for (ModuleRef ref : getDataAccess().getModuleRefsByServer(module.getServiceId(), module.getModuleId())) {
+            GetModuleRefData tempRef = GetModuleRefData.create(ref);
+            Service clientService = getService(ref.getClientServiceId(), null, null);
+            tempRef.serviceName = clientService.getServiceName();
+            tempRef.moduleName = getModule(ref.getClientModuleId(), null, clientService).getModuleName();
+            getModuleData.usedBy.add(tempRef);
+        }
+        
+        Collections.sort(getModuleData.usedBy);
     }
 
     protected void getHostInfo(Service service, GetServiceData getServiceData, List<Future> futures) {

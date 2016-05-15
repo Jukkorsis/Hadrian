@@ -21,7 +21,9 @@ package com.northernwall.hadrian.service.dao;
  * @author Richard Thurston
  */
 public class DeleteServiceRefData {
-    public String clientId;
-    public String serverId;
+    public String clientServiceId;
+    public String clientModuleId;
+    public String serverServiceId;
+    public String serverModuleId;
 
 }

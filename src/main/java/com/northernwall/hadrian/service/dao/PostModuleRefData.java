@@ -16,14 +16,14 @@
 
 package com.northernwall.hadrian.service.dao;
 
-import java.util.Map;
-
 /**
  *
  * @author Richard Thurston
  */
-public class PostServiceRefData {
-    public String clientId;
-    public Map<String, String> uses;
+public class PostModuleRefData {
+    public String clientServiceId;
+    public String clientModuleId;
+    public String serverServiceId;
+    public String serverModuleId;
 
 }

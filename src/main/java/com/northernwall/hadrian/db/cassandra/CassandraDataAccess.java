@@ -34,7 +34,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
@@ -96,12 +96,12 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement serviceSelect;
     private final PreparedStatement serviceInsert;
     private final PreparedStatement serviceUpdate;
-    private final PreparedStatement serviceRefSelectClient;
-    private final PreparedStatement serviceRefSelectServer;
-    private final PreparedStatement serviceRefInsertClient;
-    private final PreparedStatement serviceRefInsertServer;
-    private final PreparedStatement serviceRefDeleteClient;
-    private final PreparedStatement serviceRefDeleteServer;
+    private final PreparedStatement moduleRefSelectClient;
+    private final PreparedStatement moduleRefSelectServer;
+    private final PreparedStatement moduleRefInsertClient;
+    private final PreparedStatement moduleRefInsertServer;
+    private final PreparedStatement moduleRefDeleteClient;
+    private final PreparedStatement moduleRefDeleteServer;
     private final PreparedStatement teamSelect;
     private final PreparedStatement teamInsert;
     private final PreparedStatement teamUpdate;
@@ -210,19 +210,19 @@ public class CassandraDataAccess implements DataAccess {
         serviceUpdate = session.prepare("UPDATE service SET data = ? WHERE id = ?;");
         serviceUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        logger.info("Praparing serviceRef statements...");
-        serviceRefSelectClient = session.prepare("SELECT * FROM serviceRefClient WHERE clientServiceId = ?;");
-        serviceRefSelectClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        serviceRefSelectServer = session.prepare("SELECT * FROM serviceRefServer WHERE serverServiceId = ?;");
-        serviceRefSelectServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        serviceRefInsertClient = session.prepare("INSERT INTO serviceRefClient (clientServiceId, serverServiceId) VALUES (?, ?);");
-        serviceRefInsertClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        serviceRefInsertServer = session.prepare("INSERT INTO serviceRefServer (serverServiceId, clientServiceId) VALUES (?, ?);");
-        serviceRefInsertServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        serviceRefDeleteClient = session.prepare("DELETE FROM serviceRefClient WHERE clientServiceId = ? AND serverServiceId = ?;");
-        serviceRefDeleteClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        serviceRefDeleteServer = session.prepare("DELETE FROM serviceRefServer WHERE serverServiceId = ? AND clientServiceId = ?;");
-        serviceRefDeleteServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        logger.info("Praparing moduleRef statements...");
+        moduleRefSelectClient = session.prepare("SELECT * FROM moduleRefClient WHERE clientServiceId = ? AND clientModuleId = ?;");
+        moduleRefSelectClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleRefSelectServer = session.prepare("SELECT * FROM moduleRefServer WHERE serverServiceId = ? AND serverModuleId = ?;");
+        moduleRefSelectServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleRefInsertClient = session.prepare("INSERT INTO moduleRefClient (clientServiceId, clientModuleId, serverServiceId, serverModuleId) VALUES (?, ?, ?, ?);");
+        moduleRefInsertClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleRefInsertServer = session.prepare("INSERT INTO moduleRefServer (serverServiceId, serverModuleId, clientServiceId, clientModuleId) VALUES (?, ?, ?, ?);");
+        moduleRefInsertServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleRefDeleteClient = session.prepare("DELETE FROM moduleRefClient WHERE clientServiceId = ? AND clientModuleId = ? AND serverServiceId = ? AND serverModuleId = ?;");
+        moduleRefDeleteClient.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        moduleRefDeleteServer = session.prepare("DELETE FROM moduleRefServer WHERE serverServiceId = ? AND serverModuleId = ? AND clientServiceId = ? AND clientModuleId = ?;");
+        moduleRefDeleteServer.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing team statements...");
         teamSelect = session.prepare("SELECT * FROM team WHERE id = ?;");
@@ -387,37 +387,11 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Service> getServices() {
+    public List<Service> getActiveServices() {
         List<Service> services = getData("service", Service.class);
         List<Service> temp = new LinkedList<>();
         for (Service service : services) {
             if (service.isActive()) {
-                temp.add(service);
-            }
-        }
-        Collections.sort(temp);
-        return temp;
-    }
-
-    @Override
-    public List<Service> getServices(String teamId) {
-        List<Service> services = getData("service", Service.class);
-        List<Service> temp = new LinkedList<>();
-        for (Service service : services) {
-            if (service.getTeamId().equals(teamId) && service.isActive()) {
-                temp.add(service);
-            }
-        }
-        Collections.sort(temp);
-        return temp;
-    }
-
-    @Override
-    public List<Service> getDeletedServices(String teamId) {
-        List<Service> services = getData("service", Service.class);
-        List<Service> temp = new LinkedList<>();
-        for (Service service : services) {
-            if (service.getTeamId().equals(teamId) && !service.isActive()) {
                 temp.add(service);
             }
         }
@@ -578,57 +552,85 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ServiceRef> getServiceRefs() {
-        ResultSet results = session.execute(CQL_SELECT_PRE + "serviceRefClient" + CQL_SELECT_POST);
-        List<ServiceRef> serviceRefs = new LinkedList<>();
+    public List<ModuleRef> getModuleRefs() {
+        ResultSet results = session.execute(CQL_SELECT_PRE + "moduleRefClient" + CQL_SELECT_POST);
+        List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
-            serviceRefs.add(new ServiceRef(row.getString("clientServiceId"), row.getString("serverServiceId")));
+            serviceRefs.add(new ModuleRef(
+                            row.getString("clientServiceId"),
+                            row.getString("clientModuleId"), 
+                            row.getString("serverServiceId"), 
+                            row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
 
     @Override
-    public List<ServiceRef> getServiceRefsByClient(String clientServiceId) {
-        BoundStatement boundStatement = new BoundStatement(serviceRefSelectClient);
-        ResultSet results = session.execute(boundStatement.bind(clientServiceId));
-        List<ServiceRef> serviceRefs = new LinkedList<>();
+    public List<ModuleRef> getModuleRefsByClient(String clientServiceId, String clientModuleId) {
+        BoundStatement boundStatement = new BoundStatement(moduleRefSelectClient);
+        ResultSet results = session.execute(boundStatement.bind(clientServiceId, clientModuleId));
+        List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
-            serviceRefs.add(new ServiceRef(row.getString("clientServiceId"), row.getString("serverServiceId")));
+            serviceRefs.add(new ModuleRef(
+                            row.getString("clientServiceId"),
+                            row.getString("clientModuleId"), 
+                            row.getString("serverServiceId"), 
+                            row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
 
     @Override
-    public List<ServiceRef> getServiceRefsByServer(String serverServiceId) {
-        BoundStatement boundStatement = new BoundStatement(serviceRefSelectServer);
-        ResultSet results = session.execute(boundStatement.bind(serverServiceId));
-        List<ServiceRef> serviceRefs = new LinkedList<>();
+    public List<ModuleRef> getModuleRefsByServer(String serverServiceId, String serverModuleId) {
+        BoundStatement boundStatement = new BoundStatement(moduleRefSelectServer);
+        ResultSet results = session.execute(boundStatement.bind(serverServiceId, serverModuleId));
+        List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
-            serviceRefs.add(new ServiceRef(row.getString("clientServiceId"), row.getString("serverServiceId")));
+            serviceRefs.add(new ModuleRef(
+                            row.getString("clientServiceId"),
+                            row.getString("clientModuleId"), 
+                            row.getString("serverServiceId"), 
+                            row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
 
     @Override
-    public void saveServiceRef(ServiceRef serviceRef) {
+    public void saveModuleRef(ModuleRef moduleRef) {
         BoundStatement boundStatement;
 
-        boundStatement = new BoundStatement(serviceRefInsertClient);
-        session.execute(boundStatement.bind(serviceRef.getClientServiceId(), serviceRef.getServerServiceId()));
+        boundStatement = new BoundStatement(moduleRefInsertClient);
+        session.execute(boundStatement.bind(
+                moduleRef.getClientServiceId(),
+                moduleRef.getClientModuleId(), 
+                moduleRef.getServerServiceId(), 
+                moduleRef.getServerModuleId()));
 
-        boundStatement = new BoundStatement(serviceRefInsertServer);
-        session.execute(boundStatement.bind(serviceRef.getServerServiceId(), serviceRef.getClientServiceId()));
+        boundStatement = new BoundStatement(moduleRefInsertServer);
+        session.execute(boundStatement.bind(
+                moduleRef.getServerServiceId(), 
+                moduleRef.getServerModuleId(),
+                moduleRef.getClientServiceId(),
+                moduleRef.getClientModuleId()));
     }
 
     @Override
-    public void deleteServiceRef(String clientId, String serviceId) {
+    public void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId) {
         BoundStatement boundStatement;
 
-        boundStatement = new BoundStatement(serviceRefDeleteClient);
-        session.execute(boundStatement.bind(clientId, serviceId));
+        boundStatement = new BoundStatement(moduleRefDeleteClient);
+        session.execute(boundStatement.bind(
+                clientServiceId, 
+                clientModuleId, 
+                serverServiceId, 
+                serverModuleId));
 
-        boundStatement = new BoundStatement(serviceRefDeleteServer);
-        session.execute(boundStatement.bind(serviceId, clientId));
+        boundStatement = new BoundStatement(moduleRefDeleteServer);
+        session.execute(boundStatement.bind( 
+                serverServiceId, 
+                serverModuleId,
+                clientServiceId, 
+                clientModuleId));
     }
 
     @Override

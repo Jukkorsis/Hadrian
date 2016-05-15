@@ -19,16 +19,16 @@ import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.service.dao.PostServiceRefData;
+import com.northernwall.hadrian.service.dao.PostModuleRefData;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,33 +49,32 @@ public class ServiceRefCreateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PostServiceRefData postServiceRefData = fromJson(request, PostServiceRefData.class);
-        Service clientService = getService(postServiceRefData.clientId, null, null);
-        
+        PostModuleRefData data = fromJson(request, PostModuleRefData.class);
+
+        Service clientService = getService(data.clientServiceId, null, null);
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");
-        for (Entry<String, String> entry : postServiceRefData.uses.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase("true")) {
-                String serverId = entry.getKey();
-                Service serverService = getService(serverId, null, null);
-                if (serverService != null) {
-                    ServiceRef ref = new ServiceRef(postServiceRefData.clientId, serverId);
-                    getDataAccess().saveServiceRef(ref);
-                    Map<String, String> notes = new HashMap<>();
-                    notes.put("uses", serverService.getServiceAbbr());
-                    createAudit(postServiceRefData.clientId, user.getUsername(), notes);
-                    notes = new HashMap<>();
-                    notes.put("use_by", clientService.getServiceAbbr());
-                    createAudit(serverId, user.getUsername(), notes);
-                }
-            }
-        }
+
+        Module clientModule = getModule(data.clientModuleId, null, clientService);
+        Service serverService = getService(data.serverServiceId, null, null);
+        Module serverModule = getModule(data.serverModuleId, null, serverService);
+
+        ModuleRef ref = new ModuleRef(data.clientServiceId, data.clientModuleId, data.serverServiceId, data.serverModuleId);
+        getDataAccess().saveModuleRef(ref);
+        Map<String, String> notes = new HashMap<>();
+        notes.put("uses", serverService.getServiceAbbr() + " " + serverModule.getModuleName());
+        createAudit(data.clientServiceId, clientModule.getModuleName(), user.getUsername(), notes);
+        notes = new HashMap<>();
+        notes.put("use_by", clientService.getServiceAbbr() + " " + clientModule.getModuleName());
+        createAudit(data.serverServiceId, serverModule.getModuleName(), user.getUsername(), notes);
+
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private void createAudit(String serviceId, String requestor, Map<String, String> notes) {
+    private void createAudit(String serviceId, String moduleName, String requestor, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
+        audit.moduleName = moduleName;
         audit.timePerformed = GMT.getGmtAsDate();
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;

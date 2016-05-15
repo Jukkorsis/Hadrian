@@ -18,7 +18,7 @@ package com.northernwall.hadrian.graph;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import java.io.IOException;
 import java.util.List;
@@ -44,8 +44,8 @@ public class GraphAllHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         List<Team> teams;
         List<Service> services;
-        List<ServiceRef> serverRefs;
-        List<ServiceRef> clientRefs;
+        List<ModuleRef> serverRefs;
+        List<ModuleRef> clientRefs;
 
         response.setContentType(Const.TEXT);
         Graph graph = new Graph(response.getOutputStream());
@@ -54,12 +54,13 @@ public class GraphAllHandler extends AbstractHandler {
         if (teams != null && !teams.isEmpty()) {
             int c = 0;
             for (Team team : teams) {
-                services = dataAccess.getServices(team.getTeamId());
+                services = Service.filterTeam(team.getTeamId(), dataAccess.getActiveServices());
                 if (services != null && !services.isEmpty()) {
                     graph.startSubGraph(c);
+                    /*
                     for (Service service : services) {
-                        serverRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
-                        clientRefs = dataAccess.getServiceRefsByClient(service.getServiceId());
+                        serverRefs = dataAccess.getModuleRefsByServer(service.getServiceId());
+                        clientRefs = dataAccess.getModuleRefsByClient(service.getServiceId());
                         String toolTip = writeToolTip(service, serverRefs, clientRefs);
                         if (serverRefs != null && serverRefs.size() > 5) {
                             graph.writeService(service, "rectangle", true, toolTip);
@@ -67,18 +68,20 @@ public class GraphAllHandler extends AbstractHandler {
                             graph.writeService(service, "ellipse", true, toolTip);
                         }
                     }
+                    */
                     graph.finishSubGraph(team.getTeamName());
                 }
                 c++;
             }
+            /*
             for (Team team : teams) {
                 services = dataAccess.getServices(team.getTeamId());
                 if (services != null && !services.isEmpty()) {
                     for (Service service : services) {
-                        serverRefs = dataAccess.getServiceRefsByServer(service.getServiceId());
+                        serverRefs = dataAccess.getModuleRefsByServer(service.getServiceId());
                         if (serverRefs != null && !serverRefs.isEmpty()) {
                             if (serverRefs.size() <= 5) {
-                                for (ServiceRef serviceRef : serverRefs) {
+                                for (ModuleRef serviceRef : serverRefs) {
                                     Service temp = dataAccess.getService(serviceRef.getClientServiceId());
                                     graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
                                 }
@@ -88,6 +91,7 @@ public class GraphAllHandler extends AbstractHandler {
                     graph.newLine();
                 }
             }
+            */
         }
         graph.close();
 
@@ -95,7 +99,7 @@ public class GraphAllHandler extends AbstractHandler {
         response.setStatus(200);
     }
 
-    private String writeToolTip(Service service, List<ServiceRef> serverRefs, List<ServiceRef> clientRefs) {
+    private String writeToolTip(Service service, List<ModuleRef> serverRefs, List<ModuleRef> clientRefs) {
         StringBuilder temp = new StringBuilder();
         if (clientRefs != null && !clientRefs.isEmpty()) {
             temp.append(service.getServiceAbbr());

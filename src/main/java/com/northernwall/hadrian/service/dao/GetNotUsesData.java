@@ -19,6 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GetNotUsesData {
-    public List<GetServiceRefData> refs = new LinkedList<>();
+    public List<GetModuleRefData> refs = new LinkedList<>();
     
 }

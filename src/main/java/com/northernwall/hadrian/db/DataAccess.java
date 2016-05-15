@@ -25,7 +25,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
+import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -50,9 +50,7 @@ public interface DataAccess {
     void updateTeam(Team team);
 
     List<Service> getAllServices();
-    List<Service> getServices();
-    List<Service> getServices(String teamId);
-    List<Service> getDeletedServices(String teamId);
+    List<Service> getActiveServices();
     Service getService(String serviceId);
     void saveService(Service service);
     void updateService(Service service);
@@ -69,11 +67,11 @@ public interface DataAccess {
     void updateVip(Vip vip);
     void deleteVip(String serviceId, String vipId);
 
-    List<ServiceRef> getServiceRefs();
-    List<ServiceRef> getServiceRefsByClient(String clientServiceId);
-    List<ServiceRef> getServiceRefsByServer(String serverServiceId);
-    void saveServiceRef(ServiceRef serviceRef);
-    void deleteServiceRef(String clientId, String serviceId);
+    List<ModuleRef> getModuleRefs();
+    List<ModuleRef> getModuleRefsByClient(String clientServiceId, String clientModuleId);
+    List<ModuleRef> getModuleRefsByServer(String serverServiceId, String serverModuleId);
+    void saveModuleRef(ModuleRef moduleRef);
+    void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId);
     
     List<VipRef> getVipRefsByHost(String hostId);
     VipRef getVipRef(String hostId, String vipId);

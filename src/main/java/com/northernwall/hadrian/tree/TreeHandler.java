@@ -72,14 +72,15 @@ public class TreeHandler extends AbstractHandler {
         devTeamsTreenode.setLabel("Dev Teams");
         devTeamsTreenode.setData(new TreeNodeData("-1", "DevTeams"));
         List<Team> teams = dataAccess.getTeams();
+        List<Service> services = dataAccess.getActiveServices();
         Collections.sort(teams);
         for (Team team : teams) {
             TreeNode teamTreenode = new TreeNode();
             teamTreenode.setLabel(team.getTeamName());
             teamTreenode.setData(new TreeNodeData(team.getTeamId(), "Team"));
-            List<Service> services = dataAccess.getServices(team.getTeamId());
-            Collections.sort(services);
-            for (Service service : services) {
+            List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
+            Collections.sort(teamServices);
+            for (Service service : teamServices) {
                 TreeNode serviceTreeNode = new TreeNode();
                 if (service.getServiceName().length() > 20) {
                     serviceTreeNode.setLabel(service.getServiceAbbr());

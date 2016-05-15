@@ -80,7 +80,7 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Description is to long, max is 500");
         }
 
-        for (Service temp : getDataAccess().getServices(data.teamId)) {
+        for (Service temp : Service.filterTeam(data.teamId, getDataAccess().getActiveServices())) {
             if (temp.getServiceAbbr().equals(data.serviceAbbr) && temp.isActive()) {
                 throw new Http405NotAllowedException("A service already exists with that abbreviation, " + data.serviceAbbr);
             }

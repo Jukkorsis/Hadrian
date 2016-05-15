@@ -26,12 +26,10 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.ServiceRef;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
-import com.northernwall.hadrian.service.dao.GetServiceRefData;
 import com.northernwall.hadrian.service.dao.GetVipData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -76,8 +74,6 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
             getDataStoreInfo(service, getServiceData);
 
-            getServiceRefInfo(service, getServiceData);
-
             getCustomFunctionInfo(service, getServiceData);
 
             waitForFutures(futures);
@@ -101,24 +97,6 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
                 }
             }
         }
-    }
-
-    private void getServiceRefInfo(Service service, GetServiceData getServiceData) {
-        for (ServiceRef ref : getDataAccess().getServiceRefsByClient(service.getServiceId())) {
-            GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getService(ref.getServerServiceId(), null, null).getServiceName();
-            getServiceData.uses.add(tempRef);
-        }
-        
-        Collections.sort(getServiceData.uses);
-        
-        for (ServiceRef ref : getDataAccess().getServiceRefsByServer(service.getServiceId())) {
-            GetServiceRefData tempRef = GetServiceRefData.create(ref);
-            tempRef.serviceName = getService(ref.getClientServiceId(), null, null).getServiceName();
-            getServiceData.usedBy.add(tempRef);
-        }
-        
-        Collections.sort(getServiceData.usedBy);
     }
 
     private void getDataStoreInfo(Service service, GetServiceData getServiceData) {
