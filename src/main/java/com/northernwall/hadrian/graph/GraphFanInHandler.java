@@ -17,8 +17,10 @@ package com.northernwall.hadrian.graph;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
+import com.northernwall.hadrian.domain.ModuleType;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,38 +49,44 @@ public class GraphFanInHandler extends AbstractHandler {
         response.setContentType(Const.TEXT);
         Graph graph = new Graph(response.getOutputStream());
 
-        List<Service> services = new LinkedList<>();
+        List<Module> modules = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
-        Service service = dataAccess.getService(serviceId);
-        services.add(service);
-        foundIds.add(service.getServiceId());
-        while (!services.isEmpty()) {
-            fanIn(services.remove(0), graph, services, foundIds);
+        for (Module module : dataAccess.getModules(serviceId)) {
+            if (module.getModuleType() != ModuleType.Test) {
+                fanIn(module, graph, modules, foundIds, false);
+                graph.writeModule(module);
+            }
+            foundIds.add(module.getModuleId());
         }
-        graph.newLine();
-        graph.writeService(service, "rectangle", false);
+        while (!modules.isEmpty()) {
+            Module module = modules.remove(0);
+            if (module.getModuleType() != ModuleType.Test) {
+                fanIn(module, graph, modules, foundIds, true);
+                graph.writeModule(module);
+            }
+            foundIds.add(module.getModuleId());
+        }
         graph.close();
 
         request.setHandled(true);
         response.setStatus(200);
     }
 
-    private void fanIn(Service service, Graph graph, List<Service> services, List<String> foundIds) throws IOException {
-        List<ModuleRef> serviceRefs;
-        /*
-        serviceRefs = dataAccess.getModuleRefsByServer(service.getServiceId());
-        if (serviceRefs != null && !serviceRefs.isEmpty()) {
-            for (ModuleRef serviceRef : serviceRefs) {
-                if (!foundIds.contains(serviceRef.getClientServiceId())) {
-                    Service temp = dataAccess.getService(serviceRef.getClientServiceId());
-                    graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
-                    graph.writeService(temp, "ellipse", true);
-                    services.add(temp);
-                    foundIds.add(temp.getServiceId());
+    private void fanIn(Module module, Graph graph, List<Module> modules, List<String> foundIds, boolean checkFound) throws IOException {
+        List<ModuleRef> moduleRefs;
+        
+        moduleRefs = dataAccess.getModuleRefsByServer(module.getServiceId(), module.getModuleId());
+        if (moduleRefs != null && !moduleRefs.isEmpty()) {
+            for (ModuleRef moduleRef : moduleRefs) {
+                if (!checkFound || !foundIds.contains(moduleRef.getClientModuleId())) {
+                    Module temp = dataAccess.getModule(moduleRef.getClientServiceId(), moduleRef.getClientModuleId());
+                    graph.writeLink(temp.getModuleName(), module.getModuleName());
+                    if (checkFound || !temp.getServiceId().equals(module.getServiceId())) {
+                        modules.add(temp);
+                    }
                 }
             }
         }
-        */
     }
 
 }

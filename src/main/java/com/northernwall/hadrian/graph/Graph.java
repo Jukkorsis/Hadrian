@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.graph;
 
+import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -83,11 +85,29 @@ public class Graph {
         writer.newLine();
     }
 
+    public void writeModule(Module module) throws IOException {
+        writer.append(sanitize(module.getModuleName()));
+        writer.append(" [shape=");
+        if (module.getModuleType() == ModuleType.Deployable) {
+            writer.append("rectangle");
+        } else {
+            writer.append("ellipse");
+        }
+        writer.append(" URL=\"#/Service/");
+        writer.append(module.getServiceId());
+        writer.append("\"");
+        writer.append(" label=<");
+        writer.append(module.getModuleName().trim());
+        writer.append(">");
+        writer.append("];");
+        writer.newLine();
+    }
+
     public void writeLink(String serviceA, String serviceB) throws IOException {
         writer.append(" ");
-        writer.append(serviceA);
+        writer.append(sanitize(serviceA));
         writer.append(" -> ");
-        writer.append(serviceB);
+        writer.append(sanitize(serviceB));
         writer.append(";");
         writer.newLine();
     }
@@ -95,6 +115,10 @@ public class Graph {
     public void close() throws IOException {
         writer.append("}");
         writer.flush();
+    }
+    
+    public String sanitize(String text) {
+        return text.replace("-", "_").replace(".", "_").replace("=", "_");
     }
 
 }
