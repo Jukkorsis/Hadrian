@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.graph.Graph;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -38,18 +40,16 @@ public class GraphTest {
     public void testGraph() {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Graph graph = new Graph(outputStream);
-            graph.startSubGraph(1);
-            graph.finishSubGraph("test");
+            Graph graph = new Graph(outputStream, false);
+            Module service = new Module("service", "abc-123", 1, ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0);
+            Module library = new Module("lib-rary", "def-567", 1, ModuleType.Library, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0);
+            graph.writeModule(service);
+            graph.writeModule(library);
             graph.close();
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray())));
-            Assert.assertEquals("digraph G {", inputStream.readLine());
-            Assert.assertEquals(" subgraph cluster_1 {", inputStream.readLine());
-            Assert.assertEquals("  color=blue;", inputStream.readLine());
-            Assert.assertEquals("  node [style=filled];", inputStream.readLine());
-            Assert.assertEquals("  label = \"test\";", inputStream.readLine());
-            Assert.assertEquals(" }", inputStream.readLine());
-            Assert.assertEquals("", inputStream.readLine());
+            Assert.assertEquals("digraph {", inputStream.readLine());
+            Assert.assertEquals("service [shape=rectangle URL=\"#/Service/abc-123\" label=<service>];", inputStream.readLine());
+            Assert.assertEquals("lib_rary [shape=ellipse URL=\"#/Service/def-567\" label=<lib-rary>];", inputStream.readLine());
             Assert.assertEquals("}", inputStream.readLine());
         } catch (IOException ex) {
             Assert.fail(ex.getMessage());

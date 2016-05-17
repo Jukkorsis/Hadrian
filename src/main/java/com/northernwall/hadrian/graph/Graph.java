@@ -17,71 +17,29 @@ package com.northernwall.hadrian.graph;
 
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.domain.Service;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public class Graph {
 
     private final BufferedWriter writer;
 
-    public Graph(OutputStream outputStream) throws IOException {
+    public Graph(OutputStream outputStream, boolean isStruct) throws IOException {
         writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-        writer.append("digraph G {");
-        writer.newLine();
-    }
-
-    public void startSubGraph(int c) throws IOException {
-        writer.append(" subgraph cluster_");
-        writer.append(Integer.toString(c));
-        writer.append(" {");
-        writer.newLine();
-        writer.append("  color=blue;");
-        writer.newLine();
-        writer.append("  node [style=filled];");
-        writer.newLine();
-    }
-
-    public void finishSubGraph(String teamName) throws IOException {
-        writer.append("  label = \"");
-        writer.append(teamName);
-        writer.append("\";");
-        writer.newLine();
-        writer.append(" }");
-        writer.newLine();
+        if (isStruct) {
+            writer.append("digraph structs {");
+            writer.newLine();
+            writer.append("node[shape=record]");
+        } else {
+            writer.append("digraph {");
+        }
         writer.newLine();
     }
 
     public void newLine() throws IOException {
-        writer.newLine();
-    }
-
-    public void writeService(Service service, String shape, boolean brief) throws IOException {
-        writeService(service, shape, brief, null);
-    }
-
-    public void writeService(Service service, String shape, boolean brief, String toolTip) throws IOException {
-        writer.append(service.getServiceAbbr());
-        writer.append(" [shape=");
-        writer.append(shape);
-        writer.append(" URL=\"#/Service/");
-        writer.append(service.getServiceId());
-        writer.append("\"");
-        writer.append(" label=<");
-        if (brief) {
-            writer.append(service.getServiceAbbr());
-        } else {
-            writer.append(service.getServiceName());
-        }
-        writer.append(">");
-        if (toolTip != null && !toolTip.isEmpty()) {
-            writer.append(" tooltip=<");
-            writer.append(toolTip);
-            writer.append(">");
-        }
-        writer.append("];");
         writer.newLine();
     }
 
@@ -103,11 +61,29 @@ public class Graph {
         writer.newLine();
     }
 
-    public void writeLink(String serviceA, String serviceB) throws IOException {
+    public void writeModuleStructure(Module module, List<Module> libraries) throws IOException {
+        writer.append(sanitize(module.getModuleName()));
+        writer.append(" [label=\"");
+        writer.append(module.getModuleName());
+        if (libraries != null && !libraries.isEmpty()) {
+            writer.append("|{");
+            for (int c = 0; c < libraries.size(); c++) {
+                writer.append(libraries.get(c).getModuleName());
+                if (c < libraries.size() - 1) {
+                    writer.append("|");
+                }
+            }
+            writer.append("}");
+        }
+        writer.append("\"];");
+        writer.newLine();
+    }
+
+    public void writeLink(String moduleA, String moduleB) throws IOException {
         writer.append(" ");
-        writer.append(sanitize(serviceA));
+        writer.append(sanitize(moduleA));
         writer.append(" -> ");
-        writer.append(sanitize(serviceB));
+        writer.append(sanitize(moduleB));
         writer.append(";");
         writer.newLine();
     }
@@ -116,7 +92,7 @@ public class Graph {
         writer.append("}");
         writer.flush();
     }
-    
+
     public String sanitize(String text) {
         return text.replace("-", "_").replace(".", "_").replace("=", "_");
     }

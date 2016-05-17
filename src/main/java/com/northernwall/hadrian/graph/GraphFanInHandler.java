@@ -47,7 +47,7 @@ public class GraphFanInHandler extends AbstractHandler {
         String serviceId = target.substring(16);
 
         response.setContentType(Const.TEXT);
-        Graph graph = new Graph(response.getOutputStream());
+        Graph graph = new Graph(response.getOutputStream(), false);
 
         List<Module> modules = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();

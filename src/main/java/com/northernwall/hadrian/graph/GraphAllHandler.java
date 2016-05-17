@@ -17,10 +17,13 @@ package com.northernwall.hadrian.graph;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Team;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,56 +45,19 @@ public class GraphAllHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        List<Team> teams;
-        List<Service> services;
-        List<ModuleRef> serverRefs;
-        List<ModuleRef> clientRefs;
-
         response.setContentType(Const.TEXT);
-        Graph graph = new Graph(response.getOutputStream());
+        Graph graph = new Graph(response.getOutputStream(), true);
 
-        teams = dataAccess.getTeams();
-        if (teams != null && !teams.isEmpty()) {
-            int c = 0;
-            for (Team team : teams) {
-                services = Service.filterTeam(team.getTeamId(), dataAccess.getActiveServices());
-                if (services != null && !services.isEmpty()) {
-                    graph.startSubGraph(c);
-                    /*
-                    for (Service service : services) {
-                        serverRefs = dataAccess.getModuleRefsByServer(service.getServiceId());
-                        clientRefs = dataAccess.getModuleRefsByClient(service.getServiceId());
-                        String toolTip = writeToolTip(service, serverRefs, clientRefs);
-                        if (serverRefs != null && serverRefs.size() > 5) {
-                            graph.writeService(service, "rectangle", true, toolTip);
-                        } else {
-                            graph.writeService(service, "ellipse", true, toolTip);
-                        }
-                    }
-                    */
-                    graph.finishSubGraph(team.getTeamName());
-                }
-                c++;
-            }
-            /*
-            for (Team team : teams) {
-                services = dataAccess.getServices(team.getTeamId());
-                if (services != null && !services.isEmpty()) {
-                    for (Service service : services) {
-                        serverRefs = dataAccess.getModuleRefsByServer(service.getServiceId());
-                        if (serverRefs != null && !serverRefs.isEmpty()) {
-                            if (serverRefs.size() <= 5) {
-                                for (ModuleRef serviceRef : serverRefs) {
-                                    Service temp = dataAccess.getService(serviceRef.getClientServiceId());
-                                    graph.writeLink(temp.getServiceAbbr(), service.getServiceAbbr());
-                                }
-                            }
-                        }
-                    }
-                    graph.newLine();
+        List<Service> services = dataAccess.getActiveServices();
+        for (Service service : services) {
+            List<Module> modules = dataAccess.getModules(service.getServiceId());
+            for (Module module : modules) {
+                if (module.getModuleType() == ModuleType.Deployable) {
+                    List<Module> libraries = new LinkedList<>();
+                    processLibrary(module, module, libraries, graph);
+                    graph.writeModuleStructure(module, libraries);
                 }
             }
-            */
         }
         graph.close();
 
@@ -99,26 +65,20 @@ public class GraphAllHandler extends AbstractHandler {
         response.setStatus(200);
     }
 
-    private String writeToolTip(Service service, List<ModuleRef> serverRefs, List<ModuleRef> clientRefs) {
-        StringBuilder temp = new StringBuilder();
-        if (clientRefs != null && !clientRefs.isEmpty()) {
-            temp.append(service.getServiceAbbr());
-            temp.append(" uses ");
-            temp.append(clientRefs.size());
-            temp.append(" services");
+    public void processLibrary(Module root, Module module, List<Module> libraries, Graph graph) throws IOException {
+        List<ModuleRef> moduleRefs = dataAccess.getModuleRefsByClient(module.getServiceId(), module.getModuleId());
+        for (ModuleRef moduleRef : moduleRefs) {
+            Module serverModule = dataAccess.getModule(moduleRef.getServerServiceId(), moduleRef.getServerModuleId());
+            if (serverModule.getModuleType() == ModuleType.Library) {
+                if (!libraries.contains(serverModule)) {
+                    libraries.add(serverModule);
+                    processLibrary(root, serverModule, libraries, graph);
+                }
+            }
+            if (serverModule.getModuleType() == ModuleType.Deployable) {
+                graph.writeLink(root.getModuleName(), serverModule.getModuleName());
+            }
         }
-        if (clientRefs != null && !clientRefs.isEmpty() && serverRefs != null && !serverRefs.isEmpty()) {
-            temp.append(" and ");
-        }
-        if (serverRefs != null && !serverRefs.isEmpty()) {
-            temp.append(serverRefs.size());
-            temp.append(" services use ");
-            temp.append(service.getServiceAbbr());
-        }
-        if ((clientRefs != null && !clientRefs.isEmpty()) || (serverRefs != null && !serverRefs.isEmpty())) {
-            temp.append(".");
-        }
-        return temp.toString();
     }
 
 }

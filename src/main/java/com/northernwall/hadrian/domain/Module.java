@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Module implements Comparable<Module> {
@@ -221,6 +222,28 @@ public class Module implements Comparable<Module> {
 
     public void setStopTimeOut(int stopTimeOut) {
         this.stopTimeOut = stopTimeOut;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + Objects.hashCode(this.moduleId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Module other = (Module) obj;
+        if (!Objects.equals(this.moduleId, other.moduleId)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

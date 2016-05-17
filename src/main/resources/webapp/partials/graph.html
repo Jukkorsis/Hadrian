@@ -7,11 +7,12 @@
             <option value="fanOut">Fan Out - All the services that are used by...</option>
         </select>
         <span ng-if="formGraph.style == 'all'">
-            Note: Services in a rectangle are used by more than 5 other services. Their inbound service references are not shown to keep the diagram uncluttered.
+            Note: Deployable name on the left, libraries on the right, and arrows indicate calls between deployables.
         </span>
         <span ng-if="formGraph.style == 'fanOut' || formGraph.style == 'fanIn'">
             <select ng-model="formGraph.service" ng-options="s.serviceName for s in services.services" ng-init="formGraph.service = services.services[0]" class="form-control">
             </select>
+            Note: Deployables are rectangles and libraries are ellipses.
         </span>
     </div>
     <div class="col-md-6">
