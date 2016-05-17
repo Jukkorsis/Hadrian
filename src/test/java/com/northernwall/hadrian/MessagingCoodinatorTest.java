@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.stubs.StubMessageProcessor;
@@ -53,7 +54,8 @@ public class MessagingCoodinatorTest {
         data.put("A", "a");
         data.put("B", "b");
         data.put("C", null);
-        mc.sendMessage(mt, null, data);
+        Team team = new Team("test Team", null, null, "reporting", null, null);
+        mc.sendMessage(mt, team, data);
         Assert.assertEquals("Hi a.", StubMessageProcessor.text);
     }
 

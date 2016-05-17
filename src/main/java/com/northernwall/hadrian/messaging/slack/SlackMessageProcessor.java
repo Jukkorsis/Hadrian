@@ -9,10 +9,14 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SlackMessageProcessor extends MessageProcessor {
+    private final static Logger logger = LoggerFactory.getLogger(SlackMessageProcessor.class);
 
     private Gson gson;
     private OkHttpClient client;
@@ -24,7 +28,7 @@ public class SlackMessageProcessor extends MessageProcessor {
         this.gson = gson;
         this.client = client;
         slackUrl = parameters.getString("slackUrl", null);
-        slackUser = parameters.getString("slackUser", "SDT");
+        slackUser = parameters.getString("slackUser", "Hadrian");
     }
 
     @Override
@@ -50,8 +54,10 @@ public class SlackMessageProcessor extends MessageProcessor {
                 .post(body)
                 .build();
         try {
-            client.newCall(request).execute();
+            Response response = client.newCall(request).execute();
+            logger.info("{} {} {}", response.isSuccessful(), response.code(), response.body().string());
         } catch (IOException e) {
+            logger.error("Exception which contacting Slack", e);
         }
     }
 

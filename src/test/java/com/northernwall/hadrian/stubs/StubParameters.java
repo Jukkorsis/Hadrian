@@ -11,9 +11,9 @@ public class StubParameters implements Parameters {
         if (key.equalsIgnoreCase(Const.MESSAGE_PROCESSORS)) {
             return StubMessageProcessor.class.getCanonicalName();
         } else if (key.equalsIgnoreCase("messageType.TEST")) {
-            return "{\"name\":\"\", \"emailBody\":\"Hi {A}.\"}";
+            return "{\"name\":\"TEST\", \"emailBody\":\"Hi {A}.\", \"slackBody\":\"This is {A} test, by Richard.\", \"slackIcon\":\":ghost:\"}";
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value;
     }
 
     @Override
