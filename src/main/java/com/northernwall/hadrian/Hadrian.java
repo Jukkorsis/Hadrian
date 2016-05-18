@@ -159,7 +159,7 @@ public class Hadrian {
         RoutingHandler routingHandler = new RoutingHandler();
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemSender, messagingCoodinator), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webcontent"), false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess), true);
