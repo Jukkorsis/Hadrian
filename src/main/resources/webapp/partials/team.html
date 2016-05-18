@@ -21,16 +21,24 @@
             <dl class="dl-horizontal">
                 <dt>Name:</dt>
                 <dd>{{team.teamName}}</dd>
-                <dt>Email:</dt>
-                <dd>{{team.teamEmail}}</dd>
-                <dt>IRC:</dt>
-                <dd>{{team.teamIrc}}</dd>
-                <dt>Slack:</dt>
-                <dd>{{team.teamSlack}}</dd>
                 <dt>Git Group:</dt>
                 <dd>{{team.gitGroup}}</dd>
-                <dt>Calendar:</dt>
-                <dd>{{team.calendarId}}</dd>
+                <div ng-if="team.teamEmail">
+                    <dt>Email:</dt>
+                    <dd>{{team.teamEmail}}</dd>
+                </div>
+                <div ng-if="team.teamIrc">
+                    <dt>IRC:</dt>
+                    <dd>{{team.teamIrc}}</dd>
+                </div>
+                <div ng-if="team.teamSlack">
+                    <dt>Slack:</dt>
+                    <dd>{{team.teamSlack}}</dd>
+                </div>
+                <div ng-if="team.teamIrc">
+                    <dt>Calendar:</dt>
+                    <dd>{{team.calendarId}}</dd>
+                </div>
             </dl>
         </div>
         <div class="col-md-6">

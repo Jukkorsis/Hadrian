@@ -803,9 +803,16 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
         $scope.module = module;
         $scope.formSelectUses = {};
 
+        $scope.modelOptions = {
+            debounce: {
+                default: 500,
+                blur: 250
+            },
+            getterSetter: true
+        };
+
         ServiceNotUses.get({serviceId: service.serviceId, moduleId: module.moduleId}, function (notUses) {
             $scope.notUses = notUses;
-            $scope.formSelectUses.ref = notUses.refs[0];
         });
 
         $scope.save = function () {

@@ -5,7 +5,9 @@
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>Module:</dt>
-        <dd><select ng-model="formSelectUses.ref" ng-options="r as r.moduleName for r in notUses.refs" class="form-control"></select></dd>
+        <dd>
+            <input type="text" ng-model="formSelectUses.ref" ng-model-options="modelOptions" uib-typeahead="r as r.moduleName for r in notUses.refs | filter:$viewValue" class="form-control">
+        </dd>
     </dl>
 </div>
 <div class="modal-footer">
