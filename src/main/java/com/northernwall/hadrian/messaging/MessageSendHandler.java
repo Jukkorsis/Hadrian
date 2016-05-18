@@ -1,14 +1,13 @@
-package com.northernwall.hadrian.service;
+package com.northernwall.hadrian.messaging;
 
+import com.northernwall.hadrian.messaging.dao.PostMessageData;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.messaging.MessageType;
-import com.northernwall.hadrian.messaging.MessagingCoodinator;
-import com.northernwall.hadrian.service.dao.PostMessageData;
+import com.northernwall.hadrian.service.BasicHandler;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -35,22 +34,24 @@ public class MessageSendHandler extends BasicHandler {
 
         MessageType messageType = messagingCoodinator.getMessageType(data.messageTypeName);
         if (messageType == null) {
+            response.setStatus(200);
+            request.setHandled(true);
             return;
         }
-        
+
         Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
         accessHelper.checkIfUserCanAudit(request, service.getTeamId());
         Module module = getModule(null, data.moduleName, service);
         Team team = getDataAccess().getTeam(service.getTeamId());
-        
+
         data.data.put("serviceName", service.getServiceName());
         data.data.put("serviceAbbr", service.getServiceAbbr());
         data.data.put("moduleName", data.moduleName);
         data.data.put("teamName", team.getTeamName());
-        
+
         Set<Team> teams = new HashSet<>();
         teams.add(team);
-        
+
         if (messageType.includeUsedBy) {
             List<ModuleRef> refs = getDataAccess().getModuleRefsByServer(module.getServiceId(), module.getModuleId());
             for (ModuleRef ref : refs) {
@@ -58,10 +59,13 @@ public class MessageSendHandler extends BasicHandler {
                 teams.add(getDataAccess().getTeam(temp.getTeamId()));
             }
         }
-        
+
         for (Team temp : teams) {
             messagingCoodinator.sendMessage(messageType, temp, data.data);
         }
+
+        response.setStatus(200);
+        request.setHandled(true);
     }
 
 }

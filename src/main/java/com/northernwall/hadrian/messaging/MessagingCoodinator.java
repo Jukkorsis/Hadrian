@@ -71,7 +71,7 @@ public class MessagingCoodinator {
 
     public void getHealth(HealthWriter writer) throws IOException {
         for (MessageProcessor messageProcessor : messageProcessors) {
-        writer.addLine("MessageProcessor", messageProcessor.getClass().getSimpleName());
+        writer.addLine("MessageProcessor", messageProcessor.getClass().getCanonicalName());
         }
     }
 }
