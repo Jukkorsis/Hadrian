@@ -938,7 +938,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.startTimeOut = module.startTimeOut;
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
         $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
-        $scope.formUpdateModule.stopTimeOut = module.configName;
+        $scope.formUpdateModule.configName = module.configName;
 
         $scope.save = function () {
             var dataObject = {

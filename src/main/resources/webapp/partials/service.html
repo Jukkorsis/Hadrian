@@ -132,8 +132,10 @@
                                             <dd>{{m.mavenArtifactId}}</dd>
                                             <dt>Artifact Type:</dt>
                                             <dd>{{m.artifactType}}</dd>
-                                            <dt>Artifact Suffix:</dt>
-                                            <dd>{{m.artifactSuffix}}</dd>
+                                            <div ng-if="m.artifactSuffix">
+                                                <dt>Artifact Suffix:</dt>
+                                                <dd>{{m.artifactSuffix}}</dd>
+                                            </div>
                                             <div ng-if="m.moduleType === 'Deployable'">
                                                 <dt>Host Abbr:</dt>
                                                 <dd>{{m.hostAbbr}}</dd>
@@ -153,8 +155,10 @@
                                                 <dd>{{m.stopCmdLine}}</dd>
                                                 <dt>Stop Timeout:</dt>
                                                 <dd>{{m.stopTimeOut}}</dd>
-                                                <dt>Config Name:</dt>
-                                                <dd>{{m.configName}}</dd>
+                                                <div ng-if="m.configName">
+                                                    <dt>Config Name:</dt>
+                                                    <dd>{{m.configName}}</dd>
+                                                </div>
                                             </div>
                                         </dl>
                                     </div>
