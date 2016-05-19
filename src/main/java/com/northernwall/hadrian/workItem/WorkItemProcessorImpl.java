@@ -62,7 +62,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
         meterSuccess = metricRegistry.meter("workItem.callback.success");
         meterFail = metricRegistry.meter("workItem.callback.fail");
         gson = new Gson();
-        
+
         createHostAction = new CreateHostAction(dataAccess, this);
         deploySoftwareAction = new DeploySoftwareAction(dataAccess, this);
         restartHostAction = new RestartHostAction(dataAccess, this);
@@ -89,7 +89,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 logger.info("Work item sender says work item  {} is being processed.", workItem.getId());
                 return;
         }
-        
+
         CallbackData callbackData = new CallbackData();
         callbackData.requestId = workItem.getId();
         callbackData.errorCode = 0;
@@ -110,7 +110,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             if (callbackData.status == null) {
                 throw new RuntimeException("Callback is missing status, " + callbackData.requestId);
             }
-            
+
             switch (callbackData.status) {
                 case success:
                     meterSuccess.mark();
@@ -209,30 +209,30 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 default:
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
             }
-            if (callbackData.status == Result.success) {
-                Audit audit = new Audit();
-                audit.serviceId = workItem.getService().serviceId;
-                audit.timePerformed = GMT.getGmtAsDate();
-                audit.timeRequested = workItem.getRequestDate();
-                audit.requestor = workItem.getUsername();
-                audit.type = workItem.getType();
-                audit.operation = workItem.getOperation();
-                if (workItem.getMainModule() != null) {
-                    audit.moduleName = workItem.getMainModule().moduleName;
-                }
-                if (workItem.getHost() != null) {
-                    audit.hostName = workItem.getHost().hostName;
-                }
-                if (workItem.getVip() != null) {
-                    audit.vipName = workItem.getVip().vipName;
-                }
-                if (notes.isEmpty()) {
-                    audit.notes = "";
-                } else {
-                    audit.notes = gson.toJson(notes);
-                }
-                dataAccess.saveAudit(audit, callbackData.output);
+            Audit audit = new Audit();
+            audit.serviceId = workItem.getService().serviceId;
+            audit.timePerformed = GMT.getGmtAsDate();
+            audit.timeRequested = workItem.getRequestDate();
+            audit.requestor = workItem.getUsername();
+            audit.type = workItem.getType();
+            audit.operation = workItem.getOperation();
+            audit.successfull = (callbackData.status == Result.success);
+            if (workItem.getMainModule() != null) {
+                audit.moduleName = workItem.getMainModule().moduleName;
+            }
+            if (workItem.getHost() != null) {
+                audit.hostName = workItem.getHost().hostName;
+            }
+            if (workItem.getVip() != null) {
+                audit.vipName = workItem.getVip().vipName;
+            }
+            if (notes.isEmpty()) {
+                audit.notes = "";
             } else {
+                audit.notes = gson.toJson(notes);
+            }
+            dataAccess.saveAudit(audit, callbackData.output);
+            if (callbackData.status == Result.error) {
                 deleteNextWorkItem(workItem.getNextId());
             }
         } finally {

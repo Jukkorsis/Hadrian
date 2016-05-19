@@ -25,6 +25,7 @@ public class Audit implements Comparable<Audit> {
     public String requestor;
     public Type type;
     public Operation operation;
+    public boolean successfull = true;
     public String moduleName;
     public String hostName;
     public String vipName;
