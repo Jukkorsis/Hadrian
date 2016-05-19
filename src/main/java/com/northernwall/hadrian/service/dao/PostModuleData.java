@@ -42,6 +42,7 @@ public class PostModuleData {
     public int startTimeOut;
     public String stopCmdLine;
     public int stopTimeOut;
+    public String configName;
     public String deployableTemplate;
     public String libraryTemplate;
     public String testTemplate;

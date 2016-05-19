@@ -38,5 +38,6 @@ public class PutModuleData {
     public int startTimeOut;
     public String stopCmdLine;
     public int stopTimeOut;
+    public String configName;
 
 }

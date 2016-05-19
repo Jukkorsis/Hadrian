@@ -15,6 +15,12 @@
         <dd>
             <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">
         </dd>
+        <div ng-if="module.configName">
+            <dt>Config Version:</dt>
+            <dd>
+                <input type="text" ng-model="formUpdateHost.configVersion"  class="form-control">
+            </dd>
+        </div>
         <dt>Reason:</dt>
         <dd>
             <input ng-model="formUpdateHost.reason" type="text" class="form-control">

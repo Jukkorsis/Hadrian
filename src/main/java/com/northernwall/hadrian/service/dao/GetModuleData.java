@@ -42,6 +42,7 @@ public class GetModuleData {
     public int startTimeOut;
     public String stopCmdLine;
     public int stopTimeOut;
+    public String configName;
     public List<String> versions;
     public List<GetModuleNetworkData> networks;
     public List<GetCustomFunctionData> customFunctions;
@@ -69,6 +70,7 @@ public class GetModuleData {
         temp.startTimeOut = module.getStartTimeOut();
         temp.stopCmdLine = module.getStopCmdLine();
         temp.stopTimeOut = module.getStopTimeOut();
+        temp.configName = module.getConfigName();
         temp.versions = new LinkedList<>();
         temp.networks = new LinkedList<>();
         for (String network : config.networkNames) {

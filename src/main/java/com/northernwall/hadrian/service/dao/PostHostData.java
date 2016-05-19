@@ -23,6 +23,7 @@ public class PostHostData {
     public String env;
     public String size;
     public String version;
+    public String configVersion;
     public int count;
     public String reason;
 

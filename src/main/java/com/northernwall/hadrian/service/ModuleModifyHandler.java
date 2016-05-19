@@ -100,6 +100,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setStartTimeOut(data.startTimeOut);
         module.setStopCmdLine(data.stopCmdLine);
         module.setStopTimeOut(data.stopTimeOut);
+        module.setConfigName(data.configName);
 
         if (module.getOrder() != data.order) {
             if (module.getOrder() > 0) {

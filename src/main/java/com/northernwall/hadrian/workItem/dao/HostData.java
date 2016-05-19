@@ -26,6 +26,7 @@ public class HostData {
     public String size;
     public String version;
     public String versionUrl;
+    public String configVersion;
     public String reason;
 
     public static HostData create(Host host) {
@@ -41,6 +42,7 @@ public class HostData {
         temp.size = host.getSize();
         temp.version = null;
         temp.versionUrl = null;
+        temp.configVersion = null;
         temp.reason = null;
         return temp;
     }

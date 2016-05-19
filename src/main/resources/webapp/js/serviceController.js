@@ -871,6 +871,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.startTimeOut = 60;
         $scope.formSaveModule.stopCmdLine = "";
         $scope.formSaveModule.stopTimeOut = 60;
+        $scope.formSaveModule.configName = "";
 
         $scope.save = function () {
             var dataObject = {
@@ -895,7 +896,8 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 startCmdLine: $scope.formSaveModule.startCmdLine,
                 startTimeOut: $scope.formSaveModule.startTimeOut,
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
-                stopTimeOut: $scope.formSaveModule.stopTimeOut
+                stopTimeOut: $scope.formSaveModule.stopTimeOut,
+                configName: $scope.formSaveModule.configName
             };
 
             var responsePromise = $http.post("/v1/module/create", dataObject, {});
@@ -936,6 +938,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.startTimeOut = module.startTimeOut;
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
         $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
+        $scope.formUpdateModule.stopTimeOut = module.configName;
 
         $scope.save = function () {
             var dataObject = {
@@ -955,7 +958,8 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 startCmdLine: $scope.formUpdateModule.startCmdLine,
                 startTimeOut: $scope.formUpdateModule.startTimeOut,
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,
-                stopTimeOut: $scope.formUpdateModule.stopTimeOut
+                stopTimeOut: $scope.formUpdateModule.stopTimeOut,
+                configName: $scope.formUpdateModule.configName
             };
 
             var responsePromise = $http.put("/v1/module/modify", dataObject, {});
@@ -1186,6 +1190,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost.env = $scope.config.envs[0];
         $scope.formSaveHost.size = $scope.config.sizes[0];
         $scope.formSaveHost.version = $scope.module.versions[0];
+        $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.count = 1;
         $scope.formSaveHost.reason = "";
 
@@ -1198,6 +1203,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 env: $scope.formSaveHost.env,
                 size: $scope.formSaveHost.size,
                 version: $scope.formSaveHost.version,
+                configVersion: $scope.formSaveHost.configVersion,
                 count: $scope.formSaveHost.count,
                 reason: $scope.formSaveHost.reason
             };
@@ -1237,6 +1243,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
 
         $scope.formUpdateHost = {};
         $scope.formUpdateHost.version = $scope.module.versions[0];
+        $scope.formUpdateHost.configVersion = "";
         $scope.formUpdateHost.reason = "";
 
         $scope.save = function () {
@@ -1247,6 +1254,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 all: false,
                 hostNames: $scope.hostNames,
                 version: $scope.formUpdateHost.version,
+                configVersion: $scope.formUpdateHost.configVersion,
                 reason: $scope.formUpdateHost.reason,
                 wait: false
             };

@@ -178,7 +178,8 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.startCmdLine,
                 data.startTimeOut,
                 data.stopCmdLine,
-                data.stopTimeOut);
+                data.stopTimeOut,
+                data.configName);
         getDataAccess().saveModule(module);
         if (module.getOrder() > 0) {
             modules.add(module.getOrder() - 1, module);

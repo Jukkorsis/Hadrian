@@ -97,6 +97,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = data.version;
                         workItem.getHost().versionUrl = data.versionUrl;
+                        workItem.getHost().configVersion = data.configVersion;
                         workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus("Deploying...");

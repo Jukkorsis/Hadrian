@@ -34,6 +34,7 @@ public class PutDeploySoftwareData {
     public List<String> hostNames = new LinkedList<>();
     public String version;
     public String versionUrl;
+    public String configVersion;
     public String reason;
     public boolean wait = false;
 

@@ -137,9 +137,11 @@ public class HostCreateHandler extends BasicHandler {
             WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
 
             workItemCreate.getHost().version = data.version;
+            workItemCreate.getHost().configVersion = data.configVersion;
             workItemCreate.getHost().reason = data.reason;
             workItemCreate.setNextId(workItemDeploy.getId());
             workItemDeploy.getHost().version = data.version;
+            workItemDeploy.getHost().configVersion = data.configVersion;
             workItemDeploy.getHost().reason = data.reason;
 
             getDataAccess().saveWorkItem(workItemCreate);

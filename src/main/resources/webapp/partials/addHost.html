@@ -20,6 +20,12 @@
         <dd>
             <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">
         </dd>
+        <div ng-if="module.configName">
+            <dt>Config Version:</dt>
+            <dd>
+                <input type="text" ng-model="formSaveHost.configVersion"  class="form-control">
+            </dd>
+        </div>
         <dt>Count:</dt>
         <dd>
             <input ng-model="formSaveHost.count" type="number" class="form-control">
