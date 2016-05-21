@@ -102,6 +102,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateTeam.name = team.teamName;
         $scope.formUpdateTeam.email = team.teamEmail;
         $scope.formUpdateTeam.irc = team.teamIrc;
+        $scope.formUpdateTeam.slack = team.teamSlack;
         $scope.formUpdateTeam.gitGroup = team.gitGroup;
         $scope.formUpdateTeam.calendarId = team.calendarId;
 
