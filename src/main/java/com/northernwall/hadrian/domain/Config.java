@@ -24,6 +24,7 @@ public class Config {
     public String availabilityUrl = "";
     public String deploymentFolder = "";
     public String gitUiURL = "";
+    public String moduleConfigName = "";
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networkNames = new LinkedList<>();
     public List<Network> networks = new LinkedList<>();

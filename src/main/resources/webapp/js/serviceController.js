@@ -846,7 +846,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.config = config;
 
         $scope.formSaveModule = {};
-        $scope.formSaveModule.moduleName = "";
+        $scope.formSaveModule.moduleName = service.serviceAbbr + "-";
         $scope.formSaveModule.order = 1;
         if (service.serviceType === 'Service') {
             $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];

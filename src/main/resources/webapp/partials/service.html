@@ -156,7 +156,7 @@
                                                 <dt>Stop Timeout:</dt>
                                                 <dd>{{m.stopTimeOut}}</dd>
                                                 <div ng-if="m.configName">
-                                                    <dt>Config Name:</dt>
+                                                    <dt>{{config.moduleConfigName}}:</dt>
                                                     <dd>{{m.configName}}</dd>
                                                 </div>
                                             </div>
@@ -318,7 +318,7 @@
                                                     </button>
                                                     <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                                         <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                            <a ng-click="openDoCustomFunctionHostModal(i.hostId, cf)">{{cf.name}} on {{i.hostName}}</a>
+                                                            <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
                                                         </li>
                                                     </ul>
                                                 </div>

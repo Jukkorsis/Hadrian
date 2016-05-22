@@ -6,4 +6,6 @@ public interface ModuleConfigHelper {
 
     List<String> readModuleConfigVersions(String configName);
 
+    String getDisplayName();
+
 }

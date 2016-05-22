@@ -21,6 +21,8 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Network;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
+import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.lang.reflect.Type;
@@ -31,13 +33,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigHelper implements ParameterChangeListener {
+
     private final static Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
 
     private final Parameters parameters;
+    private final ModuleArtifactHelper moduleArtifactHelper;
+    private final ModuleConfigHelper moduleConfigHelper;
     private final AtomicReference<Config> config;
 
-    public ConfigHelper(Parameters parameters) {
+    public ConfigHelper(Parameters parameters, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper) {
         this.parameters = parameters;
+        this.moduleArtifactHelper = moduleArtifactHelper;
+        this.moduleConfigHelper = moduleConfigHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
     }
@@ -59,6 +66,11 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
         newConfig.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
+        if (moduleConfigHelper == null) {
+            newConfig.moduleConfigName = "Config Name";
+        } else {
+            newConfig.moduleConfigName = moduleConfigHelper.getDisplayName();
+        }
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_ENVS, Const.CONFIG_ENVS_DEFAULT, newConfig.envs);
@@ -84,7 +96,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.moduleTypes.add(ModuleType.Deployable);
         newConfig.moduleTypes.add(ModuleType.Library);
         newConfig.moduleTypes.add(ModuleType.Test);
-        
+
         logger.info("Config loaded");
         return newConfig;
     }
@@ -102,7 +114,7 @@ public class ConfigHelper implements ParameterChangeListener {
             }
         }
     }
-    
+
     private void loadNetwork(Config newConfig) {
         String temp = parameters.getString(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT);
         Gson gson = new Gson();

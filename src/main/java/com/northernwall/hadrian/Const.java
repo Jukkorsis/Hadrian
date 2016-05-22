@@ -86,9 +86,9 @@ public class Const {
     public static final String MESSAGE_PROCESSORS = "messageProcessors";
     public static final String MESSAGE_PROCESSORS_DEFAULT = "com.northernwall.hadrian.messaging.email.EmailMessageProcessor";
 
-    public static final String MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME = "module.artifactFactoryClassName";
+    public static final String MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME = "module.artifact.FactoryClassName";
     public static final String MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.module.maven.MavenHelperFactory";
-    public static final String MODULE_CONFIG_HELPER_FACTORY_CLASS_NAME = "module.configFactoryClassName";
+    public static final String MODULE_CONFIG_HELPER_FACTORY_CLASS_NAME = "module.config.FactoryClassName";
 
     public static final String MAVEN_MAX_VERSIONS = "maven.maxVersions";
     public static final int MAVEN_MAX_VERSIONS_DEFAULT = 15;

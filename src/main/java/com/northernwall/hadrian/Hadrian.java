@@ -134,7 +134,7 @@ public class Hadrian {
         this.workItemSender = workItemSender;
         this.metricRegistry = metricRegistry;
 
-        configHelper = new ConfigHelper(parameters);
+        configHelper = new ConfigHelper(parameters, moduleArtifactHelper, moduleConfigHelper);
         infoHelper = new InfoHelper(client);
         hostDetailsHelper = new HostDetailsHelper(client, parameters);
         messagingCoodinator = new MessagingCoodinator(parameters, client);

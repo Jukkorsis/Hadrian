@@ -16,7 +16,7 @@
         <dd>
             <select ng-model="formSaveHost.size" ng-options="c for c in config.sizes" class="form-control"></select>
         </dd>
-        <dt>Version:</dt>
+        <dt>Artifact Version:</dt>
         <dd>
             <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">
         </dd>
