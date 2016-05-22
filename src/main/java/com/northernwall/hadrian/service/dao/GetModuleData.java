@@ -44,6 +44,7 @@ public class GetModuleData {
     public int stopTimeOut;
     public String configName;
     public List<String> versions;
+    public List<String> configVersions;
     public List<GetModuleNetworkData> networks;
     public List<GetCustomFunctionData> customFunctions;
     public List<GetModuleRefData> uses;

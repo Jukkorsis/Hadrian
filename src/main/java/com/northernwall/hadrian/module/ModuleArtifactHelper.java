@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.maven;
+package com.northernwall.hadrian.module;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
@@ -28,14 +28,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public abstract class MavenHelper implements ParameterChangeListener {
+public abstract class ModuleArtifactHelper implements ParameterChangeListener {
     protected final Parameters parameters;
-    private final MavenVersionComparator mavenVersionComparator;
+    private final SematicVersionComparator mavenVersionComparator;
     private int maxMavenVersions;
 
-    public MavenHelper(Parameters parameters) {
+    public ModuleArtifactHelper(Parameters parameters) {
         this.parameters = parameters;
-        this.mavenVersionComparator = new MavenVersionComparator();
+        this.mavenVersionComparator = new SematicVersionComparator();
     }
 
     public void setup() {

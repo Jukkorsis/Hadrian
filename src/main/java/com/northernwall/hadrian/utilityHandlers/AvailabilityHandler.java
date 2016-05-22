@@ -15,16 +15,11 @@
  */
 package com.northernwall.hadrian.utilityHandlers;
 
-import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 

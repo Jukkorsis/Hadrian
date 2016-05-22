@@ -17,10 +17,11 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.service.helper.InfoHelper;
-import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -50,8 +51,8 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
     private final AccessHelper accessHelper;
 
-    public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, MavenHelper mavenHelper, InfoHelper infoHelper) {
-        super(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper);
+    public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, ModuleArtifactHelper mavenHelper, ModuleConfigHelper appConfigHelper, InfoHelper infoHelper) {
+        super(accessHelper, dataAccess, configHelper, mavenHelper, appConfigHelper, infoHelper);
         this.accessHelper = accessHelper;
     }
 

@@ -28,8 +28,10 @@ import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.db.DataAccessUpdater;
-import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.maven.MavenHelperFactory;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
+import com.northernwall.hadrian.module.ModuleConfigHelper;
+import com.northernwall.hadrian.module.ModuleConfigHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.WorkItemProcessorImpl;
@@ -53,7 +55,8 @@ public class HadrianBuilder {
     private final Parameters parameters;
     private OkHttpClient client;
     private DataAccess dataAccess;
-    private MavenHelper mavenHelper;
+    private ModuleArtifactHelper moduleArtifactHelper;
+    private ModuleConfigHelper moduleConfigHelper;
     private AccessHelper accessHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
@@ -73,8 +76,8 @@ public class HadrianBuilder {
         return this;
     }
 
-    public HadrianBuilder setMavenHelper(MavenHelper mavenHelper) {
-        this.mavenHelper = mavenHelper;
+    public HadrianBuilder setModuleArtifactHelper(ModuleArtifactHelper moduleArtifactHelper) {
+        this.moduleArtifactHelper = moduleArtifactHelper;
         return this;
     }
 
@@ -160,25 +163,48 @@ public class HadrianBuilder {
             dataAccess = factory.createDataAccess(parameters, metricRegistry);
         }
 
-        if (mavenHelper == null) {
-            String factoryName = parameters.getString(Const.MAVEN_HELPER_FACTORY_CLASS_NAME, Const.MAVEN_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        if (moduleArtifactHelper == null) {
+            String factoryName = parameters.getString(Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME, Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+            if (factoryName != null && !factoryName.isEmpty()) {
+                Class c;
+                try {
+                    c = Class.forName(factoryName);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException("Could not build Hadrian, could not find ModuleArtifactHelper class " + factoryName);
+                }
+                ModuleArtifactHelperFactory moduleArtifactHelperFactory;
+                try {
+                    moduleArtifactHelperFactory = (ModuleArtifactHelperFactory) c.newInstance();
+                } catch (InstantiationException ex) {
+                    throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleArtifactHelper class " + factoryName);
+                } catch (IllegalAccessException ex) {
+                    throw new RuntimeException("Could not build Hadrian, could not access ModuleArtifactHelper class " + factoryName);
+                }
+                moduleArtifactHelper = moduleArtifactHelperFactory.create(parameters, client);
+            }
+        }
+
+        if (moduleConfigHelper == null) {
+            String factoryName = parameters.getString(Const.MODULE_CONFIG_HELPER_FACTORY_CLASS_NAME, null);
+            if (factoryName != null && !factoryName.isEmpty()) {
             Class c;
             try {
                 c = Class.forName(factoryName);
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find MavenHelper class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not find ModuleConfigHelper class " + factoryName);
             }
-            MavenHelperFactory mavenHelperFactory;
+            ModuleConfigHelperFactory moduleConfigHelperFactory;
             try {
-                mavenHelperFactory = (MavenHelperFactory) c.newInstance();
+                moduleConfigHelperFactory = (ModuleConfigHelperFactory) c.newInstance();
             } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation MavenHelper class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleConfigHelper class " + factoryName);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access MavenHelper class " + factoryName);
+                throw new RuntimeException("Could not build Hadrian, could not access ModuleConfigHelper class " + factoryName);
             }
-            mavenHelper = mavenHelperFactory.create(parameters, client);
+            moduleConfigHelper = moduleConfigHelperFactory.create(parameters, client);
         }
-
+        }
+        
         accessHelper = new AccessHelper(dataAccess);
 
         if (accessHandler == null) {
@@ -243,7 +269,7 @@ public class HadrianBuilder {
 
         DataAccessUpdater.update(dataAccess);
 
-        return new Hadrian(parameters, client, dataAccess, mavenHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
+        return new Hadrian(parameters, client, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
     }
 
     private String getHostname() {

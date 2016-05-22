@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.maven.http;
+package com.northernwall.hadrian.module.maven;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
@@ -28,15 +28,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpMavenHelper extends MavenHelper {
-    private final static Logger logger = LoggerFactory.getLogger(HttpMavenHelper.class);
+public class MavenHelper extends ModuleArtifactHelper {
+    private final static Logger logger = LoggerFactory.getLogger(MavenHelper.class);
 
     private final OkHttpClient client;
     private String mavenRepo;
     private String mavenUsername;
     private String mavenPassword;
 
-    public HttpMavenHelper(Parameters parameters, OkHttpClient client) {
+    public MavenHelper(Parameters parameters, OkHttpClient client) {
         super(parameters);
         this.client = client;
     }

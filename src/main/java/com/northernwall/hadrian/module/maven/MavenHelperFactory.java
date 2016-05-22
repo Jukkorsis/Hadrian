@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.maven.http;
+package com.northernwall.hadrian.module.maven;
 
-import com.northernwall.hadrian.maven.MavenHelper;
-import com.northernwall.hadrian.maven.MavenHelperFactory;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 
-public class HttpMavenHelperFactory implements MavenHelperFactory {
+public class MavenHelperFactory implements ModuleArtifactHelperFactory {
 
     @Override
-    public MavenHelper create(Parameters parameters, OkHttpClient client) {
-        MavenHelper temp = new HttpMavenHelper(parameters, client);
+    public ModuleArtifactHelper create(Parameters parameters, OkHttpClient client) {
+        ModuleArtifactHelper temp = new MavenHelper(parameters, client);
         temp.setup();
         return temp;
     }

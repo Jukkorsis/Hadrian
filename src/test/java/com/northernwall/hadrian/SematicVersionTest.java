@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian;
 
-import com.northernwall.hadrian.maven.MavenVersionComparator;
+import com.northernwall.hadrian.module.SematicVersionComparator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,14 +26,14 @@ import org.junit.Test;
  *
  * @author rthursto
  */
-public class MavenHelperTest {
+public class SematicVersionTest {
     
-    public MavenHelperTest() {
+    public SematicVersionTest() {
     }
     
     @Test
     public void testComparator() {
-        MavenVersionComparator comparator = new MavenVersionComparator();
+        SematicVersionComparator comparator = new SematicVersionComparator();
         
         List<String> versions = new ArrayList<>();
         versions.add("1.2.3");

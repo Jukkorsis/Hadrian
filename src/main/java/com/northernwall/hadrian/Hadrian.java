@@ -22,9 +22,10 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.graph.GraphAllHandler;
 import com.northernwall.hadrian.graph.GraphFanInHandler;
 import com.northernwall.hadrian.graph.GraphFanOutHandler;
-import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessageSendHandler;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
+import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.service.AuditCreateHandler;
 import com.northernwall.hadrian.service.AuditGetHandler;
@@ -107,7 +108,8 @@ public class Hadrian {
     private final DataAccess dataAccess;
     private final MetricRegistry metricRegistry;
     private final OkHttpClient client;
-    private final MavenHelper mavenHelper;
+    private final ModuleArtifactHelper moduleArtifactHelper;
+    private final ModuleConfigHelper moduleConfigHelper;
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
     private final CalendarHelper calendarHelper;
@@ -119,11 +121,12 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, MavenHelper mavenHelper, AccessHelper accessHelper, Handler accessHandler, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.dataAccess = dataAccess;
-        this.mavenHelper = mavenHelper;
+        this.moduleArtifactHelper = moduleArtifactHelper;
+        this.moduleConfigHelper = moduleConfigHelper;
         this.accessHelper = accessHelper;
         this.accessHandler = accessHandler;
         this.calendarHelper = calendarHelper;
@@ -160,7 +163,7 @@ public class Hadrian {
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, mavenHelper, parameters, workItemSender, messagingCoodinator), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, workItemSender, messagingCoodinator), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webcontent"), false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/favicon.ico", new FaviconHandler(), false);
@@ -178,8 +181,8 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/addUser", new TeamAddUserHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/removeUser", new TeamRemoveUserHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, mavenHelper, infoHelper), false);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, moduleArtifactHelper, moduleConfigHelper, infoHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, moduleArtifactHelper, moduleConfigHelper, infoHelper), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new AuditGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess), true);

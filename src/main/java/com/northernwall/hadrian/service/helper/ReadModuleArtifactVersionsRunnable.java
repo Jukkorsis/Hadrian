@@ -15,22 +15,28 @@
  */
 package com.northernwall.hadrian.service.helper;
 
-import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.service.dao.GetModuleData;
 
-public class ReadMavenVersionsRunnable implements Runnable {
+public class ReadModuleArtifactVersionsRunnable implements Runnable {
 
-    private final MavenHelper mavenHelper;
+    private final ModuleArtifactHelper moduleArtifactHelper;
     private final GetModuleData getModuleData;
 
-    public ReadMavenVersionsRunnable(GetModuleData getModuleData, MavenHelper mavenHelper) {
-        this.mavenHelper = mavenHelper;
+    public ReadModuleArtifactVersionsRunnable(GetModuleData getModuleData, ModuleArtifactHelper moduleArtifactHelper) {
+        this.moduleArtifactHelper = moduleArtifactHelper;
         this.getModuleData = getModuleData;
     }
 
     @Override
     public void run() {
-        getModuleData.versions.addAll(mavenHelper.readMavenVersions(getModuleData.mavenGroupId, getModuleData.mavenArtifactId));
+        if (moduleArtifactHelper != null
+                && getModuleData.mavenGroupId != null
+                && !getModuleData.mavenGroupId.isEmpty()
+                && getModuleData.mavenArtifactId != null
+                && !getModuleData.mavenArtifactId.isEmpty()) {
+            getModuleData.versions.addAll(moduleArtifactHelper.readMavenVersions(getModuleData.mavenGroupId, getModuleData.mavenArtifactId));
+        }
     }
 
 }

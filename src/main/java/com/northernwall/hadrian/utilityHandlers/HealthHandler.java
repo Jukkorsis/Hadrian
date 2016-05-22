@@ -18,8 +18,9 @@ package com.northernwall.hadrian.utilityHandlers;
 
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.maven.MavenHelper;
+import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
+import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
@@ -34,8 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -43,22 +42,22 @@ import org.slf4j.LoggerFactory;
  */
 public class HealthHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(HealthHandler.class);
-
     private final Handler accessHandler;
     private final CalendarHelper calendarHelper;
     private final DataAccess dataAccess;
-    private final MavenHelper mavenHelper;
+    private final ModuleArtifactHelper moduleArtifactHelper;
+    private final ModuleConfigHelper moduleConfigHelper;
     private final Parameters parameters;
     private final WorkItemSender workItemSender;
     private final MessagingCoodinator messagingCoodinator;
     private final String version;
     
-    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, MavenHelper mavenHelper, Parameters parameters, WorkItemSender workItemSender, MessagingCoodinator messagingCoodinator) {
+    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, WorkItemSender workItemSender, MessagingCoodinator messagingCoodinator) {
         this.accessHandler = accessHandler;
         this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
-        this.mavenHelper = mavenHelper;
+        this.moduleArtifactHelper = moduleArtifactHelper;
+        this.moduleConfigHelper = moduleConfigHelper;
         this.parameters = parameters;
         this.workItemSender = workItemSender;
         this.messagingCoodinator = messagingCoodinator;
@@ -92,12 +91,13 @@ public class HealthHandler extends AbstractHandler {
         writer.addLine("JVM Peak Threads", threadMXBean.getPeakThreadCount());
         writer.addLine("Current Time", new Date());
         writer.addLine("Start Time", new Date(runtimeMXBean.getStartTime()));
-        writer.addLine("Class - Access Handler", accessHandler.getClass().getCanonicalName());
-        writer.addLine("Class - Calendar Helper", calendarHelper.getClass().getCanonicalName());
-        writer.addLine("Class - Data Access", dataAccess.getClass().getCanonicalName());
-        writer.addLine("Class - Maven Helper", mavenHelper.getClass().getCanonicalName());
-        writer.addLine("Class - Parameters", parameters.getClass().getCanonicalName());
-        writer.addLine("Class - Work Item Sender", workItemSender.getClass().getCanonicalName());
+        writer.addClassLine("Class - Access Handler", accessHandler);
+        writer.addClassLine("Class - Calendar Helper", calendarHelper);
+        writer.addClassLine("Class - Data Access", dataAccess);
+        writer.addClassLine("Class - Module Artifact Helper", moduleArtifactHelper);
+        writer.addClassLine("Class - Module Config Helper", moduleConfigHelper);
+        writer.addClassLine("Class - Parameters", parameters);
+        writer.addClassLine("Class - Work Item Sender", workItemSender);
         dataAccess.getHealth(writer);
         messagingCoodinator.getHealth(writer);
         writer.close();

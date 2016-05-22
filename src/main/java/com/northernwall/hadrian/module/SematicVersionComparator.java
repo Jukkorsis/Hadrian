@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.maven;
+package com.northernwall.hadrian.module;
 
 import java.util.Comparator;
 
 /**
- * MavenVersionComparator compares versions with the newest versions at the
+ * SematicVersionComparator compares versions with the newest versions at the
  * top/beginning of the list.
  *
  * @author rthursto
  */
-public class MavenVersionComparator implements Comparator<String> {
+public class SematicVersionComparator implements Comparator<String> {
 
     @Override
     public int compare(String ver1, String ver2) {

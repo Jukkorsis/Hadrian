@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.maven;
+package com.northernwall.hadrian.module;
 
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
@@ -22,7 +22,7 @@ import com.squareup.okhttp.OkHttpClient;
  *
  * @author rthursto
  */
-public interface MavenHelperFactory {
+public interface ModuleArtifactHelperFactory {
 
     /**
      * Implementations of the create method must call "setup()" on MavenHelper
@@ -31,6 +31,6 @@ public interface MavenHelperFactory {
      * @param client
      * @return 
      */
-    MavenHelper create(Parameters parameters, OkHttpClient client);
+    ModuleArtifactHelper create(Parameters parameters, OkHttpClient client);
 
 }
