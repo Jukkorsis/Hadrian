@@ -60,6 +60,7 @@ public class HostDetailsHelper implements ParameterChangeListener {
     @Override
     public void onChange(List<String> keys) {
         load();
+        logger.info("Reloading parameters.");
     }
 
     private void load() {

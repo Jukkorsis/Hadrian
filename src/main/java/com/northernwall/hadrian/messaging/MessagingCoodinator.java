@@ -3,6 +3,7 @@ package com.northernwall.hadrian.messaging;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import com.squareup.okhttp.OkHttpClient;
@@ -13,7 +14,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MessagingCoodinator {
+public class MessagingCoodinator implements ParameterChangeListener {
     private final static Logger logger = LoggerFactory.getLogger(MessagingCoodinator.class);
 
     private final Parameters parameters;
@@ -45,6 +46,14 @@ public class MessagingCoodinator {
                 }
             }
         }
+        
+        parameters.registerChangeListener(this);
+    }
+
+    @Override
+    public synchronized void onChange(List<String> keys) {
+        messageTypes.clear();
+        logger.info("Cache of MessageTypes has been cleared.");
     }
 
     public void sendMessage(MessageType messageType, Team team, Map<String, String> data) {
@@ -53,7 +62,7 @@ public class MessagingCoodinator {
         }
     }
 
-    public MessageType getMessageType(String messageTypeName) {
+    public synchronized MessageType getMessageType(String messageTypeName) {
         for (MessageType messageType : messageTypes) {
             if (messageType.name.equalsIgnoreCase(messageTypeName)) {
                 return messageType;
@@ -74,4 +83,5 @@ public class MessagingCoodinator {
         writer.addLine("MessageProcessor", messageProcessor.getClass().getCanonicalName());
         }
     }
+
 }
