@@ -51,8 +51,8 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
     private final AccessHelper accessHelper;
 
-    public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, ModuleArtifactHelper mavenHelper, ModuleConfigHelper appConfigHelper, InfoHelper infoHelper) {
-        super(accessHelper, dataAccess, configHelper, mavenHelper, appConfigHelper, infoHelper);
+    public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, InfoHelper infoHelper) {
+        super(accessHelper, dataAccess, configHelper, moduleArtifactHelper, moduleConfigHelper, infoHelper);
         this.accessHelper = accessHelper;
     }
 
