@@ -157,6 +157,9 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                             if (workItem.getHost().versionUrl != null) {
                                 notes.put("versionUrl", workItem.getHost().versionUrl);
                             }
+                            if (workItem.getHost().configVersion != null) {
+                                notes.put("config_Version", workItem.getHost().configVersion);
+                            }
                             notes.put("reason", workItem.getHost().reason);
                             break;
                         case restart:
