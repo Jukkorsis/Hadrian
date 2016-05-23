@@ -18,17 +18,16 @@ public class StubParameters implements Parameters {
 
     @Override
     public int getInt(String key, int value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value;
     }
 
     @Override
     public boolean getBoolean(String key, boolean value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value;
     }
 
     @Override
     public void registerChangeListener(ParameterChangeListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
