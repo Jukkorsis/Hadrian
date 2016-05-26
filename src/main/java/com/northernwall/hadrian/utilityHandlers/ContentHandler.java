@@ -18,6 +18,8 @@ package com.northernwall.hadrian.utilityHandlers;
 import com.northernwall.hadrian.Const;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,16 +33,20 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class ContentHandler extends AbstractHandler {
 
     private final String rootPath;
+    private final String indexPath;
+    private final Map<String, CachedContent> cache;
 
     public ContentHandler(String rootPath) {
         this.rootPath = rootPath;
+        indexPath = rootPath + "/index.html";
+        cache = new ConcurrentHashMap<>();
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String path;
         if (target.equals("/ui/")) {
-            path = rootPath + "/index.html";
+            path = indexPath;
         } else {
             path = rootPath + target.substring(3);
         }
@@ -51,21 +57,21 @@ public class ContentHandler extends AbstractHandler {
     }
 
     private boolean getContent(HttpServletResponse response, String resource) throws IOException {
-        byte[] buffer = new byte[50 * 1024];
-        try (InputStream is = this.getClass().getResourceAsStream(resource)) {
-            if (is == null) {
-                return false;
-            }
-            if (resource.toLowerCase().endsWith(".html")) {
-                response.addHeader("X-Frame-Options", "DENY");
-                response.setContentType(Const.HTML);
-            }
-            int len = is.read(buffer);
-            while (len != -1) {
-                response.getOutputStream().write(buffer, 0, len);
-                len = is.read(buffer);
+        CachedContent content = cache.get(resource);
+        if (content == null) {
+            try (InputStream is = this.getClass().getResourceAsStream(resource)) {
+                if (is == null) {
+                    return false;
+                }
+                content = new CachedContent(is);
+                cache.put(resource, content);
             }
         }
+        if (resource.toLowerCase().endsWith(".html")) {
+            response.addHeader("X-Frame-Options", "DENY");
+            response.setContentType(Const.HTML);
+        }
+        content.write(response.getOutputStream());
         return true;
     }
 
