@@ -16,6 +16,9 @@
 
 package com.northernwall.hadrian.service.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Richard Thurston
@@ -39,5 +42,6 @@ public class PutModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
+    public Map<String,Boolean> networkNames = new HashMap<>();
 
 }

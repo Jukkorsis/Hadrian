@@ -85,6 +85,9 @@ public class ModuleModifyHandler extends BasicHandler {
         if (data.order > modules.size()) {
             data.order = modules.size();
         }
+        
+        //todo check it there are host on a network that is marked as false
+        //todo include partial html
 
         module.setModuleName(data.moduleName);
         module.setMavenGroupId(data.mavenGroupId);
@@ -101,6 +104,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setStopCmdLine(data.stopCmdLine);
         module.setStopTimeOut(data.stopTimeOut);
         module.setConfigName(data.configName);
+        module.setNetworkNames(data.networkNames);
 
         if (module.getOrder() != data.order) {
             if (module.getOrder() > 0) {

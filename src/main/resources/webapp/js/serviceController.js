@@ -897,7 +897,8 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 startTimeOut: $scope.formSaveModule.startTimeOut,
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
                 stopTimeOut: $scope.formSaveModule.stopTimeOut,
-                configName: $scope.formSaveModule.configName
+                configName: $scope.formSaveModule.configName,
+                networkNames: $scope.formSaveModule.networkNames
             };
 
             var responsePromise = $http.post("/v1/module/create", dataObject, {});
@@ -939,6 +940,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
         $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
         $scope.formUpdateModule.configName = module.configName;
+        $scope.formUpdateModule.networkNames = module.networkNames;
 
         $scope.save = function () {
             var dataObject = {
@@ -959,7 +961,8 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 startTimeOut: $scope.formUpdateModule.startTimeOut,
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,
                 stopTimeOut: $scope.formUpdateModule.stopTimeOut,
-                configName: $scope.formUpdateModule.configName
+                configName: $scope.formUpdateModule.configName,
+                networkNames: $scope.formUpdateModule.networkNames
             };
 
             var responsePromise = $http.put("/v1/module/modify", dataObject, {});

@@ -17,6 +17,12 @@
         <dt>Artifact Suffix:</dt>
         <dd><input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control"></dd>
         <div ng-if="module.moduleType === 'Deployable'">
+            <dt>Networks:</dt>
+            <dd>
+                <div ng-repeat="n in config.networkNames">
+                    <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
+                </div>
+            </dd>
             <dt>Host Abbr:</dt>
             <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
             <dt>Version Url:</dt>

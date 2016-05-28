@@ -17,6 +17,8 @@
 package com.northernwall.hadrian.service.dao;
 
 import com.northernwall.hadrian.domain.ModuleType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -46,5 +48,6 @@ public class PostModuleData {
     public String deployableTemplate;
     public String libraryTemplate;
     public String testTemplate;
+    public Map<String,Boolean> networkNames = new HashMap<>();
 
 }

@@ -22,6 +22,7 @@ public class CachedContent {
 
     public void write(ServletOutputStream outputStream) throws IOException {
         outputStream.write(bytes);
+        outputStream.flush();
     }
 
 }

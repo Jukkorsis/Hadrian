@@ -139,6 +139,8 @@
                                             <div ng-if="m.moduleType === 'Deployable'">
                                                 <dt>Host Abbr:</dt>
                                                 <dd>{{m.hostAbbr}}</dd>
+                                                <dt>Networks:</dt>
+                                                <dd><span ng-repeat="(nname, val) in m.networkNames"><span ng-if="val">{{nname}} </span></span></dd>
                                                 <dt>Availability URL:</dt>
                                                 <dd>{{m.availabilityUrl}}</dd>
                                                 <dt>Version URL:</dt>
@@ -201,176 +203,178 @@
                     <div ng-repeat="m in service.modules">
                         <div ng-if="m.moduleType === 'Deployable'">
                             <div ng-repeat="mn in m.networks">
-                                <h4>
-                                    <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
-                                    <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
-                                    {{m.moduleName}} in {{mn.network}}
-                                    <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
-                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                        </button>
-                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                            <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision hosts in {{mn.network}}</a></li>
-                                            <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill Hosts in {{mn.network}}</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
-                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                        </button>
-                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                            <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision hosts in {{mn.network}}</a></li>
-                                            <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
-                                            <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
-                                            <li role="menuitem"><a ng-click="openAddHostsToVipModal(mn);">Add selected hosts to VIP</a></li>
-                                            <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill Hosts in {{mn.network}}</a></li>
-                                            <li class="divider"></li>
-                                            <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group" uib-dropdown ng-if="!service.canModify" is-open="status.isopen">
-                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                        </button>
-                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                            <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
-                                                <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </h4>
-                                <div ng-if="!mn.collapsed && mn.hosts.length > 0">
-                                    <table class="table table-hover table-striped table-condensed">
-                                        <tr>
-                                            <th width="7%"></th>
-                                            <th width="23%">
-                                                <a ng-click="hostSortType = 'hostName';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    Host
-                                                </a>
-                                            </th>
-                                            <th width="5%">
-                                                <a ng-click="hostSortType = 'dataCenter';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    DC
-                                                </a>
-                                            </th>
-                                            <th width="15%">VIP</th>
-                                            <th width="10%">
-                                                <a ng-click="hostSortType = 'env';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    Env.
-                                                </a>
-                                            </th>
-                                            <th width="5%">
-                                                <a ng-click="hostSortType = 'size';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    Size
-                                                </a>
-                                            </th>
-                                            <th width="15%">
-                                                <a ng-click="hostSortType = 'version';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    Ver.
-                                                </a>
-                                            </th>
-                                            <th width="10%">
-                                                <a ng-click="hostSortType = 'availability';
-                                                                    hostSortReverse = !hostSortReverse">
-                                                    Avail.
-                                                </a>
-                                            </th>
-                                        </tr>
-                                        <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
-                                            <td>&nbsp;
-                                                <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
-                                                <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
-                                                <span ng-if="i.status === '-'">
-                                                    <input ng-model="formSelectHost[i.hostId]" type="checkbox">
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {{i.hostName}}
-                                                <div class="btn-group" uib-dropdown ng-if="i.status === '-' && service.canModify" is-open="status.isopen">
-                                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                                    </button>
-                                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                                        <li role="menuitem"><a ng-click="openDeploySoftwareHostModal(i, mn, m);">Deploy software to {{i.hostName}}</a></li>
-                                                        <li role="menuitem"><a ng-click="openRestartHostModal(i, mn, m);">Restart {{i.hostName}}</a></li>
-                                                        <li role="menuitem"><a ng-click="openAddHostToVipModal(i, mn);">Add {{i.hostName}} to VIP</a></li>
-                                                        <li class="divider"></li>
-                                                        <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn, m);">Decommission {{i.hostName}}</a></li>
-                                                        <li role="menuitem" ng-repeat="epr in i.vipRefs| filter:{ status: '-' }">
-                                                            <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);">Remove {{i.hostName}} from the VIP {{epr.vipName}}</a>
-                                                        </li>
-                                                        <li class="divider"></li>
-                                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                            <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="btn-group" uib-dropdown ng-if="i.status === '-' && !service.canModify" is-open="status.isopen">
-                                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                                    </button>
-                                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                                        <li role="menuitem" ng-repeat="cf in m.customFunctions">
-                                                            <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <span ng-if="i.status !== '-'">
-                                                    <span class="label label-warning">{{i.status}}</span>
-                                                </span>
-                                            </td>
-                                            <td>{{i.dataCenter}}</td>
-                                            <td>
-                                                <div ng-repeat="epr in i.vipRefs">
-                                                    {{epr.vipName}}
-                                                    <span ng-if="epr.status !== '-'">
-                                                        <span class="label label-warning">{{epr.status}}</span>
+                                <div ng-if="m.networkNames[mn.network] && m.networkNames[mn.network]">
+                                    <h4>
+                                        <span ng-if="!mn.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="mn.collapsed = true"></span>
+                                        <span ng-if="mn.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="mn.collapsed = false"></span>
+                                        {{m.moduleName}} in {{mn.network}}
+                                        <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
+                                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                            </button>
+                                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision hosts in {{mn.network}}</a></li>
+                                                <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill Hosts in {{mn.network}}</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
+                                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                            </button>
+                                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision hosts in {{mn.network}}</a></li>
+                                                <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
+                                                <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
+                                                <li role="menuitem"><a ng-click="openAddHostsToVipModal(mn);">Add selected hosts to VIP</a></li>
+                                                <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill Hosts in {{mn.network}}</a></li>
+                                                <li class="divider"></li>
+                                                <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                    <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="btn-group" uib-dropdown ng-if="!service.canModify" is-open="status.isopen">
+                                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                            </button>
+                                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
+                                                    <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </h4>
+                                    <div ng-if="!mn.collapsed && mn.hosts.length > 0">
+                                        <table class="table table-hover table-striped table-condensed">
+                                            <tr>
+                                                <th width="7%"></th>
+                                                <th width="23%">
+                                                    <a ng-click="hostSortType = 'hostName';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        Host
+                                                    </a>
+                                                </th>
+                                                <th width="5%">
+                                                    <a ng-click="hostSortType = 'dataCenter';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        DC
+                                                    </a>
+                                                </th>
+                                                <th width="15%">VIP</th>
+                                                <th width="10%">
+                                                    <a ng-click="hostSortType = 'env';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        Env.
+                                                    </a>
+                                                </th>
+                                                <th width="5%">
+                                                    <a ng-click="hostSortType = 'size';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        Size
+                                                    </a>
+                                                </th>
+                                                <th width="15%">
+                                                    <a ng-click="hostSortType = 'version';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        Ver.
+                                                    </a>
+                                                </th>
+                                                <th width="10%">
+                                                    <a ng-click="hostSortType = 'availability';
+                                                                        hostSortReverse = !hostSortReverse">
+                                                        Avail.
+                                                    </a>
+                                                </th>
+                                            </tr>
+                                            <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
+                                                <td>&nbsp;
+                                                    <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
+                                                    <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
+                                                    <span ng-if="i.status === '-'">
+                                                        <input ng-model="formSelectHost[i.hostId]" type="checkbox">
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td>{{i.env}}</td>
-                                            <td>{{i.size}}</td>
-                                            <td>{{i.version}}</td>
-                                            <td>
-                                                <span ng-if="i.availability === -1">
-                                                    <span class="label label-danger">Time Out</span>
-                                                </span>
-                                                <span ng-if="i.availability < 300 && i.availability > 99">
-                                                    <span class="label label-success">{{i.availability}}</span>
-                                                </span>
-                                                <span ng-if="i.availability > 299">
-                                                    <span class="label label-danger">{{i.availability}}</span>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr ng-if="i.expanded" ng-repeat-end="">
-                                            <td colspan="9">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <dl class="dl-horizontal">
-                                                            <div ng-repeat="d in i.left">
-                                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                            </div>
-                                                        </dl>
+                                                </td>
+                                                <td>
+                                                    {{i.hostName}}
+                                                    <div class="btn-group" uib-dropdown ng-if="i.status === '-' && service.canModify" is-open="status.isopen">
+                                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                                        </button>
+                                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                            <li role="menuitem"><a ng-click="openDeploySoftwareHostModal(i, mn, m);">Deploy software to {{i.hostName}}</a></li>
+                                                            <li role="menuitem"><a ng-click="openRestartHostModal(i, mn, m);">Restart {{i.hostName}}</a></li>
+                                                            <li role="menuitem"><a ng-click="openAddHostToVipModal(i, mn);">Add {{i.hostName}} to VIP</a></li>
+                                                            <li class="divider"></li>
+                                                            <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn, m);">Decommission {{i.hostName}}</a></li>
+                                                            <li role="menuitem" ng-repeat="epr in i.vipRefs| filter:{ status: '-' }">
+                                                                <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);">Remove {{i.hostName}} from the VIP {{epr.vipName}}</a>
+                                                            </li>
+                                                            <li class="divider"></li>
+                                                            <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                                <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <dl class="dl-horizontal">
-                                                            <div ng-repeat="d in i.right">
-                                                                <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                            </div>
-                                                        </dl>
+                                                    <div class="btn-group" uib-dropdown ng-if="i.status === '-' && !service.canModify" is-open="status.isopen">
+                                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                                        </button>
+                                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                                            <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                                                <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                                    <span ng-if="i.status !== '-'">
+                                                        <span class="label label-warning">{{i.status}}</span>
+                                                    </span>
+                                                </td>
+                                                <td>{{i.dataCenter}}</td>
+                                                <td>
+                                                    <div ng-repeat="epr in i.vipRefs">
+                                                        {{epr.vipName}}
+                                                        <span ng-if="epr.status !== '-'">
+                                                            <span class="label label-warning">{{epr.status}}</span>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td>{{i.env}}</td>
+                                                <td>{{i.size}}</td>
+                                                <td>{{i.version}}</td>
+                                                <td>
+                                                    <span ng-if="i.availability === -1">
+                                                        <span class="label label-danger">Time Out</span>
+                                                    </span>
+                                                    <span ng-if="i.availability < 300 && i.availability > 99">
+                                                        <span class="label label-success">{{i.availability}}</span>
+                                                    </span>
+                                                    <span ng-if="i.availability > 299">
+                                                        <span class="label label-danger">{{i.availability}}</span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="i.expanded" ng-repeat-end="">
+                                                <td colspan="9">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <dl class="dl-horizontal">
+                                                                <div ng-repeat="d in i.left">
+                                                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                                                </div>
+                                                            </dl>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <dl class="dl-horizontal">
+                                                                <div ng-repeat="d in i.right">
+                                                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                                                </div>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

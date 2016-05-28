@@ -40,38 +40,44 @@
                 <div class="input-group">
                     <div class="input-group-addon"> / </div>
                     <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
-            </dd>
-        </div>
-        <dt>Maven Group Id:</dt>
-        <dd><input ng-model="formSaveModule.mavenGroupId" type="text" class="form-control"></dd>
-        <dt>Maven Artifact Id:</dt>
-        <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
-        <dt>Artifact Type:</dt>
-        <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
-        <dt>Artifact Suffix:</dt>
-        <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
-        <div ng-if="formSaveModule.moduleType === 'Deployable'">
-            <dt>Host Abbr:</dt>
-            <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
-            <dt>Version Url:</dt>
-            <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
-            <dt>Availability Url:</dt>
-            <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
-            <dt>Run As User:</dt>
-            <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
-            <dt>Deployment Folder:</dt>
-            <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
-            <dt>Start Cmd Line:</dt>
-            <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-            <dt>Start Time Out:</dt>
-            <dd><input ng-model="formSaveModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
-            <dt>Stop Cmd Line:</dt>
-            <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-            <dt>Stop Time Out:</dt>
-            <dd><input ng-model="formSaveModule.stopTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
-            <dt>{{config.moduleConfigName}}:</dt>
-            <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
-        </div>
+                    </dd>
+                </div>
+            <dt>Maven Group Id:</dt>
+            <dd><input ng-model="formSaveModule.mavenGroupId" type="text" class="form-control"></dd>
+            <dt>Maven Artifact Id:</dt>
+            <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
+            <dt>Artifact Type:</dt>
+            <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
+            <dt>Artifact Suffix:</dt>
+            <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
+            <div ng-if="formSaveModule.moduleType === 'Deployable'">
+                <dt>Networks:</dt>
+                <dd>
+                    <div ng-repeat="n in config.networkNames">
+                        <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
+                    </div>
+                </dd>
+                <dt>Host Abbr:</dt>
+                <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
+                <dt>Version Url:</dt>
+                <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
+                <dt>Availability Url:</dt>
+                <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
+                <dt>Run As User:</dt>
+                <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+                <dt>Deployment Folder:</dt>
+                <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+                <dt>Start Cmd Line:</dt>
+                <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Start Time Out:</dt>
+                <dd><input ng-model="formSaveModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+                <dt>Stop Cmd Line:</dt>
+                <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Stop Time Out:</dt>
+                <dd><input ng-model="formSaveModule.stopTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
+            </div>
     </dl>
 </div>
 <div class="modal-footer">

@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.domain;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -41,8 +43,9 @@ public class Module implements Comparable<Module> {
     private String stopCmdLine;
     private int stopTimeOut;
     private String configName;
+    private Map<String,Boolean> networkNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName) {
+    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -64,6 +67,7 @@ public class Module implements Comparable<Module> {
         this.stopCmdLine = stopCmdLine;
         this.stopTimeOut = stopTimeOut;
         this.configName = configName;
+        this.networkNames = networkNames;
     }
 
     public String getModuleId() {
@@ -232,6 +236,14 @@ public class Module implements Comparable<Module> {
 
     public void setConfigName(String configName) {
         this.configName = configName;
+    }
+
+    public Map<String, Boolean> getNetworkNames() {
+        return networkNames;
+    }
+
+    public void setNetworkNames(Map<String, Boolean> networkNames) {
+        this.networkNames = networkNames;
     }
 
     @Override

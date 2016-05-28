@@ -18,8 +18,10 @@ package com.northernwall.hadrian.service.dao;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class GetModuleData {
 
@@ -43,6 +45,7 @@ public class GetModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
+    public Map<String,Boolean> networkNames = new HashMap<>();
     public List<String> versions;
     public List<String> configVersions;
     public List<GetModuleNetworkData> networks;
@@ -72,6 +75,7 @@ public class GetModuleData {
         temp.stopCmdLine = module.getStopCmdLine();
         temp.stopTimeOut = module.getStopTimeOut();
         temp.configName = module.getConfigName();
+        temp.networkNames = module.getNetworkNames();
         temp.versions = new LinkedList<>();
         temp.networks = new LinkedList<>();
         for (String network : config.networkNames) {
