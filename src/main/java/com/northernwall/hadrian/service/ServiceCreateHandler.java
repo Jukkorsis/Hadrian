@@ -131,6 +131,7 @@ public class ServiceCreateHandler extends BasicHandler {
         audit.requestor = requestor;
         audit.type = type;
         audit.operation = operation;
+        audit.successfull = true;
         audit.notes = getGson().toJson(notes);
         getDataAccess().saveAudit(audit, null);
     }

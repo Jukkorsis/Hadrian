@@ -13,12 +13,12 @@
         </dd>
         <dt>Artifact Version:</dt>
         <dd>
-            <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in module.versions | filter:$viewValue" class="form-control">
+            <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
         </dd>
         <div ng-if="module.configName">
             <dt>Config Version:</dt>
             <dd>
-                <input type="text" ng-model="formUpdateHost.configVersion"  class="form-control">
+                <input type="text" ng-model="formUpdateHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
             </dd>
         </div>
         <dt>Reason:</dt>

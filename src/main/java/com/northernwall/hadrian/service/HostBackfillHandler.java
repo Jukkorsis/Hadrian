@@ -115,6 +115,7 @@ public class HostBackfillHandler extends BasicHandler {
                         audit.requestor = user.getUsername();
                         audit.type = Type.host;
                         audit.operation = Operation.create;
+                        audit.successfull = true;
                         audit.moduleName = module.getModuleName();
                         audit.hostName = temp;
                         Map<String, String> notes = new HashMap<>();

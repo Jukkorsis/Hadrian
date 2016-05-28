@@ -106,6 +106,7 @@ public class ModuleFileCreateHandler extends BasicHandler {
         audit.requestor = requestor;
         audit.type = Type.module;
         audit.operation = Operation.update;
+        audit.successfull = true;
         audit.notes = getGson().toJson(notes);
         getDataAccess().saveAudit(audit, null);
     }

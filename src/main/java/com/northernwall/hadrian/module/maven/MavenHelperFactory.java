@@ -24,9 +24,7 @@ public class MavenHelperFactory implements ModuleArtifactHelperFactory {
 
     @Override
     public ModuleArtifactHelper create(Parameters parameters, OkHttpClient client) {
-        ModuleArtifactHelper temp = new MavenHelper(parameters, client);
-        temp.setup();
-        return temp;
+        return new MavenHelper(parameters, client);
     }
 
 }

@@ -4,14 +4,12 @@ import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.VipRef;
-import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
 import com.northernwall.hadrian.service.dao.GetModuleRefData;
@@ -20,8 +18,6 @@ import com.northernwall.hadrian.service.dao.GetVipData;
 import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.service.helper.ReadAvailabilityRunnable;
-import com.northernwall.hadrian.service.helper.ReadModuleConfigVersionsRunnable;
-import com.northernwall.hadrian.service.helper.ReadModuleArtifactVersionsRunnable;
 import com.northernwall.hadrian.service.helper.ReadVersionRunnable;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -43,17 +39,13 @@ public class ServiceRefreshHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final ModuleArtifactHelper moduleArtifactHelper;
-    private final ModuleConfigHelper moduleConfigHelper;
     private final InfoHelper infoHelper;
     private final ExecutorService executorService;
 
-    public ServiceRefreshHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, InfoHelper infoHelper) {
+    public ServiceRefreshHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, InfoHelper infoHelper) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.moduleArtifactHelper = moduleArtifactHelper;
-        this.moduleConfigHelper = moduleConfigHelper;
         this.infoHelper = infoHelper;
 
         executorService = Executors.newFixedThreadPool(20);
@@ -90,8 +82,6 @@ public class ServiceRefreshHandler extends BasicHandler {
         for (Module module : modules) {
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
             if (includeStuff) {
-                futures.add(executorService.submit(new ReadModuleArtifactVersionsRunnable(getModuleData, moduleArtifactHelper)));
-                futures.add(executorService.submit(new ReadModuleConfigVersionsRunnable(getModuleData, moduleConfigHelper)));
                 getModuleRefInfo(module, getModuleData);
             }
             getServiceData.modules.add(getModuleData);
@@ -151,7 +141,7 @@ public class ServiceRefreshHandler extends BasicHandler {
     protected void waitForFutures(List<Future> futures) {
         for (int i = 0; i < 20; i++) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
             }
             futures.removeIf(new Predicate<Future>() {

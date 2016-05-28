@@ -51,6 +51,7 @@ public class AuditCreateHandler extends BasicHandler {
         audit.requestor = user.getUsername();
         audit.type = data.type;
         audit.operation = data.operation;
+        audit.successfull = true;
         if (data.hostName != null) {
             audit.hostName = data.hostName;
         }

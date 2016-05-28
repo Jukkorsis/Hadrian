@@ -1189,10 +1189,21 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
         $scope.formSaveHost.env = $scope.config.envs[0];
         $scope.formSaveHost.size = $scope.config.sizes[0];
-        $scope.formSaveHost.version = $scope.module.versions[0];
+        $scope.formSaveHost.version = "";
         $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.count = 1;
         $scope.formSaveHost.reason = "";
+
+        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId, {});
+        responsePromise.success(function (data, status, headers, config) {
+            $scope.versions = data;
+            if ($scope.formSaveHost.version === "") {
+                $scope.formSaveHost.version = data.artifactVersions[0];
+            }
+            if ($scope.formSaveHost.configVersion === "") {
+                $scope.formSaveHost.configVersion = data.configVersions[0];
+            }
+        });
 
         $scope.save = function () {
             var dataObject = {
@@ -1242,9 +1253,20 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         };
 
         $scope.formUpdateHost = {};
-        $scope.formUpdateHost.version = $scope.module.versions[0];
+        $scope.formUpdateHost.version = "";
         $scope.formUpdateHost.configVersion = "";
         $scope.formUpdateHost.reason = "";
+
+        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId, {});
+        responsePromise.success(function (data, status, headers, config) {
+            $scope.versions = data;
+            if ($scope.formUpdateHost.version === "") {
+                $scope.formUpdateHost.version = data.artifactVersions[0];
+            }
+            if ($scope.formUpdateHost.configVersion === "") {
+                $scope.formUpdateHost.configVersion = data.configVersions[0];
+            }
+        });
 
         $scope.save = function () {
             var dataObject = {

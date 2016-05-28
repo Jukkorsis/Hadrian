@@ -16,47 +16,58 @@
 package com.northernwall.hadrian.module.maven;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
+import com.northernwall.hadrian.module.SematicVersionComparator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-public class MavenHelper extends ModuleArtifactHelper {
+public class MavenHelper implements ModuleArtifactHelper {
+
     private final static Logger logger = LoggerFactory.getLogger(MavenHelper.class);
 
     private final OkHttpClient client;
-    private String mavenRepo;
-    private String mavenUsername;
-    private String mavenPassword;
+    protected final Parameters parameters;
+    private final SematicVersionComparator mavenVersionComparator;
 
     public MavenHelper(Parameters parameters, OkHttpClient client) {
-        super(parameters);
+        this.parameters = parameters;
+        this.mavenVersionComparator = new SematicVersionComparator();
         this.client = client;
     }
 
     @Override
-    public void setup() {
-        super.setup();
-        mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
-        mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
-        mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
-    }
-    
-    @Override
-    public List<String> readMavenVersions(String groupId, String artifactId) {
+    public List<String> readArtifactVersions(Module module) {
         List<String> versions = new LinkedList<>();
-        if (groupId != null && !groupId.isEmpty() && artifactId != null && !artifactId.isEmpty()) {
+        if (module.getMavenGroupId() != null
+                && !module.getMavenGroupId().isEmpty()
+                && module.getMavenArtifactId() != null
+                && !module.getMavenArtifactId().isEmpty()) {
             try {
                 Request.Builder builder = new Request.Builder();
-                String url = mavenRepo + groupId.replace(".", "/") + "/" + artifactId + "/maven-metadata.xml"; 
+                String mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
+                String url = mavenRepo
+                        + module.getMavenGroupId().replace(".", "/")
+                        + "/"
+                        + module.getMavenArtifactId()
+                        + "/maven-metadata.xml";
                 builder.url(url);
+                String mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
+                String mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
                 if (!mavenUsername.equals(Const.MAVEN_USERNAME_DEFAULT)) {
                     String credential = Credentials.basic(mavenUsername, mavenPassword);
                     builder.header("Authorization", credential);
@@ -68,12 +79,33 @@ public class MavenHelper extends ModuleArtifactHelper {
                     versions = processMavenStream(inputStream);
                 }
             } catch (Exception ex) {
-                logger.error("Error reading maven version from {} {}, {}", groupId, artifactId, ex.getMessage());
+                logger.error("Error reading maven version from {} {}, {}",
+                        module.getMavenGroupId(),
+                        module.getMavenArtifactId(),
+                        ex.getMessage());
             }
         }
-        
-        if (versions.isEmpty()) {
-            versions.add("0.0.0");
+
+        return versions;
+    }
+
+    private List<String> processMavenStream(InputStream inputStream) throws Exception {
+        List<String> versions = new LinkedList<>();
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(inputStream);
+        Element root = doc.getDocumentElement();
+        Node versionsNode = root.getElementsByTagName("versions").item(0);
+        for (int i = 0; i < versionsNode.getChildNodes().getLength(); i++) {
+            Node child = versionsNode.getChildNodes().item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE && !child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
+                versions.add(child.getTextContent());
+            }
+        }
+        Collections.sort(versions, mavenVersionComparator);
+        int maxMavenVersions = parameters.getInt(Const.MAVEN_MAX_VERSIONS, Const.MAVEN_MAX_VERSIONS_DEFAULT);
+        if (versions.size() > maxMavenVersions) {
+            return versions.subList(0, maxMavenVersions);
         }
         return versions;
     }
