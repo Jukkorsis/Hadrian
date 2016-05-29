@@ -19,9 +19,9 @@
         <div ng-if="module.moduleType === 'Deployable'">
             <dt>Networks:</dt>
             <dd>
-                <div ng-repeat="n in config.networkNames">
+                <span ng-repeat="n in config.networkNames">
                     <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
-                </div>
+                </span>
             </dd>
             <dt>Host Abbr:</dt>
             <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
