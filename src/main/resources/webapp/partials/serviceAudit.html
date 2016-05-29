@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div>
+            <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
+            <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
+            <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
+        </div>
+        <form>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                    <input type="text" class="form-control" placeholder="Filter audit records" ng-model="auditFilter">
+                </div>      
+            </div>
+        </form>       
+        <table class="table table-hover table-striped table-condensed">
+            <tr>
+                <th></th>
+                <th>Requestor</th>
+                <th>Performed</th>
+                <th>Requested</th>
+                <th>Type</th>
+                <th>Operation</th>
+                <th>Module</th>
+                <th>Host</th>
+                <th>VIP</th>
+            </tr>
+            <tr ng-repeat-start="a in audits| filter:auditFilter">
+                <td>
+                    <span ng-if="a.expanded" class="glyphicon glyphicon-chevron-down" ng-click="a.expanded = false"></span>
+                    <span ng-if="!a.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getAuditOutput(a);"></span>
+                    <span ng-if="a.successfull" class="glyphicon glyphicon-thumbs-up"></span>
+                    <span ng-if="!a.successfull" class="glyphicon glyphicon-thumbs-downp"></span>
+                </td>
+                <td>{{a.requestor}}</td>
+                <td>{{a.timePerformed}}</td>
+                <td>{{a.timeRequested}}</td>
+                <td>{{a.type}}</td>
+                <td>{{a.operation}}</td>
+                <td>{{a.moduleName}}</td>
+                <td>{{a.hostName}}</td>
+                <td>{{a.vipName}}</td>
+            </tr>
+            <tr ng-if="a.expanded" ng-repeat-end="">
+                <td colspan="9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <div ng-repeat="d in a.left">
+                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <div ng-repeat="d in a.right">
+                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                    <pre ng-if="a.output.length > 0">{{a.output}}</pre>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,144 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h4>Modules
+            <div class="btn-group" uib-dropdown ng-if="service.canModify && service.active" is-open="status.isopen">
+                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                    <li role="menuitem"><a ng-click="openAddModuleModal();">Add module to {{service.serviceName}}</a></li>
+                </ul>
+            </div>
+        </h4>
+        <table class="table table-hover table-striped table-condensed">
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Build Order</th>
+                <th>Type</th>
+                <th>Git Project</th>
+                <th>Git Folder</th>
+            </tr>
+            <tr ng-repeat-start="m in service.modules">
+                <td>
+                    <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
+                    <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
+                </td>
+                <td>
+                    {{m.moduleName}}
+                    <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Deployable'" is-open="status.isopen">
+                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                            <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
+                            <li class="divider"></li>
+                            <li role="menuitem"ng-repeat="network in config.networks">
+                                <a ng-click="openModuleFileModal(m, network);">Manage file for {{network.name}}</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
+                            <li role="menuitem"ng-repeat="sr in m.uses">
+                                <a ng-click="deleteServiceRef(service.serviceId, m.moduleId, sr.serverServiceId, sr.serverModuleId);">Remove dependence on {{sr.moduleName}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Library'" is-open="status.isopen">
+                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                            <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
+                            <li class="divider"></li>
+                            <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
+                            <li role="menuitem"ng-repeat="sr in m.uses">
+                                <a ng-click="deleteServiceRef(service.serviceId, m.moduleId, sr.serverServiceId, sr.serverModuleId);">Remove dependence on {{sr.moduleName}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Test'" is-open="status.isopen">
+                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
+                            <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>{{m.order}}</td>
+                <td>{{m.moduleType}}</td>
+                <td>
+                    <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{m.gitProject}}" target="_blank">{{team.gitGroup}}/{{m.gitProject}}.git</a>
+                </td>
+                <td>/{{m.gitFolder}}</td>
+            </tr>
+            <tr ng-if="m.expanded" ng-repeat-end="">
+                <td colspan="9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>Maven Group ID:</dt>
+                                <dd>{{m.mavenGroupId}}</dd>
+                                <dt>Maven Artifact ID:</dt>
+                                <dd>{{m.mavenArtifactId}}</dd>
+                                <dt>Artifact Type:</dt>
+                                <dd>{{m.artifactType}}</dd>
+                                <div ng-if="m.artifactSuffix">
+                                    <dt>Artifact Suffix:</dt>
+                                    <dd>{{m.artifactSuffix}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Deployable'">
+                                    <dt>Host Abbr:</dt>
+                                    <dd>{{m.hostAbbr}}</dd>
+                                    <dt>Networks:</dt>
+                                    <dd><span ng-repeat="(nname, val) in m.networkNames"><span ng-if="val">{{nname}} </span></span></dd>
+                                    <dt>Availability URL:</dt>
+                                    <dd>{{m.availabilityUrl}}</dd>
+                                    <dt>Version URL:</dt>
+                                    <dd>{{m.versionUrl}}</dd>
+                                    <dt>Run As:</dt>
+                                    <dd>{{m.runAs}}</dd>
+                                    <dt>Deployment Folder:</dt>
+                                    <dd>{{m.deploymentFolder}}</dd>
+                                    <dt>Start Cmd Line:</dt>
+                                    <dd>{{m.startCmdLine}}</dd>
+                                    <dt>Start Timeout:</dt>
+                                    <dd>{{m.startTimeOut}}</dd>
+                                    <dt>Stop Cmd Line:</dt>
+                                    <dd>{{m.stopCmdLine}}</dd>
+                                    <dt>Stop Timeout:</dt>
+                                    <dd>{{m.stopTimeOut}}</dd>
+                                    <div ng-if="m.configName">
+                                        <dt>{{config.moduleConfigName}}:</dt>
+                                        <dd>{{m.configName}}</dd>
+                                    </div>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>Used By:</dt>
+                                <dd>
+                                    <div ng-repeat="sr in m.usedBy">
+                                        <a href="#/Service/{{sr.clientServiceId}}">{{sr.moduleName}}</a> 
+                                        <br/>
+                                    </div>
+                                </dd>
+                                <dt>Uses:</dt>
+                                <dd>
+                                    <div ng-repeat="sr in m.uses">
+                                        <a href="#/Service/{{sr.serverServiceId}}">{{sr.moduleName}}</a> 
+                                        <br/>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

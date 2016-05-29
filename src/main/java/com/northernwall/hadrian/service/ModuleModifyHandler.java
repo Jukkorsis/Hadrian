@@ -87,7 +87,6 @@ public class ModuleModifyHandler extends BasicHandler {
         }
         
         //todo check it there are host on a network that is marked as false
-        //todo include partial html
 
         module.setModuleName(data.moduleName);
         module.setMavenGroupId(data.mavenGroupId);
