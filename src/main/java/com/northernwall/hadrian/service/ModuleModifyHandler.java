@@ -17,6 +17,7 @@ package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
@@ -26,6 +27,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutModuleData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -61,6 +63,16 @@ public class ModuleModifyHandler extends BasicHandler {
         
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
+        
+        List<Host> hosts = getDataAccess().getHosts(data.serviceId);
+        for (Host host : hosts) {
+            if (host.getModuleId().equals(data.moduleId)) {
+                Boolean temp = data.networkNames.get(host.getNetwork());
+                if (temp == null || !temp.booleanValue()) {
+                    throw new Http400BadRequestException("Can not remove a network from a module with an active host");
+                }
+            }
+        }
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         List<Module> zeroModules = new LinkedList<>();
@@ -86,8 +98,6 @@ public class ModuleModifyHandler extends BasicHandler {
             data.order = modules.size();
         }
         
-        //todo check it there are host on a network that is marked as false
-
         module.setModuleName(data.moduleName);
         module.setMavenGroupId(data.mavenGroupId);
         module.setMavenArtifactId(data.mavenArtifactId);
