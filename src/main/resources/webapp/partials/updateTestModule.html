@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h3 class="modal-title">Update Test Module</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <dl class="dl-horizontal">
+        <dt>Name:</dt>
+        <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control" uib-popover="It's convention to name modules with the service's abbreviation (capitalized) followed by a dash then the module's function. For example FOO-service or FOO-client." popover-trigger="mouseenter"></dd>
+        <dt>Build Order:</dt>
+        <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
+        <dt>Run As User:</dt>
+        <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
+        <dt>Deployment Folder:</dt>
+        <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
+        <dt>Start Cmd Line:</dt>
+        <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        <dt>Start Time Out:</dt>
+        <dd><input ng-model="formUpdateModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Update Test Module</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

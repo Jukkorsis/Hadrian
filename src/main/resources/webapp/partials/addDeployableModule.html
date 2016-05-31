@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <h3 class="modal-title">Create Deployable Module</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Name:</dt>
+                <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control" uib-popover="It's convention to name modules with the service's abbreviation (capitalized) followed by a dash then the module's function. For example FOO-service or FOO-client." popover-trigger="mouseenter"></dd>
+                <div ng-if="service.gitMode === 'Flat'">
+                    <dt>Git Project:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <div class="input-group-addon">{{team.gitGroup}} / </div>
+                            <input ng-model="formSaveModule.gitProject" type="text" class="form-control">
+                            <div class="input-group-addon">.git</div>
+                        </div>
+                    </dd>
+                </div>
+                <div ng-if="service.gitMode === 'Consolidated'">
+                    <dt>Git Folder:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <div class="input-group-addon"> / </div>
+                            <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
+                        </div>
+                    </dd>
+                </div>
+                <dt>Maven Group Id:</dt>
+                <dd><input ng-model="formSaveModule.mavenGroupId" type="text" class="form-control"></dd>
+                <dt>Maven Artifact Id:</dt>
+                <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
+                <dt>Networks:</dt>
+                <dd>
+                    <span ng-repeat="n in config.networkNames">
+                        <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
+                    </span>
+                </dd>
+                <dt>Host Abbr:</dt>
+                <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
+                <dt>Run As User:</dt>
+                <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+                <dt>Start Cmd Line:</dt>
+                <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Start Time Out:</dt>
+                <dd><input ng-model="formSaveModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Build Order:</dt>
+                <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
+                <dt>Template:</dt>
+                <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+                <dt>Artifact Type:</dt>
+                <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
+                <dt>Artifact Suffix:</dt>
+                <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
+                <dt>Version Url:</dt>
+                <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
+                <dt>Availability Url:</dt>
+                <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
+                <dt>Deployment Folder:</dt>
+                <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+                <dt>Stop Cmd Line:</dt>
+                <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Stop Time Out:</dt>
+                <dd><input ng-model="formSaveModule.stopTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Create Deployable Module</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

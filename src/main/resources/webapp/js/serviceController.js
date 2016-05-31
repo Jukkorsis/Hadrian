@@ -99,10 +99,37 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddModuleModal = function () {
+        $scope.openAddDeployableModuleModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'partials/addModule.html',
+                templateUrl: 'partials/addDeployableModule.html',
+                controller: 'ModalAddModuleCtrl',
+                size: 'lg',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    },
+                    moduleType: function () {
+                        return 'Deployable';
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openAddLibraryModuleModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addLibraryModule.html',
                 controller: 'ModalAddModuleCtrl',
                 resolve: {
                     team: function () {
@@ -113,6 +140,35 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     },
                     config: function () {
                         return $scope.config;
+                    },
+                    moduleType: function () {
+                        return 'Library';
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openAddTestModuleModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addTestModule.html',
+                controller: 'ModalAddModuleCtrl',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    },
+                    moduleType: function () {
+                        return 'Test';
                     }
                 }
             });
@@ -123,26 +179,73 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         $scope.openUpdateModuleModal = function (module) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/updateModule.html',
-                controller: 'ModalUpdateModuleCtrl',
-                resolve: {
-                    service: function () {
-                        return $scope.service;
-                    },
-                    module: function () {
-                        return module;
-                    },
-                    config: function () {
-                        return $scope.config;
+            if (module.moduleType === 'Deployable') {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/updateDeployableModule.html',
+                    controller: 'ModalUpdateModuleCtrl',
+                    size: 'lg',
+                    resolve: {
+                        service: function () {
+                            return $scope.service;
+                        },
+                        module: function () {
+                            return module;
+                        },
+                        config: function () {
+                            return $scope.config;
+                        }
                     }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
+                });
+                modalInstance.result.then(function () {
+                    $route.reload();
+                }, function () {
+                });
+            }
+            if (module.moduleType === 'Library') {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/updateLibraryModule.html',
+                    controller: 'ModalUpdateModuleCtrl',
+                    resolve: {
+                        service: function () {
+                            return $scope.service;
+                        },
+                        module: function () {
+                            return module;
+                        },
+                        config: function () {
+                            return $scope.config;
+                        }
+                    }
+                });
+                modalInstance.result.then(function () {
+                    $route.reload();
+                }, function () {
+                });
+            }
+            if (module.moduleType === 'Test') {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/updateTestModule.html',
+                    controller: 'ModalUpdateModuleCtrl',
+                    resolve: {
+                        service: function () {
+                            return $scope.service;
+                        },
+                        module: function () {
+                            return module;
+                        },
+                        config: function () {
+                            return $scope.config;
+                        }
+                    }
+                });
+                modalInstance.result.then(function () {
+                    $route.reload();
+                }, function () {
+                });
+            }
         };
 
         $scope.openModuleFileModal = function (module, network) {
@@ -838,8 +941,8 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'team', 'service',
-    function ($scope, $http, $modalInstance, $route, config, team, service) {
+hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'moduleType', 'team', 'service',
+    function ($scope, $http, $modalInstance, $route, config, moduleType, team, service) {
         $scope.errorMsg = null;
         $scope.team = team;
         $scope.service = service;
@@ -848,11 +951,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule = {};
         $scope.formSaveModule.moduleName = service.serviceAbbr + "-";
         $scope.formSaveModule.order = 1;
-        if (service.serviceType === 'Service') {
-            $scope.formSaveModule.moduleType = $scope.config.moduleTypes[0];
-        } else {
-            $scope.formSaveModule.moduleType = 'Library';
-        }
+        $scope.formSaveModule.moduleType = moduleType;
         $scope.formSaveModule.deployableTemplate = $scope.config.deployableTemplates[0];
         $scope.formSaveModule.libraryTemplate = $scope.config.libraryTemplates[0];
         $scope.formSaveModule.testTemplate = $scope.config.testTemplates[0];

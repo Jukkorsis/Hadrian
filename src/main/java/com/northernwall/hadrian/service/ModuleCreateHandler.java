@@ -102,7 +102,7 @@ public class ModuleCreateHandler extends BasicHandler {
             data.moduleType = ModuleType.Library;
         }
 
-        if (!data.moduleType.equals(ModuleType.Deployable)) {
+        if (data.moduleType.equals(ModuleType.Library)) {
             data.hostAbbr = "";
             data.versionUrl = "";
             data.availabilityUrl = "";
@@ -110,6 +110,12 @@ public class ModuleCreateHandler extends BasicHandler {
             data.deploymentFolder = "";
             data.startCmdLine = "";
             data.startTimeOut = 0;
+            data.stopCmdLine = "";
+            data.stopTimeOut = 0;
+        } else if (data.moduleType.equals(ModuleType.Test)) {
+            data.hostAbbr = "";
+            data.versionUrl = "";
+            data.availabilityUrl = "";
             data.stopCmdLine = "";
             data.stopTimeOut = 0;
         } else {

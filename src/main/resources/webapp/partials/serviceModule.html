@@ -1,12 +1,22 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <h4>Modules
-            <div class="btn-group" uib-dropdown ng-if="service.canModify && service.active" is-open="status.isopen">
+            <div class="btn-group" uib-dropdown ng-if="service.canModify && service.serviceType === 'Service'" is-open="status.isopen">
                 <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                     <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem"><a ng-click="openAddModuleModal();">Add module to {{service.serviceName}}</a></li>
+                    <li role="menuitem"><a ng-click="openAddDeployableModuleModal();">Add Deployable module</a></li>
+                    <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
+                    <li role="menuitem"><a ng-click="openAddTestModuleModal();">Add Test module</a></li>
+                </ul>
+            </div>
+            <div class="btn-group" uib-dropdown ng-if="service.canModify && service.serviceType !== 'Service'" is-open="status.isopen">
+                <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                    <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                    <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
                 </ul>
             </div>
         </h4>
@@ -80,15 +90,17 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
-                                <dt>Maven Group ID:</dt>
-                                <dd>{{m.mavenGroupId}}</dd>
-                                <dt>Maven Artifact ID:</dt>
-                                <dd>{{m.mavenArtifactId}}</dd>
-                                <dt>Artifact Type:</dt>
-                                <dd>{{m.artifactType}}</dd>
-                                <div ng-if="m.artifactSuffix">
-                                    <dt>Artifact Suffix:</dt>
-                                    <dd>{{m.artifactSuffix}}</dd>
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Library'">
+                                    <dt>Maven Group ID:</dt>
+                                    <dd>{{m.mavenGroupId}}</dd>
+                                    <dt>Maven Artifact ID:</dt>
+                                    <dd>{{m.mavenArtifactId}}</dd>
+                                    <dt>Artifact Type:</dt>
+                                    <dd>{{m.artifactType}}</dd>
+                                    <div ng-if="m.artifactSuffix">
+                                        <dt>Artifact Suffix:</dt>
+                                        <dd>{{m.artifactSuffix}}</dd>
+                                    </div>
                                 </div>
                                 <div ng-if="m.moduleType === 'Deployable'">
                                     <dt>Host Abbr:</dt>
@@ -99,6 +111,8 @@
                                     <dd>{{m.availabilityUrl}}</dd>
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Test'">
                                     <dt>Run As:</dt>
                                     <dd>{{m.runAs}}</dd>
                                     <dt>Deployment Folder:</dt>
@@ -107,6 +121,8 @@
                                     <dd>{{m.startCmdLine}}</dd>
                                     <dt>Start Timeout:</dt>
                                     <dd>{{m.startTimeOut}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Deployable'">
                                     <dt>Stop Cmd Line:</dt>
                                     <dd>{{m.stopCmdLine}}</dd>
                                     <dt>Stop Timeout:</dt>
