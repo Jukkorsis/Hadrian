@@ -104,6 +104,7 @@ public class ModuleCreateHandler extends BasicHandler {
 
         if (data.moduleType.equals(ModuleType.Library)) {
             data.hostAbbr = "";
+            data.hostname = "";
             data.versionUrl = "";
             data.availabilityUrl = "";
             data.runAs = "";
@@ -114,11 +115,15 @@ public class ModuleCreateHandler extends BasicHandler {
             data.stopTimeOut = 0;
         } else if (data.moduleType.equals(ModuleType.Test)) {
             data.hostAbbr = "";
+            data.mavenGroupId = "";
+            data.mavenArtifactId = "";
+            data.artifactSuffix = "";
             data.versionUrl = "";
             data.availabilityUrl = "";
             data.stopCmdLine = "";
             data.stopTimeOut = 0;
         } else {
+            data.hostname = "";
             if (data.hostAbbr.contains("-")) {
                 throw new Http400BadRequestException("Can not have '-' in host abbr");
             }
@@ -177,6 +182,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.artifactType,
                 data.artifactSuffix,
                 data.hostAbbr.toLowerCase(),
+                data.hostname,
                 data.versionUrl,
                 data.availabilityUrl,
                 data.runAs,

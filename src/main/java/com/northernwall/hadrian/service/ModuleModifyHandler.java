@@ -104,6 +104,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setArtifactType(data.artifactType);
         module.setArtifactSuffix(data.artifactSuffix);
         module.setHostAbbr(data.hostAbbr.toLowerCase());
+        module.setHostname(data.hostname);
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setRunAs(data.runAs);

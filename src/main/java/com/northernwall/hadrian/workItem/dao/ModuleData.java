@@ -31,6 +31,7 @@ public class ModuleData {
     public String artifactType;
     public String artifactSuffix;
     public String hostAbbr;
+    public String hostname;
     public String versionUrl;
     public String availabilityUrl;
     public String runAs;
@@ -57,6 +58,7 @@ public class ModuleData {
         temp.artifactType = module.getArtifactType();
         temp.artifactSuffix = module.getArtifactSuffix();
         temp.hostAbbr = module.getHostAbbr();
+        temp.hostname = module.getHostname();
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.runAs = module.getRunAs();

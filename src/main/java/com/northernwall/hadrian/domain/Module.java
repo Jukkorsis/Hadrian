@@ -34,6 +34,7 @@ public class Module implements Comparable<Module> {
     private String artifactType;
     private String artifactSuffix;
     private String hostAbbr;
+    private String hostname;
     private String versionUrl;
     private String availabilityUrl;
     private String runAs;
@@ -45,7 +46,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> networkNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
+    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -58,6 +59,7 @@ public class Module implements Comparable<Module> {
         this.artifactType = artifactType;
         this.artifactSuffix = artifactSuffix;
         this.hostAbbr = hostAbbr;
+        this.hostname = hostname;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.runAs = runAs;
@@ -164,6 +166,14 @@ public class Module implements Comparable<Module> {
 
     public void setHostAbbr(String hostAbbr) {
         this.hostAbbr = hostAbbr;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public String getVersionUrl() {

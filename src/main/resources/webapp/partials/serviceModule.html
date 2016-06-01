@@ -112,6 +112,10 @@
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
                                 </div>
+                                <div ng-if="m.moduleType === 'Test'">
+                                    <dt>Host Name:</dt>
+                                    <dd>{{m.hostname}}</dd>
+                                </div>
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Test'">
                                     <dt>Run As:</dt>
                                     <dd>{{m.runAs}}</dd>

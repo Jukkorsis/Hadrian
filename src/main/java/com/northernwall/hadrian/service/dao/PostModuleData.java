@@ -36,6 +36,7 @@ public class PostModuleData {
     public String artifactType;
     public String artifactSuffix;
     public String hostAbbr;
+    public String hostname;
     public String versionUrl;
     public String availabilityUrl;
     public String runAs;

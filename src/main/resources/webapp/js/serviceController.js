@@ -962,6 +962,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
         $scope.formSaveModule.artifactSuffix = "";
         $scope.formSaveModule.hostAbbr = "";
+        $scope.formSaveModule.hostname = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.runAs = "";
@@ -988,6 +989,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 artifactType: $scope.formSaveModule.artifactType,
                 artifactSuffix: $scope.formSaveModule.artifactSuffix,
                 hostAbbr: $scope.formSaveModule.hostAbbr,
+                hostname: $scope.formSaveModule.hostname,
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 runAs: $scope.formSaveModule.runAs,
@@ -1030,6 +1032,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.artifactType = module.artifactType;
         $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
         $scope.formUpdateModule.hostAbbr = module.hostAbbr;
+        $scope.formUpdateModule.hostname = module.hostname;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.runAs = module.runAs;
@@ -1052,6 +1055,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 artifactType: $scope.formUpdateModule.artifactType,
                 artifactSuffix: $scope.formUpdateModule.artifactSuffix,
                 hostAbbr: $scope.formUpdateModule.hostAbbr,
+                hostname: $scope.formUpdateModule.hostname,
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 runAs: $scope.formUpdateModule.runAs,
