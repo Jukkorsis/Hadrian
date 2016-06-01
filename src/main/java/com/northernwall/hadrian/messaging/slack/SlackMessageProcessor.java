@@ -37,7 +37,9 @@ public class SlackMessageProcessor extends MessageProcessor {
                 || messageType.slackBody == null
                 || messageType.slackBody.isEmpty()
                 || slackUrl == null
-                || slackUrl.isEmpty()) {
+                || slackUrl.isEmpty()
+                || team.getTeamSlack() == null
+                || team.getTeamSlack().isEmpty()) {
             return;
         }
         
