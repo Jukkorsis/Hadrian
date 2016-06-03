@@ -120,6 +120,21 @@ public class AccessHelper {
         return user;
     }
 
+    public User checkIfUserCanAudit(Request request, Team team) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new Http404NotFoundException("unknown user attempted to add audit record");
+        }
+        if (user.isAudit()) {
+            return user;
+        }
+        String username = user.getUsername();
+        if (!team.getUsernames().contains(username)) {
+            throw new Http401UnauthorizedException(username + " attempted to add audit record on team " + team.getTeamName());
+        }
+        return user;
+    }
+
     public User checkIfUserCanAudit(Request request, String teamId) {
         User user = (User) request.getAttribute(Const.ATTR_USER);
         if (user == null) {

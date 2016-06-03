@@ -15,9 +15,14 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.domain.GitMode;
+import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
+import com.northernwall.hadrian.stubs.StubDataAccess;
 import com.northernwall.hadrian.stubs.StubMessageProcessor;
 import com.northernwall.hadrian.stubs.StubParameters;
 import com.squareup.okhttp.ConnectionPool;
@@ -48,14 +53,16 @@ public class MessagingCoodinatorTest {
 
     @Test
     public void sendMessageTest() {
-        MessagingCoodinator mc = new MessagingCoodinator(new StubParameters(), client);
+        MessagingCoodinator mc = new MessagingCoodinator(new StubDataAccess(), new StubParameters(), client);
         MessageType mt = mc.getMessageType("TEST");
+        Team team = new Team("test Team", null, null, "myTeam", null, null);
+        Service service = new Service("TS", "Test Service", team.getTeamId(), "Desc", "service", GitMode.Consolidated, "gitGroup", true);
+        Module module = new Module("Test Module", service.getServiceId(), 0, ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, null);
         Map<String, String> data = new HashMap<>();
         data.put("A", "a");
         data.put("B", "b");
         data.put("C", null);
-        Team team = new Team("test Team", null, null, "reporting", null, null);
-        mc.sendMessage(mt, team, data);
+        mc.sendMessage(mt, team, service, module, data);
         Assert.assertEquals("Hi a.", StubMessageProcessor.text);
     }
 

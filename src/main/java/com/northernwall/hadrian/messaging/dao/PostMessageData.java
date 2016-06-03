@@ -9,6 +9,8 @@ public class PostMessageData {
     public String serviceName;
     public String serviceAbbr;
     public String moduleName;
+    public String gitlabNamespace;
+    public String gitlabProject;
     public Map<String, String> data = new HashMap<>();
 
 }
