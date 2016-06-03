@@ -44,8 +44,8 @@
                             <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                             <li class="divider"></li>
-                            <li role="menuitem"ng-repeat="network in config.networks">
-                                <a ng-click="openModuleFileModal(m, network);">Manage file for {{network.name}}</a>
+                            <li role="menuitem"ng-repeat="(nname, val) in m.networkNames">
+                                <a ng-click="openModuleFileModal(m, nname);">Manage file for {{nname}}</a>
                             </li>
                             <li class="divider"></li>
                             <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
@@ -106,7 +106,7 @@
                                     <dt>Host Abbr:</dt>
                                     <dd>{{m.hostAbbr}}</dd>
                                     <dt>Networks:</dt>
-                                    <dd><span ng-repeat="(nname, val) in m.networkNames"><span ng-if="val">{{nname}} </span></span></dd>
+                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
                                     <dt>Availability URL:</dt>
                                     <dd>{{m.availabilityUrl}}</dd>
                                     <dt>Version URL:</dt>

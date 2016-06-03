@@ -80,6 +80,7 @@ public class ServiceRefreshHandler extends BasicHandler {
         List<Module> modules = getDataAccess().getModules(service.getServiceId());
         Collections.sort(modules);
         for (Module module : modules) {
+            module.cleanNetworkNames();
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
             if (includeStuff) {
                 getModuleRefInfo(module, getModuleData);

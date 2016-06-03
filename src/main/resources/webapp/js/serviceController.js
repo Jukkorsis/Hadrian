@@ -1097,7 +1097,7 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
 
         $scope.loading = true;
 
-        var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId + "&network=" + $scope.network.name, {});
+        var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId + "&network=" + $scope.network, {});
         responsePromise.success(function (dataFromServer, status, headers, config) {
             $scope.formFile.name = dataFromServer.name;
             $scope.formFile.contents = dataFromServer.contents;
@@ -1108,7 +1108,7 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
-                network: $scope.network.name,
+                network: $scope.network,
                 name: $scope.formFile.name,
                 contents: $scope.formFile.contents
             };

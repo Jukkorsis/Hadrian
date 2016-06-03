@@ -17,6 +17,8 @@
 package com.northernwall.hadrian.domain;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -254,6 +256,27 @@ public class Module implements Comparable<Module> {
 
     public void setNetworkNames(Map<String, Boolean> networkNames) {
         this.networkNames = networkNames;
+    }
+    
+    public void cleanNetworkNames() {
+        if (networkNames == null || networkNames.isEmpty()) {
+            return;
+        }
+        List<String> keys = null;
+        for (String key : networkNames.keySet()) {
+            if (!networkNames.get(key).booleanValue()) {
+                if (keys == null) {
+                    keys = new LinkedList<>();
+                }
+                keys.add(key);
+            }
+        }
+        if (keys == null) {
+            return;
+        }
+        for (String key : keys) {
+            networkNames.remove(key);
+        }
     }
 
     @Override

@@ -60,10 +60,10 @@ public class ModuleModifyHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutModuleData data = fromJson(request, PutModuleData.class);
         Service service = getService(data.serviceId, null, null);
-        
+
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
-        
+
         List<Host> hosts = getDataAccess().getHosts(data.serviceId);
         for (Host host : hosts) {
             if (host.getModuleId().equals(data.moduleId)) {
@@ -97,7 +97,7 @@ public class ModuleModifyHandler extends BasicHandler {
         if (data.order > modules.size()) {
             data.order = modules.size();
         }
-        
+
         module.setModuleName(data.moduleName);
         module.setMavenGroupId(data.mavenGroupId);
         module.setMavenArtifactId(data.mavenArtifactId);
@@ -115,6 +115,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setStopTimeOut(data.stopTimeOut);
         module.setConfigName(data.configName);
         module.setNetworkNames(data.networkNames);
+        module.cleanNetworkNames();
 
         if (module.getOrder() != data.order) {
             if (module.getOrder() > 0) {

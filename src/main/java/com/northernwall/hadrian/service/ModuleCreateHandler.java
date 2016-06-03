@@ -169,7 +169,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 }
             }
         }
-
+        
         Module module = new Module(
                 data.moduleName,
                 data.serviceId,
@@ -193,6 +193,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopTimeOut,
                 data.configName,
                 data.networkNames);
+        module.cleanNetworkNames();
         getDataAccess().saveModule(module);
         if (module.getOrder() > 0) {
             modules.add(module.getOrder() - 1, module);
