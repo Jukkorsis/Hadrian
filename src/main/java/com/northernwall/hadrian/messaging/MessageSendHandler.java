@@ -35,18 +35,18 @@ public class MessageSendHandler extends BasicHandler {
             throw new Http400BadRequestException("Could not find MessageType " + data.messageTypeName);
         }
 
-        if (data.gitlabNamespace != null
-                && !data.gitlabNamespace.isEmpty()
-                && data.gitlabProject != null
-                && !data.gitlabProject.isEmpty()) {
+        if (data.gitGroup != null
+                && !data.gitGroup.isEmpty()
+                && data.gitProject != null
+                && !data.gitProject.isEmpty()) {
             List<Service> services = getDataAccess().getActiveServices();
             for (Team team : getDataAccess().getTeams()) {
-                if (team.getGitGroup().equalsIgnoreCase(data.gitlabNamespace)) {
+                if (team.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
                     accessHelper.checkIfUserCanAudit(request, team);
                     List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
                     for (Service service : teamServices) {
                         for (Module module : getDataAccess().getModules(service.getServiceId())) {
-                            if (module.getGitProject().equalsIgnoreCase(data.gitlabProject)) {
+                            if (module.getGitProject().equalsIgnoreCase(data.gitProject)) {
                                 messagingCoodinator.sendMessage(messageType, team, service, module, data.data);
                             }
                         }
