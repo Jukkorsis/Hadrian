@@ -21,39 +21,6 @@ public class DataAccessUpdater {
         }
         
         logger.info("Current DB version is {}, no upgrade required.", version);
-        List<Service> services = dataAccess.getAllServices();
-        if (services != null && !services.isEmpty()) {
-            for (Service service : services) {
-                List<Module> modules = dataAccess.getModules(service.getServiceId());
-                for (Module module : modules) {
-                    if (module.getModuleType() == ModuleType.Deployable) {
-                        boolean updated = false;
-                        if (module.getNetworkNames() == null) {
-                            updated = true;
-                            module.setNetworkNames(new HashMap<>());
-                        }
-                        if (!module.getNetworkNames().containsKey("Prod")) {
-                            updated = true;
-                            module.getNetworkNames().put("Prod", Boolean.TRUE);
-                            System.out.println("not found Prod " + service.getServiceAbbr() + " - " + module.getModuleName());
-                        }
-                        if (!module.getNetworkNames().containsKey("Test")) {
-                            updated = true;
-                            module.getNetworkNames().put("Test", Boolean.TRUE);
-                            System.out.println("not found Test " + service.getServiceAbbr() + " - " + module.getModuleName());
-                        }
-                        if (!module.getNetworkNames().containsKey("Reg")) {
-                            updated = true;
-                            module.getNetworkNames().put("Reg", Boolean.TRUE);
-                            System.out.println("not found Reg " + service.getServiceAbbr() + " - " + module.getModuleName());
-                        }
-                        if (updated) {
-                            dataAccess.saveModule(module);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private DataAccessUpdater() {

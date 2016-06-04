@@ -26,10 +26,15 @@
                         <tr ng-repeat="cf in m.customFunctions">
                             <td>
                                 {{cf.name}}
-                                <span ng-if="service.canModify">
-                                    <a ng-click="openUpdateCustomFunctionModal(cf)" class="btn btn-info btn-xs" uib-popover="Update custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
-                                    <a ng-click="deleteCustomFunction(cf.customFunctionId)" class="btn btn-danger btn-xs" uib-popover="Delete custom function {{cf.name}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-remove"></span></a>
-                                </span>
+                                <div class="btn-group" uib-dropdown  ng-if="service.canModify" is-open="status.isopen">
+                                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                                        <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                        <li role="menuitem"><a ng-click="openUpdateCustomFunctionModal(cf)">Update custom function></a></li>
+                                        <li role="menuitem"><a ng-click="deleteCustomFunction(cf.customFunctionId)">Delete custom function</a></li>
+                                    </ul>
+                                </div>
                             </td>
                             <td>{{cf.method}}</td>
                             <td>{{cf.url}}</td>
