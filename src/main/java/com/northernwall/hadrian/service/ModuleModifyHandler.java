@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutModuleData;
@@ -70,6 +71,16 @@ public class ModuleModifyHandler extends BasicHandler {
                 Boolean temp = data.networkNames.get(host.getNetwork());
                 if (temp == null || !temp.booleanValue()) {
                     throw new Http400BadRequestException("Can not remove a network from a module with an active host");
+                }
+            }
+        }
+
+        List<Vip> vips = getDataAccess().getVips(data.serviceId);
+        for (Vip vip : vips) {
+            if (vip.getModuleId().equals(data.moduleId)) {
+                Boolean temp = data.networkNames.get(vip.getNetwork());
+                if (temp == null || !temp.booleanValue()) {
+                    throw new Http400BadRequestException("Can not remove a network from a module with an active VIP");
                 }
             }
         }
