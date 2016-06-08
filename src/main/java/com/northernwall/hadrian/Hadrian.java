@@ -71,7 +71,8 @@ import com.northernwall.hadrian.service.VipCreateHandler;
 import com.northernwall.hadrian.service.VipDeleteHandler;
 import com.northernwall.hadrian.service.VipModifyHandler;
 import com.northernwall.hadrian.service.WorkItemGetHandler;
-import com.northernwall.hadrian.service.helper.HostDetailsHelper;
+import com.northernwall.hadrian.details.HostDetailsHelper;
+import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
@@ -118,11 +119,12 @@ public class Hadrian {
     private final WorkItemSender workItemSender;
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
+    private final VipDetailsHelper vipDetailsHelper;
     private final MessagingCoodinator messagingCoodinator;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.dataAccess = dataAccess;
@@ -130,6 +132,8 @@ public class Hadrian {
         this.moduleConfigHelper = moduleConfigHelper;
         this.accessHelper = accessHelper;
         this.accessHandler = accessHandler;
+        this.hostDetailsHelper = hostDetailsHelper;
+        this.vipDetailsHelper = vipDetailsHelper;
         this.calendarHelper = calendarHelper;
         this.workItemProcess = workItemProcess;
         this.workItemSender = workItemSender;
@@ -137,7 +141,6 @@ public class Hadrian {
 
         configHelper = new ConfigHelper(parameters, moduleArtifactHelper, moduleConfigHelper);
         infoHelper = new InfoHelper(client);
-        hostDetailsHelper = new HostDetailsHelper(client, parameters);
         messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
 
         setupJetty();

@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
-import com.northernwall.hadrian.service.helper.HostDetailsHelper;
+import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;

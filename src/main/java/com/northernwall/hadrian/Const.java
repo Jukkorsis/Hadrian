@@ -64,8 +64,14 @@ public class Const {
     public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.idleTimeout";
     public static final int JETTY_ACCEPT_QUEUE_SIZE_DEFAULT = 100;
     
+    public static final String HOST_DETAILS_HELPER_FACTORY_CLASS_NAME = "hostDetailsHelper.factoryClassName";
+    public static final String HOST_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.details.simple.SimpleHostDetailsHelperFactory";
     public static final String HOST_DETAILS_URL = "host.detailsUrl";
     public static final String HOST_DETAILS_ATTRIBUTES = "host.detailsAttrs";
+    
+    public static final String VIP_DETAILS_HELPER_FACTORY_CLASS_NAME = "vipDetailsHelper.factoryClassName";
+    public static final String VIP_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.details.simple.SimpleVipDetailsHelperFactory";
+    public static final String VIP_DETAILS_URL = "vip.detailsUrl";
 
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWorkItemSenderFactory";

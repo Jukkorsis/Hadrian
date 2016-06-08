@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.service.helper;
+package com.northernwall.hadrian.details.simple;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -37,17 +38,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HostDetailsHelper implements ParameterChangeListener {
+public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChangeListener {
 
     private final static Logger logger = LoggerFactory.getLogger(HostDetailsHelper.class);
 
     private final OkHttpClient client;
     private final Parameters parameters;
     private final JsonParser parser;
-    private List<String> urlTemplates;
+    private final List<String> urlTemplates;
     private final List<String> attributes;
 
-    public HostDetailsHelper(OkHttpClient client, Parameters parameters) {
+    public SimpleHostDetailsHelper(OkHttpClient client, Parameters parameters) {
         this.client = client;
         this.parameters = parameters;
         this.parser = new JsonParser();

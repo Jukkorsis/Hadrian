@@ -28,6 +28,10 @@ import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.db.DataAccessUpdater;
+import com.northernwall.hadrian.details.HostDetailsHelper;
+import com.northernwall.hadrian.details.HostDetailsHelperFactory;
+import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.details.VipDetailsHelperFactory;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
@@ -58,6 +62,8 @@ public class HadrianBuilder {
     private ModuleArtifactHelper moduleArtifactHelper;
     private ModuleConfigHelper moduleConfigHelper;
     private AccessHelper accessHelper;
+    private HostDetailsHelper hostDetailsHelper;
+    private VipDetailsHelper vipDetailsHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
     private WorkItemSender workItemSender;
@@ -226,6 +232,44 @@ public class HadrianBuilder {
             accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
         }
 
+        if (hostDetailsHelper == null) {
+            String factoryName = parameters.getString(Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find Host Details Helper class " + factoryName);
+            }
+            HostDetailsHelperFactory hostDetailsHelperFactory;
+            try {
+                hostDetailsHelperFactory = (HostDetailsHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation Host Details Helper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access Host Details Helper class " + factoryName);
+            }
+            hostDetailsHelper = hostDetailsHelperFactory.create(client, parameters);
+        }
+
+        if (vipDetailsHelper == null) {
+            String factoryName = parameters.getString(Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find VIP Details Helper class " + factoryName);
+            }
+            VipDetailsHelperFactory vipDetailsHelperFactory;
+            try {
+                vipDetailsHelperFactory = (VipDetailsHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation VIP Details Helper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access VIP Details Helper class " + factoryName);
+            }
+            vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters);
+        }
+
         if (calendarHelper == null) {
             String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -269,7 +313,7 @@ public class HadrianBuilder {
 
         DataAccessUpdater.update(dataAccess);
 
-        return new Hadrian(parameters, client, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
+        return new Hadrian(parameters, client, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
     }
 
     private String getHostname() {
