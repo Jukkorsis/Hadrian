@@ -73,6 +73,7 @@ import com.northernwall.hadrian.service.VipModifyHandler;
 import com.northernwall.hadrian.service.WorkItemGetHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.service.VipGetDetailsHandler;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
@@ -124,9 +125,10 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
+        this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
@@ -139,7 +141,6 @@ public class Hadrian {
         this.workItemSender = workItemSender;
         this.metricRegistry = metricRegistry;
 
-        configHelper = new ConfigHelper(parameters, moduleArtifactHelper, moduleConfigHelper);
         infoHelper = new InfoHelper(client);
         messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
 
@@ -196,6 +197,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/delete", new ServiceDeleteHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/createRef", new ServiceRefCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/deleteRef", new ServiceRefDeleteHandler(accessHelper, dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/vip/details", new VipGetDetailsHandler(dataAccess, vipDetailsHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(accessHelper, dataAccess, workItemProcess), true);

@@ -151,6 +151,13 @@ public abstract class BasicHandler extends AbstractHandler {
         throw new Http404NotFoundException("Could not find host");
     }
 
+    protected Vip getVip(Request request, Service service) {
+        return getVip(
+                request.getParameter("vipId"),
+                request.getParameter("vipName"),
+                service);
+    }
+
     protected Vip getVip(String vipId, String vipName, Service service) {
         if (vipId != null && !vipId.isEmpty()) {
             Vip vip = dataAccess.getVip(service.getServiceId(), vipId);

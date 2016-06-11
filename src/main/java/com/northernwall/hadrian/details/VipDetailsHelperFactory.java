@@ -15,11 +15,12 @@
  */
 package com.northernwall.hadrian.details;
 
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 
 public interface VipDetailsHelperFactory {
     
-    VipDetailsHelper create(OkHttpClient client, Parameters parameters);
+    VipDetailsHelper create(OkHttpClient client, Parameters parameters, ConfigHelper configHelper);
 
 }

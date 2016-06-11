@@ -15,6 +15,25 @@
  */
 package com.northernwall.hadrian.service.dao;
 
-public class GetVipDetailsData {
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+public class GetVipDetailsData {
+    public Map<String, String> address = new HashMap<>();
+    public List<GetVipDetailRowData> rows = new LinkedList<>();
+
+    public GetVipDetailRowData find(String hostName) {
+        for (GetVipDetailRowData data : rows) {
+            if (data.hostName.equalsIgnoreCase(hostName)) {
+                return data;
+            }
+        }
+        GetVipDetailRowData data = new GetVipDetailRowData();
+        data.hostName = hostName;
+        rows.add(data);
+        return data;
+    }
+    
 }

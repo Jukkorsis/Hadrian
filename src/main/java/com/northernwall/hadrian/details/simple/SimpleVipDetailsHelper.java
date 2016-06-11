@@ -15,10 +15,13 @@
  */
 package com.northernwall.hadrian.details.simple;
 
+import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.service.dao.GetVipDetailCellData;
 import com.northernwall.hadrian.service.dao.GetVipDetailsData;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -32,29 +35,90 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
 
     private final OkHttpClient client;
     private final Parameters parameters;
+    private final ConfigHelper configHelper;
+    private final Gson gson;
 
-    public SimpleVipDetailsHelper(OkHttpClient client, Parameters parameters) {
+    public SimpleVipDetailsHelper(OkHttpClient client, Parameters parameters, ConfigHelper configHelper) {
         this.client = client;
         this.parameters = parameters;
+        this.configHelper = configHelper;
+        this.gson = new Gson();
     }
 
     @Override
     public GetVipDetailsData getDetails(Vip vip) {
-        String url = parameters.getString(Const.VIP_DETAILS_URL, null);
-        if (url == null || url.isEmpty()) {
+        String vipUrl = parameters.getString(Const.VIP_DETAILS_URL, null);
+        String poolUrl = parameters.getString(Const.VIP_POOL_DETAILS_URL, null);
+        
+        if (vipUrl == null || vipUrl.isEmpty()) {
             return null;
         }
-        url = url.replace("{vip}", vip.getDns());
+        vipUrl = vipUrl.replace("{vip}", vip.getDns());
+        GetVipDetailsData data = new GetVipDetailsData();
+        for (String dataCenter : configHelper.getConfig().dataCenters) {
+            getDetailsForDataCenter(vip, data, vipUrl, poolUrl, dataCenter);
+        }
+        return data;
+    }
+    
+    private void getDetailsForDataCenter(Vip vip, GetVipDetailsData data, String vipUrl, String poolUrl, String dataCenter) {
+        VipInfo vipInfo = getVipInfo(vipUrl, dataCenter);
+        if (vipInfo == null) {
+            return;
+        }
+        data.address.put(dataCenter, vipInfo.address);
+        
+        for (VipPortInfo vipPortInfo : vipInfo.ports) {
+            if (vipPortInfo.port == vip.getVipPort()) {
+                VipPoolInfo vipPoolInfo = getPoolInfo(poolUrl, vipPortInfo.poolName, dataCenter);
+                if (vipPoolInfo != null) {
+                    for (VipMemberInfo member : vipPoolInfo.members) {
+                        GetVipDetailCellData cell = new GetVipDetailCellData();
+                        cell.priority = member.priority;
+                        cell.connections = member.connections;
+                        if (member.status == 0) {
+                            cell.status = "Off";
+                        } else if (member.status == 1) {
+                            cell.status = "On";
+                        } else {
+                            cell.status = "error";
+                        }
+                        data.find(member.hostName).details.put(dataCenter, cell);
+                    }
+                }
+            }
+        }
+    }
+    
+    private VipInfo getVipInfo(String url, String dataCenter) {
+        url = url.replace("{dc}", dataCenter.toUpperCase());
         Request httpRequest = new Request.Builder().url(url).build();
         try {
             Response resp = client.newCall(httpRequest).execute();
             if (resp.isSuccessful()) {
-
+                VipsInfo vipsInfo = gson.fromJson(resp.body().charStream(), VipsInfo.class);
+                return vipsInfo.vips.get(0);
             }
         } catch (Exception ex) {
-            logger.warn("Error while getting secondary vip details for {}, error {}", vip.getVipName(), ex.getMessage());
+            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
         }
         return null;
     }
-
+    
+    private VipPoolInfo getPoolInfo(String url, String poolName, String dataCenter) {
+        url = url.replace("{pool}", poolName);
+        url = url.replace("{dc}", dataCenter.toUpperCase());
+        Request httpRequest = new Request.Builder().url(url).build();
+        try {
+            Response resp = client.newCall(httpRequest).execute();
+            if (resp.isSuccessful()) {
+                VipPoolsInfo vipPoolsInfo = gson.fromJson(resp.body().charStream(), VipPoolsInfo.class);
+                return vipPoolsInfo.pools.get(0);
+            }
+        } catch (Exception ex) {
+            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
+        }
+        return null;
+    }
+    
 }

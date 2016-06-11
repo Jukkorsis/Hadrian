@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.details.simple;
 
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -23,8 +24,8 @@ import com.squareup.okhttp.OkHttpClient;
 public class SimpleVipDetailsHelperFactory implements VipDetailsHelperFactory {
 
     @Override
-    public VipDetailsHelper create(OkHttpClient client, Parameters parameters) {
-        return new SimpleVipDetailsHelper(client, parameters);
+    public VipDetailsHelper create(OkHttpClient client, Parameters parameters, ConfigHelper configHelper) {
+        return new SimpleVipDetailsHelper(client, parameters, configHelper);
     }
 
 }
