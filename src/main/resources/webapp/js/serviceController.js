@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails',
-    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails', 'VipDetails',
+    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails, VipDetails) {
         $scope.loading = true;
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
@@ -661,6 +661,64 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 host.left = details.left;
                 host.right = details.right;
             });
+        };
+
+        $scope.getVipDetails = function (vip) {
+            vip.loaded = false;
+            vip.expanded = true;
+
+            VipDetails.get({serviceId: $scope.service.serviceId, vipId: vip.vipId}, function (details) {
+                vip.details = details;
+                vip.loaded = true;
+            });
+        };
+
+        $scope.getVipDetailsHeader = function (details, dataCenter) {
+            if (details && details.address && details.address[dataCenter]) {
+                return details.address[dataCenter];
+            } else {
+                return " ";
+            }
+        };
+
+        $scope.getVipDetailsPriority = function (details, dataCenter) {
+            if (details && details[dataCenter]) {
+                return details[dataCenter].priority;
+            } else {
+                return " ";
+            }
+        };
+
+        $scope.getVipDetailsOff = function (details, dataCenter) {
+            if (details && details[dataCenter]) {
+                return details[dataCenter].status=== "Off";
+            } else {
+                return false;
+            }
+        };
+
+        $scope.getVipDetailsOn = function (details, dataCenter) {
+            if (details && details[dataCenter]) {
+                return details[dataCenter].status === "On";
+            } else {
+                return false;
+            }
+        };
+
+        $scope.getVipDetailsError = function (details, dataCenter) {
+            if (details && details[dataCenter]) {
+                return details[dataCenter].status=== "Error";
+            } else {
+                return false;
+            }
+        };
+
+        $scope.getVipDetailsConnections = function (details, dataCenter) {
+            if (details && details[dataCenter]) {
+                return details[dataCenter].connections;
+            } else {
+                return " ";
+            }
         };
 
         $scope.openAddCustomFunctionModal = function (module) {

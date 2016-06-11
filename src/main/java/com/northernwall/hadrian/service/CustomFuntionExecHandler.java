@@ -82,13 +82,13 @@ public class CustomFuntionExecHandler extends BasicHandler {
         com.squareup.okhttp.Request cfRequest = builder.build();
         try {
             com.squareup.okhttp.Response resp = client.newCall(cfRequest).execute();
-            InputStream inputStream = resp.body().byteStream();
-
-            byte[] buffer = new byte[50 * 1024];
-            int len = inputStream.read(buffer);
-            while (len != -1) {
-                response.getOutputStream().write(buffer, 0, len);
-                len = inputStream.read(buffer);
+            try (InputStream inputStream = resp.body().byteStream()) {
+                byte[] buffer = new byte[50 * 1024];
+                int len = inputStream.read(buffer);
+                while (len != -1) {
+                    response.getOutputStream().write(buffer, 0, len);
+                    len = inputStream.read(buffer);
+                }
             }
         } catch (UnknownHostException ex) {
             response.getOutputStream().print("Error: Unknown host!");

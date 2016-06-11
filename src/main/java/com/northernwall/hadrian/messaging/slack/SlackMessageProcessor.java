@@ -58,6 +58,7 @@ public class SlackMessageProcessor extends MessageProcessor {
         try {
             Response response = client.newCall(request).execute();
             logger.info("{} {} {}", response.isSuccessful(), response.code(), response.body().string());
+            response.body().close();
         } catch (IOException e) {
             logger.error("Exception which contacting Slack", e);
         }

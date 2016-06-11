@@ -117,34 +117,36 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
         Request httpRequest = new Request.Builder().url(url).build();
         try {
             Response resp = client.newCall(httpRequest).execute();
-            if (resp.isSuccessful()) {
-                Reader reader = new InputStreamReader(resp.body().byteStream());
-
-                JsonElement jsonElement = parser.parse(reader);
-                if (jsonElement.isJsonObject()) {
-                    JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                        if (entry.getValue().isJsonPrimitive()) {
-                            addPair(entry.getKey(), entry.getValue().getAsString(), data);
-                        } else if (entry.getValue().isJsonArray()) {
-                            StringBuffer buffer = null;
-                            JsonArray jsonArray = entry.getValue().getAsJsonArray();
-                            for (int i = 0; i < jsonArray.size(); i++) {
-                                JsonElement arrayElement = jsonArray.get(i);
-                                if (arrayElement.isJsonPrimitive()) {
-                                    if (buffer == null) {
-                                        buffer = new StringBuffer(arrayElement.getAsString());
-                                    } else {
-                                        buffer.append(", ");
-                                        buffer.append(arrayElement.getAsString());
+            try (Reader reader = new InputStreamReader(resp.body().byteStream())) {
+                if (resp.isSuccessful()) {
+                    JsonElement jsonElement = parser.parse(reader);
+                    if (jsonElement.isJsonObject()) {
+                        JsonObject jsonObject = jsonElement.getAsJsonObject();
+                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                            if (entry.getValue().isJsonPrimitive()) {
+                                addPair(entry.getKey(), entry.getValue().getAsString(), data);
+                            } else if (entry.getValue().isJsonArray()) {
+                                StringBuffer buffer = null;
+                                JsonArray jsonArray = entry.getValue().getAsJsonArray();
+                                for (int i = 0; i < jsonArray.size(); i++) {
+                                    JsonElement arrayElement = jsonArray.get(i);
+                                    if (arrayElement.isJsonPrimitive()) {
+                                        if (buffer == null) {
+                                            buffer = new StringBuffer(arrayElement.getAsString());
+                                        } else {
+                                            buffer.append(", ");
+                                            buffer.append(arrayElement.getAsString());
+                                        }
                                     }
                                 }
-                            }
-                            if (buffer != null) {
-                                addPair(entry.getKey(), buffer.toString(), data);
+                                if (buffer != null) {
+                                    addPair(entry.getKey(), buffer.toString(), data);
+                                }
                             }
                         }
                     }
+                } else {
+                    logger.warn("Call to {} failed with code {}", url, resp.code());
                 }
             }
         } catch (Exception ex) {

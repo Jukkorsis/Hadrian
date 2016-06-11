@@ -46,6 +46,12 @@ hadrianServices.factory('HostDetails', ['$resource', function($resource) {
         });
     }]);
 
+hadrianServices.factory('VipDetails', ['$resource', function($resource) {
+        return $resource('/v1/vip/details', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);
+
 hadrianServices.factory('DataStore', ['$resource', function($resource) {
         return $resource('/v1/datastore/:dataStoreId', {}, {
             query: {method: 'GET', params: {dataStoreId: 'services'}, isArray: false}
