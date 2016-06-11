@@ -79,6 +79,7 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
             return;
         }
         data.address.put(dataCenter, vipInfo.address);
+        data.name.put(dataCenter, vipInfo.name);
 
         for (VipPortInfo vipPortInfo : vipInfo.ports) {
             if (vipPortInfo.port == vip.getVipPort()) {

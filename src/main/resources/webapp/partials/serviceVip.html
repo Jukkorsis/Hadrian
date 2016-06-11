@@ -60,7 +60,7 @@
                                         <table class="table table-hover table-striped table-condensed">
                                             <tr>
                                                 <th>Host</th>
-                                                <th ng-repeat="dc in config.dataCenters">{{dc}}<br/>{{getVipDetailsHeader(ep.details, dc)}}</th>
+                                                <th ng-repeat="dc in config.dataCenters">{{dc}}<br/>{{getVipDetailsName(ep.details, dc)}}<br/>{{getVipDetailsAddress(ep.details, dc)}}</th>
                                             </tr>
                                             <tr ng-repeat="h in ep.details.rows">
                                                 <td>{{h.hostName}}</td>

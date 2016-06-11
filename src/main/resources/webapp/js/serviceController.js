@@ -673,7 +673,15 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.getVipDetailsHeader = function (details, dataCenter) {
+        $scope.getVipDetailsName = function (details, dataCenter) {
+            if (details && details.name && details.name[dataCenter]) {
+                return details.name[dataCenter];
+            } else {
+                return " ";
+            }
+        };
+
+        $scope.getVipDetailsAddress = function (details, dataCenter) {
             if (details && details.address && details.address[dataCenter]) {
                 return details.address[dataCenter];
             } else {

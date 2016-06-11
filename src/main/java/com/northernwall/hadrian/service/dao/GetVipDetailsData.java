@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class GetVipDetailsData {
     public Map<String, String> address = new HashMap<>();
+    public Map<String, String> name = new HashMap<>();
     public List<GetVipDetailRowData> rows = new LinkedList<>();
 
     public GetVipDetailRowData find(String hostName) {
