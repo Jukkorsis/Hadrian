@@ -9,13 +9,10 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
 import com.northernwall.hadrian.service.dao.GetModuleRefData;
 import com.northernwall.hadrian.service.dao.GetServiceData;
-import com.northernwall.hadrian.service.dao.GetVipData;
-import com.northernwall.hadrian.service.dao.GetVipRefData;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.service.helper.ReadAvailabilityRunnable;
 import com.northernwall.hadrian.service.helper.ReadVersionRunnable;
@@ -125,15 +122,6 @@ public class ServiceRefreshHandler extends BasicHandler {
                 GetHostData getHostData = GetHostData.create(host);
                 futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
                 futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
-                for (VipRef vipRef : getDataAccess().getVipRefsByHost(getHostData.hostId)) {
-                    GetVipRefData getVipRefData = GetVipRefData.create(vipRef);
-                    for (GetVipData vip : getModuleData.getVips(host.getNetwork())) {
-                        if (vip.vipId.equals(getVipRefData.vipId)) {
-                            getVipRefData.vipName = vip.vipName;
-                        }
-                    }
-                    getHostData.vipRefs.add(getVipRefData);
-                }
                 getModuleData.addHost(getHostData);
             }
         }

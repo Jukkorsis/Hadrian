@@ -87,9 +87,6 @@ public class EmailWorkItemSender extends WorkItemSender {
             case vip:
                 sendVipEmail(workItem);
                 break;
-            case hostvip:
-                sendHostVipEmail(workItem);
-                break;
             default:
                 logger.warn("Unknown workItem type {} with operation {}", workItem.getType(), workItem.getOperation());
         }
@@ -150,35 +147,6 @@ public class EmailWorkItemSender extends WorkItemSender {
         addLine("Protocol", workItem.getVip().protocol, body);
         addLine("VIP Port", Integer.toString(workItem.getVip().vipPort), body);
         addLine("Service Port", Integer.toString(workItem.getVip().servicePort), body);
-
-        emailWorkItem(subject, body.toString());
-    }
-
-    protected void sendHostVipEmail(WorkItem workItem) {
-        logger.info("Processing Host Vip {} {} on {} with opertion {}", workItem.getHost().hostName, workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
-
-        String subject;
-        switch (workItem.getOperation()) {
-            case create:
-                subject = "Add Host to Vip";
-                break;
-            case delete:
-                subject = "Remove Host from Vip";
-                break;
-            default:
-                logger.warn("Unknown workItem operation {} for host {}", workItem.getOperation(), workItem.getHost().hostName);
-                return;
-        }
-
-        StringBuffer body = new StringBuffer();
-        addEmailHeader(workItem, body);
-        body.append("\n");
-        addLine("Host Name", workItem.getHost().hostName, body);
-        addLine("Data Center", workItem.getHost().dataCenter, body);
-        addLine("Network", workItem.getHost().network, body);
-        body.append("\n");
-        addLine("VIP Name", workItem.getVip().vipName, body);
-        addLine("DNS", workItem.getVip().dns + "." + workItem.getVip().domain, body);
 
         emailWorkItem(subject, body.toString());
     }

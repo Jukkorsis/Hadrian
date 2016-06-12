@@ -122,10 +122,16 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             session.execute("DROP TABLE " + keyspace + ".serviceRefServer;");
         } catch (InvalidQueryException e) {
         }
+        try {
+            session.execute("DROP TABLE " + keyspace + ".vipRefHost;");
+        } catch (InvalidQueryException e) {
+        }
+        try {
+            session.execute("DROP TABLE " + keyspace + ".vipRefVip;");
+        } catch (InvalidQueryException e) {
+        }
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
-        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefHost (hostId text, vipId text, data text, PRIMARY KEY (hostId, vipId));");
-        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".vipRefVip(vipId text, hostId text, PRIMARY KEY (vipId, hostId));");
         //Audit table
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".audit (serviceId text, time timeuuid, data text, PRIMARY KEY (serviceId, time));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");

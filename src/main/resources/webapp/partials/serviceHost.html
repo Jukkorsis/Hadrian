@@ -33,7 +33,6 @@
                                     <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision hosts in {{mn.network}}</a></li>
                                     <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
                                     <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
-                                    <li role="menuitem"><a ng-click="openAddHostsToVipModal(mn);">Add selected hosts to VIP</a></li>
                                     <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill Hosts in {{mn.network}}</a></li>
                                     <li class="divider"></li>
                                     <li role="menuitem" ng-repeat="cf in m.customFunctions">
@@ -56,26 +55,25 @@
                             <table class="table table-hover table-striped table-condensed">
                                 <tr>
                                     <th width="7%"></th>
-                                    <th width="23%">
+                                    <th width="28%">
                                         <a ng-click="hostSortType = 'hostName';
                                                                 hostSortReverse = !hostSortReverse">
                                             Host
                                         </a>
                                     </th>
-                                    <th width="5%">
+                                    <th width="10%">
                                         <a ng-click="hostSortType = 'dataCenter';
                                                                 hostSortReverse = !hostSortReverse">
                                             DC
                                         </a>
                                     </th>
-                                    <th width="15%">VIP</th>
                                     <th width="10%">
                                         <a ng-click="hostSortType = 'env';
                                                                 hostSortReverse = !hostSortReverse">
                                             Env.
                                         </a>
                                     </th>
-                                    <th width="5%">
+                                    <th width="10%">
                                         <a ng-click="hostSortType = 'size';
                                                                 hostSortReverse = !hostSortReverse">
                                             Size
@@ -111,12 +109,8 @@
                                             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                                 <li role="menuitem"><a ng-click="openDeploySoftwareHostModal(i, mn, m);">Deploy software to {{i.hostName}}</a></li>
                                                 <li role="menuitem"><a ng-click="openRestartHostModal(i, mn, m);">Restart {{i.hostName}}</a></li>
-                                                <li role="menuitem"><a ng-click="openAddHostToVipModal(i, mn);">Add {{i.hostName}} to VIP</a></li>
                                                 <li class="divider"></li>
                                                 <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn, m);">Decommission {{i.hostName}}</a></li>
-                                                <li role="menuitem" ng-repeat="epr in i.vipRefs| filter:{ status: '-' }">
-                                                    <a ng-click="deleteHostFromVip(i.hostId, epr.vipId);">Remove {{i.hostName}} from the VIP {{epr.vipName}}</a>
-                                                </li>
                                                 <li class="divider"></li>
                                                 <li role="menuitem" ng-repeat="cf in m.customFunctions">
                                                     <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
@@ -138,14 +132,6 @@
                                         </span>
                                     </td>
                                     <td>{{i.dataCenter}}</td>
-                                    <td>
-                                        <div ng-repeat="epr in i.vipRefs">
-                                            {{epr.vipName}}
-                                            <span ng-if="epr.status !== '-'">
-                                                <span class="label label-warning">{{epr.status}}</span>
-                                            </span>
-                                        </div>
-                                    </td>
                                     <td>{{i.env}}</td>
                                     <td>{{i.size}}</td>
                                     <td>{{i.version}}</td>

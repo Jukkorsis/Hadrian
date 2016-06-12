@@ -25,7 +25,6 @@ public enum Type {
     serviceRef,
     module,
     host,
-    vip,
-    hostvip;
+    vip;
 
 }

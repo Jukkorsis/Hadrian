@@ -42,9 +42,7 @@ import com.northernwall.hadrian.service.HostCreateHandler;
 import com.northernwall.hadrian.service.HostDeleteHandler;
 import com.northernwall.hadrian.service.HostDeploySoftwareHandler;
 import com.northernwall.hadrian.service.HostGetDetailsHandler;
-import com.northernwall.hadrian.service.HostVipDeleteHandler;
 import com.northernwall.hadrian.service.HostRestartHandler;
-import com.northernwall.hadrian.service.HostVipCreateHandler;
 import com.northernwall.hadrian.service.ModuleCreateHandler;
 import com.northernwall.hadrian.service.ModuleDeleteHandler;
 import com.northernwall.hadrian.service.ModuleModifyHandler;
@@ -212,8 +210,6 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(accessHelper, configHelper, dataAccess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/hostvip/create", new HostVipCreateHandler(accessHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/hostvip/delete", new HostVipDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(accessHelper, dataAccess, client), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/modify", new CustomFuntionModifyHandler(accessHelper, dataAccess), true);

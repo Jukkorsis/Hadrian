@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
@@ -72,13 +71,6 @@ public interface DataAccess {
     List<ModuleRef> getModuleRefsByServer(String serverServiceId, String serverModuleId);
     void saveModuleRef(ModuleRef moduleRef);
     void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId);
-    
-    List<VipRef> getVipRefsByHost(String hostId);
-    VipRef getVipRef(String hostId, String vipId);
-    void saveVipRef(VipRef vipRef);
-    void updateVipRef(VipRef vipRef);
-    void deleteVipRef(String hostId, String vipId);
-    void deleteVipRefs(String vipId);
     
     List<CustomFunction> getCustomFunctions(String serviceId);
     CustomFunction getCustomFunction(String serviceId, String customFunctionId);

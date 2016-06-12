@@ -26,7 +26,6 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.action.CreateHostAction;
 import com.northernwall.hadrian.workItem.action.DeploySoftwareAction;
@@ -197,18 +196,6 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
                     }
                     break;
-                case hostvip:
-                    switch (workItem.getOperation()) {
-                        case create:
-                            addHostVip(workItem, callbackData.status);
-                            break;
-                        case delete:
-                            deleteHostVip(workItem, callbackData.status);
-                            break;
-                        default:
-                            throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
-                    }
-                    break;
                 default:
                     throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
             }
@@ -314,42 +301,11 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             return;
         }
         if (result == Result.success) {
-            dataAccess.deleteVipRefs(vip.getVipId());
             dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         } else {
             logger.warn("Callback for {} failed with status {}", vip.getVipId(), result);
             vip.setStatus(Const.NO_STATUS);
             dataAccess.updateVip(vip);
-        }
-    }
-
-    private void addHostVip(WorkItem workItem, Result result) {
-        VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
-        if (vipRef == null) {
-            logger.error("Could not find end point ref {} {} to create.", workItem.getHost().hostId, workItem.getVip().vipId);
-            return;
-        }
-        if (result == Result.success) {
-            vipRef.setStatus(Const.NO_STATUS);
-            dataAccess.updateVipRef(vipRef);
-        } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result.toString());
-            dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
-        }
-    }
-
-    private void deleteHostVip(WorkItem workItem, Result result) {
-        VipRef vipRef = dataAccess.getVipRef(workItem.getHost().hostId, workItem.getVip().vipId);
-        if (vipRef == null) {
-            logger.error("Could not find end point ref {} {} to delete.", workItem.getHost().hostId, workItem.getVip().vipId);
-            return;
-        }
-        if (result == Result.success) {
-            dataAccess.deleteVipRef(vipRef.getHostId(), vipRef.getVipId());
-        } else {
-            logger.warn("Callback for {} {} failed with status {}", vipRef.getHostId(), vipRef.getVipId(), result.toString());
-            vipRef.setStatus(Const.NO_STATUS);
-            dataAccess.updateVipRef(vipRef);
         }
     }
 

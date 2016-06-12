@@ -12,7 +12,6 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.io.IOException;
@@ -153,36 +152,6 @@ public class StubDataAccess implements DataAccess {
 
     @Override
     public void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<VipRef> getVipRefsByHost(String hostId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public VipRef getVipRef(String hostId, String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveVipRef(VipRef vipRef) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateVipRef(VipRef vipRef) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteVipRef(String hostId, String vipId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteVipRefs(String vipId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

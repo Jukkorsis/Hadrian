@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
@@ -51,7 +50,6 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, Host> hosts;
     private final Map<String, Vip> vips;
     private final List<ModuleRef> moduleRefs;
-    private final List<VipRef> vipRefs;
     private final Map<String, CustomFunction> customFunctions;
     private final Map<String, Module> modules;
     private final Map<String, DataStore> dataStores;
@@ -66,7 +64,6 @@ public class InMemoryDataAccess implements DataAccess {
         hosts = new ConcurrentHashMap<>();
         vips = new ConcurrentHashMap<>();
         moduleRefs = new LinkedList<>();
-        vipRefs = new LinkedList<>();
         customFunctions = new ConcurrentHashMap<>();
         modules = new ConcurrentHashMap<>();
         dataStores = new ConcurrentHashMap<>();
@@ -252,67 +249,6 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteModuleRef(String clientServiceId, String clientModuleId, String serverServiceId, String serverModuleId) {
         moduleRefs.removeIf(new ModuleRefPredicate(clientServiceId, clientModuleId, serverServiceId, serverModuleId));
-    }
-
-    @Override
-    public List<VipRef> getVipRefsByHost(String hostId) {
-        List<VipRef> temp = new LinkedList<>();
-        for (VipRef vipRef : vipRefs) {
-            if (vipRef.getHostId().equals(hostId)) {
-                temp.add(vipRef);
-            }
-        }
-        return temp;
-    }
-
-    @Override
-    public VipRef getVipRef(String hostId, String vipId) {
-        for (VipRef vipRef : vipRefs) {
-            if (vipRef.getHostId().equals(hostId) && vipRef.getVipId().equals(vipId)) {
-                return vipRef;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void saveVipRef(VipRef vipRef) {
-        for (VipRef temp : vipRefs) {
-            if (temp.getVipId().equals(vipRef.getVipId()) && temp.getHostId().equals(vipRef.getHostId())) {
-                return;
-            }
-        }
-        vipRefs.add(vipRef);
-    }
-
-    @Override
-    public void updateVipRef(VipRef vipRef) {
-        for (VipRef temp : vipRefs) {
-            if (temp.getVipId().equals(vipRef.getVipId()) && temp.getHostId().equals(vipRef.getHostId())) {
-                temp.setStatus(vipRef.getStatus());
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void deleteVipRef(final String hostId, final String vipId) {
-        vipRefs.removeIf(new Predicate<VipRef>() {
-            @Override
-            public boolean test(VipRef ref) {
-                return ref.getHostId().equals(hostId) && ref.getVipId().equals(vipId);
-            }
-        });
-    }
-
-    @Override
-    public void deleteVipRefs(final String vipId) {
-        vipRefs.removeIf(new Predicate<VipRef>() {
-            @Override
-            public boolean test(VipRef ref) {
-                return ref.getVipId().equals(vipId);
-            }
-        });
     }
 
     @Override

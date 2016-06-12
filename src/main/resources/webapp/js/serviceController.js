@@ -580,80 +580,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddHostsToVipModal = function (moduleNetwork) {
-            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
-            var hostNames = [];
-            for (var i in filteredArray) {
-                for (var ii in $scope.formSelectHost) {
-                    if (filteredArray[i].hostId === ii && $scope.formSelectHost[ii]) {
-                        hostNames.push(filteredArray[i].hostName);
-                    }
-                }
-            }
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addHostToVip.html',
-                controller: 'ModalAddHostToVipCtrl',
-                resolve: {
-                    service: function () {
-                        return $scope.service;
-                    },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
-                    },
-                    hostNames: function () {
-                        return hostNames;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-
-        $scope.openAddHostToVipModal = function (host, moduleNetwork) {
-            var hostNames = [];
-            hostNames.push(host.hostName);
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addHostToVip.html',
-                controller: 'ModalAddHostToVipCtrl',
-                resolve: {
-                    service: function () {
-                        return $scope.service;
-                    },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
-                    },
-                    hostNames: function () {
-                        return hostNames;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-
-        $scope.deleteHostFromVip = function (hostId, vipId) {
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                hostId: hostId,
-                vipId: vipId
-            };
-
-            var responsePromise = $http.post("/v1/hostvip/delete", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to remove host from Vip has failed!");
-                $route.reload();
-            });
-        };
-
         $scope.getHostDetails = function (host) {
             host.expanded = true;
 
@@ -1540,39 +1466,6 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
             $modalInstance.dismiss('cancel');
         };
     }]);
-
-hadrianControllers.controller('ModalAddHostToVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'moduleNetwork', 'hostNames',
-    function ($scope, $http, $modalInstance, $route, service, moduleNetwork, hostNames) {
-        $scope.errorMsg = null;
-        $scope.service = service;
-        $scope.moduleNetwork = moduleNetwork;
-        $scope.hostNames = hostNames;
-
-        $scope.formAddHostVip = {};
-        $scope.formAddHostVip.vip = moduleNetwork.vips[0];
-
-        $scope.save = function () {
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                vipId: $scope.formAddHostVip.vip.vipId,
-                hostNames: $scope.hostNames
-            };
-
-            var responsePromise = $http.post("/v1/hostvip/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
-                $route.reload();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
-            });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    }
-]);
 
 hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
     function ($scope, $http, $modalInstance, $route, service, module) {

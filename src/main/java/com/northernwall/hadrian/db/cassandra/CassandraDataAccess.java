@@ -38,7 +38,6 @@ import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.domain.VipRef;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.io.IOException;
@@ -114,15 +113,6 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement vipInsert;
     private final PreparedStatement vipUpdate;
     private final PreparedStatement vipDelete;
-    private final PreparedStatement vipRefSelectHost1;
-    private final PreparedStatement vipRefSelectHost2;
-    private final PreparedStatement vipRefSelectVip;
-    private final PreparedStatement vipRefInsertHost;
-    private final PreparedStatement vipRefInsertVip;
-    private final PreparedStatement vipRefUpdateHost;
-    private final PreparedStatement vipRefDeleteHost;
-    private final PreparedStatement vipRefDeleteVip1;
-    private final PreparedStatement vipRefDeleteVip2;
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
     private final PreparedStatement workItemDelete;
@@ -253,26 +243,6 @@ public class CassandraDataAccess implements DataAccess {
         vipUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         vipDelete = session.prepare("DELETE FROM vip WHERE serviceId = ? AND id = ?;");
         vipDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-
-        logger.info("Praparing vipRef statements...");
-        vipRefSelectHost1 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ?;");
-        vipRefSelectHost1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefSelectHost2 = session.prepare("SELECT * FROM vipRefHost WHERE hostId = ? AND vipId = ?;");
-        vipRefSelectHost2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefSelectVip = session.prepare("SELECT * FROM vipRefVip WHERE vipId = ?;");
-        vipRefSelectVip.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefInsertHost = session.prepare("INSERT INTO vipRefHost (hostId, vipId, data) VALUES (?, ?, ?);");
-        vipRefInsertHost.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefInsertVip = session.prepare("INSERT INTO vipRefVip (vipId, hostId) VALUES (?, ?);");
-        vipRefInsertVip.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefUpdateHost = session.prepare("UPDATE vipRefHost SET data = ? WHERE hostId = ? AND vipId = ?;");
-        vipRefUpdateHost.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefDeleteHost = session.prepare("DELETE FROM vipRefHost WHERE hostId = ? AND vipId = ?;");
-        vipRefDeleteHost.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefDeleteVip1 = session.prepare("DELETE FROM vipRefVip WHERE vipId = ?;");
-        vipRefDeleteVip1.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        vipRefDeleteVip2 = session.prepare("DELETE FROM vipRefVip WHERE vipId = ? AND hostId = ?;");
-        vipRefDeleteVip2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing workItem statements...");
         workItemSelect = session.prepare("SELECT * FROM workItem WHERE id = ?;");
@@ -631,77 +601,6 @@ public class CassandraDataAccess implements DataAccess {
                 serverModuleId,
                 clientServiceId, 
                 clientModuleId));
-    }
-
-    @Override
-    public List<VipRef> getVipRefsByHost(String hostId) {
-        BoundStatement boundStatement = new BoundStatement(vipRefSelectHost1);
-        ResultSet results = session.execute(boundStatement.bind(hostId));
-        List<VipRef> vipRefs = new LinkedList<>();
-        for (Row row : results) {
-            String data = row.getString("data");
-            vipRefs.add(gson.fromJson(data, VipRef.class));
-        }
-        return vipRefs;
-    }
-
-    @Override
-    public VipRef getVipRef(String hostId, String vipId) {
-        BoundStatement boundStatement = new BoundStatement(vipRefSelectHost2);
-        ResultSet results = session.execute(boundStatement.bind(hostId, vipId));
-        for (Row row : results) {
-            String data = row.getString("data");
-            return gson.fromJson(data, VipRef.class);
-        }
-        return null;
-    }
-
-    @Override
-    public void saveVipRef(VipRef vipRef) {
-        BoundStatement boundStatement;
-
-        boundStatement = new BoundStatement(vipRefInsertHost);
-        session.execute(boundStatement.bind(vipRef.getHostId(), vipRef.getVipId(), gson.toJson(vipRef)));
-
-        boundStatement = new BoundStatement(vipRefInsertVip);
-        session.execute(boundStatement.bind(vipRef.getVipId(), vipRef.getHostId()));
-    }
-
-    @Override
-    public void updateVipRef(VipRef vipRef) {
-        BoundStatement boundStatement = new BoundStatement(vipRefUpdateHost);
-        session.execute(boundStatement.bind(gson.toJson(vipRef), vipRef.getHostId(), vipRef.getVipId()));
-    }
-
-    @Override
-    public void deleteVipRef(String hostId, String vipId) {
-        BoundStatement boundStatement;
-
-        boundStatement = new BoundStatement(vipRefDeleteHost);
-        session.execute(boundStatement.bind(hostId, vipId));
-
-        boundStatement = new BoundStatement(vipRefDeleteVip2);
-        session.execute(boundStatement.bind(vipId, hostId));
-    }
-
-    @Override
-    public void deleteVipRefs(String vipId) {
-        BoundStatement boundStatement;
-
-        boundStatement = new BoundStatement(vipRefSelectVip);
-        ResultSet results = session.execute(boundStatement.bind(vipId));
-        List<String> hostIds = new LinkedList<>();
-        for (Row row : results) {
-            hostIds.add(row.getString("hostId"));
-        }
-
-        for (String hostId : hostIds) {
-            boundStatement = new BoundStatement(vipRefDeleteHost);
-            session.execute(boundStatement.bind(hostId, vipId));
-        }
-
-        boundStatement = new BoundStatement(vipRefDeleteVip1);
-        session.execute(boundStatement.bind(vipId));
     }
 
     @Override
