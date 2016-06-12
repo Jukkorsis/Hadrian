@@ -21,34 +21,33 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.service.dao.GetVipDetailCellData;
 import com.northernwall.hadrian.service.dao.GetVipDetailRowData;
 import com.northernwall.hadrian.service.dao.GetVipDetailsData;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Collections;
 import java.util.Comparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Predicate;
 
 public class SimpleVipDetailsHelper implements VipDetailsHelper {
-
-    private final static Logger logger = LoggerFactory.getLogger(SimpleVipDetailsHelper.class);
 
     private final OkHttpClient client;
     private final Parameters parameters;
     private final ConfigHelper configHelper;
     private final Gson gson;
+    private final ExecutorService executorService;
 
     public SimpleVipDetailsHelper(OkHttpClient client, Parameters parameters, ConfigHelper configHelper) {
         this.client = client;
         this.parameters = parameters;
         this.configHelper = configHelper;
-        this.gson = new Gson();
+        
+        gson = new Gson();
+        executorService = Executors.newFixedThreadPool(20);
     }
 
     @Override
@@ -61,9 +60,14 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
         }
         vipUrl = vipUrl.replace("{vip}", vip.getDns());
         GetVipDetailsData data = new GetVipDetailsData();
+        
+        List<Future> futures = new LinkedList<>();
         for (String dataCenter : configHelper.getConfig().dataCenters) {
-            getDetailsForDataCenter(vip, data, vipUrl, poolUrl, dataCenter);
+            futures.add(executorService.submit(new SimpleVipDetailsRunnable(gson, client, vip, data, vipUrl, poolUrl, dataCenter)));
         }
+
+        waitForFutures(futures);
+
         Collections.sort(data.rows, new Comparator<GetVipDetailRowData>() {
             @Override
             public int compare(GetVipDetailRowData o1, GetVipDetailRowData o2) {
@@ -73,75 +77,22 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
         return data;
     }
 
-    private void getDetailsForDataCenter(Vip vip, GetVipDetailsData data, String vipUrl, String poolUrl, String dataCenter) {
-        VipInfo vipInfo = getVipInfo(vipUrl, dataCenter);
-        if (vipInfo == null) {
-            return;
-        }
-        data.address.put(dataCenter, vipInfo.address);
-        data.name.put(dataCenter, vipInfo.name);
-
-        for (VipPortInfo vipPortInfo : vipInfo.ports) {
-            if (vipPortInfo.port == vip.getVipPort()) {
-                VipPoolInfo vipPoolInfo = getPoolInfo(poolUrl, vipPortInfo.poolName, dataCenter);
-                if (vipPoolInfo != null) {
-                    for (VipMemberInfo member : vipPoolInfo.members) {
-                        GetVipDetailCellData cell = new GetVipDetailCellData();
-                        cell.priority = member.priority;
-                        cell.connections = member.connections;
-                        if (member.status == 0) {
-                            cell.status = "Off";
-                        } else if (member.status == 1) {
-                            cell.status = "On";
-                        } else {
-                            cell.status = "Error";
-                        }
-                        data.find(member.hostName).details.put(dataCenter, cell);
-                    }
+    protected void waitForFutures(List<Future> futures) {
+        for (int i = 0; i < 151; i++) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+            }
+            futures.removeIf(new Predicate<Future>() {
+                @Override
+                public boolean test(Future t) {
+                    return t.isDone();
                 }
+            });
+            if (futures.isEmpty()) {
+                return;
             }
         }
-    }
-
-    private VipInfo getVipInfo(String url, String dataCenter) {
-        url = url.replace("{dc}", dataCenter.toUpperCase());
-        Request httpRequest = new Request.Builder().url(url).build();
-        try {
-            Response resp = client.newCall(httpRequest).execute();
-            try (InputStream stream = resp.body().byteStream()) {
-                if (resp.isSuccessful()) {
-                    Reader reader = new InputStreamReader(stream);
-                    VipsInfo vipsInfo = gson.fromJson(reader, VipsInfo.class);
-                    return vipsInfo.vips.get(0);
-                } else {
-                    logger.warn("Call to {} failed with code {}", url, resp.code());
-                }
-            }
-        } catch (Exception ex) {
-            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
-        }
-        return null;
-    }
-
-    private VipPoolInfo getPoolInfo(String url, String poolName, String dataCenter) {
-        url = url.replace("{pool}", poolName);
-        url = url.replace("{dc}", dataCenter.toUpperCase());
-        Request httpRequest = new Request.Builder().url(url).build();
-        try {
-            Response resp = client.newCall(httpRequest).execute();
-            try (InputStream stream = resp.body().byteStream()) {
-                if (resp.isSuccessful()) {
-                    Reader reader = new InputStreamReader(stream);
-                    VipPoolsInfo vipPoolsInfo = gson.fromJson(reader, VipPoolsInfo.class);
-                    return vipPoolsInfo.pools.get(0);
-                } else {
-                    logger.warn("Call to {} failed with code {}", url, resp.code());
-                }
-            }
-        } catch (Exception ex) {
-            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
-        }
-        return null;
     }
 
 }

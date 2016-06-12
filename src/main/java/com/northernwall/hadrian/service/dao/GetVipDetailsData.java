@@ -15,17 +15,17 @@
  */
 package com.northernwall.hadrian.service.dao;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GetVipDetailsData {
-    public Map<String, String> address = new HashMap<>();
-    public Map<String, String> name = new HashMap<>();
+    public Map<String, String> address = new ConcurrentHashMap<>();
+    public Map<String, String> name = new ConcurrentHashMap<>();
     public List<GetVipDetailRowData> rows = new LinkedList<>();
 
-    public GetVipDetailRowData find(String hostName) {
+    public synchronized GetVipDetailRowData find(String hostName) {
         for (GetVipDetailRowData data : rows) {
             if (data.hostName.equalsIgnoreCase(hostName)) {
                 return data;

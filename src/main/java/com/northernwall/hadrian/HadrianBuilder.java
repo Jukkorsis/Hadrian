@@ -106,7 +106,7 @@ public class HadrianBuilder {
     public Hadrian builder() {
         client = new OkHttpClient();
         client.setConnectTimeout(2, TimeUnit.SECONDS);
-        client.setReadTimeout(2, TimeUnit.SECONDS);
+        client.setReadTimeout(15, TimeUnit.SECONDS);
         client.setWriteTimeout(2, TimeUnit.SECONDS);
         client.setFollowSslRedirects(false);
         client.setFollowRedirects(false);
