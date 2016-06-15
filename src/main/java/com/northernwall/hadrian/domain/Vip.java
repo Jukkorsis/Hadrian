@@ -24,7 +24,6 @@ import java.util.UUID;
  */
 public class Vip implements Comparable<Vip>{
     private String vipId;
-    private String vipName;
     private String serviceId;
     private String status;
     private String moduleId;
@@ -38,7 +37,6 @@ public class Vip implements Comparable<Vip>{
 
     public Vip() {
         this.vipId = UUID.randomUUID().toString();
-        this.vipName = null;
         this.serviceId = null;
         this.status = "-";
         this.moduleId = null;
@@ -51,9 +49,8 @@ public class Vip implements Comparable<Vip>{
         this.servicePort = 8080;
     }
 
-    public Vip(String vipName, String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort) {
         this.vipId = UUID.randomUUID().toString();
-        this.vipName = vipName;
         this.serviceId = serviceId;
         this.status = status;
         this.moduleId = moduleId;
@@ -72,14 +69,6 @@ public class Vip implements Comparable<Vip>{
 
     public void setVipId(String vipId) {
         this.vipId = vipId;
-    }
-
-    public String getVipName() {
-        return vipName;
-    }
-
-    public void setVipName(String vipName) {
-        this.vipName = vipName;
     }
 
     public String getServiceId() {
@@ -164,7 +153,15 @@ public class Vip implements Comparable<Vip>{
 
     @Override
     public int compareTo(Vip o) {
-        return vipName.compareTo(o.vipName);
+        int temp = dns.compareTo(o.dns);
+        if (temp != 0) {
+            return temp;
+        }
+        temp = domain.compareTo(o.domain);
+        if (temp != 0) {
+            return temp;
+        }
+        return vipPort - o.vipPort;
     }
 
 }

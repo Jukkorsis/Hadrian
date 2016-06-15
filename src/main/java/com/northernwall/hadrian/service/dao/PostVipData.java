@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service.dao;
 
 public class PostVipData {
-    public String vipName;
     public String serviceId;
     public String moduleId;
     public String dns;

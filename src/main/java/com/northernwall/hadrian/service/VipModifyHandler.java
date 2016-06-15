@@ -52,7 +52,7 @@ public class VipModifyHandler extends BasicHandler {
         PutVipData data = fromJson(request, PutVipData.class);
 
         Service service = getService(data.serviceId, null, null);
-        Vip vip = getVip(data.vipId, null, service);
+        Vip vip = getVip(data.vipId, service);
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
 

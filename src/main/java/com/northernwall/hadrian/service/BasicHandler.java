@@ -154,22 +154,14 @@ public abstract class BasicHandler extends AbstractHandler {
     protected Vip getVip(Request request, Service service) {
         return getVip(
                 request.getParameter("vipId"),
-                request.getParameter("vipName"),
                 service);
     }
 
-    protected Vip getVip(String vipId, String vipName, Service service) {
+    protected Vip getVip(String vipId, Service service) {
         if (vipId != null && !vipId.isEmpty()) {
             Vip vip = dataAccess.getVip(service.getServiceId(), vipId);
             if (vip != null) {
                 return vip;
-            }
-        }
-        if (vipName != null && !vipName.isEmpty()) {
-            for (Vip vip : dataAccess.getVips(service.getServiceId())) {
-                if (vip.getVipName().equalsIgnoreCase(vipName)) {
-                    return vip;
-                }
             }
         }
         throw new Http404NotFoundException("Could not find vip");

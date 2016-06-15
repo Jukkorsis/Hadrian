@@ -1205,7 +1205,6 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.config = config;
 
         $scope.formSaveVip = {};
-        $scope.formSaveVip.vipName = "";
         $scope.formSaveVip.dns = "";
         $scope.formSaveVip.domain = $scope.config.domains[0];
         $scope.formSaveVip.external = false;
@@ -1215,7 +1214,6 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
 
         $scope.save = function () {
             var dataObject = {
-                vipName: $scope.formSaveVip.vipName,
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 dns: $scope.formSaveVip.dns,

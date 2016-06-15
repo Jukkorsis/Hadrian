@@ -24,7 +24,6 @@ import com.northernwall.hadrian.domain.Vip;
  */
 public class VipData {
     public String vipId;
-    public String vipName;
     public String dns;
     public String domain;
     public boolean external;
@@ -39,7 +38,6 @@ public class VipData {
         }
         VipData temp = new VipData();
         temp.vipId = vip.getVipId();
-        temp.vipName = vip.getVipName();
         temp.dns = vip.getDns();
         temp.domain = vip.getDomain();
         temp.external = vip.isExternal();

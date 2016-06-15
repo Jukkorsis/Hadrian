@@ -177,6 +177,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                     switch (workItem.getOperation()) {
                         case create:
                             notes.put("protocol", workItem.getVip().protocol);
+                            notes.put("dns", workItem.getVip().dns + "." + workItem.getVip().domain);
                             notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
                             notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
                             notes.put("external", Boolean.toString(workItem.getVip().external));
@@ -184,6 +185,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                             break;
                         case update:
                             notes.put("protocol", workItem.getVip().protocol);
+                            notes.put("dns", workItem.getVip().dns + "." + workItem.getVip().domain);
                             notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
                             notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
                             notes.put("external", Boolean.toString(workItem.getVip().external));
@@ -214,7 +216,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 audit.hostName = workItem.getHost().hostName;
             }
             if (workItem.getVip() != null) {
-                audit.vipName = workItem.getVip().vipName;
+                audit.vipName = workItem.getVip().dns;
             }
             if (notes.isEmpty()) {
                 audit.notes = "";

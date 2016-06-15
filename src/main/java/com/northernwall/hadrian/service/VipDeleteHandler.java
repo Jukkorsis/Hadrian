@@ -54,7 +54,7 @@ public class VipDeleteHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
 
-        Vip vip = getVip(data.vipId, null, service);
+        Vip vip = getVip(data.vipId, service);
 
         vip.setStatus("Deleting...");
         getDataAccess().updateVip(vip);

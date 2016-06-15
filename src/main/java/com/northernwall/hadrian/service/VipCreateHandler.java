@@ -60,9 +60,6 @@ public class VipCreateHandler extends BasicHandler {
         //Check for duplicate VIP
         List<Vip> vips = getDataAccess().getVips(data.serviceId);
         for (Vip temp : vips) {
-            if (temp.getVipName().equals(data.vipName)) {
-                return;
-            }
             if (temp.getDns().equals(data.dns)
                     && temp.getDomain().equals(data.domain)
                     && temp.getVipPort() == data.vipPort) {
@@ -73,7 +70,6 @@ public class VipCreateHandler extends BasicHandler {
         Module module = getModule(data.moduleId, null, service);
 
         Vip vip = new Vip(
-                data.vipName,
                 data.serviceId,
                 "Creating...",
                 data.moduleId,

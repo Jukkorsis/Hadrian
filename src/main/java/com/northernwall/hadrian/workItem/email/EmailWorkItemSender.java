@@ -133,14 +133,13 @@ public class EmailWorkItemSender extends WorkItemSender {
     }
 
     protected void sendVipEmail(WorkItem workItem) {
-        logger.info("Processing Vip {} on {} with opertion {}", workItem.getVip().vipName, workItem.getService().serviceName, workItem.getOperation());
+        logger.info("Processing Vip {}.{}:{} on {} with opertion {}", workItem.getVip().dns, workItem.getVip().domain, workItem.getVip().vipPort, workItem.getService().serviceName, workItem.getOperation());
 
-        String subject = workItem.getOperation() + " vip " + workItem.getVip().vipName;
+        String subject = workItem.getOperation() + " vip " + workItem.getVip().dns + "." + workItem.getVip().domain + ":" + Integer.toString(workItem.getVip().vipPort);
 
         StringBuffer body = new StringBuffer();
         addEmailHeader(workItem, body);
         body.append("\n");
-        addLine("VIP Name", workItem.getVip().vipName, body);
         addLine("DNS", workItem.getVip().dns + "." + workItem.getVip().domain, body);
         addLine("Network", workItem.getVip().network, body);
         addLine("Public", Boolean.toString(workItem.getVip().external), body);
