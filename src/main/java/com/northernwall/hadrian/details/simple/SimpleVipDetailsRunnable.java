@@ -54,6 +54,7 @@ public class SimpleVipDetailsRunnable implements Runnable {
             if (vipPortInfo.port == vip.getVipPort()) {
                 VipPoolDao vipPoolInfo = getPoolInfo(poolUrl, vipPortInfo.poolName, dataCenter);
                 if (vipPoolInfo != null) {
+                    data.connections.put(dataCenter, Integer.toString(vipPoolInfo.connections));
                     for (VipMemberDao member : vipPoolInfo.members) {
                         GetVipDetailCellData cell = new GetVipDetailCellData();
                         cell.priority = member.priority;

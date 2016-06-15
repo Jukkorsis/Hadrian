@@ -615,6 +615,14 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
+        $scope.getVipDetailsConections = function (details, dataCenter) {
+            if (details && details.connections && details.connections[dataCenter]) {
+                return details.connections[dataCenter];
+            } else {
+                return " ";
+            }
+        };
+
         $scope.getVipDetailsPriority = function (details, dataCenter) {
             if (details && details[dataCenter]) {
                 return details[dataCenter].priority;

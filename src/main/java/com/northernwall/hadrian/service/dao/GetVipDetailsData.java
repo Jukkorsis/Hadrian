@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GetVipDetailsData {
     public Map<String, String> address = new ConcurrentHashMap<>();
     public Map<String, String> name = new ConcurrentHashMap<>();
+    public Map<String, String> connections = new ConcurrentHashMap<>();
     public List<GetVipDetailRowData> rows = new LinkedList<>();
 
     public synchronized GetVipDetailRowData find(String hostName) {

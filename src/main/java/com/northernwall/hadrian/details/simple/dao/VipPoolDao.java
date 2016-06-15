@@ -8,6 +8,8 @@ public class VipPoolDao {
     public String name;
     @SerializedName(value="dataCenter", alternate={"site"})
     public String dataCenter;
+    @SerializedName(value="connections", alternate={"cur_conns"})
+    public int connections;
     @SerializedName(value="members", alternate={"member_list"})
     public List<VipMemberDao> members = new LinkedList<>();;
 
