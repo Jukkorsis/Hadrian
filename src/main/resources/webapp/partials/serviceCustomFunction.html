@@ -3,9 +3,6 @@
         <div ng-repeat="m in service.modules">
             <div ng-if="m.moduleType === 'Deployable'">
                 <h4>
-                    <span ng-if="!m.collapsed" class="glyphicon glyphicon-chevron-down" ng-click="m.collapsed = true"></span>
-                    <span ng-if="m.collapsed" class="glyphicon glyphicon-chevron-right" ng-click="m.collapsed = false"></span>
-                    {{m.moduleName}}
                     <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
                         <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                             <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
@@ -14,8 +11,9 @@
                             <li role="menuitem"><a ng-click="openAddCustomFunctionModal(m)">Add custom function to {{m.moduleName}}</a></li>
                         </ul>
                     </div>
+                    {{m.moduleName}}
                 </h4>
-                <div ng-if="!m.collapsed && m.customFunctions.length > 0">
+                <div ng-if="m.customFunctions.length > 0">
                     <table class="table table-hover table-striped table-condensed">
                         <tr>
                             <th width="30%">Name</th>
@@ -25,7 +23,6 @@
                         </tr>
                         <tr ng-repeat="cf in m.customFunctions">
                             <td>
-                                {{cf.name}}
                                 <div class="btn-group" uib-dropdown  ng-if="service.canModify" is-open="status.isopen">
                                     <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                         <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
@@ -35,6 +32,7 @@
                                         <li role="menuitem"><a ng-click="deleteCustomFunction(cf.customFunctionId)">Delete custom function</a></li>
                                     </ul>
                                 </div>
+                                {{cf.name}}
                             </td>
                             <td>{{cf.method}}</td>
                             <td>{{cf.url}}</td>

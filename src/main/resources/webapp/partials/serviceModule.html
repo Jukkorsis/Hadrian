@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-body">
-        <h4>Modules
+        <h4>
             <div class="btn-group" uib-dropdown ng-if="service.canModify && service.serviceType === 'Service'" is-open="status.isopen">
                 <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                     <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
@@ -19,10 +19,10 @@
                     <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
                 </ul>
             </div>
+            Modules
         </h4>
         <table class="table table-hover table-striped table-condensed">
             <tr>
-                <th></th>
                 <th>Name</th>
                 <th>Build Order</th>
                 <th>Type</th>
@@ -33,9 +33,6 @@
                 <td>
                     <span ng-if="m.expanded" class="glyphicon glyphicon-chevron-down" ng-click="m.expanded = false"></span>
                     <span ng-if="!m.expanded" class="glyphicon glyphicon-chevron-right" ng-click="m.expanded = true"></span>
-                </td>
-                <td>
-                    {{m.moduleName}}
                     <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Deployable'" is-open="status.isopen">
                         <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                             <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
@@ -77,6 +74,7 @@
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                         </ul>
                     </div>
+                    {{m.moduleName}}
                 </td>
                 <td>{{m.order}}</td>
                 <td>{{m.moduleType}}</td>
