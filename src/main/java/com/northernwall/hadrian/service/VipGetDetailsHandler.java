@@ -19,11 +19,16 @@ import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.service.dao.GetVipDetailRowData;
 import com.northernwall.hadrian.service.dao.GetVipDetailsData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +53,41 @@ public class VipGetDetailsHandler extends BasicHandler {
         Vip vip = getVip(request, service);
 
         GetVipDetailsData details = vipDetailsHelper.getDetails(vip);
+        
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
+        for (Host host : hosts) {
+            boolean found = false;
+            for (GetVipDetailRowData row : details.rows) {
+                if (host.getHostName().equalsIgnoreCase(row.hostName)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                GetVipDetailRowData temp = new GetVipDetailRowData();
+                temp.hostName = host.getHostName();
+                temp.warning = "Host not found in VIP";
+                details.rows.add(temp);
+            }
+        }
+
+        for (GetVipDetailRowData row : details.rows) {
+            boolean found = false;
+            for (Host host : hosts) {
+                if (host.getHostName().equalsIgnoreCase(row.hostName)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                row.warning = "Host in VIP, but not in inventory";
+            }
+        }
+
+        Collections.sort(details.rows, new Comparator<GetVipDetailRowData>() {
+            @Override
+            public int compare(GetVipDetailRowData o1, GetVipDetailRowData o2) {
+                return o1.hostName.compareTo(o2.hostName);
+            }
+        });
 
         response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

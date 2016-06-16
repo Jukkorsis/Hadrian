@@ -67,13 +67,6 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
         }
 
         waitForFutures(futures);
-
-        Collections.sort(data.rows, new Comparator<GetVipDetailRowData>() {
-            @Override
-            public int compare(GetVipDetailRowData o1, GetVipDetailRowData o2) {
-                return o1.hostName.compareTo(o2.hostName);
-            }
-        });
         return data;
     }
 
