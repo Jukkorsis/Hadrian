@@ -119,20 +119,26 @@
                                     <dd>{{m.runAs}}</dd>
                                     <dt>Deployment Folder:</dt>
                                     <dd>{{m.deploymentFolder}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Deployable'">
                                     <dt>Start Cmd Line:</dt>
                                     <dd>{{m.startCmdLine}}</dd>
                                     <dt>Start Timeout:</dt>
-                                    <dd>{{m.startTimeOut}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Deployable'">
+                                    <dd>{{m.startTimeOut}} sec</dd>
                                     <dt>Stop Cmd Line:</dt>
                                     <dd>{{m.stopCmdLine}}</dd>
                                     <dt>Stop Timeout:</dt>
-                                    <dd>{{m.stopTimeOut}}</dd>
+                                    <dd>{{m.stopTimeOut}} sec</dd>
                                     <div ng-if="m.configName">
                                         <dt>{{config.moduleConfigName}}:</dt>
                                         <dd>{{m.configName}}</dd>
                                     </div>
+                                </div>
+                                <div ng-if="m.moduleType === 'Test'">
+                                    <dt>Test Cmd Line:</dt>
+                                    <dd>{{m.startCmdLine}}</dd>
+                                    <dt>Test Timeout:</dt>
+                                    <dd>{{m.startTimeOut}} sec</dd>
                                 </div>
                             </dl>
                         </div>

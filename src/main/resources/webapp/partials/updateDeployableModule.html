@@ -25,7 +25,12 @@
                 <dt>Start Cmd Line:</dt>
                 <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
                 <dt>Start Time Out:</dt>
-                <dd><input ng-model="formUpdateModule.startTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
+                    </div>
+                </dd>
                 <dt>{{config.moduleConfigName}}:</dt>
                 <dd><input ng-model="formUpdateModule.configName" type="text" class="form-control"></dd>
             </dl>
@@ -47,7 +52,12 @@
                 <dt>Stop Cmd Line:</dt>
                 <dd><input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
                 <dt>Stop Time Out:</dt>
-                <dd><input ng-model="formUpdateModule.stopTimeOut" type="text" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter"></dd>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
+                    </div>
+                </dd>
             </dl>
         </div>
     </div>
