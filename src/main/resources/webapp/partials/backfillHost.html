@@ -8,8 +8,6 @@
         <dd><select ng-model="formBackfillHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select></dd>
         <dt>Env:</dt>
         <dd><select ng-model="formBackfillHost.env" ng-options="c for c in config.envs" class="form-control"></select></dd>
-        <dt>Size:</dt>
-        <dd><select ng-model="formBackfillHost.size" ng-options="c for c in config.sizes" class="form-control"></select></dd>
         <dt>Hosts:</dt>
         <dd><input ng-model="formBackfillHost.hosts" type="text" uib-popover="Comma separated list of hosts." popover-trigger="mouseenter" class="form-control"></dd>
     </dl>

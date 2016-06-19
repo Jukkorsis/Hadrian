@@ -1139,7 +1139,6 @@ hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$m
         $scope.formBackfillHost = {};
         $scope.formBackfillHost.dataCenter = $scope.config.dataCenters[0];
         $scope.formBackfillHost.env = $scope.config.envs[0];
-        $scope.formBackfillHost.size = $scope.config.sizes[0];
         $scope.formBackfillHost.hosts = "";
 
         $scope.save = function () {
@@ -1149,7 +1148,6 @@ hadrianControllers.controller('ModalBackfillModuleCtrl', ['$scope', '$http', '$m
                 dataCenter: $scope.formBackfillHost.dataCenter,
                 network: $scope.network,
                 env: $scope.formBackfillHost.env,
-                size: $scope.formBackfillHost.size,
                 hosts: $scope.formBackfillHost.hosts
             };
 
@@ -1292,7 +1290,9 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost = {};
         $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
         $scope.formSaveHost.env = $scope.config.envs[0];
-        $scope.formSaveHost.size = $scope.config.sizes[0];
+        $scope.formSaveHost.sizeCpu = 1;
+        $scope.formSaveHost.sizeMemory = 1;
+        $scope.formSaveHost.sizeStorage = 1;
         $scope.formSaveHost.version = "";
         $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.count = 1;
@@ -1316,7 +1316,9 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 dataCenter: $scope.formSaveHost.dataCenter,
                 network: $scope.network,
                 env: $scope.formSaveHost.env,
-                size: $scope.formSaveHost.size,
+                sizeCpu: $scope.formSaveHost.sizeCpu,
+                sizeMemory: $scope.formSaveHost.sizeMemory,
+                sizeStorage: $scope.formSaveHost.sizeStorage,
                 version: $scope.formSaveHost.version,
                 configVersion: $scope.formSaveHost.configVersion,
                 count: $scope.formSaveHost.count,

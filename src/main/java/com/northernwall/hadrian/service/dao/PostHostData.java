@@ -21,7 +21,9 @@ public class PostHostData {
     public String dataCenter;
     public String network;
     public String env;
-    public String size;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
     public String version;
     public String configVersion;
     public int count;

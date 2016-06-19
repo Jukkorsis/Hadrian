@@ -12,9 +12,23 @@
         <dd>
             <select ng-model="formSaveHost.env" ng-options="c for c in config.envs" class="form-control"></select>
         </dd>
-        <dt>Size:</dt>
+        <dt>Size CPU:</dt>
         <dd>
-            <select ng-model="formSaveHost.size" ng-options="c for c in config.sizes" class="form-control"></select>
+            <input ng-model="formSaveHost.sizeCpu" type="number" class="form-control">
+        </dd>
+        <dt>Size Memory:</dt>
+        <dd>
+            <div class="input-group">
+                <input ng-model="formSaveHost.sizeMemory" type="number" class="form-control">
+                <div class="input-group-addon">GB</div>
+            </div>
+        </dd>
+        <dt>Size Storage:</dt>
+        <dd>
+            <div class="input-group">
+                <input ng-model="formSaveHost.sizeStorage" type="number" class="form-control">
+                <div class="input-group-addon">GB</div>
+            </div>
         </dd>
         <dt>Artifact Version:</dt>
         <dd>

@@ -145,7 +145,9 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                         case create:
                             createHostAction.process(workItem, callbackData.status);
                             notes.put("env", workItem.getHost().env);
-                            notes.put("size", workItem.getHost().size);
+                            notes.put("size_cpu", Integer.toString(workItem.getHost().sizeCpu));
+                            notes.put("size_memory", Integer.toString(workItem.getHost().sizeMemory));
+                            notes.put("size_storage", Integer.toString(workItem.getHost().sizeStorage));
                             notes.put("reason", workItem.getHost().reason);
                             break;
                         case deploy:

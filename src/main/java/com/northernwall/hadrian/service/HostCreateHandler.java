@@ -84,9 +84,6 @@ public class HostCreateHandler extends BasicHandler {
         if (!config.envs.contains(data.env)) {
             throw new Http400BadRequestException("Unknown env");
         }
-        if (!config.sizes.contains(data.size)) {
-            throw new Http400BadRequestException("Unknown size");
-        }
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         Module module = null;
@@ -129,13 +126,15 @@ public class HostCreateHandler extends BasicHandler {
                     data.moduleId,
                     data.dataCenter,
                     data.network,
-                    data.env,
-                    data.size);
+                    data.env);
             getDataAccess().saveHost(host);
 
             WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
             WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
 
+            workItemCreate.getHost().sizeCpu = data.sizeCpu;
+            workItemCreate.getHost().sizeMemory = data.sizeMemory;
+            workItemCreate.getHost().sizeStorage = data.sizeStorage;
             workItemCreate.getHost().version = data.version;
             workItemCreate.getHost().configVersion = data.configVersion;
             workItemCreate.getHost().reason = data.reason;

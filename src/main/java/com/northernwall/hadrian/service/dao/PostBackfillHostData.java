@@ -7,7 +7,6 @@ public class PostBackfillHostData {
     public String dataCenter;
     public String network;
     public String env;
-    public String size;
     public String hosts;
 
 }

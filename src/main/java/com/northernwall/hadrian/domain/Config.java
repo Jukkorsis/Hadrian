@@ -29,7 +29,6 @@ public class Config {
     public List<String> networkNames = new LinkedList<>();
     public List<Network> networks = new LinkedList<>();
     public List<String> envs = new LinkedList<>();
-    public List<String> sizes = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> serviceTypes = new LinkedList<>();

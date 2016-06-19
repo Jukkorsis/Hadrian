@@ -64,19 +64,13 @@
                                             DC
                                         </a>
                                     </th>
-                                    <th width="10%">
+                                    <th width="15%">
                                         <a ng-click="hostSortType = 'env';
                                                                 hostSortReverse = !hostSortReverse">
                                             Env.
                                         </a>
                                     </th>
-                                    <th width="10%">
-                                        <a ng-click="hostSortType = 'size';
-                                                                hostSortReverse = !hostSortReverse">
-                                            Size
-                                        </a>
-                                    </th>
-                                    <th width="15%">
+                                    <th width="20%">
                                         <a ng-click="hostSortType = 'version';
                                                                 hostSortReverse = !hostSortReverse">
                                             Ver.
@@ -128,7 +122,6 @@
                                     </td>
                                     <td>{{i.dataCenter}}</td>
                                     <td>{{i.env}}</td>
-                                    <td>{{i.size}}</td>
                                     <td>{{i.version}}</td>
                                     <td>
                                         <span ng-if="i.availability === -1">

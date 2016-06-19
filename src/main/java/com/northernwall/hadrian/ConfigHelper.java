@@ -74,7 +74,6 @@ public class ConfigHelper implements ParameterChangeListener {
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_ENVS, Const.CONFIG_ENVS_DEFAULT, newConfig.envs);
-        loadConfig(Const.CONFIG_SIZES, Const.CONFIG_SIZES_DEFAULT, newConfig.sizes);
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, newConfig.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, newConfig.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, newConfig.artifactTypes);

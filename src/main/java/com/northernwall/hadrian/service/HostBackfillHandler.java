@@ -75,9 +75,6 @@ public class HostBackfillHandler extends BasicHandler {
         if (!config.envs.contains(data.env)) {
             throw new Http400BadRequestException("unknown env, " + data.env);
         }
-        if (!config.sizes.contains(data.size)) {
-            throw new Http400BadRequestException("unknown size, " + data.size);
-        }
 
         Module module = getModule(data.moduleId, null, service);
         if (module.getModuleType() != ModuleType.Deployable) {
@@ -104,8 +101,7 @@ public class HostBackfillHandler extends BasicHandler {
                                 module.getModuleId(),
                                 data.dataCenter,
                                 data.network,
-                                data.env,
-                                data.size);
+                                data.env);
                         getDataAccess().saveHost(host);
 
                         Audit audit = new Audit();

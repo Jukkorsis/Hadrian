@@ -126,7 +126,9 @@ public class EmailWorkItemSender extends WorkItemSender {
         addLine("Data Center", workItem.getHost().dataCenter, body);
         addLine("Network", workItem.getHost().network, body);
         addLine("Environment", workItem.getHost().env, body);
-        addLine("Size", workItem.getHost().size, body);
+        addLine("Size CPU", Integer.toString(workItem.getHost().sizeCpu), body);
+        addLine("Size Memory", Integer.toString(workItem.getHost().sizeMemory), body);
+        addLine("Size Storage", Integer.toString(workItem.getHost().sizeStorage), body);
         addLine("Version", workItem.getHost().version, body);
 
         emailWorkItem(subject, body.toString());

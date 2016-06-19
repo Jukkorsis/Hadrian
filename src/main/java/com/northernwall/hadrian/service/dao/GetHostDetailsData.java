@@ -19,7 +19,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GetHostDetailsData {
+
     public List<GetPairData> left = new LinkedList<>();
     public List<GetPairData> right = new LinkedList<>();
+
+    public void addPair(GetPairData pair) {
+        if (left.size() == right.size()) {
+            left.add(pair);
+        } else {
+            right.add(pair);
+        }
+
+    }
 
 }

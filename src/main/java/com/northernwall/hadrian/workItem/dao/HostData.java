@@ -23,7 +23,9 @@ public class HostData {
     public String dataCenter;
     public String network;
     public String env;
-    public String size;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
     public String version;
     public String versionUrl;
     public String configVersion;
@@ -39,7 +41,6 @@ public class HostData {
         temp.dataCenter = host.getDataCenter();
         temp.network = host.getNetwork();
         temp.env = host.getEnv();
-        temp.size = host.getSize();
         temp.version = null;
         temp.versionUrl = null;
         temp.configVersion = null;

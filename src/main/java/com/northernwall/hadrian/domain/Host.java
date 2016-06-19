@@ -31,7 +31,6 @@ public class Host implements Comparable<Host> {
     private String dataCenter;
     private String network;
     private String env;
-    private String size;
 
     public Host() {
         this.hostId = UUID.randomUUID().toString();
@@ -41,10 +40,9 @@ public class Host implements Comparable<Host> {
         this.dataCenter = null;
         this.network = null;
         this.env = null;
-        this.size = null;
     }
 
-    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String network, String env, String size) {
+    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String network, String env) {
         this.hostId = UUID.randomUUID().toString();
         this.hostName = hostName;
         this.serviceId = serviceId;
@@ -53,7 +51,6 @@ public class Host implements Comparable<Host> {
         this.dataCenter = dataCenter;
         this.network = network;
         this.env = env;
-        this.size = size;
     }
 
     public String getHostId() {
@@ -118,14 +115,6 @@ public class Host implements Comparable<Host> {
 
     public void setEnv(String env) {
         this.env = env;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     @Override

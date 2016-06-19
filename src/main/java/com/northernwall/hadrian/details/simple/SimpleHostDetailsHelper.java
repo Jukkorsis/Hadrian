@@ -90,30 +90,27 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
         }
     }
 
+    @Override
     public GetHostDetailsData getDetails(Host host) {
-        List<GetPairData> data = new LinkedList<>();
-        data.add(new GetPairData("host id", host.getHostId()));
+        List<GetPairData> pairs = new LinkedList<>();
+        pairs.add(new GetPairData("host id", host.getHostId()));
         if (!urlTemplates.isEmpty()) {
             for (String urlTemplate : urlTemplates) {
                 String url = urlTemplate.replace(Const.HOST, host.getHostName());
-                getDetailsFromUrl(host, url, data);
+                getDetailsFromUrl(host, url, pairs);
             }
         }
 
-        Collections.sort(data);
+        Collections.sort(pairs);
         GetHostDetailsData details = new GetHostDetailsData();
-        for (GetPairData pair : data) {
-            if (details.left.size() == details.right.size()) {
-                details.left.add(pair);
-            } else {
-                details.right.add(pair);
-            }
+        for (GetPairData pair : pairs) {
+            details.addPair(pair);
         }
 
         return details;
     }
 
-    private void getDetailsFromUrl(Host host, String url, List<GetPairData> data) {
+    private void getDetailsFromUrl(Host host, String url, List<GetPairData> pairs) {
         Request httpRequest = new Request.Builder().url(url).build();
         try {
             Response resp = client.newCall(httpRequest).execute();
@@ -123,26 +120,7 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
                     if (jsonElement.isJsonObject()) {
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
                         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            if (entry.getValue().isJsonPrimitive()) {
-                                addPair(entry.getKey(), entry.getValue().getAsString(), data);
-                            } else if (entry.getValue().isJsonArray()) {
-                                StringBuffer buffer = null;
-                                JsonArray jsonArray = entry.getValue().getAsJsonArray();
-                                for (int i = 0; i < jsonArray.size(); i++) {
-                                    JsonElement arrayElement = jsonArray.get(i);
-                                    if (arrayElement.isJsonPrimitive()) {
-                                        if (buffer == null) {
-                                            buffer = new StringBuffer(arrayElement.getAsString());
-                                        } else {
-                                            buffer.append(", ");
-                                            buffer.append(arrayElement.getAsString());
-                                        }
-                                    }
-                                }
-                                if (buffer != null) {
-                                    addPair(entry.getKey(), buffer.toString(), data);
-                                }
-                            }
+                            processAttribute(null, entry, pairs);
                         }
                     }
                 } else {
@@ -154,9 +132,40 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
         }
     }
 
-    private void addPair(String label, String value, List<GetPairData> data) {
+    private void processAttribute(String prefix, Map.Entry<String, JsonElement> entry, List<GetPairData> pairs) {
+        if (entry.getValue().isJsonPrimitive()) {
+            addPair(prefix, entry.getKey(), entry.getValue().getAsString(), pairs);
+        } else if (entry.getValue().isJsonArray()) {
+            StringBuffer buffer = null;
+            JsonArray jsonArray = entry.getValue().getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonElement arrayElement = jsonArray.get(i);
+                if (arrayElement.isJsonPrimitive()) {
+                    if (buffer == null) {
+                        buffer = new StringBuffer(arrayElement.getAsString());
+                    } else {
+                        buffer.append(", ");
+                        buffer.append(arrayElement.getAsString());
+                    }
+                }
+            }
+            if (buffer != null) {
+                addPair(prefix, entry.getKey(), buffer.toString(), pairs);
+            }
+        } else if (entry.getValue().isJsonObject()) {
+            JsonObject jsonObject = entry.getValue().getAsJsonObject();
+            for (Map.Entry<String, JsonElement> innerEntry : jsonObject.entrySet()) {
+                processAttribute(entry.getKey(), innerEntry, pairs);
+            }
+        }
+    }
+
+    private void addPair(String prefix, String label, String value, List<GetPairData> data) {
         if (label == null || label.isEmpty() || value == null || value.isEmpty()) {
             return;
+        }
+        if ( prefix != null && !prefix.isEmpty()) {
+            label = prefix + "_" + label;
         }
         if (attributes.isEmpty() || attributes.contains(label)) {
             label = label.replace("-", " ").replace("_", " ");

@@ -25,7 +25,6 @@ public class GetHostData {
     public String dataCenter;
     public String network;
     public String env;
-    public String size;
     public String version;
     public int availability;
 
@@ -38,7 +37,6 @@ public class GetHostData {
         temp.dataCenter = host.getDataCenter();
         temp.network = host.getNetwork();
         temp.env = host.getEnv();
-        temp.size = host.getSize();
         temp.version = "-";
         temp.availability = 0;
         return temp;
