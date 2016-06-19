@@ -27,6 +27,7 @@ public class HostData {
     public int sizeMemory;
     public int sizeStorage;
     public String version;
+    public String prevVersion;
     public String versionUrl;
     public String configVersion;
     public String reason;
@@ -42,6 +43,7 @@ public class HostData {
         temp.network = host.getNetwork();
         temp.env = host.getEnv();
         temp.version = null;
+        temp.prevVersion = null;
         temp.versionUrl = null;
         temp.configVersion = null;
         temp.reason = null;

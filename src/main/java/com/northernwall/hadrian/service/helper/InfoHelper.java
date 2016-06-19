@@ -31,19 +31,19 @@ public class InfoHelper {
         this.client = client;
     }
 
-    public int readAvailability(String host, String url) throws IOException {
+    public int readAvailability(String host, String url) {
         try {
             Request request = new Request.Builder()
                     .url(Const.HTTP + url.replace(Const.HOST, host))
                     .build();
             Response response = client.newCall(request).execute();
             return response.code();
-        } catch (ConnectException | UnknownHostException | SocketTimeoutException ex) {
+        } catch (IOException ex) {
             return -1;
         }
     }
 
-    public String readVersion(String host, String url) throws IOException {
+    public String readVersion(String host, String url) {
         try {
             Request request = new Request.Builder()
                     .url(Const.HTTP + url.replace(Const.HOST, host))
@@ -58,6 +58,8 @@ public class InfoHelper {
             return "Unknown Host";
         } catch (ConnectException | SocketTimeoutException ex) {
             return "Time Out";
+        } catch (IOException ex) {
+            return "IO Exception";
         }
     }
 

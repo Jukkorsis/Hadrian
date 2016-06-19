@@ -30,6 +30,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.service.dao.PutDeploySoftwareData;
+import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,12 +48,14 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
+    private final InfoHelper infoHelper;
     private final WorkItemProcessor workItemProcess;
 
-    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
+        this.infoHelper = infoHelper;
         this.workItemProcess = workItemProcess;
     }
 
@@ -96,6 +99,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                     if (host.getStatus().equals(Const.NO_STATUS)) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = data.version;
+                        workItem.getHost().prevVersion = infoHelper.readVersion(host.getHostName(), module.getVersionUrl());
                         workItem.getHost().versionUrl = data.versionUrl;
                         workItem.getHost().configVersion = data.configVersion;
                         workItem.getHost().reason = data.reason;
