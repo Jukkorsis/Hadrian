@@ -735,9 +735,15 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.search = {};
+        var dateObj = new Date();
+        $scope.search = {
+            year: dateObj.getUTCFullYear(),
+            month: dateObj.getUTCMonth() + 1,
+            start: dateObj.getUTCDate(),
+            end: dateObj.getUTCDate()
+        };
         $scope.searchAudit = function () {
-            var responsePromise = $http.get("/v1/service/audit?serviceId=" + $scope.service.serviceId + "&start=" + $scope.search.start + "&end=" + $scope.search.end, {});
+            var responsePromise = $http.get("/v1/service/audit?serviceId=" + $scope.service.serviceId + "&year=" + $scope.search.year + "&month=" + $scope.search.month + "&start=" + $scope.search.start + "&end=" + $scope.search.end, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $scope.audits = dataFromServer.audits;
                 for (var j = 0; j < $scope.audits.length; j++) {

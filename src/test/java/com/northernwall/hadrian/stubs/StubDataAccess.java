@@ -306,7 +306,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Audit> getAudit(String serviceId, Date start, Date end) {
+    public List<Audit> getAudit(String serviceId, int year, int month, int startDay, int endDay) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

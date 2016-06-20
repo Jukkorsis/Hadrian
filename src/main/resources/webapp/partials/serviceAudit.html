@@ -1,9 +1,37 @@
 <div class="panel panel-default">
     <div class="panel-body">
-        <div>
-            <input type="text" ng-model="search.start" uib-popover="Search from the beginning of this day (MM/DD/YYYY). If blank then 2 years ago." popover-trigger="mouseenter"/>
-            <input type="text" ng-model="search.end" uib-popover="Search to the beginning of this day (MM/DD/YYYY). If blank then today." popover-trigger="mouseenter"/>
-            <a ng-click="searchAudit()" class="btn btn-info btn-xs" uib-popover="Search audit records." popover-trigger="mouseenter"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
+        <div class="row">
+            <div class="col-md-2">Year<br/>
+                <select ng-model="search.year" class="form-control">
+                    <option value="2016">2016</option> 
+                    <option value="2017">2017</option>
+                </select>
+            </div>
+            <div class="col-md-4">Month<br/>
+                <select ng-model="search.month" class="form-control">
+                    <option value="1">January</option> 
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div class="col-md-2">Start Day<br/>
+                <input type="number" ng-model="search.start" class="form-control"/>
+            </div>
+            <div class="col-md-2">End Day<br/>
+                <input type="number" ng-model="search.end" class="form-control"/>
+            </div>
+            <div class="col-md-2"><br/>
+                <a ng-click="searchAudit()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-search"></span> Search</a><br/>
+            </div>
         </div>
         <form>
             <div class="form-group">
@@ -18,7 +46,6 @@
                 <th></th>
                 <th>Requestor</th>
                 <th>Performed</th>
-                <th>Requested</th>
                 <th>Type</th>
                 <th>Operation</th>
                 <th>Module</th>
@@ -34,7 +61,6 @@
                 </td>
                 <td>{{a.requestor}}</td>
                 <td>{{a.timePerformed}}</td>
-                <td>{{a.timeRequested}}</td>
                 <td>{{a.type}}</td>
                 <td>{{a.operation}}</td>
                 <td>{{a.moduleName}}</td>
@@ -46,6 +72,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
+                                <dt>Requested:</dt><dd>{{a.timeRequested}}</dd>
                                 <div ng-repeat="d in a.left">
                                     <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
                                 </div>

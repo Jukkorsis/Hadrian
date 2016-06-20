@@ -430,7 +430,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Audit> getAudit(String serviceId, Date start, Date end) {
+    public List<Audit> getAudit(String serviceId, int year, int month, int startDay, int endDay) {
         List<Audit> temp = new LinkedList<>();
         for (Audit audit : audits) {
             if (audit.serviceId.equals(serviceId)) {

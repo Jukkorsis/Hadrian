@@ -1,10 +1,5 @@
 package com.northernwall.hadrian.db;
 
-import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.domain.Service;
-import java.util.HashMap;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,15 +17,12 @@ package com.northernwall.hadrian.service;
 
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.service.dao.GetAuditData;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,45 +38,46 @@ public class AuditGetHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(AuditGetHandler.class);
 
-    private final DateFormat format;
-
     public AuditGetHandler(DataAccess dataAccess) {
         super(dataAccess);
-
-        format = new SimpleDateFormat("MM/dd/yyyy");
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
+        String year = request.getParameter("year");
+        String month = request.getParameter("month");
         String start = request.getParameter("start");
         String end = request.getParameter("end");
         String id = request.getParameter("serviceId");
         GetAuditData auditData = new GetAuditData();
 
-        Date startDate = null;
-        try {
-            startDate = format.parse(start);
-        } catch (ParseException ex) {
-            Calendar now = Calendar.getInstance();
-            now.add(Calendar.DATE, -15);
-            now.clear(Calendar.HOUR);
-            now.clear(Calendar.MINUTE);
-            now.clear(Calendar.SECOND);
-            startDate = now.getTime();
+        Service service = getService(request);
+        if (year == null || year.isEmpty()) {
+            throw new Http400BadRequestException("parameter year is missing");
         }
-        Date endDate = null;
-        try {
-            endDate = format.parse(end);
-        } catch (ParseException ex) {
-            Calendar now = Calendar.getInstance();
-            now.add(Calendar.DATE, 1);
-            now.clear(Calendar.HOUR);
-            now.clear(Calendar.MINUTE);
-            now.clear(Calendar.SECOND);
-            endDate = now.getTime();
+        if (month == null || month.isEmpty()) {
+            throw new Http400BadRequestException("parameter month is missing");
         }
-        logger.info("Audit search from {} to {} on service {}", startDate.toString(), endDate.toString(), id);
-        auditData.audits = getDataAccess().getAudit(id, startDate, endDate);
+        if (start == null || start.isEmpty()) {
+            throw new Http400BadRequestException("parameter start is missing");
+        }
+        if (end == null || end.isEmpty()) {
+            throw new Http400BadRequestException("parameter end is missing");
+        }
+        
+        auditData.audits = getDataAccess().getAudit(
+                id, 
+                Integer.parseInt(year), 
+                Integer.parseInt(month), 
+                Integer.parseInt(start), 
+                Integer.parseInt(end));
+        logger.info("Got {} audit record for {} between {} {} {} and {}", 
+                auditData.audits.size(), 
+                service.getServiceName(), 
+                year, 
+                month, 
+                start, 
+                end);
         Collections.sort(auditData.audits);
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

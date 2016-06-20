@@ -115,7 +115,7 @@ public class HostBackfillHandler extends BasicHandler {
                         audit.moduleName = module.getModuleName();
                         audit.hostName = temp;
                         Map<String, String> notes = new HashMap<>();
-                        notes.put("reason", "Backfilled host.");
+                        notes.put("Reason", "Backfilled host.");
                         audit.notes = getGson().toJson(notes);
                         getDataAccess().saveAudit(audit, null);
                     }

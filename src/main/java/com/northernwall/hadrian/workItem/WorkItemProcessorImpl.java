@@ -129,8 +129,8 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 case module:
                     switch (workItem.getOperation()) {
                         case create:
-                            notes.put("template", workItem.getMainModule().template);
-                            notes.put("type", workItem.getMainModule().moduleType.toString());
+                            notes.put("Template", workItem.getMainModule().template);
+                            notes.put("Type", workItem.getMainModule().moduleType.toString());
                             break;
                         case update:
                             break;
@@ -144,35 +144,35 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                     switch (workItem.getOperation()) {
                         case create:
                             createHostAction.process(workItem, callbackData.status);
-                            notes.put("env", workItem.getHost().env);
-                            notes.put("size_cpu", Integer.toString(workItem.getHost().sizeCpu));
-                            notes.put("size_memory", Integer.toString(workItem.getHost().sizeMemory));
-                            notes.put("size_storage", Integer.toString(workItem.getHost().sizeStorage));
-                            notes.put("reason", workItem.getHost().reason);
+                            notes.put("Env", workItem.getHost().env);
+                            notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
+                            notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
+                            notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));
+                            notes.put("Reason", workItem.getHost().reason);
                             break;
                         case deploy:
                             deploySoftwareAction.process(workItem, callbackData.status);
                             if (workItem.getHost().version != null) {
-                                notes.put("version", workItem.getHost().version);
+                                notes.put("Version", workItem.getHost().version);
                             }
                             if (workItem.getHost().prevVersion != null) {
-                                notes.put("prevVersion", workItem.getHost().prevVersion);
+                                notes.put("Prev Version", workItem.getHost().prevVersion);
                             }
                             if (workItem.getHost().versionUrl != null) {
-                                notes.put("versionUrl", workItem.getHost().versionUrl);
+                                notes.put("Version Url", workItem.getHost().versionUrl);
                             }
                             if (workItem.getHost().configVersion != null) {
-                                notes.put("config_Version", workItem.getHost().configVersion);
+                                notes.put("Config_Version", workItem.getHost().configVersion);
                             }
-                            notes.put("reason", workItem.getHost().reason);
+                            notes.put("Reason", workItem.getHost().reason);
                             break;
                         case restart:
                             restartHostAction.process(workItem, callbackData.status);
-                            notes.put("reason", workItem.getHost().reason);
+                            notes.put("Reason", workItem.getHost().reason);
                             break;
                         case delete:
                             deleteHost(workItem, callbackData.status);
-                            notes.put("reason", workItem.getHost().reason);
+                            notes.put("Reason", workItem.getHost().reason);
                             break;
                         default:
                             throw new RuntimeException("Unknown callback " + workItem.getType() + " " + workItem.getOperation());
@@ -181,19 +181,19 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 case vip:
                     switch (workItem.getOperation()) {
                         case create:
-                            notes.put("protocol", workItem.getVip().protocol);
-                            notes.put("dns", workItem.getVip().dns + "." + workItem.getVip().domain);
-                            notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
-                            notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
-                            notes.put("external", Boolean.toString(workItem.getVip().external));
+                            notes.put("Protocol", workItem.getVip().protocol);
+                            notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
+                            notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
+                            notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
+                            notes.put("External", Boolean.toString(workItem.getVip().external));
                             createVip(workItem, callbackData.status);
                             break;
                         case update:
-                            notes.put("protocol", workItem.getVip().protocol);
-                            notes.put("dns", workItem.getVip().dns + "." + workItem.getVip().domain);
-                            notes.put("vip_port", Integer.toString(workItem.getVip().vipPort));
-                            notes.put("service_port", Integer.toString(workItem.getVip().servicePort));
-                            notes.put("external", Boolean.toString(workItem.getVip().external));
+                            notes.put("Protocol", workItem.getVip().protocol);
+                            notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
+                            notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
+                            notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
+                            notes.put("External", Boolean.toString(workItem.getVip().external));
                             updateVip(workItem, callbackData.status);
                             break;
                         case delete:

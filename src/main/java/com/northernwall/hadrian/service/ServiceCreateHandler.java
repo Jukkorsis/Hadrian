@@ -116,8 +116,8 @@ public class ServiceCreateHandler extends BasicHandler {
         getDataAccess().saveService(service);
 
         Map<String, String> notes = new HashMap<>();
-        notes.put("name", service.getServiceName());
-        notes.put("abbr", service.getServiceAbbr());
+        notes.put("Name", service.getServiceName());
+        notes.put("Abbr", service.getServiceAbbr());
         createAudit(service.getServiceId(), user.getUsername(), Type.service, Operation.create, notes);
         response.setStatus(200);
         request.setHandled(true);

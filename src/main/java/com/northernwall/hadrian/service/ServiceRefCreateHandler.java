@@ -61,10 +61,10 @@ public class ServiceRefCreateHandler extends BasicHandler {
         ModuleRef ref = new ModuleRef(data.clientServiceId, data.clientModuleId, data.serverServiceId, data.serverModuleId);
         getDataAccess().saveModuleRef(ref);
         Map<String, String> notes = new HashMap<>();
-        notes.put("uses", serverService.getServiceAbbr() + " " + serverModule.getModuleName());
+        notes.put("Uses", serverService.getServiceAbbr() + " " + serverModule.getModuleName());
         createAudit(data.clientServiceId, clientModule.getModuleName(), user.getUsername(), notes);
         notes = new HashMap<>();
-        notes.put("use_by", clientService.getServiceAbbr() + " " + clientModule.getModuleName());
+        notes.put("Use_By", clientService.getServiceAbbr() + " " + clientModule.getModuleName());
         createAudit(data.serverServiceId, serverModule.getModuleName(), user.getUsername(), notes);
 
         response.setStatus(200);

@@ -41,8 +41,9 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -254,8 +255,8 @@ public class CassandraDataAccess implements DataAccess {
 
         logger.info("Praparing audit statements...");
         logger.info("Audit TTL {}", auditTimeToLive);
-        auditSelect = session.prepare("SELECT data FROM audit WHERE serviceId = ? AND time >= minTimeuuid(?) AND time < minTimeuuid(?)");
-        auditInsert = session.prepare("INSERT INTO audit (serviceId, time, data) VALUES (?, now(), ?) USING TTL " + auditTimeToLive + ";");
+        auditSelect = session.prepare("SELECT data FROM auditRecord WHERE serviceId = ? AND year = ? AND month = ? AND day = ?");
+        auditInsert = session.prepare("INSERT INTO auditRecord (serviceId, year, month, day, time, data) VALUES (?, ?, ?, ?, now(), ?) USING TTL " + auditTimeToLive + ";");
         auditInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         auditOutputSelect = session.prepare("SELECT data FROM auditOutput WHERE serviceId = ? AND auditId = ?");
         auditOutputInsert = session.prepare("INSERT INTO auditOutput (serviceId, auditId, data) VALUES (?, ?, ?) USING TTL " + auditTimeToLive + ";");
@@ -701,8 +702,15 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveAudit(Audit audit, String output) {
         audit.auditId = UUID.randomUUID().toString();
+        Calendar c = new GregorianCalendar();
+        c.setTime(audit.timePerformed);
         BoundStatement boundStatement = new BoundStatement(auditInsert);
-        session.execute(boundStatement.bind(audit.serviceId, gson.toJson(audit)));
+        session.execute(boundStatement.bind(
+                audit.serviceId, 
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH)+1,
+                c.get(Calendar.DAY_OF_MONTH),
+                gson.toJson(audit)));
 
         if (output == null) {
             return;
@@ -716,19 +724,35 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<Audit> getAudit(String serviceId, Date start, Date end) {
-        BoundStatement boundStatement = new BoundStatement(auditSelect);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, start, end));
+    public List<Audit> getAudit(String serviceId, int year, int month, int startDay, int endDay) {
         List<Audit> audits = new LinkedList<>();
-        for (Row row : results) {
-            String data = row.getString("data");
-            Audit audit = gson.fromJson(data, Audit.class);
-            if (audit.auditId == null) {
-                audit.auditId = UUID.randomUUID().toString();
-            }
-            audits.add(audit);
+        if (startDay < 1) {
+            startDay = 1;
         }
-        logger.info("Got {} audit record for {} between {} and {}", audits.size(), serviceId, start, end);
+        if (endDay < startDay) {
+            endDay = startDay;
+        }
+        if (endDay > 31) {
+            endDay = 31;
+        }
+        int day = startDay;
+        while (day <= endDay) {
+            BoundStatement boundStatement = new BoundStatement(auditSelect);
+            ResultSet results = session.execute(boundStatement.bind(
+                    serviceId, 
+                    year, 
+                    month,
+                    day));
+            for (Row row : results) {
+                String data = row.getString("data");
+                Audit audit = gson.fromJson(data, Audit.class);
+                if (audit.auditId == null) {
+                    audit.auditId = UUID.randomUUID().toString();
+                }
+                audits.add(audit);
+            }
+            day++;
+        }
         return audits;
     }
 

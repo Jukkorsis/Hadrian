@@ -133,7 +133,11 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
         //Audit table
-        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".audit (serviceId text, time timeuuid, data text, PRIMARY KEY (serviceId, time));");
+        try {
+            session.execute("DROP TABLE " + keyspace + ".audit;");
+        } catch (InvalidQueryException e) {
+        }
+        session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
         session.execute("CREATE TABLE IF NOT EXISTS " + keyspace + ".auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
         logger.info("Tables created");
 
