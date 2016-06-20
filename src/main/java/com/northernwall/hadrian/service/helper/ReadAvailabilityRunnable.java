@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
-import java.io.IOException;
 
 public class ReadAvailabilityRunnable implements Runnable {
 
@@ -33,9 +32,6 @@ public class ReadAvailabilityRunnable implements Runnable {
 
     @Override
     public void run() {
-        try {
-            getHostData.availability = infoHelper.readAvailability(getHostData.hostName, getModuleData.availabilityUrl);
-        } catch (IOException ex) {
-        }
+        getHostData.availability = infoHelper.readAvailability(getHostData.hostName, getModuleData.availabilityUrl);
     }
 }

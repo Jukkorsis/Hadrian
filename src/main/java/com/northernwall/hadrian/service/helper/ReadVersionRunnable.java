@@ -17,7 +17,6 @@ package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.service.dao.GetHostData;
 import com.northernwall.hadrian.service.dao.GetModuleData;
-import java.io.IOException;
 
 public class ReadVersionRunnable implements Runnable {
 
@@ -33,9 +32,6 @@ public class ReadVersionRunnable implements Runnable {
 
     @Override
     public void run() {
-        try {
-            getHostData.version = infoHelper.readVersion(getHostData.hostName, getModuleData.versionUrl);
-        } catch (IOException ex) {
-        }
+        getHostData.version = infoHelper.readVersion(getHostData.hostName, getModuleData.versionUrl);
     }
 }
