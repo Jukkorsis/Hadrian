@@ -134,6 +134,9 @@ hadrianControllers.controller('UsersCtrl', ['$scope', '$route', '$uibModal', 'Us
     function ($scope, $route, $uibModal, User) {
         selectTreeNode("-5");
 
+        $scope.userSortType = 'username';
+        $scope.userSortReverse = false;
+        
         $scope.users = User.get();
 
         $scope.openAddTeamModal = function () {

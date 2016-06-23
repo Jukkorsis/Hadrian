@@ -10,13 +10,38 @@
 </h3>
 <table class="table table-hover table-condensed">
     <tr>
-        <th>User Name</th>
-        <th>Full Name</th>
-        <th>Is Admin</th>
-        <th>Can Deploy</th>
-        <th>Can Audit</th>
+        <th>
+            <a ng-click="userSortType = 'username';
+                                                    userSortReverse = !userSortReverse">
+                User Name
+            </a>
+        </th>
+        <th>
+            <a ng-click="userSortType = 'fullName';
+                                                    userSortReverse = !userSortReverse">
+                Full Name
+            </a>
+        </th>
+        <th>
+            <a ng-click="userSortType = 'admin';
+                                                    userSortReverse = !userSortReverse">
+                Is Admin
+            </a>
+        </th>
+        <th>
+            <a ng-click="userSortType = 'deploy';
+                                                    userSortReverse = !userSortReverse">
+                Can Deploy
+            </a>
+        </th>
+        <th>
+            <a ng-click="userSortType = 'audit';
+                                                    userSortReverse = !userSortReverse">
+                Can Audit
+            </a>
+        </th>
     </tr>
-    <tr ng-repeat="u in users.users">
+    <tr ng-repeat="u in users.users| orderBy:userSortType:userSortReverse">
         <td>
             {{u.username}}
             <a ng-click="openUpdateUserModal(u);" class="btn btn-info btn-xs" uib-popover="Update {{u.username}}." popover-trigger="mouseenter"><span class="glyphicon glyphicon-pencil"></span></a>
