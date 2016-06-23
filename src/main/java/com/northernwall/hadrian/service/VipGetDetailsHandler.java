@@ -56,17 +56,19 @@ public class VipGetDetailsHandler extends BasicHandler {
         
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         for (Host host : hosts) {
-            boolean found = false;
-            for (GetVipDetailRowData row : details.rows) {
-                if (host.getHostName().equalsIgnoreCase(row.hostName)) {
-                    found = true;
+            if (host.getNetwork().equals(vip.getNetwork())) {
+                boolean found = false;
+                for (GetVipDetailRowData row : details.rows) {
+                    if (host.getHostName().equalsIgnoreCase(row.hostName)) {
+                        found = true;
+                    }
                 }
-            }
-            if (!found) {
-                GetVipDetailRowData temp = new GetVipDetailRowData();
-                temp.hostName = host.getHostName();
-                temp.warning = "Host not found in VIP";
-                details.rows.add(temp);
+                if (!found) {
+                    GetVipDetailRowData temp = new GetVipDetailRowData();
+                    temp.hostName = host.getHostName();
+                    temp.warning = "Host not found in VIP";
+                    details.rows.add(temp);
+                }
             }
         }
 
