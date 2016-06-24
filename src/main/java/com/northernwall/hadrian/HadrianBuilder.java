@@ -142,7 +142,7 @@ public class HadrianBuilder {
             if (graphiteUrl != null && graphitePort > -1) {
                 Graphite graphite = new Graphite(new InetSocketAddress(graphiteUrl, graphitePort));
                 GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry)
-                        .prefixedWith("hadrian." + getHostname())
+                        .prefixedWith(parameters.getString("metrics.graphite.prefix", "hadrian") + "." + getHostname())
                         .convertRatesTo(TimeUnit.SECONDS)
                         .convertDurationsTo(TimeUnit.MILLISECONDS)
                         .filter(MetricFilter.ALL)

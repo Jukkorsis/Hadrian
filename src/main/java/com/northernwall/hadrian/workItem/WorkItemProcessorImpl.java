@@ -34,6 +34,7 @@ import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,8 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
 
     private final DataAccess dataAccess;
     private final WorkItemSender workItemSender;
-    private final Timer timerProcess;
+    private final MetricRegistry metricRegistry;
+    private final Map<String,Timer> timerProcess;
     private final Timer timerCalback;
     private final Meter meterSuccess;
     private final Meter meterFail;
@@ -55,8 +57,9 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
     public WorkItemProcessorImpl(DataAccess dataAccess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
         this.dataAccess = dataAccess;
         this.workItemSender = workItemSender;
+        this.metricRegistry = metricRegistry;
 
-        timerProcess = metricRegistry.timer("workItem.sendWorkItem");
+        timerProcess = new ConcurrentHashMap<>();
         timerCalback = metricRegistry.timer("workItem.callback.process");
         meterSuccess = metricRegistry.meter("workItem.callback.success");
         meterFail = metricRegistry.meter("workItem.callback.fail");
@@ -70,7 +73,14 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
     @Override
     public void sendWorkItem(WorkItem workItem) throws IOException {
         Result result;
-        Timer.Context context = timerProcess.time();
+        
+        String key = workItem.getType()+"."+workItem.getOperation();
+        Timer timer = timerProcess.get(key);
+        if (timer == null) {
+            timer = metricRegistry.timer("workItem.send."+key);
+            timerProcess.put(key, timer);
+        }
+        Timer.Context context = timer.time();
         try {
             result = workItemSender.sendWorkItem(workItem);
         } finally {
@@ -80,9 +90,11 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
         switch (result) {
             case success:
                 logger.info("Work item sender says work item  {} has been process, no callback expected.", workItem.getId());
+                meterSuccess.mark();
                 break;
             case error:
                 logger.warn("Work item sender says work item  {} failed to be process, no callback expected.", workItem.getId());
+                meterFail.mark();
                 break;
             case wip:
                 logger.info("Work item sender says work item  {} is being processed.", workItem.getId());
