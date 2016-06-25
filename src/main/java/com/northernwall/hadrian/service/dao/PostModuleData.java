@@ -41,6 +41,9 @@ public class PostModuleData {
     public String availabilityUrl;
     public String runAs;
     public String deploymentFolder;
+    public String dataFolder;
+    public String logsFolder;
+    public int logsRetention;
     public String startCmdLine;
     public int startTimeOut;
     public String stopCmdLine;

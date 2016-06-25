@@ -23,6 +23,8 @@ public class Config {
     public String versionUrl = "";
     public String availabilityUrl = "";
     public String deploymentFolder = "";
+    public String dataFolder = "";
+    public String logsFolder = "";
     public String gitUiURL = "";
     public String moduleConfigName = "";
     public List<String> dataCenters = new LinkedList<>();

@@ -120,6 +120,9 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setRunAs(data.runAs);
         module.setDeploymentFolder(data.deploymentFolder);
+        module.setDataFolder(data.dataFolder);
+        module.setLogsFolder(data.logsFolder);
+        module.setLogsRetention(data.logsRetention);
         module.setStartCmdLine(data.startCmdLine);
         module.setStartTimeOut(data.startTimeOut);
         module.setStopCmdLine(data.stopCmdLine);

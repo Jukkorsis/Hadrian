@@ -121,6 +121,12 @@
                                     <dd>{{m.deploymentFolder}}</dd>
                                 </div>
                                 <div ng-if="m.moduleType === 'Deployable'">
+                                    <dt>Data Folder:</dt>
+                                    <dd>{{m.dataFolder}}</dd>
+                                    <dt>Logs Folder:</dt>
+                                    <dd>{{m.logsFolder}}</dd>
+                                    <dt>Logs Retention:</dt>
+                                    <dd>{{m.logsRetention}} Months</dd>
                                     <dt>Start Cmd Line:</dt>
                                     <dd>{{m.startCmdLine}}</dd>
                                     <dt>Start Timeout:</dt>
@@ -143,7 +149,7 @@
                             </dl>
                         </div>
                         <div class="col-md-6">
-                            <dl class="dl-horizontal">
+                            <dl class="dl-horizontal" ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Library'">
                                 <dt>Used By:</dt>
                                 <dd>
                                     <div ng-repeat="sr in m.usedBy">

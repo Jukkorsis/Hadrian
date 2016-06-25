@@ -41,6 +41,9 @@ public class Module implements Comparable<Module> {
     private String availabilityUrl;
     private String runAs;
     private String deploymentFolder;
+    private String dataFolder;
+    private String logsFolder;
+    private int logsRetention;
     private String startCmdLine;
     private int startTimeOut;
     private String stopCmdLine;
@@ -48,7 +51,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> networkNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
+    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -66,6 +69,9 @@ public class Module implements Comparable<Module> {
         this.availabilityUrl = availabilityUrl;
         this.runAs = runAs;
         this.deploymentFolder = deploymentFolder;
+        this.dataFolder = dataFolder;
+        this.logsFolder = logsFolder;
+        this.logsRetention = logsRetention;
         this.startCmdLine = startCmdLine;
         this.startTimeOut = startTimeOut;
         this.stopCmdLine = stopCmdLine;
@@ -208,6 +214,30 @@ public class Module implements Comparable<Module> {
 
     public void setDeploymentFolder(String deploymentFolder) {
         this.deploymentFolder = deploymentFolder;
+    }
+
+    public String getDataFolder() {
+        return dataFolder;
+    }
+
+    public void setDataFolder(String dataFolder) {
+        this.dataFolder = dataFolder;
+    }
+
+    public String getLogsFolder() {
+        return logsFolder;
+    }
+
+    public void setLogsFolder(String logsFolder) {
+        this.logsFolder = logsFolder;
+    }
+
+    public int getLogsRetention() {
+        return logsRetention;
+    }
+
+    public void setLogsRetention(int logsRetention) {
+        this.logsRetention = logsRetention;
     }
 
     public String getStartCmdLine() {

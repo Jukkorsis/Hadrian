@@ -973,6 +973,9 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.runAs = "";
         $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
+        $scope.formSaveModule.dataFolder = $scope.config.dataFolder;
+        $scope.formSaveModule.logsFolder = $scope.config.logsFolder;
+        $scope.formSaveModule.logsRetention = 6;
         $scope.formSaveModule.startCmdLine = "";
         $scope.formSaveModule.startTimeOut = 60;
         $scope.formSaveModule.stopCmdLine = "";
@@ -1000,6 +1003,9 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 runAs: $scope.formSaveModule.runAs,
                 deploymentFolder: $scope.formSaveModule.deploymentFolder,
+                dataFolder: $scope.formSaveModule.dataFolder,
+                logsFolder: $scope.formSaveModule.logsFolder,
+                logsRetention: $scope.formSaveModule.logsRetention,
                 startCmdLine: $scope.formSaveModule.startCmdLine,
                 startTimeOut: $scope.formSaveModule.startTimeOut,
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
@@ -1043,6 +1049,9 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.runAs = module.runAs;
         $scope.formUpdateModule.deploymentFolder = module.deploymentFolder;
+        $scope.formUpdateModule.dataFolder = module.dataFolder;
+        $scope.formUpdateModule.logsFolder = module.logsFolder;
+        $scope.formUpdateModule.logsRetention = module.logsRetention;
         $scope.formUpdateModule.startCmdLine = module.startCmdLine;
         $scope.formUpdateModule.startTimeOut = module.startTimeOut;
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
@@ -1066,6 +1075,9 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 runAs: $scope.formUpdateModule.runAs,
                 deploymentFolder: $scope.formUpdateModule.deploymentFolder,
+                dataFolder: $scope.formUpdateModule.dataFolder,
+                logsFolder: $scope.formUpdateModule.logsFolder,
+                logsRetention: $scope.formUpdateModule.logsRetention,
                 startCmdLine: $scope.formUpdateModule.startCmdLine,
                 startTimeOut: $scope.formUpdateModule.startTimeOut,
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,

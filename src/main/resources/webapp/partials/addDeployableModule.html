@@ -41,6 +41,10 @@
                 <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
                 <dt>Run As User:</dt>
                 <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+                <dt>Deployment Folder:</dt>
+                <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+                <dt>Data Folder:</dt>
+                <dd><input ng-model="formSaveModule.dataFolder" type="text" class="form-control"></dd>
                 <dt>Start Cmd Line:</dt>
                 <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
                 <dt>Start Time Out:</dt>
@@ -50,8 +54,6 @@
                         <div class="input-group-addon">sec</div>
                     </div>
                 </dd>
-                <dt>{{config.moduleConfigName}}:</dt>
-                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
             </dl>
         </div>
         <div class="col-md-6">
@@ -68,8 +70,17 @@
                 <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
                 <dt>Availability Url:</dt>
                 <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
-                <dt>Deployment Folder:</dt>
-                <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
+                <dt>Logs Folder:</dt>
+                <dd><input ng-model="formSaveModule.logsFolder" type="text" class="form-control"></dd>
+                <dt>Logs Retention:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
+                        <div class="input-group-addon">months</div>
+                    </div>
+                </dd>
                 <dt>Stop Cmd Line:</dt>
                 <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
                 <dt>Stop Time Out:</dt>

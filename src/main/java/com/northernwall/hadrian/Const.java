@@ -146,6 +146,10 @@ public class Const {
     public static final String CONFIG_AVAILABILITY_URL_DEFAULT = HOST+".mydomain.com:9090/availability";
     public static final String CONFIG_DEPLOYMENT_FOLDER = "config.deploymentFolder";
     public static final String CONFIG_DEPLOYMENT_FOLDER_DEFAULT = "/home/app";
+    public static final String CONFIG_DATA_FOLDER = "config.dataFolder";
+    public static final String CONFIG_DATA_FOLDER_DEFAULT = "/var/app/data";
+    public static final String CONFIG_LOGS_FOLDER = "config.logsFolder";
+    public static final String CONFIG_LOGS_FOLDER_DEFAULT = "/var/app/logs";
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";

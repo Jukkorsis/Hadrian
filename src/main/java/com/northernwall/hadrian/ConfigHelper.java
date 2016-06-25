@@ -65,6 +65,8 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
         newConfig.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
         newConfig.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
+        newConfig.dataFolder = parameters.getString(Const.CONFIG_DATA_FOLDER, Const.CONFIG_DATA_FOLDER_DEFAULT);
+        newConfig.logsFolder = parameters.getString(Const.CONFIG_LOGS_FOLDER, Const.CONFIG_LOGS_FOLDER_DEFAULT);
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
         if (moduleConfigHelper == null) {
             newConfig.moduleConfigName = "Config Name";
