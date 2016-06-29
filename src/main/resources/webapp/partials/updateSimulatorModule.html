@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <h3 class="modal-title">Update Simulator Module</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Name:</dt>
+                <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control" uib-popover="It's convention to name modules with the service's abbreviation (capitalized) followed by a dash then the module's function. For example FOO-service or FOO-client." popover-trigger="mouseenter"></dd>
+                <dt>Maven Group Id:</dt>
+                <dd><input ng-model="formUpdateModule.mavenGroupId" type="text" class="form-control"></dd>
+                <dt>Maven Artifact Id:</dt>
+                <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
+                <dt>Networks:</dt>
+                <dd>
+                    <span ng-repeat="n in config.networkNames">
+                        <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
+                    </span>
+                </dd>
+                <dt>Host Abbr:</dt>
+                <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
+                <dt>Run As User:</dt>
+                <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
+                <dt>Deployment Folder:</dt>
+                <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
+                <dt>Data Folder:</dt>
+                <dd><input ng-model="formUpdateModule.dataFolder" type="text" class="form-control"></dd>
+                <dt>Start Cmd Line:</dt>
+                <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Start Time Out:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Build Order:</dt>
+                <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
+                <dt>Artifact Type:</dt>
+                <dd><select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
+                <dt>Artifact Suffix:</dt>
+                <dd><input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control"></dd>
+                <dt>Version Url:</dt>
+                <dd><input ng-model="formUpdateModule.versionUrl" type="text" class="form-control"></dd>
+                <dt>Availability Url:</dt>
+                <dd><input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control"></dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formUpdateModule.configName" type="text" class="form-control"></dd>
+                <dt>Logs Folder:</dt>
+                <dd><input ng-model="formUpdateModule.logsFolder" type="text" class="form-control"></dd>
+                <dt>Logs Retention:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
+                        <div class="input-group-addon">months</div>
+                    </div>
+                </dd>
+                <dt>Stop Cmd Line:</dt>
+                <dd><input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Stop Time Out:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Update Simulator Module</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

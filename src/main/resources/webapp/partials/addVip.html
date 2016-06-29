@@ -4,11 +4,10 @@
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
-        <dt>DNS:</dt>
-        <dd>
-            <input ng-model="formSaveVip.dns" type="text" class="form-control">
-            <select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select>
-        </dd>
+        <dt>Domain:</dt>
+        <dd><input ng-model="formSaveVip.dns" type="text" class="form-control"></dd>
+        <dt>Root Domain:</dt>
+        <dd><select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select></dd>
         <dt>External:</dt>
         <dd><select ng-model="formSaveVip.external" class="form-control"><option value="false" selected="selected">False</option><option value="true">True</option></select></dd>
         <dt>Protocol:</dt>

@@ -23,6 +23,8 @@ public interface Parameters {
     String getString(String key, String value);
     int getInt(String key, int value);
     boolean getBoolean(String key, boolean value);
+    String getUsername();
+    String getPassword();
     void registerChangeListener(ParameterChangeListener listener);
     
 }

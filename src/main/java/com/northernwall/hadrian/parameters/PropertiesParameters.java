@@ -48,6 +48,16 @@ public class PropertiesParameters implements Parameters {
     }
     
     @Override
+    public String getUsername() {
+        return properties.getProperty("username", null);
+    }
+    
+    @Override
+    public String getPassword() {
+        return properties.getProperty("password", null);
+    }
+    
+    @Override
     public void registerChangeListener(ParameterChangeListener listener) {
     }
 

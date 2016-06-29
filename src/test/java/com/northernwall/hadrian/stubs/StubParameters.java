@@ -30,4 +30,14 @@ public class StubParameters implements Parameters {
     public void registerChangeListener(ParameterChangeListener listener) {
     }
 
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
 }

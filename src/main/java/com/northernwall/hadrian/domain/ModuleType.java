@@ -23,6 +23,7 @@ public enum ModuleType {
 
     Deployable,
     Library,
+    Simulator,
     Test;
 
 }

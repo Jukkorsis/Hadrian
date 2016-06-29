@@ -94,10 +94,6 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.gitModes.add(GitMode.Consolidated);
         newConfig.gitModes.add(GitMode.Flat);
 
-        newConfig.moduleTypes.add(ModuleType.Deployable);
-        newConfig.moduleTypes.add(ModuleType.Library);
-        newConfig.moduleTypes.add(ModuleType.Test);
-
         logger.info("Config loaded");
         return newConfig;
     }

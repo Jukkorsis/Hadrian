@@ -6,6 +6,8 @@
     <dl class="dl-horizontal">
         <dt>Name:</dt>
         <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control" uib-popover="It's convention to name modules with the service's abbreviation (capitalized) followed by a dash then the module's function. For example FOO-service or FOO-client." popover-trigger="mouseenter"></dd>
+        <dt>Build Order:</dt>
+        <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
         <div ng-if="service.gitMode === 'Flat'">
             <dt>Git Project:</dt>
             <dd>
@@ -25,8 +27,6 @@
                 </div>
             </dd>
         </div>
-        <dt>Build Order:</dt>
-        <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
         <dt>Template:</dt>
         <dd><select ng-model="formSaveModule.libraryTemplate" ng-options="c for c in config.libraryTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
         <dt>Maven Group Id:</dt>

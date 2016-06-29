@@ -139,7 +139,7 @@ public class Hadrian {
         this.workItemSender = workItemSender;
         this.metricRegistry = metricRegistry;
 
-        infoHelper = new InfoHelper(client);
+        infoHelper = new InfoHelper(parameters, client);
         messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
 
         setupJetty();

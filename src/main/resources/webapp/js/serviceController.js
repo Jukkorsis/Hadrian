@@ -152,6 +152,33 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openAddSimulatorModuleModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addSimulatorModule.html',
+                controller: 'ModalAddModuleCtrl',
+                size: 'lg',
+                resolve: {
+                    team: function () {
+                        return $scope.team;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    },
+                    moduleType: function () {
+                        return 'Simulator';
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.openAddTestModuleModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -206,6 +233,28 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 var modalInstance = $uibModal.open({
                     animation: true,
                     templateUrl: 'partials/updateLibraryModule.html',
+                    controller: 'ModalUpdateModuleCtrl',
+                    resolve: {
+                        service: function () {
+                            return $scope.service;
+                        },
+                        module: function () {
+                            return module;
+                        },
+                        config: function () {
+                            return $scope.config;
+                        }
+                    }
+                });
+                modalInstance.result.then(function () {
+                    $route.reload();
+                }, function () {
+                });
+            }
+            if (module.moduleType === 'Simulator') {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/updateSimulatorModule.html',
                     controller: 'ModalUpdateModuleCtrl',
                     resolve: {
                         service: function () {

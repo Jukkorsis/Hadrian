@@ -70,9 +70,6 @@ public class ModuleCreateHandler extends BasicHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
 
         Config config = configHelper.getConfig();
-        if (!config.moduleTypes.contains(data.moduleType)) {
-            throw new Http400BadRequestException("Unknown module type");
-        }
         String template = null;
         switch (data.moduleType) {
             case Deployable:
@@ -86,6 +83,12 @@ public class ModuleCreateHandler extends BasicHandler {
                     throw new Http400BadRequestException("Unknown library template");
                 }
                 template = data.libraryTemplate;
+                break;
+            case Simulator:
+                if (!config.deployableTemplates.contains(data.deployableTemplate)) {
+                    throw new Http400BadRequestException("Unknown Simulator template");
+                }
+                template = data.deployableTemplate;
                 break;
             case Test:
                 if (!config.testTemplates.contains(data.testTemplate)) {

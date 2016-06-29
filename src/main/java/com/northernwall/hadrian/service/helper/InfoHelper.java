@@ -16,8 +16,11 @@
 package com.northernwall.hadrian.service.helper;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.parameters.Parameters;
+import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -25,17 +28,28 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class InfoHelper {
+
+    private final Parameters parameters;
     private final OkHttpClient client;
 
-    public InfoHelper(OkHttpClient client) {
+    public InfoHelper(Parameters parameters, OkHttpClient client) {
+        this.parameters = parameters;
         this.client = client;
     }
 
     public int readAvailability(String host, String url) {
         try {
-            Request request = new Request.Builder()
-                    .url(Const.HTTP + url.replace(Const.HOST, host))
-                    .build();
+            Builder builder = new Request.Builder()
+                    .url(Const.HTTP + url.replace(Const.HOST, host));
+            if (parameters.getUsername() != null
+                    && parameters.getUsername().isEmpty()
+                    && parameters.getPassword() != null
+                    && parameters.getPassword().isEmpty()) {
+                builder.addHeader(
+                        "Authorization",
+                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
+            }
+            Request request = builder.build();
             Response response = client.newCall(request).execute();
             return response.code();
         } catch (IOException ex) {
@@ -45,9 +59,17 @@ public class InfoHelper {
 
     public String readVersion(String host, String url) {
         try {
-            Request request = new Request.Builder()
-                    .url(Const.HTTP + url.replace(Const.HOST, host))
-                    .build();
+            Builder builder = new Request.Builder()
+                    .url(Const.HTTP + url.replace(Const.HOST, host));
+            if (parameters.getUsername() != null
+                    && parameters.getUsername().isEmpty()
+                    && parameters.getPassword() != null
+                    && parameters.getPassword().isEmpty()) {
+                builder.addHeader(
+                        "Authorization",
+                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
+            }
+            Request request = builder.build();
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 return response.body().string();
