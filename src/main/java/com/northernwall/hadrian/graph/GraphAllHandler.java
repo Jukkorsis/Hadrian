@@ -21,7 +21,6 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.domain.Team;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;

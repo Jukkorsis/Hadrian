@@ -12,7 +12,7 @@
         <span ng-if="formGraph.style == 'fanOut' || formGraph.style == 'fanIn'">
             <select ng-model="formGraph.service" ng-options="s.serviceName for s in services.services" ng-init="formGraph.service = services.services[0]" class="form-control">
             </select>
-            Note: Deployables are rectangles and libraries are ellipses.
+            Note: Deployables are rectangles, Simulators are parallelograms, and libraries are ellipses.
         </span>
     </div>
     <div class="col-md-6">

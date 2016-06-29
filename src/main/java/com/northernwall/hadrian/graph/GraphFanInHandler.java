@@ -18,7 +18,6 @@ package com.northernwall.hadrian.graph;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.ModuleType;
 import java.io.IOException;

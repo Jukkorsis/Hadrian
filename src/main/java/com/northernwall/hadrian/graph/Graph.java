@@ -48,6 +48,8 @@ public class Graph {
         writer.append(" [shape=");
         if (module.getModuleType() == ModuleType.Deployable) {
             writer.append("rectangle");
+        } else if (module.getModuleType() == ModuleType.Simulator) {
+            writer.append("parallelogram");
         } else {
             writer.append("ellipse");
         }
