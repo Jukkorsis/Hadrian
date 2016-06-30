@@ -20,7 +20,6 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.service.dao.PutTeamData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -73,6 +72,7 @@ public class TeamModifyHandler extends BasicHandler {
         team.setTeamIrc(data.teamIrc);
         team.setTeamSlack(data.teamSlack);
         team.setGitGroup(data.gitGroup);
+        team.setTeamPage(data.teamPage);
         team.setCalendarId(data.calendarId);
 
         getDataAccess().saveTeam(team);

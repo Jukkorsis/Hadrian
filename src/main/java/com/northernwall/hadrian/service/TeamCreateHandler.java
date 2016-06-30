@@ -80,7 +80,7 @@ public class TeamCreateHandler extends BasicHandler {
             throw new Http404NotFoundException("Failed to create new team, could not find initial user " + data.user.getUsername());
         }
 
-        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.teamSlack, data.gitGroup, data.calendarId);
+        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.teamSlack, data.gitGroup, data.teamPage, data.calendarId);
         team.getUsernames().add(data.user.getUsername());
 
         getDataAccess().saveTeam(team);

@@ -35,7 +35,11 @@
                     <dt>Slack:</dt>
                     <dd>{{team.teamSlack}}</dd>
                 </div>
-                <div ng-if="team.teamIrc">
+                <div ng-if="team.teamPage">
+                    <dt>Team Page:</dt>
+                    <dd><a href="http://{{team.teamPage}}" target="_blank">{{team.teamPage}}</a></dd>
+                </div>
+                <div ng-if="team.calendarId">
                     <dt>Calendar:</dt>
                     <dd>{{team.calendarId}}</dd>
                 </div>

@@ -22,6 +22,7 @@ public class PutTeamData {
     public String teamIrc;
     public String teamSlack;
     public String gitGroup;
+    public String teamPage;
     public String calendarId;
 
 }

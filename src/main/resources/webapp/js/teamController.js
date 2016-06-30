@@ -104,6 +104,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateTeam.irc = team.teamIrc;
         $scope.formUpdateTeam.slack = team.teamSlack;
         $scope.formUpdateTeam.gitGroup = team.gitGroup;
+        $scope.formUpdateTeam.teamPage = team.teamPage;
         $scope.formUpdateTeam.calendarId = team.calendarId;
 
         $scope.save = function () {
@@ -114,6 +115,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
                 teamIrc: $scope.formUpdateTeam.irc,
                 teamSlack: $scope.formUpdateTeam.slack,
                 gitGroup: $scope.formUpdateTeam.gitGroup,
+                teamPage: $scope.formUpdateTeam.teamPage,
                 calendarId: $scope.formUpdateTeam.calendarId
             };
 

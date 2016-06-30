@@ -30,6 +30,7 @@ public class GetTeamData {
     public String teamIrc;
     public String teamSlack;
     public String gitGroup;
+    public String teamPage;
     public String calendarId;
     public List<User> users;
     public List<GetServiceData> services;
@@ -43,6 +44,7 @@ public class GetTeamData {
         temp.teamIrc = team.getTeamIrc();
         temp.teamSlack = team.getTeamSlack();
         temp.gitGroup = team.getGitGroup();
+        temp.teamPage = team.getTeamPage();
         temp.calendarId = team.getCalendarId();
         temp.users = new LinkedList<>();
         for (String username : team.getUsernames()) {
