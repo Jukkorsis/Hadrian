@@ -1,0 +1,27 @@
+body {
+    padding: 15px;
+}
+
+ul.dropdown-menu li {
+    cursor: pointer;
+}
+
+div.page-content {
+    padding-left: 5px;
+}
+
+div.tab-content {
+    margin-top: 15px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+}
+
+span.glyphicon-chevron-right, span.glyphicon-chevron-down {
+    cursor: pointer;
+}
+
+h3 {
+    margin-top: 8px;
+}

@@ -22,6 +22,7 @@ limitations under the License.
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/abn_tree.css">
+        <link rel="stylesheet" href="css/hadrian.css">
 
         <script src="js/angular.js"></script>
         <script src="js/angular-animate.js"></script>
@@ -41,22 +42,22 @@ limitations under the License.
     <body>
         <div ng-app ng-controller="MenuCtrl">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-sm-3 col-xs-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h2 class="panel-title"><b>B</b>uild and <b>D</b>eploy</h2>
                         </div>
                         <div class="panel-body">
-                            <abn-tree 
-                                tree-data="my_data" 
-                                tree-control="my_tree" 
-                                on-select="my_tree_handler(branch)" 
+                            <abn-tree
+                                tree-data="my_data"
+                                tree-control="my_tree"
+                                on-select="my_tree_handler(branch)"
                                 expand-level="3" >
                             </abn-tree>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-sm-9 col-xs-12 page-content">
                     <div class="view-container">
                         <div ng-view class="view-frame"></div>
                     </div>
