@@ -65,7 +65,7 @@ public class ModuleCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostModuleData data = fromJson(request, PostModuleData.class);
-        Service service = getService(data.serviceId, null, null);
+        Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
 

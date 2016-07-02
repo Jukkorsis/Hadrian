@@ -5,7 +5,7 @@
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>Name:</dt>
-        <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control" uib-popover="It's convention to name modules with the service's abbreviation (capitalized) followed by a dash then the module's function. For example FOO-service or FOO-client." popover-trigger="mouseenter"></dd>
+        <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
         <dt>Build Order:</dt>
         <dd><input ng-model="formSaveModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
         <div ng-if="service.gitMode === 'Flat'">

@@ -23,7 +23,6 @@ import com.northernwall.hadrian.domain.GitMode;
  * @author Richard Thurston
  */
 public class PostServiceData {
-    public String serviceAbbr;
     public String serviceName;
     public String teamId;
     public String description;

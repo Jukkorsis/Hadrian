@@ -53,7 +53,7 @@ public class HostDeleteHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteHostData data = fromJson(request, DeleteHostData.class);
-        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+        Service service = getService(data.serviceId, data.serviceName);
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
 

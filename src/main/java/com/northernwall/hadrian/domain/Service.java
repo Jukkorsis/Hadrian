@@ -28,7 +28,6 @@ import java.util.UUID;
  */
 public class Service implements Comparable<Service>{
     private String serviceId;
-    private String serviceAbbr;
     private String serviceName;
     private String teamId;
     private String description;
@@ -39,9 +38,8 @@ public class Service implements Comparable<Service>{
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceAbbr, String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
-        this.serviceAbbr = serviceAbbr;
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
@@ -59,14 +57,6 @@ public class Service implements Comparable<Service>{
 
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public String getServiceAbbr() {
-        return serviceAbbr;
-    }
-
-    public void setServiceAbbr(String serviceAbbr) {
-        this.serviceAbbr = serviceAbbr;
     }
 
     public String getServiceName() {

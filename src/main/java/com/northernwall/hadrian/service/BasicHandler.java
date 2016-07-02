@@ -74,11 +74,10 @@ public abstract class BasicHandler extends AbstractHandler {
     protected Service getService(Request request) {
         return getService(
                 request.getParameter("serviceId"),
-                request.getParameter("serviceName"),
-                request.getParameter("serviceAbbr"));
+                request.getParameter("serviceName"));
     }
 
-    protected Service getService(String serviceId, String serviceName, String serviceAbbr) {
+    protected Service getService(String serviceId, String serviceName) {
         if (serviceId != null && !serviceId.isEmpty()) {
             Service service = dataAccess.getService(serviceId);
             if (service != null) {
@@ -89,13 +88,6 @@ public abstract class BasicHandler extends AbstractHandler {
         if (serviceName != null && !serviceName.isEmpty()) {
             for (Service service : dataAccess.getActiveServices()) {
                 if (service.getServiceName().equalsIgnoreCase(serviceName)) {
-                    return service;
-                }
-            }
-        }
-        if (serviceAbbr != null && !serviceAbbr.isEmpty()) {
-            for (Service service : dataAccess.getActiveServices()) {
-                if (service.getServiceAbbr().equalsIgnoreCase(serviceAbbr)) {
                     return service;
                 }
             }

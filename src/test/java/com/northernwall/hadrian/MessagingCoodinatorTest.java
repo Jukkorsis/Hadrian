@@ -55,8 +55,8 @@ public class MessagingCoodinatorTest {
     public void sendMessageTest() {
         MessagingCoodinator mc = new MessagingCoodinator(new StubDataAccess(), new StubParameters(), client);
         MessageType mt = mc.getMessageType("TEST");
-        Team team = new Team("test Team", null, null, "myTeam", null, null);
-        Service service = new Service("TS", "Test Service", team.getTeamId(), "Desc", "service", GitMode.Consolidated, "gitGroup", true);
+        Team team = new Team("test Team", null, null, "myTeam", null, null, null);
+        Service service = new Service("Test Service", team.getTeamId(), "Desc", "service", GitMode.Consolidated, "gitGroup", true);
         Module module = new Module("Test Module", service.getServiceId(), 0, ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, null);
         Map<String, String> data = new HashMap<>();
         data.put("A", "a");

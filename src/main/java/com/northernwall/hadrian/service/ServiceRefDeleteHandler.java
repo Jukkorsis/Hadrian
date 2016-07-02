@@ -50,20 +50,20 @@ public class ServiceRefDeleteHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteServiceRefData data = fromJson(request, DeleteServiceRefData.class);
         
-        Service clientService = getService(data.clientServiceId, null, null);
+        Service clientService = getService(data.clientServiceId, null);
         User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a module ref");
 
         Module clientModule = getModule(data.clientModuleId, null, clientService);
-        Service serverService = getService(data.serverServiceId, null, null);
+        Service serverService = getService(data.serverServiceId, null);
         Module serverModule = getModule(data.serverModuleId, null, serverService);
         
         getDataAccess().deleteModuleRef(data.clientServiceId, data.clientModuleId, data.serverServiceId, data.serverModuleId);
         
         Map<String, String> notes = new HashMap<>();
-        notes.put("Uses", serverService.getServiceAbbr() + " " + serverModule.getModuleName());
+        notes.put("Uses", serverService.getServiceName() + " " + serverModule.getModuleName());
         createAudit(data.clientServiceId, clientModule.getModuleName(), user.getUsername(), notes);
         notes = new HashMap<>();
-        notes.put("Use_By", clientService.getServiceAbbr() + " " + clientModule.getModuleName());
+        notes.put("Use_By", clientService.getServiceName() + " " + clientModule.getModuleName());
         createAudit(data.serverServiceId, serverModule.getModuleName(), user.getUsername(), notes);
         response.setStatus(200);
         request.setHandled(true);

@@ -24,7 +24,6 @@ import java.util.List;
 public class GetServiceData {
 
     public String serviceId;
-    public String serviceAbbr;
     public String serviceName;
     public String teamId;
     public String description;
@@ -41,7 +40,6 @@ public class GetServiceData {
     public static GetServiceData create(Service service) {
         GetServiceData temp = new GetServiceData();
         temp.serviceId = service.getServiceId();
-        temp.serviceAbbr = service.getServiceAbbr();
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
         temp.description = service.getDescription();

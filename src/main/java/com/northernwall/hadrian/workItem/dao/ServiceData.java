@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Service;
 
 public class ServiceData {
     public String serviceId;
-    public String serviceAbbr;
     public String serviceName;
     public String teamId;
     public String serviceType;
@@ -33,7 +32,6 @@ public class ServiceData {
         }
         ServiceData temp = new ServiceData();
         temp.serviceId = service.getServiceId();
-        temp.serviceAbbr = service.getServiceAbbr();
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
         temp.serviceType = service.getServiceType();

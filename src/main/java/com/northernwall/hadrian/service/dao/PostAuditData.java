@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Type;
 
 public class PostAuditData {
     public String serviceId;
-    public String serviceAbbr;
     public String serviceName;
     public Type type;
     public Operation operation;

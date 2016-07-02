@@ -144,7 +144,6 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.team = team;
 
             $scope.formSaveService = {};
-            $scope.formSaveService.serviceAbbr = "";
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
             $scope.formSaveService.serviceType = $scope.config.serviceTypes[0];
@@ -153,7 +152,6 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
 
             $scope.save = function () {
                 var dataObject = {
-                    serviceAbbr: $scope.formSaveService.serviceAbbr,
                     serviceName: $scope.formSaveService.serviceName,
                     teamId: $scope.team.teamId,
                     description: $scope.formSaveService.description,

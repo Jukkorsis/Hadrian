@@ -89,7 +89,7 @@ public class ServiceRefreshHandler extends BasicHandler {
     private void getModuleRefInfo(Module module, GetModuleData getModuleData) {
         for (ModuleRef ref : getDataAccess().getModuleRefsByClient(module.getServiceId(), module.getModuleId())) {
             GetModuleRefData tempRef = GetModuleRefData.create(ref);
-            Service serverService = getService(ref.getServerServiceId(), null, null);
+            Service serverService = getService(ref.getServerServiceId(), null);
             tempRef.serviceName = serverService.getServiceName();
             tempRef.moduleName = getModule(ref.getServerModuleId(), null, serverService).getModuleName();
             getModuleData.uses.add(tempRef);
@@ -99,7 +99,7 @@ public class ServiceRefreshHandler extends BasicHandler {
         
         for (ModuleRef ref : getDataAccess().getModuleRefsByServer(module.getServiceId(), module.getModuleId())) {
             GetModuleRefData tempRef = GetModuleRefData.create(ref);
-            Service clientService = getService(ref.getClientServiceId(), null, null);
+            Service clientService = getService(ref.getClientServiceId(), null);
             tempRef.serviceName = clientService.getServiceName();
             tempRef.moduleName = getModule(ref.getClientModuleId(), null, clientService).getModuleName();
             getModuleData.usedBy.add(tempRef);

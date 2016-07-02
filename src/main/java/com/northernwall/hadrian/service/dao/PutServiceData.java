@@ -22,7 +22,6 @@ package com.northernwall.hadrian.service.dao;
  */
 public class PutServiceData {
     public String serviceId;
-    public String serviceAbbr;
     public String serviceName;
     public String description;
 

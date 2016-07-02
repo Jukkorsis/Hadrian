@@ -60,7 +60,7 @@ public class ModuleModifyHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutModuleData data = fromJson(request, PutModuleData.class);
-        Service service = getService(data.serviceId, null, null);
+        Service service = getService(data.serviceId, null);
 
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");

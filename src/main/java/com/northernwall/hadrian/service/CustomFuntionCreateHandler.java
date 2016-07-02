@@ -42,7 +42,7 @@ public class CustomFuntionCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
-        Service service = getService(postCFData.serviceId, null, null);
+        Service service = getService(postCFData.serviceId, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
 
         CustomFunction customFunction = new CustomFunction(

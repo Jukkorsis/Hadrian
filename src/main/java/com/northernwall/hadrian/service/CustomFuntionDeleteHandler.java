@@ -48,7 +48,7 @@ public class CustomFuntionDeleteHandler extends BasicHandler {
         if (customFunction == null) {
             throw new Http404NotFoundException("Could not find custom function");
         }
-        Service service = getService(customFunction.getServiceId(), null, null);
+        Service service = getService(customFunction.getServiceId(), null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
 
         getDataAccess().deleteCustomFunction(deleteCFData.serviceId, deleteCFData.cfId);

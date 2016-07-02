@@ -60,16 +60,6 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("teamId attribute is mising");
         }
         User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
-        if (data.serviceAbbr == null || data.serviceAbbr.isEmpty()) {
-            throw new Http400BadRequestException("Service Abbr is mising or empty");
-        }
-        data.serviceAbbr = data.serviceAbbr.toUpperCase();
-        if (!data.serviceAbbr.matches("\\w+")) {
-            throw new Http400BadRequestException("Service Abbr can only have letters and numbers");
-        }
-        if (data.serviceAbbr.length() > 7) {
-            throw new Http400BadRequestException("Service Abbr is to long, max is 7");
-        }
         if (data.serviceName == null || data.serviceName.isEmpty()) {
             throw new Http400BadRequestException("Service Name is mising or empty");
         }
@@ -81,11 +71,8 @@ public class ServiceCreateHandler extends BasicHandler {
         }
 
         for (Service temp : Service.filterTeam(data.teamId, getDataAccess().getActiveServices())) {
-            if (temp.getServiceAbbr().equals(data.serviceAbbr) && temp.isActive()) {
-                throw new Http405NotAllowedException("A service already exists with that abbreviation, " + data.serviceAbbr);
-            }
             if (temp.getServiceName().equalsIgnoreCase(data.serviceName) && temp.isActive()) {
-                throw new Http405NotAllowedException("A service already exists with that name, " + data.serviceAbbr);
+                throw new Http405NotAllowedException("A service already exists with that name, " + data.serviceName);
             }
         }
 
@@ -104,7 +91,6 @@ public class ServiceCreateHandler extends BasicHandler {
         }
 
         Service service = new Service(
-                data.serviceAbbr,
                 data.serviceName,
                 data.teamId,
                 data.description,
@@ -117,7 +103,6 @@ public class ServiceCreateHandler extends BasicHandler {
 
         Map<String, String> notes = new HashMap<>();
         notes.put("Name", service.getServiceName());
-        notes.put("Abbr", service.getServiceAbbr());
         createAudit(service.getServiceId(), user.getUsername(), Type.service, Operation.create, notes);
         response.setStatus(200);
         request.setHandled(true);

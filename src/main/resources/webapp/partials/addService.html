@@ -4,8 +4,6 @@
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
-        <dt>Abbreviation:</dt>
-        <dd><input ng-model="formSaveService.serviceAbbr" type="text" maxlength="7" class="form-control" uib-popover="The service abbreviation is used in places like the host name. Abbreviations must only contain letters and numbers." popover-trigger="mouseenter"></dd>
         <dt>Name:</dt>
         <dd><input ng-model="formSaveService.serviceName" type="text" maxlength="30" class="form-control"></dd>
         <dt>Description:</dt>

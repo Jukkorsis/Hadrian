@@ -26,7 +26,6 @@ import java.util.List;
 public class PutRestartHostData {
     public String serviceId;
     public String serviceName;
-    public String serviceAbbr;
     public String moduleId;
     public String moduleName;
     public String network;

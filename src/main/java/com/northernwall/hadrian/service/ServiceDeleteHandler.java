@@ -33,7 +33,7 @@ public class ServiceDeleteHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteServiceData data = fromJson(request, DeleteServiceData.class);
-        Service service = getService(data.serviceId, null, null);
+        Service service = getService(data.serviceId, null);
         getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete service");
 

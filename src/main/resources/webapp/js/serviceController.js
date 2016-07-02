@@ -738,14 +738,14 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 var h = filteredArray[key];
                 for (var key2 in $scope.formSelectHost) {
                     if (h.hostId === key2 && $scope.formSelectHost[key2]) {
-                        window.open("/v1/cf/exec?serviceAbbr=" + $scope.service.serviceAbbr + "&hostName=" + h.hostName + "&cfId=" + cf.customFunctionId, '_blank');
+                        window.open("/v1/cf/exec?serviceId=" + $scope.service.serviceId + "&hostName=" + h.hostName + "&cfId=" + cf.customFunctionId, '_blank');
                     }
                 }
             }
         };
 
         $scope.openDoCustomFunctionHostModal = function (host, cf) {
-            window.open("/v1/cf/exec?serviceAbbr=" + $scope.service.serviceAbbr + "&hostName=" + host.hostName + "&cfId=" + cf.customFunctionId, '_blank');
+            window.open("/v1/cf/exec?serviceId=" + $scope.service.serviceName + "&hostName=" + host.hostName + "&cfId=" + cf.customFunctionId, '_blank');
         };
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
@@ -841,7 +841,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         var stopRefresh = $interval(function () {
             ServiceRefresh.get({serviceId: $routeParams.serviceId}, function (newService) {
-                $scope.service.serviceAbbr = newService.serviceAbbr;
                 $scope.service.serviceName = newService.serviceName;
                 $scope.service.description = newService.description;
                 for (var moduleIndex = 0; moduleIndex < $scope.service.modules.length; moduleIndex++) {
@@ -896,14 +895,12 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.errorMsg = null;
         $scope.formUpdateService = {};
         $scope.formUpdateService.serviceId = service.serviceId;
-        $scope.formUpdateService.serviceAbbr = service.serviceAbbr;
         $scope.formUpdateService.serviceName = service.serviceName;
         $scope.formUpdateService.description = service.description;
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.formUpdateService.serviceId,
-                serviceAbbr: $scope.formUpdateService.serviceAbbr,
                 serviceName: $scope.formUpdateService.serviceName,
                 description: $scope.formUpdateService.description
             };
@@ -928,7 +925,6 @@ hadrianControllers.controller('ModalDeleteServiceCtrl', ['$scope', '$route', '$h
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.formDeleteService = {};
-        $scope.formDeleteService.serviceAbbr = service.serviceAbbr;
         $scope.formDeleteService.serviceName = service.serviceName;
         $scope.formDeleteService.description = service.description;
         $scope.formDeleteService.reason = "";
@@ -1004,7 +1000,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.config = config;
 
         $scope.formSaveModule = {};
-        $scope.formSaveModule.moduleName = service.serviceAbbr + "-";
+        $scope.formSaveModule.moduleName = "";
         $scope.formSaveModule.order = 1;
         $scope.formSaveModule.moduleType = moduleType;
         $scope.formSaveModule.deployableTemplate = $scope.config.deployableTemplates[0];

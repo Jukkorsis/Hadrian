@@ -41,7 +41,7 @@ public class AuditCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostAuditData data = fromJson(request, PostAuditData.class);
 
-        Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+        Service service = getService(data.serviceId, data.serviceName);
         User user = accessHelper.checkIfUserCanAudit(request, service.getTeamId());
 
         Audit audit = new Audit();

@@ -62,7 +62,7 @@ public class HostBackfillHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostBackfillHostData data = fromJson(request, PostBackfillHostData.class);
-        Service service = getService(data.serviceId, null, null);
+        Service service = getService(data.serviceId, null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "backfill host");
 
         Config config = configHelper.getConfig();

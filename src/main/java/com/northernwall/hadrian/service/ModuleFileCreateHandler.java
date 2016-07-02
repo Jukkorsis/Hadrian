@@ -53,7 +53,7 @@ public class ModuleFileCreateHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostModuleFileData data = fromJson(request, PostModuleFileData.class);
-        Service service = getService(data.serviceId, null, null);
+        Service service = getService(data.serviceId, null);
         Module module = getModule(data.moduleId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
         if (data.network == null || data.network.isEmpty()) {

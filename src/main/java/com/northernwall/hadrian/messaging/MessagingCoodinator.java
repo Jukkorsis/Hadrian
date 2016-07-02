@@ -66,9 +66,8 @@ public class MessagingCoodinator implements ParameterChangeListener {
     }
 
     public void sendMessage(MessageType messageType, Team team, Service service, Module module, Map<String, String> data) {
-        logger.info("sendMessage {} to {} {} {}", messageType.name, team.getTeamName(), service.getServiceAbbr(), module.getModuleName());
+        logger.info("sendMessage {} to {} {} {}", messageType.name, team.getTeamName(), service.getServiceName(), module.getModuleName());
         data.put("serviceName", service.getServiceName());
-        data.put("serviceAbbr", service.getServiceAbbr());
         data.put("moduleName", module.getModuleName());
         data.put("teamName", team.getTeamName());
 

@@ -82,11 +82,7 @@ public class TreeHandler extends AbstractHandler {
             Collections.sort(teamServices);
             for (Service service : teamServices) {
                 TreeNode serviceTreeNode = new TreeNode();
-                if (service.getServiceName().length() > 20) {
-                    serviceTreeNode.setLabel(service.getServiceAbbr());
-                } else {
-                    serviceTreeNode.setLabel(service.getServiceName());
-                }
+                serviceTreeNode.setLabel(service.getServiceName());
                 serviceTreeNode.setData(new TreeNodeData(service.getServiceId(), "Service"));
                 teamTreenode.getChildren().add(serviceTreeNode);
             }

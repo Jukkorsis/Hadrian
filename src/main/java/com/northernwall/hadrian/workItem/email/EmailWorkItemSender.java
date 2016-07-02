@@ -158,7 +158,7 @@ public class EmailWorkItemSender extends WorkItemSender {
         addLine("Requestor", workItem.getUsername(), workItem.getFullname(), body);
         addLine("Team", workItem.getTeam().teamName, body);
         body.append("\n");
-        addLine("Service Abbr", workItem.getService().serviceAbbr, workItem.getService().serviceName, body);
+        addLine("Service Name", workItem.getService().serviceName, body);
     }
 
     private void addLine(String label, String value, StringBuffer body) {

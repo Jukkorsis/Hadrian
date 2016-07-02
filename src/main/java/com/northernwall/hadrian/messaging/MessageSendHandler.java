@@ -54,7 +54,7 @@ public class MessageSendHandler extends BasicHandler {
                 }
             }
         } else {
-            Service service = getService(data.serviceId, data.serviceName, data.serviceAbbr);
+            Service service = getService(data.serviceId, data.serviceName);
             Team team = getDataAccess().getTeam(service.getTeamId());
             accessHelper.checkIfUserCanAudit(request, team);
             Module module = getModule(null, data.moduleName, service);

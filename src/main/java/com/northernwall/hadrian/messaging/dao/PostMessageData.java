@@ -8,7 +8,6 @@ public class PostMessageData {
     public String messageTypeName;
     public String serviceId;
     public String serviceName;
-    public String serviceAbbr;
     public String moduleName;
     @SerializedName(value="gitGroup", alternate={"gitlabNamespace"})
     public String gitGroup;
