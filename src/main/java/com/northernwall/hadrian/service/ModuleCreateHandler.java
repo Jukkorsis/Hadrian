@@ -134,8 +134,17 @@ public class ModuleCreateHandler extends BasicHandler {
 
         if (service.getGitMode().equals(GitMode.Consolidated)) {
             data.gitProject = service.getGitProject();
+            if (data.gitFolder == null) {
+                data.gitFolder = "";
+            }
             if (data.gitFolder.startsWith("/")) {
                 data.gitFolder = data.gitFolder.substring(1);
+            }
+            if (data.gitFolder.endsWith(".")) {
+                data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
+            }
+            if (data.gitFolder.endsWith("/")) {
+                data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
             }
         } else {
             data.gitFolder = "";
@@ -145,12 +154,20 @@ public class ModuleCreateHandler extends BasicHandler {
         List<Module> zeroModules = new LinkedList<>();
         for (Module temp : modules) {
             if (data.moduleName.equalsIgnoreCase(temp.getModuleName())) {
-                logger.warn("Error there already exists a module named {} on service {}", data.moduleName, data.serviceId);
-                return;
+                throw new Http400BadRequestException("Error there already exists a module named " + data.moduleName + " on service " + data.serviceId);
             }
-            if (data.gitProject.equalsIgnoreCase(temp.getGitProject()) && data.gitFolder.equalsIgnoreCase(temp.getGitFolder())) {
-                logger.warn("Error there already exists a module with git project {} and folder {} on service {}", data.gitProject, data.gitFolder, data.serviceId);
-                return;
+            if (data.gitProject.equalsIgnoreCase(temp.getGitProject())) {
+                String dataFolder = "/" + data.gitFolder.toUpperCase() + "/";
+                String tempFolder = "/" + temp.getGitFolder().toUpperCase() + "/";
+                if (dataFolder.equals(tempFolder)) {
+                    throw new Http400BadRequestException("Error there already exists a module with git project " + data.gitProject + " and folder " + data.gitFolder + " on service " + data.serviceId);
+                }
+                if (dataFolder.startsWith(tempFolder)) {
+                    throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
+                }
+                if (tempFolder.startsWith(dataFolder)) {
+                    throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
+                }
             }
             if (temp.getOrder() == 0) {
                 zeroModules.add(temp);
@@ -172,7 +189,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 }
             }
         }
-        
+
         Module module = new Module(
                 data.moduleName,
                 data.serviceId,
