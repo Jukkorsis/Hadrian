@@ -15,7 +15,12 @@
         <dt>Git Group</dt>
         <dd><input ng-model="formSaveTeam.gitGroup" type="text" maxlength="30" class="form-control"></dd>
         <dt>Team Page:</dt>
-        <dd><input ng-model="formSaveTeam.teamPage" type="text" class="form-control"></dd>
+        <dd>
+            <div class="input-group">
+                <div class="input-group-addon">http:// </div>
+                <input ng-model="formSaveTeam.teamPage" type="text" class="form-control">
+            </div>
+        </dd>
         <dt>Calendar ID:</dt>
         <dd><input ng-model="formSaveTeam.calendarId" type="text" class="form-control"></dd>
         <dt>Initial Team Member:</dt>
