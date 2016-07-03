@@ -784,12 +784,45 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openAddDocumentModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addDocument.html',
+                controller: 'ModalAddDocumentCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openRemoveDocument = function (doc) {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                docId: doc.docId
+            };
+
+            var responsePromise = $http.post("/v1/document/delete", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to delete vip has failed!");
+                $route.reload();
+            });
+        };
+
         $scope.openDocument = function (doc) {
             if (doc.documentType === "Link") {
                 window.open("http://" + doc.link, "_blank");
             } else {
                 $scope.service.docType = "Loading";
-                var responsePromise = $http.get("/v1/service/geDocument?serviceId=" + $scope.service.serviceId + "&docId=" + doc.docId, {});
+                var responsePromise = $http.get("/v1/document?serviceId=" + $scope.service.serviceId + "&docId=" + doc.docId, {});
                 responsePromise.success(function (output, status, headers, config) {
                     if (doc.documentType === "Text") {
                         $scope.service.docBody = output;
@@ -1627,3 +1660,39 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
             $modalInstance.dismiss('cancel');
         };
     }]);
+
+hadrianControllers.controller('ModalAddDocumentCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service',
+    function ($scope, $http, $modalInstance, $route, service) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+
+        $scope.formSaveDocument = {
+            documentType: "Markdown",
+            title: "",
+            link: ""
+        };
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                documentType: $scope.formSaveDocument.documentType,
+                title: $scope.formSaveDocument.title,
+                link: $scope.formSaveDocument.link
+            };
+
+            var responsePromise = $http.post("/v1/document/create", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+

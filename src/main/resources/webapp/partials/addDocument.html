@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h3 class="modal-title">Add Document</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <dl class="dl-horizontal">
+        <dt>Document Link:</dt>
+        <dd>
+            <select ng-model="formSaveDocument.documentType" class="form-control">
+                <option value="Link">Link</option>
+                <option value="Markdown">Markdown</option>
+                <option value="Text">Text</option>
+            </select>
+        </dd>
+        <dt>Title:</dt>
+        <dd><input ng-model="formSaveDocument.title" type="text" maxlength="50" class="form-control"></dd>
+        <dt>Link:</dt>
+        <dd>
+            <div class="input-group">
+                <div class="input-group-addon">http:// </div>
+                <input ng-model="formSaveDocument.link" type="text" maxlength="300" class="form-control">
+            </div>
+        </dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Add Document</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

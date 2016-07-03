@@ -71,6 +71,8 @@ import com.northernwall.hadrian.service.VipModifyHandler;
 import com.northernwall.hadrian.service.WorkItemGetHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.service.DocumentCreateHandler;
+import com.northernwall.hadrian.service.DocumentDeleteHandler;
 import com.northernwall.hadrian.service.DocumentGetHandler;
 import com.northernwall.hadrian.service.VipGetDetailsHandler;
 import com.northernwall.hadrian.service.helper.InfoHelper;
@@ -189,7 +191,6 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, infoHelper), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/version", new VersionsGetHandler(dataAccess, moduleArtifactHelper, moduleConfigHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/geDocument", new DocumentGetHandler(dataAccess, client), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new AuditGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/create", new ServiceCreateHandler(accessHelper, dataAccess), true);
@@ -216,6 +217,9 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/modify", new CustomFuntionModifyHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/delete", new CustomFuntionDeleteHandler(accessHelper, dataAccess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/document/create", new DocumentCreateHandler(accessHelper, dataAccess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/document/delete", new DocumentDeleteHandler(accessHelper, dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, client), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler(), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/calendar", new CalendarGetHandler(dataAccess, calendarHelper), true);
