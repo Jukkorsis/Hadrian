@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails', 'VipDetails',
-    function ($scope, $route, $interval, $http, $routeParams, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails, VipDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$sce', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails', 'VipDetails',
+    function ($scope, $route, $interval, $http, $routeParams, $sce, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails, VipDetails) {
         $scope.loading = true;
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
@@ -682,7 +682,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         $scope.getVipDetailsOff = function (details, dataCenter) {
             if (details && details[dataCenter]) {
-                return details[dataCenter].status=== "Off";
+                return details[dataCenter].status === "Off";
             } else {
                 return false;
             }
@@ -698,7 +698,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         $scope.getVipDetailsError = function (details, dataCenter) {
             if (details && details[dataCenter]) {
-                return details[dataCenter].status=== "Error";
+                return details[dataCenter].status === "Error";
             } else {
                 return false;
             }
@@ -782,6 +782,26 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 alert("Request to delete custom function has failed!");
                 $route.reload();
             });
+        };
+
+        $scope.openDocument = function (doc) {
+            if (doc.documentType === "Link") {
+                window.open("http://" + doc.link, "_blank");
+            } else {
+                $scope.service.docType = "Loading";
+                var responsePromise = $http.get("/v1/service/geDocument?serviceId=" + $scope.service.serviceId + "&docId=" + doc.docId, {});
+                responsePromise.success(function (output, status, headers, config) {
+                    if (doc.documentType === "Text") {
+                        $scope.service.docBody = output;
+                    }
+                    if (doc.documentType === "Markdown") {
+                        var converter = new showdown.Converter();
+                        var html = converter.makeHtml(output);
+                        $scope.service.docBody = $sce.trustAsHtml(html);
+                    }
+                    $scope.service.docType = doc.documentType;
+                });
+            }
         };
 
         var dateObj = new Date();

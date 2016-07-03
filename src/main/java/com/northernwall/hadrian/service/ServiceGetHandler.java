@@ -23,6 +23,8 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
+import com.northernwall.hadrian.domain.Document;
+import com.northernwall.hadrian.domain.DocumentType;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.service.dao.GetCustomFunctionData;
@@ -77,7 +79,7 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
             waitForFutures(futures);
         }
-
+        
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             getGson().toJson(getServiceData, GetServiceData.class, jw);
         }

@@ -89,6 +89,7 @@ public class CustomFuntionExecHandler extends BasicHandler {
                     response.getOutputStream().write(buffer, 0, len);
                     len = inputStream.read(buffer);
                 }
+                response.getOutputStream().flush();
             }
         } catch (UnknownHostException ex) {
             response.getOutputStream().print("Error: Unknown host!");

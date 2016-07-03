@@ -1,6 +1,40 @@
 <div class="panel panel-default">
     <div class="panel-body">
-        Links:<br/>
-        Body:
+        <h4>Documents</h4>
+        <div class="row">
+            <div class="col-md-4">
+                <ul>
+                    <li ng-repeat="d in service.leftDocuments">
+                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
+                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <ul>
+                    <li ng-repeat="d in service.middleDocuments">
+                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
+                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <ul>
+                    <li ng-repeat="d in service.rightDocuments">
+                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
+                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
+</div>
+
+<pre ng-if="service.docType === 'Loading'">Loading...</pre>
+<pre ng-if="service.docType === 'Text'">{{service.docBody}}</pre>
+<div ng-if="service.docType === 'Markdown'" class="panel panel-default">
+    <div class="panel-heading"><div ng-bind-html="service.docBody"></div></div>
 </div>

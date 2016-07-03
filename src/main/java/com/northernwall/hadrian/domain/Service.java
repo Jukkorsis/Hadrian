@@ -34,6 +34,7 @@ public class Service implements Comparable<Service>{
     private String serviceType;
     private GitMode gitMode;
     private String gitProject;
+    private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
@@ -46,6 +47,7 @@ public class Service implements Comparable<Service>{
         this.serviceType = serviceType;
         this.gitMode = gitMode;
         this.gitProject = gitProject;
+        this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
         this.active = active;
@@ -105,6 +107,13 @@ public class Service implements Comparable<Service>{
 
     public void setGitProject(String gitProject) {
         this.gitProject = gitProject;
+    }
+
+    public List<Document> getDocuments() {
+        if (documents == null) {
+            documents = new LinkedList<>();
+        }
+        return documents;
     }
 
     public Date getCreationDate() {

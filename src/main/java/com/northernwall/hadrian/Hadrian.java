@@ -71,6 +71,7 @@ import com.northernwall.hadrian.service.VipModifyHandler;
 import com.northernwall.hadrian.service.WorkItemGetHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.service.DocumentGetHandler;
 import com.northernwall.hadrian.service.VipGetDetailsHandler;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.tree.TreeHandler;
@@ -188,6 +189,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, infoHelper), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/version", new VersionsGetHandler(dataAccess, moduleArtifactHelper, moduleConfigHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/geDocument", new DocumentGetHandler(dataAccess, client), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new AuditGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/create", new ServiceCreateHandler(accessHelper, dataAccess), true);

@@ -15,8 +15,10 @@
  */
 package com.northernwall.hadrian.service.dao;
 
+import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Service;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,9 +32,12 @@ public class GetServiceData {
     public String serviceType;
     public GitMode gitMode;
     public String gitProject;
-    public boolean active;
+    public List<Document> leftDocuments;
+    public List<Document> middleDocuments;
+    public List<Document> rightDocuments;
     public Date creationDate;
     public Date deletionDate;
+    public boolean active;
     public List<GetModuleData> modules;
     public List<GetDataStoreData> dataStores;
     public boolean canModify;
@@ -46,9 +51,26 @@ public class GetServiceData {
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
-        temp.active = service.isActive();
+        
+        temp.leftDocuments = new LinkedList<>();
+        temp.middleDocuments = new LinkedList<>();
+        temp.rightDocuments = new LinkedList<>();
+        Collections.sort(service.getDocuments());
+        for (Document doc : service.getDocuments()) {
+            if (temp.middleDocuments.size() == temp.rightDocuments.size()) {
+                if (temp.leftDocuments.size() == temp.middleDocuments.size()) {
+                    temp.leftDocuments.add(doc);
+                } else {
+                    temp.middleDocuments.add(doc);
+                }
+            } else {
+                temp.rightDocuments.add(doc);
+            }
+        }
+        
         temp.creationDate = service.getCreationDate();
         temp.deletionDate = service.getDeletionDate();
+        temp.active = service.isActive();
         temp.modules = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
         return temp;
