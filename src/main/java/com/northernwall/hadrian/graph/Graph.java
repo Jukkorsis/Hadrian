@@ -96,7 +96,7 @@ public class Graph {
     }
 
     public String sanitize(String text) {
-        return text.replace("-", "_").replace(".", "_").replace("=", "_");
+        return text.replace("-", "_").replace(".", "_").replace("=", "_").replace(" ", "_");
     }
 
 }
