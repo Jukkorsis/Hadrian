@@ -3,9 +3,11 @@ package com.northernwall.hadrian.messaging;
 import com.northernwall.hadrian.messaging.dao.PostMessageData;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.service.BasicHandler;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
@@ -39,31 +41,47 @@ public class MessageSendHandler extends BasicHandler {
                 && !data.gitGroup.isEmpty()
                 && data.gitProject != null
                 && !data.gitProject.isEmpty()) {
-            List<Service> services = getDataAccess().getActiveServices();
-            for (Team team : getDataAccess().getTeams()) {
-                if (team.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
-                    accessHelper.checkIfUserCanAudit(request, team);
-                    List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
-                    for (Service service : teamServices) {
+            processByGit(data, request, messageType);
+        } else {
+            processByService(data, request, messageType);
+        }
+
+        response.setStatus(200);
+        request.setHandled(true);
+    }
+
+    private void processByGit(PostMessageData data, Request request, MessageType messageType) {
+        List<Service> services = getDataAccess().getActiveServices();
+        for (Team team : getDataAccess().getTeams()) {
+            if (team.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
+                accessHelper.checkIfUserCanAudit(request, team);
+                List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
+                for (Service service : teamServices) {
+                    if (service.getGitMode().equals(GitMode.Consolidated)) {
+                        if (service.getGitProject().equalsIgnoreCase(data.gitProject)) {
+                            messagingCoodinator.sendMessage(messageType, team, service, data.data);
+                            return;
+                        }
+                    } else {
                         for (Module module : getDataAccess().getModules(service.getServiceId())) {
                             if (module.getGitProject().equalsIgnoreCase(data.gitProject)) {
                                 messagingCoodinator.sendMessage(messageType, team, service, module, data.data);
+                                return;
                             }
                         }
                     }
                 }
             }
-        } else {
-            Service service = getService(data.serviceId, data.serviceName);
-            Team team = getDataAccess().getTeam(service.getTeamId());
-            accessHelper.checkIfUserCanAudit(request, team);
-            Module module = getModule(null, data.moduleName, service);
-
-            messagingCoodinator.sendMessage(messageType, team, service, module, data.data);
         }
+    }
 
-        response.setStatus(200);
-        request.setHandled(true);
+    private void processByService(PostMessageData data, Request request, MessageType messageType) {
+        Service service = getService(data.serviceId, data.serviceName);
+        Team team = getDataAccess().getTeam(service.getTeamId());
+        accessHelper.checkIfUserCanAudit(request, team);
+        Module module = getModule(null, data.moduleName, service);
+        
+        messagingCoodinator.sendMessage(messageType, team, service, module, data.data);
     }
 
 }

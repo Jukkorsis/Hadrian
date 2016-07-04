@@ -91,6 +91,44 @@ public class MessagingCoodinator implements ParameterChangeListener {
         }
     }
 
+    public void sendMessage(MessageType messageType, Team team, Service service, Map<String, String> data) {
+        logger.info("sendMessage {} to {} {}", messageType.name, team.getTeamName(), service.getServiceName());
+        data.put("serviceName", service.getServiceName());
+        data.put("teamName", team.getTeamName());
+
+        Set<Team> teams = new HashSet<>();
+        teams.add(team);
+
+        String moduleNames = "(no modules)";
+        if (messageType.includeUsedBy) {
+            List<Module> modules = dataAccess.getModules(service.getServiceId());
+            for (int i=0; i<modules.size()-1; i++) {
+                Module module = modules.get(i);
+                if (i == 0) {
+                    moduleNames = module.getModuleName();
+                } else if (i == modules.size()-1) {
+                    moduleNames = moduleNames + ", and " + module.getModuleName();
+                } else {
+                    moduleNames = moduleNames + ", " + module.getModuleName();
+                }
+                List<ModuleRef> refs = dataAccess.getModuleRefsByServer(module.getServiceId(), module.getModuleId());
+                for (ModuleRef ref : refs) {
+                    Service tempService = dataAccess.getService(ref.getClientServiceId());
+                    Team tempTeam = dataAccess.getTeam(tempService.getTeamId());
+                    logger.info("also sending message {} to {}", messageType.name, tempTeam.getTeamName());
+                    teams.add(tempTeam);
+                }
+            }
+        }
+        data.put("moduleName", moduleNames);
+        
+        for (Team tempTeam : teams) {
+            for (MessageProcessor messageProcessor : messageProcessors) {
+                messageProcessor.process(messageType, tempTeam, data);
+            }
+        }
+    }
+
     public synchronized MessageType getMessageType(String messageTypeName) {
         for (MessageType messageType : messageTypes) {
             if (messageType.name.equalsIgnoreCase(messageTypeName)) {
