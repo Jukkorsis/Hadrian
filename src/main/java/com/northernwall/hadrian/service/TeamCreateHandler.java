@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
@@ -71,6 +72,11 @@ public class TeamCreateHandler extends BasicHandler {
             if (temp.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
                 throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
             }
+        }
+
+        if (!data.teamPage.toLowerCase().startsWith(Const.HTTP)
+                && !data.teamPage.toLowerCase().startsWith(Const.HTTPS)) {
+            data.teamPage = Const.HTTP + data.teamPage;
         }
 
         if (data.user == null) {

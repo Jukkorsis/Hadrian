@@ -18,6 +18,7 @@ package com.northernwall.hadrian.domain;
 import java.util.UUID;
 
 public class Document implements Comparable<Document> {
+
     private String docId;
     private DocumentType documentType;
     private String title;

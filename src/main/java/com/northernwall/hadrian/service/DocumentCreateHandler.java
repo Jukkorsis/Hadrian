@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Document;
@@ -60,6 +61,10 @@ public class DocumentCreateHandler extends BasicHandler {
             if (temp.getTitle().equalsIgnoreCase(data.title)) {
                 throw new Http400BadRequestException("Failed to add new document, a document with that title already exists");
             }
+        }
+        if (!data.link.toLowerCase().startsWith(Const.HTTP)
+                && !data.link.toLowerCase().startsWith(Const.HTTPS)) {
+            data.link = Const.HTTP + data.link;
         }
 
         Document document = new Document(data.documentType, data.title, data.link);

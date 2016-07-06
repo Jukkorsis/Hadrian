@@ -219,7 +219,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/delete", new CustomFuntionDeleteHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/document/create", new DocumentCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/document/delete", new DocumentDeleteHandler(accessHelper, dataAccess), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, client), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, client, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler(), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/calendar", new CalendarGetHandler(dataAccess, calendarHelper), true);

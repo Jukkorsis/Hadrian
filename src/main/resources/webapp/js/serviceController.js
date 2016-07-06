@@ -819,7 +819,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         $scope.openDocument = function (doc) {
             if (doc.documentType === "Link") {
-                window.open("http://" + doc.link, "_blank");
+                window.open(doc.link, "_blank");
             } else {
                 $scope.service.docType = "Loading";
                 var responsePromise = $http.get("/v1/document?serviceId=" + $scope.service.serviceId + "&docId=" + doc.docId, {});
@@ -833,6 +833,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                         $scope.service.docBody = $sce.trustAsHtml(html);
                     }
                     $scope.service.docType = doc.documentType;
+                });
+                responsePromise.error(function (data, status, headers, config) {
+                    $scope.service.docBody = data;
+                    $scope.service.docType = "Text";
                 });
             }
         };

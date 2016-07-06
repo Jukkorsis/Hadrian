@@ -21,6 +21,7 @@ public class Const {
     public static final String NO_STATUS = "-";
     
     public static final String HTTP = "http://";
+    public static final String HTTPS = "https://";
     public static final String HTTP_GET = "GET";
     public static final String HTTP_POST = "POST";
     public static final String HTTP_PUT = "PUT";
@@ -73,6 +74,8 @@ public class Const {
     public static final String VIP_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.details.simple.SimpleVipDetailsHelperFactory";
     public static final String VIP_DETAILS_URL = "vipDetailsHelper.vipDetailsUrl";
     public static final String VIP_POOL_DETAILS_URL = "vipDetailsHelper.poolDetailsUrl";
+    
+    public static final String DOCUMENT_TOKENS = "document.tokens";
 
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
     public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWorkItemSenderFactory";

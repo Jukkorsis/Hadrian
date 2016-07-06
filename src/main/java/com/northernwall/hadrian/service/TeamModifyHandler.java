@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
@@ -65,6 +66,11 @@ public class TeamModifyHandler extends BasicHandler {
                     throw new Http405NotAllowedException("Can not chnage team name, as a team with name " + data.teamName + " already exists");
                 }
             }
+        }
+
+        if (!data.teamPage.toLowerCase().startsWith(Const.HTTP)
+                && !data.teamPage.toLowerCase().startsWith(Const.HTTPS)) {
+            data.teamPage = Const.HTTP + data.teamPage;
         }
 
         team.setTeamName(data.teamName);

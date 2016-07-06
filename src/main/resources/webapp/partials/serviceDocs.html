@@ -19,27 +19,27 @@
             <div class="col-md-4">
                 <ul>
                     <li ng-repeat="d in service.leftDocuments">
-                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType === 'Link'" href="{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
                         <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
-                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" href="{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
                     </li>
                 </ul>
             </div>
             <div class="col-md-4">
                 <ul>
                     <li ng-repeat="d in service.middleDocuments">
-                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType === 'Link'" href="{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
                         <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
-                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" href="{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
                     </li>
                 </ul>
             </div>
             <div class="col-md-4">
                 <ul>
                     <li ng-repeat="d in service.rightDocuments">
-                        <a ng-if="d.documentType === 'Link'" href="http://{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType === 'Link'" href="{{d.link}}" target="_blank">{{d.title}} <span class="glyphicon glyphicon-new-window"></span></a>
                         <a ng-if="d.documentType !== 'Link'" ng-click="openDocument(d);">{{d.title}}</a>
-                        <a ng-if="d.documentType !== 'Link'" href="http://{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
+                        <a ng-if="d.documentType !== 'Link'" href="{{d.link}}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a>
                     </li>
                 </ul>
             </div>
