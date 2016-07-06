@@ -112,6 +112,8 @@ public class ModuleCreateHandler extends BasicHandler {
             data.availabilityUrl = "";
             data.runAs = "";
             data.deploymentFolder = "";
+            data.dataFolder = "";
+            data.logsFolder = "";
             data.startCmdLine = "";
             data.startTimeOut = 0;
             data.stopCmdLine = "";
@@ -123,6 +125,8 @@ public class ModuleCreateHandler extends BasicHandler {
             data.artifactSuffix = "";
             data.versionUrl = "";
             data.availabilityUrl = "";
+            data.dataFolder = "";
+            data.logsFolder = "";
             data.stopCmdLine = "";
             data.stopTimeOut = 0;
         } else {
