@@ -12,6 +12,9 @@ import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundEx
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.function.Predicate;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -157,6 +160,24 @@ public abstract class BasicHandler extends AbstractHandler {
             }
         }
         throw new Http404NotFoundException("Could not find vip");
+    }
+
+    protected void waitForFutures(List<Future> futures, int loopMax, int loopSleep) {
+        for (int i = 0; i < loopMax; i++) {
+            try {
+                Thread.sleep(loopSleep);
+            } catch (InterruptedException ex) {
+            }
+            futures.removeIf(new Predicate<Future>() {
+                @Override
+                public boolean test(Future t) {
+                    return t.isDone();
+                }
+            });
+            if (futures.isEmpty()) {
+                return;
+            }
+        }
     }
 
 }

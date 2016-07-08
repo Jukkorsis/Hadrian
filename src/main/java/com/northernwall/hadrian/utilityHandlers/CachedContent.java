@@ -25,4 +25,8 @@ public class CachedContent {
         outputStream.flush();
     }
 
+    public int getSize() {
+        return bytes.length;
+    }
+
 }

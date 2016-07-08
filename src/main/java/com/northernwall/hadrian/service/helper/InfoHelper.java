@@ -38,6 +38,9 @@ public class InfoHelper {
     }
 
     public int readAvailability(String host, String url) {
+        if (url == null || url.isEmpty()) {
+            return -1;
+        }
         try {
             Builder builder = new Request.Builder()
                     .url(Const.HTTP + url.replace(Const.HOST, host));
@@ -58,6 +61,9 @@ public class InfoHelper {
     }
 
     public String readVersion(String host, String url) {
+        if (url == null || url.isEmpty()) {
+            return "No Version URL";
+        }
         try {
             Builder builder = new Request.Builder()
                     .url(Const.HTTP + url.replace(Const.HOST, host));

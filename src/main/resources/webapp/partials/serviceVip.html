@@ -9,7 +9,7 @@
             </div>
         </form>
         <div ng-repeat="m in service.modules">
-            <div ng-if="m.moduleType === 'Deployable'">
+            <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                 <div ng-repeat="mn in m.networks">
                     <div ng-if="m.networkNames[mn.network] && m.networkNames[mn.network]">
                         <h4>

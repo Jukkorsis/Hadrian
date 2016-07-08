@@ -63,7 +63,7 @@ public class ServiceRefreshHandler extends BasicHandler {
 
             getHostInfo(service, getServiceData, futures);
 
-            waitForFutures(futures);
+            waitForFutures(futures, 151, 100);
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
@@ -123,24 +123,6 @@ public class ServiceRefreshHandler extends BasicHandler {
                 futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
                 futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
                 getModuleData.addHost(getHostData);
-            }
-        }
-    }
-
-    protected void waitForFutures(List<Future> futures) {
-        for (int i = 0; i < 151; i++) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-            }
-            futures.removeIf(new Predicate<Future>() {
-                @Override
-                public boolean test(Future t) {
-                    return t.isDone();
-                }
-            });
-            if (futures.isEmpty()) {
-                return;
             }
         }
     }

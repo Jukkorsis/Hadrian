@@ -77,7 +77,7 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
             getCustomFunctionInfo(service, getServiceData);
 
-            waitForFutures(futures);
+            waitForFutures(futures, 151, 100);
         }
         
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

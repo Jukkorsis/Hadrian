@@ -25,12 +25,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class ContentHandler extends AbstractHandler {
+
+    private final static Logger logger = LoggerFactory.getLogger(ContentHandler.class);
 
     private final String rootPath;
     private final String indexPath;
@@ -59,19 +63,28 @@ public class ContentHandler extends AbstractHandler {
     private boolean getContent(HttpServletResponse response, String resource) throws IOException {
         CachedContent content = cache.get(resource);
         if (content == null) {
-            try (InputStream is = this.getClass().getResourceAsStream(resource)) {
-                if (is == null) {
-                    return false;
+            synchronized (this) {
+                content = cache.get(resource);
+                if (content == null) {
+                    try (InputStream is = this.getClass().getResourceAsStream(resource)) {
+                        if (is == null) {
+                            return false;
+                        }
+                        content = new CachedContent(is);
+                        cache.put(resource, content);
+                        logger.info("Loaded content {} into cache, {} bytes", resource, content.getSize());
+                    }
                 }
-                content = new CachedContent(is);
-                cache.put(resource, content);
             }
         }
+
         if (resource.toLowerCase().endsWith(".html")) {
             response.addHeader("X-Frame-Options", "DENY");
             response.setContentType(Const.HTML);
         }
+
         content.write(response.getOutputStream());
+
         return true;
     }
 

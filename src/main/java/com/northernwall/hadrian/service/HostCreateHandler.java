@@ -22,6 +22,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Network;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
@@ -85,15 +86,10 @@ public class HostCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Unknown env");
         }
 
-        List<Module> modules = getDataAccess().getModules(data.serviceId);
-        Module module = null;
-        for (Module temp : modules) {
-            if (temp.getModuleId().equals(data.moduleId)) {
-                module = temp;
-            }
-        }
-        if (module == null) {
-            throw new Http400BadRequestException("Unknown module");
+        Module module = getModule(data.moduleId, null, service);
+        if (module.getModuleType() != ModuleType.Deployable
+                && module.getModuleType() != ModuleType.Simulator) {
+            throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
         //calc host name

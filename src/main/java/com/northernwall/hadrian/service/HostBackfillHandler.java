@@ -77,8 +77,9 @@ public class HostBackfillHandler extends BasicHandler {
         }
 
         Module module = getModule(data.moduleId, null, service);
-        if (module.getModuleType() != ModuleType.Deployable) {
-            throw new Http400BadRequestException("Module must be a deployable");
+        if (module.getModuleType() != ModuleType.Deployable
+                && module.getModuleType() != ModuleType.Simulator) {
+            throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
