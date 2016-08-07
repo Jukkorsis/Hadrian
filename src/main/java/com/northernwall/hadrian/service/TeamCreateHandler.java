@@ -28,9 +28,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TeamCreateHandler extends BasicHandler {
 
+    private final static Logger logger = LoggerFactory.getLogger(TeamCreateHandler.class);
     private final AccessHelper accessHelper;
 
     public TeamCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
@@ -66,11 +69,11 @@ public class TeamCreateHandler extends BasicHandler {
         }
 
         for (Team temp : getDataAccess().getTeams()) {
-            if (temp.getTeamName().equals(data.teamName)) {
+            if (temp.getTeamName().equalsIgnoreCase(data.teamName)) {
                 throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
             }
             if (temp.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
-                throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
+                logger.warn("Creating new teamwith name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
             }
         }
 
