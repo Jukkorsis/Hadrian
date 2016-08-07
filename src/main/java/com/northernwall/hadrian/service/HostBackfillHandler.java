@@ -86,46 +86,66 @@ public class HostBackfillHandler extends BasicHandler {
 
         String[] hostnames = data.hosts.split(",");
         for (String hostname : hostnames) {
-            if (hostname != null && !hostname.isEmpty()) {
-                String temp = hostname.trim();
-                if (temp != null && !temp.isEmpty()) {
-                    boolean found = false;
-                    for (Host host : hosts) {
-                        if (host.getHostName().equalsIgnoreCase(temp)) {
-                            found = true;
-                        }
+            String temp = scrubHostname(hostname);
+            if (temp != null && !temp.isEmpty()) {
+                boolean found = false;
+                for (Host host : hosts) {
+                    if (host.getHostName().equalsIgnoreCase(temp)) {
+                        found = true;
                     }
-                    if (!found) {
-                        Host host = new Host(temp,
-                                service.getServiceId(),
-                                Const.NO_STATUS,
-                                module.getModuleId(),
-                                data.dataCenter,
-                                data.network,
-                                data.env);
-                        getDataAccess().saveHost(host);
+                }
+                if (!found) {
+                    Host host = new Host(temp,
+                            service.getServiceId(),
+                            Const.NO_STATUS,
+                            module.getModuleId(),
+                            data.dataCenter,
+                            data.network,
+                            data.env);
+                    getDataAccess().saveHost(host);
 
-                        Audit audit = new Audit();
-                        audit.serviceId = service.getServiceId();
-                        audit.timePerformed = GMT.getGmtAsDate();
-                        audit.timeRequested = GMT.getGmtAsDate();
-                        audit.requestor = user.getUsername();
-                        audit.type = Type.host;
-                        audit.operation = Operation.create;
-                        audit.successfull = true;
-                        audit.moduleName = module.getModuleName();
-                        audit.hostName = temp;
-                        Map<String, String> notes = new HashMap<>();
-                        notes.put("Reason", "Backfilled host.");
-                        audit.notes = getGson().toJson(notes);
-                        getDataAccess().saveAudit(audit, null);
-                    }
+                    Audit audit = new Audit();
+                    audit.serviceId = service.getServiceId();
+                    audit.timePerformed = GMT.getGmtAsDate();
+                    audit.timeRequested = GMT.getGmtAsDate();
+                    audit.requestor = user.getUsername();
+                    audit.type = Type.host;
+                    audit.operation = Operation.create;
+                    audit.successfull = true;
+                    audit.moduleName = module.getModuleName();
+                    audit.hostName = temp;
+                    Map<String, String> notes = new HashMap<>();
+                    notes.put("Reason", "Backfilled host.");
+                    audit.notes = getGson().toJson(notes);
+                    getDataAccess().saveAudit(audit, null);
                 }
             }
         }
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    public static String scrubHostname(String hostname) {
+        if (hostname == null) {
+            return null;
+        }
+        String temp = hostname.trim();
+        if (temp == null || temp.isEmpty()) {
+            return null;
+        }
+        int index = temp.indexOf(".");
+        if (index == -1) {
+            return temp;
+        }
+        if (index == 0) {
+            return null;
+        }
+        temp = temp.substring(0, index).trim();
+        if (temp == null || temp.isEmpty()) {
+            return null;
+        }
+        return temp;
     }
 
 }
