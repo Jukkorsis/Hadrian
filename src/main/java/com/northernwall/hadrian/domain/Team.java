@@ -31,7 +31,6 @@ public class Team implements Comparable<Team> {
     private String teamEmail;
     private String teamIrc;
     private String teamSlack;
-    private String gitRepo;
     private String gitGroup;
     private String teamPage;
     private String calendarId;
@@ -43,7 +42,6 @@ public class Team implements Comparable<Team> {
         this.teamEmail = teamEmail;
         this.teamIrc = teamIrc;
         this.teamSlack = teamSlack;
-        this.gitRepo = gitGroup;
         this.gitGroup = gitGroup;
         this.teamPage = teamPage;
         this.calendarId = calendarId;
@@ -88,14 +86,6 @@ public class Team implements Comparable<Team> {
 
     public void setTeamSlack(String teamSlack) {
         this.teamSlack = teamSlack;
-    }
-
-    public String getGitRepo() {
-        return gitRepo;
-    }
-
-    public void setGitRepo(String gitRepo) {
-        this.gitRepo = gitRepo;
     }
 
     public String getGitGroup() {
