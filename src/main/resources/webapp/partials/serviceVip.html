@@ -45,7 +45,7 @@
                                                 <li role="menuitem"><a ng-click="deleteVip(ep.vipId);">Delete VIP</a></li>
                                             </ul>
                                         </div>
-                                        {{ep.dns}}.{{ep.domain}}
+                                        <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
                                         <span ng-if="ep.status !== '-'">
                                             <span class="label label-warning">{{ep.status}}</span>
                                         </span>
