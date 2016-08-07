@@ -73,7 +73,7 @@ public class HostBackfillHandler extends BasicHandler {
             throw new Http400BadRequestException("unknown network, " + data.network);
         }
         if (!config.envs.contains(data.env)) {
-            throw new Http400BadRequestException("unknown env, " + data.env);
+            throw new Http400BadRequestException("unknown operating env, " + data.env);
         }
 
         Module module = getModule(data.moduleId, null, service);
@@ -116,6 +116,9 @@ public class HostBackfillHandler extends BasicHandler {
                     audit.hostName = temp;
                     Map<String, String> notes = new HashMap<>();
                     notes.put("Reason", "Backfilled host.");
+                    notes.put("DC", data.dataCenter);
+                    notes.put("Network", data.network);
+                    notes.put("Operating_Env", data.env);
                     audit.notes = getGson().toJson(notes);
                     getDataAccess().saveAudit(audit, null);
                 }

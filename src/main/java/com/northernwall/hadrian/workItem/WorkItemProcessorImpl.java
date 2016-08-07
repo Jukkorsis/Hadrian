@@ -156,7 +156,9 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                     switch (workItem.getOperation()) {
                         case create:
                             createHostAction.process(workItem, callbackData.status);
-                            notes.put("Env", workItem.getHost().env);
+                            notes.put("DC", workItem.getHost().dataCenter);
+                            notes.put("Network", workItem.getHost().network);
+                            notes.put("Operating_Env", workItem.getHost().env);
                             notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
                             notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
                             notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));

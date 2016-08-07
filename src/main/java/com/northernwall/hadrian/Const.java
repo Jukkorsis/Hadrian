@@ -161,7 +161,7 @@ public class Const {
     public static final String CONFIG_NETWORKS_DC = "{dc}";
     public static final String CONFIG_NETWORKS_ABBR = "{abbr}";
     public static final String CONFIG_ENVS = "config.envs";
-    public static final String CONFIG_ENVS_DEFAULT = "Java7, Java8, NodeJS";
+    public static final String CONFIG_ENVS_DEFAULT = "Java7, Java8";
     public static final String CONFIG_PROTOCOLS = "config.protocols";
     public static final String CONFIG_PROTOCOLS_DEFAULT = "HTTP, HTTPS, TCP";
     public static final String CONFIG_DOMAINS = "config.domains";

@@ -83,7 +83,7 @@ public class HostCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Unknown network");
         }
         if (!config.envs.contains(data.env)) {
-            throw new Http400BadRequestException("Unknown env");
+            throw new Http400BadRequestException("Unknown operating env");
         }
 
         Module module = getModule(data.moduleId, null, service);
