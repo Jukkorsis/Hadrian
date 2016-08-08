@@ -4,6 +4,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +26,15 @@ public class DataAccessUpdater {
                 List<Module> modules = dataAccess.getModules(service.getServiceId());
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
-                        if (module.getModuleName().toLowerCase().contains("simulator") 
-                                && module.getModuleType().equals(ModuleType.Deployable)) {
-                            logger.info("Found a sim, {} in {}", module.getModuleName(), service.getServiceName());
-                            module.setModuleType(ModuleType.Simulator);
-                            dataAccess.saveModule(module);
+                        if (module.getModuleType() == ModuleType.Deployable ||
+                                module.getModuleType() == ModuleType.Simulator) {
+                            if (module.getNetworkNames().containsKey("Test")) {
+                                boolean value = module.getNetworkNames().get("Test").booleanValue();
+                                logger.info("Found a deployable or simulator with a Test network, {} in {} with value {}", module.getModuleName(), service.getServiceName(), value);
+                                module.getNetworkNames().put("Sandbox", value);
+                                module.getNetworkNames().remove("Test");
+                                dataAccess.saveModule(module);
+                            }
                         }
                     }
                 }
