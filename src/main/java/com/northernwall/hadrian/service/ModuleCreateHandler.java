@@ -129,10 +129,22 @@ public class ModuleCreateHandler extends BasicHandler {
             data.logsFolder = "";
             data.stopCmdLine = "";
             data.stopTimeOut = 0;
+            if (data.hostname == null || data.hostname.isEmpty()) {
+                throw new Http400BadRequestException("Can not have an empty hostname");
+            }
         } else {
             data.hostname = "";
             if (data.hostAbbr.contains("-")) {
                 throw new Http400BadRequestException("Can not have '-' in host abbr");
+            }
+            data.deploymentFolder = scrubFolder(data.deploymentFolder);
+            data.logsFolder = scrubFolder(data.logsFolder);
+            if (isSubFolder(data.logsFolder, data.deploymentFolder)) {
+                throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
+            }
+            data.dataFolder = scrubFolder(data.dataFolder);
+            if (isSubFolder(data.dataFolder, data.deploymentFolder)) {
+                throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
             }
         }
 
@@ -161,15 +173,15 @@ public class ModuleCreateHandler extends BasicHandler {
                 throw new Http400BadRequestException("Error there already exists a module named " + data.moduleName + " on service " + data.serviceId);
             }
             if (data.gitProject.equalsIgnoreCase(temp.getGitProject())) {
-                String dataFolder = "/" + data.gitFolder.toUpperCase() + "/";
-                String tempFolder = "/" + temp.getGitFolder().toUpperCase() + "/";
-                if (dataFolder.equals(tempFolder)) {
+                String gitFolder = "/" + data.gitFolder.toUpperCase() + "/";
+                String tempGitFolder = "/" + temp.getGitFolder().toUpperCase() + "/";
+                if (gitFolder.equals(tempGitFolder)) {
                     throw new Http400BadRequestException("Error there already exists a module with git project " + data.gitProject + " and folder " + data.gitFolder + " on service " + data.serviceId);
                 }
-                if (dataFolder.startsWith(tempFolder)) {
+                if (gitFolder.startsWith(tempGitFolder)) {
                     throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
                 }
-                if (tempFolder.startsWith(dataFolder)) {
+                if (tempGitFolder.startsWith(gitFolder)) {
                     throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
                 }
             }
@@ -242,6 +254,41 @@ public class ModuleCreateHandler extends BasicHandler {
         workItemProcess.sendWorkItem(workItem);
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    public static String scrubFolder(String folder) {
+        if (folder == null || folder.isEmpty()) {
+            return "/";
+        }
+        String temp = folder.trim();
+        if (temp == null || temp.isEmpty()) {
+            return "/";
+        }
+        if (!folder.startsWith("/")) {
+            temp = "/" + temp;
+        }
+        if (temp.endsWith("/") && temp.length() > 1) {
+            temp = temp.substring(0, temp.length()-1);
+        }
+        return temp;
+    }
+
+    /**
+     * This metho assumes that both folder parameters have already been scrubbed.
+     * @param subFolder
+     * @param mainFolder
+     * @return 
+     */
+    public static boolean isSubFolder(String subFolder, String mainFolder) {
+        String tempSubFolder = subFolder;
+        if (tempSubFolder.length() > 1) {
+            tempSubFolder = tempSubFolder + "/";
+        }
+        String tempMainFolder = mainFolder;
+        if (tempMainFolder.length() > 1) {
+            tempMainFolder = tempMainFolder + "/";
+        }
+        return (tempSubFolder.equals(tempMainFolder) || tempSubFolder.startsWith(tempMainFolder));
     }
 
 }

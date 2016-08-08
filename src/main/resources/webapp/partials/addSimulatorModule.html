@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <dl class="dl-horizontal">
                 <dt>Name:</dt>
-                <dd><input ng-model="formSaveModule.moduleName" type="text"></dd>
+                <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
                 <div ng-if="service.gitMode === 'Flat'">
                     <dt>Git Project:</dt>
                     <dd>
@@ -35,7 +35,7 @@
                 <dd>
                     <span ng-repeat="n in config.networkNames">
                         <label class="checkbox-inline">
-                        <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
+                            <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
                         </label>
                     </span>
                 </dd>

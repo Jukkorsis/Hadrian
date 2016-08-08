@@ -19,6 +19,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -107,6 +108,49 @@ public class ModuleModifyHandler extends BasicHandler {
         }
         if (data.order > modules.size()) {
             data.order = modules.size();
+        }
+
+        if (module.getModuleType().equals(ModuleType.Library)) {
+            data.hostAbbr = "";
+            data.hostname = "";
+            data.versionUrl = "";
+            data.availabilityUrl = "";
+            data.runAs = "";
+            data.deploymentFolder = "";
+            data.dataFolder = "";
+            data.logsFolder = "";
+            data.startCmdLine = "";
+            data.startTimeOut = 0;
+            data.stopCmdLine = "";
+            data.stopTimeOut = 0;
+        } else if (module.getModuleType().equals(ModuleType.Test)) {
+            data.hostAbbr = "";
+            data.mavenGroupId = "";
+            data.mavenArtifactId = "";
+            data.artifactSuffix = "";
+            data.versionUrl = "";
+            data.availabilityUrl = "";
+            data.dataFolder = "";
+            data.logsFolder = "";
+            data.stopCmdLine = "";
+            data.stopTimeOut = 0;
+            if (data.hostname == null || data.hostname.isEmpty()) {
+                throw new Http400BadRequestException("Can not have an empty hostname");
+            }
+        } else {
+            data.hostname = "";
+            if (data.hostAbbr.contains("-")) {
+                throw new Http400BadRequestException("Can not have '-' in host abbr");
+            }
+            data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder);
+            data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder);
+            if (ModuleCreateHandler.isSubFolder(data.logsFolder, data.deploymentFolder)) {
+                throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
+            }
+            data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder);
+            if (ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
+                throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
+            }
         }
 
         module.setModuleName(data.moduleName);

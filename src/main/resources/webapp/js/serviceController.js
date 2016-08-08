@@ -256,6 +256,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     animation: true,
                     templateUrl: 'partials/updateSimulatorModule.html',
                     controller: 'ModalUpdateModuleCtrl',
+                    size: 'lg',
                     resolve: {
                         service: function () {
                             return $scope.service;
