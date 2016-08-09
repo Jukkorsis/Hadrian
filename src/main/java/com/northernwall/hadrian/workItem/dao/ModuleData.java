@@ -36,6 +36,9 @@ public class ModuleData {
     public String availabilityUrl;
     public String runAs;
     public String deploymentFolder;
+    public String dataFolder;
+    public String logsFolder;
+    public int logsRetention;
     public String startCmdLine;
     public int startTimeOut;
     public String stopCmdLine;
@@ -63,6 +66,9 @@ public class ModuleData {
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.runAs = module.getRunAs();
         temp.deploymentFolder = module.getDeploymentFolder();
+        temp.dataFolder = module.getDataFolder();
+        temp.logsFolder = module.getLogsFolder();
+        temp.logsRetention = module.getLogsRetention();
         temp.startCmdLine = module.getStartCmdLine();
         temp.startTimeOut = module.getStartTimeOut();
         temp.stopCmdLine = module.getStopCmdLine();
