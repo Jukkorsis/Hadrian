@@ -22,6 +22,7 @@ public class GetHostData {
     public String hostName;
     public String serviceId;
     public String status;
+    public boolean busy;
     public String dataCenter;
     public String network;
     public String env;
@@ -34,6 +35,7 @@ public class GetHostData {
         temp.hostName = host.getHostName();
         temp.serviceId = host.getServiceId();
         temp.status = host.getStatus();
+        temp.busy = host.isBusy();
         temp.dataCenter = host.getDataCenter();
         temp.network = host.getNetwork();
         temp.env = host.getEnv();
