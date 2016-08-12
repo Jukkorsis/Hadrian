@@ -20,6 +20,7 @@
                                 <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                     <li role="menuitem"><a ng-click="openAddHostModal(mn.network, m);">Provision new hosts in {{mn.network}}</a></li>
                                     <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill existing hosts in {{mn.network}}</a></li>
+                                    <li role="menuitem"><a ng-click="openModuleFileModal(m, mn.network);">Manage file for {{mn.network}}</a></li>
                                 </ul>
                             </div>
                             <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
@@ -31,6 +32,7 @@
                                     <li role="menuitem"><a ng-click="openDeploySoftwareHostsModal(mn, m);">Deploy software to selected hosts</a></li>
                                     <li role="menuitem"><a ng-click="openRestartHostsModal(mn, m);">Restart selected hosts</a></li>
                                     <li role="menuitem"><a ng-click="openBackfillModal(mn.network, m);">Backfill existing hosts in {{mn.network}}</a></li>
+                                    <li role="menuitem"><a ng-click="openModuleFileModal(m, mn.network);">Manage file for {{mn.network}}</a></li>
                                     <li class="divider"></li>
                                     <li role="menuitem" ng-repeat="cf in m.customFunctions">
                                         <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
@@ -119,6 +121,7 @@
                                         <span ng-if="i.status !== '-'">
                                             <span class="label label-warning">{{i.status}}</span>
                                         </span>
+                                        {{i.busy}}
                                     </td>
                                     <td>{{i.dataCenter}}</td>
                                     <td>{{i.env}}</td>
