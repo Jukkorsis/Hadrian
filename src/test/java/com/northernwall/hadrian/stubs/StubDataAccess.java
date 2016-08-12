@@ -301,6 +301,16 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
+    public int getWorkItemStatus(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void saveWorkItemStatus(String id, int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public void saveAudit(Audit audit, String output) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

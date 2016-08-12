@@ -244,7 +244,10 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             }
             dataAccess.saveAudit(audit, callbackData.output);
             if (callbackData.status == Result.error) {
+                dataAccess.saveWorkItemStatus(workItem.getId(), 400);
                 deleteNextWorkItem(workItem.getNextId());
+            } else {
+                dataAccess.saveWorkItemStatus(workItem.getId(), 200);
             }
         } finally {
             context.stop();
@@ -265,6 +268,28 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                     }
                 }
                 dataAccess.deleteWorkItem(nextId);
+                
+                dataAccess.saveWorkItemStatus(workItem.getId(), 400);
+                
+                Audit audit = new Audit();
+                audit.serviceId = workItem.getService().serviceId;
+                audit.timePerformed = GMT.getGmtAsDate();
+                audit.timeRequested = workItem.getRequestDate();
+                audit.requestor = workItem.getUsername();
+                audit.type = workItem.getType();
+                audit.operation = workItem.getOperation();
+                audit.successfull = false;
+                if (workItem.getMainModule() != null) {
+                    audit.moduleName = workItem.getMainModule().moduleName;
+                }
+                if (workItem.getHost() != null) {
+                    audit.hostName = workItem.getHost().hostName;
+                }
+                if (workItem.getVip() != null) {
+                    audit.vipName = workItem.getVip().dns;
+                }
+                audit.notes = "";
+                dataAccess.saveAudit(audit, "Operation not preformed because an earlier operation in the sequence failed.");
             }
         }
     }

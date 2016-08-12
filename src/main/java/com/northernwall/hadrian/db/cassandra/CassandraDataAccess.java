@@ -117,6 +117,8 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
     private final PreparedStatement workItemDelete;
+    private final PreparedStatement workItemStatusSelect;
+    private final PreparedStatement workItemStatusInsert;
 
     private final Gson gson;
 
@@ -252,6 +254,12 @@ public class CassandraDataAccess implements DataAccess {
         workItemInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        logger.info("Praparing workItem statements...");
+        workItemStatusSelect = session.prepare("SELECT * FROM workItemStatus WHERE id = ?;");
+        workItemStatusSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        workItemStatusInsert = session.prepare("INSERT INTO workItemStatus (id, status) VALUES (?, ?) USING TTL 86400;");
+        workItemStatusInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing audit statements...");
         logger.info("Audit TTL {}", auditTimeToLive);
@@ -445,8 +453,8 @@ public class CassandraDataAccess implements DataAccess {
         List<ModuleFile> moduleFiles = new LinkedList<>();
         for (Row row : results) {
             moduleFiles.add(new ModuleFile(
-                    serviceId, 
-                    row.getString("moduleId"), 
+                    serviceId,
+                    row.getString("moduleId"),
                     row.getString("network"),
                     row.getString("name"),
                     row.getString("data")));
@@ -460,15 +468,15 @@ public class CassandraDataAccess implements DataAccess {
         ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
         for (Row row : results) {
             return new ModuleFile(
-                    serviceId, 
-                    moduleId, 
+                    serviceId,
+                    moduleId,
                     network,
                     row.getString("name"),
                     row.getString("data"));
         }
         return null;
     }
-    
+
     @Override
     public void saveModuleFile(ModuleFile moduleFile) {
         BoundStatement boundStatement = new BoundStatement(moduleFileInsert);
@@ -479,7 +487,7 @@ public class CassandraDataAccess implements DataAccess {
                 moduleFile.getName(),
                 moduleFile.getContents()));
     }
-    
+
     @Override
     public void updateModuleFile(ModuleFile moduleFile) {
         BoundStatement boundStatement = new BoundStatement(moduleFileUpdate);
@@ -490,7 +498,7 @@ public class CassandraDataAccess implements DataAccess {
                 moduleFile.getNetwork(),
                 moduleFile.getName()));
     }
-    
+
     @Override
     public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileDelete);
@@ -528,10 +536,10 @@ public class CassandraDataAccess implements DataAccess {
         List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
             serviceRefs.add(new ModuleRef(
-                            row.getString("clientServiceId"),
-                            row.getString("clientModuleId"), 
-                            row.getString("serverServiceId"), 
-                            row.getString("serverModuleId")));
+                    row.getString("clientServiceId"),
+                    row.getString("clientModuleId"),
+                    row.getString("serverServiceId"),
+                    row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
@@ -543,10 +551,10 @@ public class CassandraDataAccess implements DataAccess {
         List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
             serviceRefs.add(new ModuleRef(
-                            row.getString("clientServiceId"),
-                            row.getString("clientModuleId"), 
-                            row.getString("serverServiceId"), 
-                            row.getString("serverModuleId")));
+                    row.getString("clientServiceId"),
+                    row.getString("clientModuleId"),
+                    row.getString("serverServiceId"),
+                    row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
@@ -558,10 +566,10 @@ public class CassandraDataAccess implements DataAccess {
         List<ModuleRef> serviceRefs = new LinkedList<>();
         for (Row row : results) {
             serviceRefs.add(new ModuleRef(
-                            row.getString("clientServiceId"),
-                            row.getString("clientModuleId"), 
-                            row.getString("serverServiceId"), 
-                            row.getString("serverModuleId")));
+                    row.getString("clientServiceId"),
+                    row.getString("clientModuleId"),
+                    row.getString("serverServiceId"),
+                    row.getString("serverModuleId")));
         }
         return serviceRefs;
     }
@@ -573,13 +581,13 @@ public class CassandraDataAccess implements DataAccess {
         boundStatement = new BoundStatement(moduleRefInsertClient);
         session.execute(boundStatement.bind(
                 moduleRef.getClientServiceId(),
-                moduleRef.getClientModuleId(), 
-                moduleRef.getServerServiceId(), 
+                moduleRef.getClientModuleId(),
+                moduleRef.getServerServiceId(),
                 moduleRef.getServerModuleId()));
 
         boundStatement = new BoundStatement(moduleRefInsertServer);
         session.execute(boundStatement.bind(
-                moduleRef.getServerServiceId(), 
+                moduleRef.getServerServiceId(),
                 moduleRef.getServerModuleId(),
                 moduleRef.getClientServiceId(),
                 moduleRef.getClientModuleId()));
@@ -591,16 +599,16 @@ public class CassandraDataAccess implements DataAccess {
 
         boundStatement = new BoundStatement(moduleRefDeleteClient);
         session.execute(boundStatement.bind(
-                clientServiceId, 
-                clientModuleId, 
-                serverServiceId, 
+                clientServiceId,
+                clientModuleId,
+                serverServiceId,
                 serverModuleId));
 
         boundStatement = new BoundStatement(moduleRefDeleteServer);
-        session.execute(boundStatement.bind( 
-                serverServiceId, 
+        session.execute(boundStatement.bind(
+                serverServiceId,
                 serverModuleId,
-                clientServiceId, 
+                clientServiceId,
                 clientModuleId));
     }
 
@@ -700,15 +708,32 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public int getWorkItemStatus(String id) {
+        BoundStatement boundStatement = new BoundStatement(workItemStatusSelect);
+        ResultSet results = session.execute(boundStatement.bind(id));
+        Row row = results.one();
+        if (row == null) {
+            return -1;
+        }
+        return row.getInt("status");
+    }
+
+    @Override
+    public void saveWorkItemStatus(String id, int status) {
+        BoundStatement boundStatement = new BoundStatement(workItemStatusInsert);
+        session.execute(boundStatement.bind(id, status));
+    }
+
+    @Override
     public void saveAudit(Audit audit, String output) {
         audit.auditId = UUID.randomUUID().toString();
         Calendar c = new GregorianCalendar();
         c.setTime(audit.timePerformed);
         BoundStatement boundStatement = new BoundStatement(auditInsert);
         session.execute(boundStatement.bind(
-                audit.serviceId, 
+                audit.serviceId,
                 c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH)+1,
+                c.get(Calendar.MONTH) + 1,
                 c.get(Calendar.DAY_OF_MONTH),
                 gson.toJson(audit)));
 
@@ -739,8 +764,8 @@ public class CassandraDataAccess implements DataAccess {
         while (day <= endDay) {
             BoundStatement boundStatement = new BoundStatement(auditSelect);
             ResultSet results = session.execute(boundStatement.bind(
-                    serviceId, 
-                    year, 
+                    serviceId,
+                    year,
                     month,
                     day));
             for (Row row : results) {

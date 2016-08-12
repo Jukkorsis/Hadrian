@@ -127,14 +127,14 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             workItemProcess.sendWorkItem(workItems.get(0));
             if (data.wait) {
                 String lastId = workItems.get(size - 1).getId();
-                for (int i = 0; i < 30; i++) {
+                for (int i = 0; i < (size*2*10); i++) {
                     try {
-                        Thread.sleep(20_000);
+                        Thread.sleep(module.getStartTimeOut() * 100);
                     } catch (InterruptedException ex) {
                     }
-                    WorkItem workItem = getDataAccess().getWorkItem(lastId);
-                    if (workItem == null) {
-                        response.setStatus(200);
+                    int workItemStatus = getDataAccess().getWorkItemStatus(lastId);
+                    if (workItemStatus > 0) {
+                        response.setStatus(workItemStatus);
                         request.setHandled(true);
                         return;
                     }

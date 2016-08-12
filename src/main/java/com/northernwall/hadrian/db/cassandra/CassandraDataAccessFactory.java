@@ -90,58 +90,57 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     }
 
     private void setup(boolean createKeyspace, String keyspace, int replicationFactor) {
-        Session session = cluster.connect(keyspace);
-
-        if (createKeyspace) {
-            session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspace + " WITH replication = {'class':'SimpleStrategy', 'replication_factor':" + replicationFactor + "};");
-            logger.info("Keyspace {} created", keyspace);
-        } else {
-            logger.info("Not calling create keyspace for {}", keyspace);
-        }
-
-        //Version tables
-        session.execute("CREATE TABLE IF NOT EXISTS version (component text, version text, PRIMARY KEY (component));");
-        //Data tables
-        session.execute("CREATE TABLE IF NOT EXISTS service (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS team (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS user (id text, data text, PRIMARY KEY (id));");
-        session.execute("CREATE TABLE IF NOT EXISTS workItem (id text, data text, PRIMARY KEY (id));");
-        //Data tables below Service
-        session.execute("CREATE TABLE IF NOT EXISTS customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        session.execute("CREATE TABLE IF NOT EXISTS moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
-        session.execute("CREATE TABLE IF NOT EXISTS vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-        //Ref tables
-        try {
-            session.execute("DROP TABLE serviceRefClient;");
-        } catch (InvalidQueryException e) {
-        }
-        try {
-            session.execute("DROP TABLE serviceRefServer;");
-        } catch (InvalidQueryException e) {
-        }
-        try {
-            session.execute("DROP TABLE vipRefHost;");
-        } catch (InvalidQueryException e) {
-        }
-        try {
-            session.execute("DROP TABLE vipRefVip;");
-        } catch (InvalidQueryException e) {
-        }
-        session.execute("CREATE TABLE IF NOT EXISTS moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
-        session.execute("CREATE TABLE IF NOT EXISTS moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
-        //Audit table
-        try {
-            session.execute("DROP TABLE audit;");
-        } catch (InvalidQueryException e) {
-        }
-        session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
-        session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
-        logger.info("Tables created");
-
-        session.close();
+        try (Session session = cluster.connect(keyspace)) {
+            if (createKeyspace) {
+                session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspace + " WITH replication = {'class':'SimpleStrategy', 'replication_factor':" + replicationFactor + "};");
+                logger.info("Keyspace {} created", keyspace);
+            } else {
+                logger.info("Not calling create keyspace for {}", keyspace);
+            }
+            
+            //Version tables
+            session.execute("CREATE TABLE IF NOT EXISTS version (component text, version text, PRIMARY KEY (component));");
+            //Data tables
+            session.execute("CREATE TABLE IF NOT EXISTS service (id text, data text, PRIMARY KEY (id));");
+            session.execute("CREATE TABLE IF NOT EXISTS team (id text, data text, PRIMARY KEY (id));");
+            session.execute("CREATE TABLE IF NOT EXISTS user (id text, data text, PRIMARY KEY (id));");
+            session.execute("CREATE TABLE IF NOT EXISTS workItem (id text, data text, PRIMARY KEY (id));");
+            session.execute("CREATE TABLE IF NOT EXISTS workItemStatus (id text, status int, PRIMARY KEY (id));");
+            //Data tables below Service
+            session.execute("CREATE TABLE IF NOT EXISTS customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            session.execute("CREATE TABLE IF NOT EXISTS dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            session.execute("CREATE TABLE IF NOT EXISTS host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            session.execute("CREATE TABLE IF NOT EXISTS module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            session.execute("CREATE TABLE IF NOT EXISTS moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
+            session.execute("CREATE TABLE IF NOT EXISTS vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            //Ref tables
+            try {
+                session.execute("DROP TABLE serviceRefClient;");
+            } catch (InvalidQueryException e) {
+            }
+            try {
+                session.execute("DROP TABLE serviceRefServer;");
+            } catch (InvalidQueryException e) {
+            }
+            try {
+                session.execute("DROP TABLE vipRefHost;");
+            } catch (InvalidQueryException e) {
+            }
+            try {
+                session.execute("DROP TABLE vipRefVip;");
+            } catch (InvalidQueryException e) {
+            }
+            session.execute("CREATE TABLE IF NOT EXISTS moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
+            session.execute("CREATE TABLE IF NOT EXISTS moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
+            //Audit table
+            try {
+                session.execute("DROP TABLE audit;");
+            } catch (InvalidQueryException e) {
+            }
+            session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
+            session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
+            logger.info("Tables created");
+        }  
     }
 
     @Override

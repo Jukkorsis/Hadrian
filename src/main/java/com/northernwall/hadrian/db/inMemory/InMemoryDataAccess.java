@@ -392,6 +392,15 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public int getWorkItemStatus(String id) {
+        return 200;
+    }
+
+    @Override
+    public void saveWorkItemStatus(String id, int status) {
+    }
+
+    @Override
     public List<User> getUsers() {
         List<User> temp = new LinkedList<>(users.values());
         Collections.sort(temp);
