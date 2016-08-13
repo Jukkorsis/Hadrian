@@ -68,13 +68,13 @@ public class HostRestartHandler extends BasicHandler {
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
-                    if (host.getStatus().equals(Const.NO_STATUS)) {
+                    if (!host.isBusy()) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
                         workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
-                            host.setStatus("Restarting...");
+                            host.setStatus(true, "Restarting...");
                         } else {
-                            host.setStatus("Restart Queued");
+                            host.setStatus(true, "Restart Queued");
                         }
                         getDataAccess().updateHost(host);
                         workItems.add(workItem);

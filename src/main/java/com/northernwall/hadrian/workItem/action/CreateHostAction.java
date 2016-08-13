@@ -42,12 +42,12 @@ public class CreateHostAction extends Action {
         if (workItem.getNextId() != null) {
             WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
             if (nextWorkItem != null) {
-                host.setStatus("Deploying...");
+                host.setStatus(true, "Deploying...");
                 dataAccess.updateHost(host);
                 workItemProcessor.sendWorkItem(nextWorkItem);
             } else {
                 logger.warn("Odd, the deploy work item {} for create host {} could not be found", workItem.getNextId(), host.getHostName());
-                host.setStatus(Const.NO_STATUS);
+                host.setStatus(false, Const.NO_STATUS);
                 dataAccess.updateHost(host);
             }
         } else {

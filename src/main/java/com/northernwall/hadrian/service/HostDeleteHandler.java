@@ -66,8 +66,8 @@ public class HostDeleteHandler extends BasicHandler {
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.hostNames.contains(host.getHostName())) {
-                    if (host.getStatus().equals(Const.NO_STATUS)) {
-                        host.setStatus("Deleting...");
+                    if (!host.isBusy()) {
+                        host.setStatus(true, "Deleting...");
                         getDataAccess().updateHost(host);
                         WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
                         workItem.getHost().reason = data.reason;

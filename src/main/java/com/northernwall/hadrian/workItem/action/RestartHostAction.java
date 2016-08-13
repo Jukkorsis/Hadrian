@@ -39,7 +39,7 @@ public class RestartHostAction extends Action {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        host.setStatus(Const.NO_STATUS);
+        host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
 
         if (workItem.getNextId() == null) {
@@ -53,7 +53,7 @@ public class RestartHostAction extends Action {
             logger.error("Finished restarting {}, next work item is {}, but could not find it.", workItem.getHost().hostId, nextWorkItem.getHost().hostId);
             return;
         }
-        nextHost.setStatus("Restarting...");
+        nextHost.setStatus(true, "Restarting...");
         dataAccess.saveHost(nextHost);
 
         workItemProcessor.sendWorkItem(nextWorkItem);
@@ -67,7 +67,7 @@ public class RestartHostAction extends Action {
             return;
         }
         
-        host.setStatus(Const.NO_STATUS);
+        host.setStatus(false, "Last restart failed");
         dataAccess.updateHost(host);
         
         logger.warn("Callback for {} recorded a failure", workItem.getHost().hostId);

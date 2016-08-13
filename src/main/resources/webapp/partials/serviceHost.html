@@ -89,7 +89,7 @@
                                     <td>
                                         <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
                                         <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
-                                        <div class="btn-group" uib-dropdown ng-if="i.status === '-' && service.canModify" is-open="status.isopen">
+                                        <div class="btn-group" uib-dropdown ng-if="!i.busy && service.canModify" is-open="status.isopen">
                                             <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                                 <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                             </button>
@@ -104,7 +104,7 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <div class="btn-group" uib-dropdown ng-if="i.status === '-' && !service.canModify" is-open="status.isopen">
+                                        <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify" is-open="status.isopen">
                                             <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                                 <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                             </button>
@@ -114,14 +114,13 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <span ng-if="i.status === '-'">
+                                        <span ng-if="!i.busy">
                                             <input ng-model="formSelectHost[i.hostId]" type="checkbox">
                                         </span>
                                         {{i.hostName}}
                                         <span ng-if="i.status !== '-'">
                                             <span class="label label-warning">{{i.status}}</span>
                                         </span>
-                                        {{i.busy}}
                                     </td>
                                     <td>{{i.dataCenter}}</td>
                                     <td>{{i.env}}</td>

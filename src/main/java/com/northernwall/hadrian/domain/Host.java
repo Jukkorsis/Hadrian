@@ -84,15 +84,12 @@ public class Host implements Comparable<Host> {
         return busy;
     }
 
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean busy, String status) {
+        this.busy = busy;
         this.status = status;
     }
 

@@ -40,7 +40,7 @@ public class DeploySoftwareAction extends Action {
             return;
         }
 
-        host.setStatus(Const.NO_STATUS);
+        host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
 
         if (workItem.getNextId() == null) {
@@ -54,7 +54,7 @@ public class DeploySoftwareAction extends Action {
             logger.error("Finished updating {}, next work item is {}, but could not find it.", workItem.getHost().hostId, nextWorkItem.getHost().hostId);
             return;
         }
-        nextHost.setStatus("Deploying...");
+        nextHost.setStatus(true, "Deploying...");
         dataAccess.saveHost(nextHost);
 
         workItemProcessor.sendWorkItem(nextWorkItem);
@@ -68,7 +68,7 @@ public class DeploySoftwareAction extends Action {
             return;
         }
 
-        host.setStatus(Const.NO_STATUS);
+        host.setStatus(false, "Last deployment failed");
         dataAccess.updateHost(host);
 
         logger.warn("Callback for {} recorded a failure", workItem.getHost().hostId);

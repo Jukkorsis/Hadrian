@@ -96,7 +96,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
-                    if (host.getStatus().equals(Const.NO_STATUS)) {
+                    if (!host.isBusy()) {
                         WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = data.version;
                         workItem.getHost().prevVersion = infoHelper.readVersion(host.getHostName(), module.getVersionUrl());
@@ -104,9 +104,9 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         workItem.getHost().configVersion = data.configVersion;
                         workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
-                            host.setStatus("Deploying...");
+                            host.setStatus(true, "Deploying...");
                         } else {
-                            host.setStatus("Deploy Queued");
+                            host.setStatus(true, "Deploy Queued");
                         }
                         getDataAccess().updateHost(host);
                         workItems.add(workItem);

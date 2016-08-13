@@ -265,7 +265,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 if (workItem.getType() == Type.host) {
                     Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
                     if (host != null) {
-                        host.setStatus(Const.NO_STATUS);
+                        host.setStatus(false, "Last operation cancelled");
                         dataAccess.updateHost(host);
                     }
                 }
@@ -306,7 +306,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             dataAccess.deleteHost(host.getServiceId(), host.getHostId());
         } else {
             logger.warn("Callback for {} failed with status {}", host.getHostId(), result);
-            host.setStatus(Const.NO_STATUS);
+            host.setStatus(false, Const.NO_STATUS);
             dataAccess.updateHost(host);
         }
     }
