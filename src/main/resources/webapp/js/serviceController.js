@@ -746,7 +746,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         $scope.openDoCustomFunctionHostModal = function (host, cf) {
-            window.open("/v1/cf/exec?serviceId=" + $scope.service.serviceName + "&hostName=" + host.hostName + "&cfId=" + cf.customFunctionId, '_blank');
+            window.open("/v1/cf/exec?serviceId=" + $scope.service.serviceId + "&hostName=" + host.hostName + "&cfId=" + cf.customFunctionId, '_blank');
         };
 
         $scope.openUpdateCustomFunctionModal = function (cf) {
