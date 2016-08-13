@@ -68,9 +68,11 @@ public class TeamModifyHandler extends BasicHandler {
             }
         }
 
-        if (!data.teamPage.toLowerCase().startsWith(Const.HTTP)
-                && !data.teamPage.toLowerCase().startsWith(Const.HTTPS)) {
-            data.teamPage = Const.HTTP + data.teamPage;
+        if (data.teamPage != null && data.teamPage.isEmpty()) {
+            if (!data.teamPage.toLowerCase().startsWith(Const.HTTP)
+                    && !data.teamPage.toLowerCase().startsWith(Const.HTTPS)) {
+                data.teamPage = Const.HTTP + data.teamPage;
+            }
         }
 
         team.setTeamName(data.teamName);
@@ -80,6 +82,7 @@ public class TeamModifyHandler extends BasicHandler {
         team.setGitGroup(data.gitGroup);
         team.setTeamPage(data.teamPage);
         team.setCalendarId(data.calendarId);
+        team.setColour(data.colour);
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

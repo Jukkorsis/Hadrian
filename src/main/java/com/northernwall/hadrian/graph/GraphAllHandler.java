@@ -21,6 +21,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Team;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,12 +50,13 @@ public class GraphAllHandler extends AbstractHandler {
 
         List<Service> services = dataAccess.getActiveServices();
         for (Service service : services) {
+            Team team = dataAccess.getTeam(service.getTeamId());
             List<Module> modules = dataAccess.getModules(service.getServiceId());
             for (Module module : modules) {
                 if (module.getModuleType() == ModuleType.Deployable) {
                     List<Module> libraries = new LinkedList<>();
                     processLibrary(module, module, libraries, graph);
-                    graph.writeModuleStructure(module, libraries);
+                    graph.writeModuleStructure(module, libraries, team.getColour());
                 }
             }
         }

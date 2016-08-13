@@ -24,5 +24,6 @@ public class PutTeamData {
     public String gitGroup;
     public String teamPage;
     public String calendarId;
+    public String colour;
 
 }

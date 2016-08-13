@@ -43,7 +43,7 @@ public class Graph {
         writer.newLine();
     }
 
-    public void writeModule(Module module) throws IOException {
+    public void writeModule(Module module, String colour) throws IOException {
         writer.append(sanitize(module.getModuleName()));
         writer.append(" [shape=");
         if (module.getModuleType() == ModuleType.Deployable) {
@@ -59,11 +59,13 @@ public class Graph {
         writer.append(" label=<");
         writer.append(module.getModuleName().trim());
         writer.append(">");
-        writer.append("];");
+       writer.append(",color=\"");
+        writer.append(colour);
+        writer.append("\"];");
         writer.newLine();
     }
 
-    public void writeModuleStructure(Module module, List<Module> libraries) throws IOException {
+    public void writeModuleStructure(Module module, List<Module> libraries, String colour) throws IOException {
         writer.append(sanitize(module.getModuleName()));
         writer.append(" [label=\"");
         writer.append(module.getModuleName());
@@ -77,6 +79,8 @@ public class Graph {
             }
             writer.append("}");
         }
+        writer.append("\",color=\"");
+        writer.append(colour);
         writer.append("\"];");
         writer.newLine();
     }

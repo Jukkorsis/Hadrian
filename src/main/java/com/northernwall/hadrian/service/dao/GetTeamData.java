@@ -32,6 +32,7 @@ public class GetTeamData {
     public String gitGroup;
     public String teamPage;
     public String calendarId;
+    public String colour;
     public List<User> users;
     public List<GetServiceData> services;
     public boolean canModify;
@@ -46,6 +47,7 @@ public class GetTeamData {
         temp.gitGroup = team.getGitGroup();
         temp.teamPage = team.getTeamPage();
         temp.calendarId = team.getCalendarId();
+        temp.colour = team.getColour();
         temp.users = new LinkedList<>();
         for (String username : team.getUsernames()) {
             temp.users.add(dataAccess.getUser(username));

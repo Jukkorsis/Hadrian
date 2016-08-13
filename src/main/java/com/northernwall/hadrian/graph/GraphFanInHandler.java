@@ -20,6 +20,8 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,10 +52,12 @@ public class GraphFanInHandler extends AbstractHandler {
 
         List<Module> modules = new LinkedList<>();
         List<String> foundIds = new LinkedList<>();
+        Service service = dataAccess.getService(serviceId);
+        Team team = dataAccess.getTeam(service.getTeamId());
         for (Module module : dataAccess.getModules(serviceId)) {
             if (module.getModuleType() != ModuleType.Test) {
                 fanIn(module, graph, modules, foundIds, false);
-                graph.writeModule(module);
+                graph.writeModule(module, team.getColour());
             }
             foundIds.add(module.getModuleId());
         }
@@ -61,7 +65,9 @@ public class GraphFanInHandler extends AbstractHandler {
             Module module = modules.remove(0);
             if (module.getModuleType() != ModuleType.Test) {
                 fanIn(module, graph, modules, foundIds, true);
-                graph.writeModule(module);
+                service = dataAccess.getService(module.getServiceId());
+                team = dataAccess.getTeam(service.getTeamId());
+                graph.writeModule(module, team.getColour());
             }
             foundIds.add(module.getModuleId());
         }
@@ -73,7 +79,7 @@ public class GraphFanInHandler extends AbstractHandler {
 
     private void fanIn(Module module, Graph graph, List<Module> modules, List<String> foundIds, boolean checkFound) throws IOException {
         List<ModuleRef> moduleRefs;
-        
+
         moduleRefs = dataAccess.getModuleRefsByServer(module.getServiceId(), module.getModuleId());
         if (moduleRefs != null && !moduleRefs.isEmpty()) {
             for (ModuleRef moduleRef : moduleRefs) {
