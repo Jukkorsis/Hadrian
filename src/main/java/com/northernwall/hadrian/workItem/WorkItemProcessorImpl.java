@@ -27,6 +27,8 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import com.northernwall.hadrian.workItem.action.CreateHostAction;
 import com.northernwall.hadrian.workItem.action.DeploySoftwareAction;
 import com.northernwall.hadrian.workItem.action.RestartHostAction;
@@ -116,10 +118,10 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
         try {
             WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
             if (workItem == null) {
-                throw new RuntimeException("Could not find work item " + callbackData.requestId);
+                throw new Http404NotFoundException("Could not find work item " + callbackData.requestId);
             }
             if (callbackData.status == null) {
-                throw new RuntimeException("Callback is missing status, " + callbackData.requestId);
+                throw new Http400BadRequestException("Callback is missing status, " + callbackData.requestId);
             }
 
             switch (callbackData.status) {
