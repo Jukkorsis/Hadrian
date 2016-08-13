@@ -43,13 +43,13 @@ public class GraphTest {
             Graph graph = new Graph(outputStream, false);
             Module service = new Module("service", "abc-123", 1, ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, null);
             Module library = new Module("lib-rary", "def-567", 1, ModuleType.Library, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, null);
-            graph.writeModule(service);
-            graph.writeModule(library);
+            graph.writeModule(service, "black");
+            graph.writeModule(library, "blue");
             graph.close();
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray())));
             Assert.assertEquals("digraph {", inputStream.readLine());
-            Assert.assertEquals("service [shape=rectangle URL=\"#/Service/abc-123\" label=<service>];", inputStream.readLine());
-            Assert.assertEquals("lib_rary [shape=ellipse URL=\"#/Service/def-567\" label=<lib-rary>];", inputStream.readLine());
+            Assert.assertEquals("service [shape=rectangle URL=\"#/Service/abc-123\" label=<service>, color=\"black\"];", inputStream.readLine());
+            Assert.assertEquals("lib_rary [shape=ellipse URL=\"#/Service/def-567\" label=<lib-rary>, color=\"blue\"];", inputStream.readLine());
             Assert.assertEquals("}", inputStream.readLine());
         } catch (IOException ex) {
             Assert.fail(ex.getMessage());
