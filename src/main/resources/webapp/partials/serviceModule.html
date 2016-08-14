@@ -47,7 +47,7 @@
                             </li>
                             <li class="divider"></li>
                             <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
-                            <li role="menuitem"ng-repeat="sr in m.uses">
+                            <li role="menuitem" ng-repeat="sr in m.uses">
                                 <a ng-click="deleteServiceRef(service.serviceId, m.moduleId, sr.serverServiceId, sr.serverModuleId);">Remove dependence on {{sr.moduleName}}</a>
                             </li>
                         </ul>

@@ -16,15 +16,15 @@
 package com.northernwall.hadrian.tree;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.tree.dao.TreeNode;
-import com.northernwall.hadrian.tree.dao.TreeNodeData;
+import com.northernwall.hadrian.tree.dao.TreeData;
+import com.northernwall.hadrian.tree.dao.TreeServiceData;
+import com.northernwall.hadrian.tree.dao.TreeTeamData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
@@ -51,81 +51,34 @@ public class TreeHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
+        TreeData treeData = new TreeData();
+        
         User user = (User) request.getAttribute(Const.ATTR_USER);
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            jw.beginArray();
-            listDevTeams(jw);
-            listGraph(jw);
-            if (user.isAdmin()) {
-                listAdminTeam(jw);
-            }
-            listHelp(jw);
-            jw.endArray();
-        }
-        response.setStatus(200);
-        request.setHandled(true);
-    }
+        treeData.isAdmin = user.isAdmin();
 
-    private void listDevTeams(final JsonWriter jw) throws JsonIOException {
-        TreeNode devTeamsTreenode = new TreeNode();
-        devTeamsTreenode.setLabel("Dev Teams");
-        devTeamsTreenode.setData(new TreeNodeData("-1", "DevTeams"));
         List<Team> teams = dataAccess.getTeams();
         List<Service> services = dataAccess.getActiveServices();
         Collections.sort(teams);
         for (Team team : teams) {
-            TreeNode teamTreenode = new TreeNode();
-            teamTreenode.setLabel(team.getTeamName());
-            teamTreenode.setData(new TreeNodeData(team.getTeamId(), "Team"));
+            TreeTeamData teamData = new TreeTeamData();
+            teamData.teamId = team.getTeamId();
+            teamData.teamName = team.getTeamName();
             List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
             Collections.sort(teamServices);
             for (Service service : teamServices) {
-                TreeNode serviceTreeNode = new TreeNode();
-                serviceTreeNode.setLabel(service.getServiceName());
-                serviceTreeNode.setData(new TreeNodeData(service.getServiceId(), "Service"));
-                teamTreenode.getChildren().add(serviceTreeNode);
+                TreeServiceData serviceData = new TreeServiceData();
+                serviceData.serviceId = service.getServiceId();
+                serviceData.serviceName = service.getServiceName();
+                teamData.services.add(serviceData);
             }
-            devTeamsTreenode.getChildren().add(teamTreenode);
+            treeData.teams.add(teamData);
         }
-        gson.toJson(devTeamsTreenode, TreeNode.class, jw);
+        
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            gson.toJson(treeData, TreeData.class, jw);
+        }
+        response.setStatus(200);
+        request.setHandled(true);
     }
-
-    private void listGraph(final JsonWriter jw) throws JsonIOException {
-        TreeNode graphTreenode = new TreeNode();
-        graphTreenode.setLabel("Graph");
-        graphTreenode.setData(new TreeNodeData("-2", "Graph"));
-        gson.toJson(graphTreenode, TreeNode.class, jw);
-    }
-
-    private void listAdminTeam(final JsonWriter jw) throws JsonIOException {
-        TreeNode adminTreenode = new TreeNode();
-        adminTreenode.setLabel("Admin");
-        adminTreenode.setData(new TreeNodeData("-9", "Admin"));
-
-        TreeNode usersTreenode = new TreeNode();
-        usersTreenode.setLabel("Users");
-        usersTreenode.setData(new TreeNodeData("-5", "Users"));
-        adminTreenode.getChildren().add(usersTreenode);
-
-        TreeNode workItemsTreenode = new TreeNode();
-        workItemsTreenode.setLabel("Work Items");
-        workItemsTreenode.setData(new TreeNodeData("-6", "WorkItems"));
-        adminTreenode.getChildren().add(workItemsTreenode);
-
-        TreeNode optionsTreenode = new TreeNode();
-        optionsTreenode.setLabel("Parameters");
-        optionsTreenode.setData(new TreeNodeData("-8", "Parameters"));
-        adminTreenode.getChildren().add(optionsTreenode);
-
-        gson.toJson(adminTreenode, TreeNode.class, jw);
-    }
-
-    private void listHelp(final JsonWriter jw) throws JsonIOException {
-        TreeNode adminTreenode = new TreeNode();
-        adminTreenode.setLabel("Help");
-        adminTreenode.setData(new TreeNodeData("-10", "Help"));
-        gson.toJson(adminTreenode, TreeNode.class, jw);
-    }
-
+    
 }

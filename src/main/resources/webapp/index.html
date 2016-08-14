@@ -21,7 +21,6 @@ limitations under the License.
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/abn_tree.css">
         <link rel="stylesheet" href="css/hadrian.css">
 
         <script src="js/angular.js"></script>
@@ -49,12 +48,35 @@ limitations under the License.
                             <h2 class="panel-title"><b>B</b>uild and <b>D</b>eploy</h2>
                         </div>
                         <div class="panel-body">
-                            <abn-tree
-                                tree-data="my_data"
-                                tree-control="my_tree"
-                                on-select="my_tree_handler(branch)"
-                                expand-level="3" >
-                            </abn-tree>
+                            <div ng-if="menuMode == 'home'">
+                                <b>Dev Teams</b>
+                                <ul>
+                                    <li ng-repeat="team in treeData.teams">
+                                        <a ng-click="selectDevTeam(team);">{{team.teamName}}</a>
+                                    </li>
+                                </ul>
+                                <b>Tools</b>
+                                <ul>
+                                    <li><a ng-click="selectActivity();">Recent Activity</a></li>
+                                    <li><a ng-click="selectGraphs();">Graphs</a></li>
+                                    <li><a ng-click="selectFindHost();">Find Host</a></li>
+                                    <div ng-if="treeData.isAdmin">
+                                        <li><a ng-click="selectWorkItems();">Work Items</a></li>
+                                        <li><a ng-click="selectUsers();">Users</a></li>
+                                        <li><a ng-click="selectParameters();">Parameters</a></li>
+                                    </div>
+                                </ul>
+                                <b><a ng-click="selectHelp();">Help</a></b>
+                            </div>
+                            <div ng-if="menuMode == 'devTeam'">
+                                <b><a ng-click="selectDevTeam(team);">{{team.teamName}}</a></b>
+                                <ul>
+                                    <li ng-repeat="service in team.services">
+                                        <a ng-click="selectService(service);">{{service.serviceName}}</a>
+                                    </li>
+                                </ul>
+                                <a ng-click="selectActivity();">Back</a><br/>
+                            </div>
                         </div>
                     </div>
                 </div>

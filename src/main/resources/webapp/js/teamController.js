@@ -6,8 +6,6 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
     function ($scope, $route, $routeParams, $uibModal, $http, User, Team) {
         $scope.loading = true;
 
-        selectTreeNode($routeParams.teamId);
-
         $scope.users = User.get();
 
         Team.get({teamId: $routeParams.teamId}, function (team) {

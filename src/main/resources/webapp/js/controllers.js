@@ -4,48 +4,48 @@
 
 var hadrianControllers = angular.module('hadrianControllers', []);
 
-var tree;
-var selectTreeNode = function (id) {
-    var n = tree.get_first_branch();
-    if (n) {
-        while (true) {
-            if (n === null) {
-                return;
-            }
-            if (n.data.id === id) {
-                tree.select_branch(n);
-                return;
-            }
-            n = tree.get_next_branch(n);
-        }
-    } else {
-        window.setTimeout(function () {
-            selectTreeNode(id)
-        }, 100);
-    }
-};
-
 hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
     function ($scope, $location, Tree) {
-        $scope.my_tree_handler = function (branch) {
-            if (branch.data.id < 0) {
-                $location.path(branch.data.type);
-            } else {
-                $location.path(branch.data.type + '/' + branch.data.id);
-            }
-        };
-        $scope.my_data = Tree.query();
-        $scope.my_tree = tree = {};
+        $scope.selectActivity = function () {
+            $location.path("Activty");
+            $scope.menuMode = "home";
+        }
+        $scope.selectDevTeam = function (team) {
+            $location.path("Team/" + team.teamId);
+            $scope.team = team;
+            $scope.menuMode = "devTeam";
+        }
+        $scope.selectService = function (service) {
+            $location.path("Service/" + service.serviceId);
+        }
+        $scope.selectGraphs = function () {
+            $location.path("Graph");
+        }
+        $scope.selectFindHost = function () {
+            $location.path("FindHost");
+        }
+        $scope.selectWorkItems = function () {
+            $location.path("WorkItems");
+        }
+        $scope.selectUsers = function () {
+            $location.path("Users");
+        }
+        $scope.selectParameters = function () {
+            $location.path("Parameters");
+        }
+        $scope.selectHelp = function () {
+            $location.path("Help");
+        }
+        $scope.treeData = Tree.query();
+        $scope.selectActivity();
     }]);
 
-hadrianControllers.controller('HomeCtrl', ['$scope',
+hadrianControllers.controller('ActivityCtrl', ['$scope',
     function ($scope) {
     }]);
 
 hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
     function ($scope, $http, Services) {
-        selectTreeNode("-2");
-
         $scope.services = Services.get();
 
         $scope.formGraph = {};
@@ -72,16 +72,17 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
         }
     }]);
 
+hadrianControllers.controller('FindHostCtrl', ['$scope',
+    function ($scope) {
+    }]);
+
 hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
     function ($scope, Config) {
         $scope.config = Config.get();
-        selectTreeNode("-8");
     }]);
 
 hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',
     function ($scope, $http, $route, WorkItem) {
-        selectTreeNode("-6");
-
         $scope.workItemSortType = 'requestDate';
         $scope.workItemSortReverse = false;
         $scope.workItemSearch = '';
@@ -132,11 +133,9 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
 
 hadrianControllers.controller('UsersCtrl', ['$scope', '$route', '$uibModal', 'User',
     function ($scope, $route, $uibModal, User) {
-        selectTreeNode("-5");
-
         $scope.userSortType = 'username';
         $scope.userSortReverse = false;
-        
+
         $scope.users = User.get();
 
         $scope.openAddTeamModal = function () {

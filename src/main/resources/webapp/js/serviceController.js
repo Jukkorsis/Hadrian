@@ -19,9 +19,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             Team.get({teamId: service.teamId}, function (team) {
                 $scope.team = team;
             });
-            if (service.active) {
-                selectTreeNode($routeParams.serviceId);
-            }
         });
         Config.get({}, function (config) {
             $scope.config = config;

@@ -6,7 +6,7 @@ var hadrianServices = angular.module('hadrianServices', ['ngResource']);
 
 hadrianServices.factory('Tree', ['$resource', function($resource) {
         return $resource('/v1/tree', {}, {
-            query: {method: 'GET', isArray: true}
+            query: {method: 'GET', isArray: false}
         });
     }]);
 
