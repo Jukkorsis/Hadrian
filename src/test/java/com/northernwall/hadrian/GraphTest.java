@@ -48,8 +48,8 @@ public class GraphTest {
             graph.close();
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray())));
             Assert.assertEquals("digraph {", inputStream.readLine());
-            Assert.assertEquals("service [shape=rectangle URL=\"#/Service/abc-123\" label=<service>, color=\"black\"];", inputStream.readLine());
-            Assert.assertEquals("lib_rary [shape=ellipse URL=\"#/Service/def-567\" label=<lib-rary>, color=\"blue\"];", inputStream.readLine());
+            Assert.assertEquals("service [shape=rectangle URL=\"#/Service/abc-123\" label=<service>,color=\"black\"];", inputStream.readLine());
+            Assert.assertEquals("lib_rary [shape=ellipse URL=\"#/Service/def-567\" label=<lib-rary>,color=\"blue\"];", inputStream.readLine());
             Assert.assertEquals("}", inputStream.readLine());
         } catch (IOException ex) {
             Assert.fail(ex.getMessage());
