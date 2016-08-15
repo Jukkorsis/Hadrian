@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.northernwall</groupId>
     <artifactId>Hadrian</artifactId>
-    <version>1.5.27</version>
+    <version>1.5.28-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Hadrian</name>
     <url>https://github.com/Jukkorsis/Hadrian</url>
