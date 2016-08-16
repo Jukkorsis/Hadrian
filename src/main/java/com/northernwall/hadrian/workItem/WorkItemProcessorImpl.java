@@ -246,7 +246,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             }
             dataAccess.saveAudit(audit, callbackData.output);
             if (callbackData.status == Result.error) {
-                dataAccess.saveWorkItemStatus(workItem.getId(), 400);
+                dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 deleteNextWorkItem(workItem.getNextId());
             } else {
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
@@ -271,7 +271,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
                 }
                 dataAccess.deleteWorkItem(nextId);
                 
-                dataAccess.saveWorkItemStatus(workItem.getId(), 400);
+                dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 
                 Audit audit = new Audit();
                 audit.serviceId = workItem.getService().serviceId;

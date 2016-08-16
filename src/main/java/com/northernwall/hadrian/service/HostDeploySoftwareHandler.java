@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service;
 
 import com.northernwall.hadrian.ConfigHelper;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -39,12 +38,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class HostDeploySoftwareHandler extends BasicHandler {
+
+    private final static Logger logger = LoggerFactory.getLogger(HostDeploySoftwareHandler.class);
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
@@ -126,6 +129,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             }
             workItemProcess.sendWorkItem(workItems.get(0));
             if (data.wait) {
+                logger.info("Waiting for deployment, {} {} {}", service.getServiceName(), module.getModuleName(), data.version);
                 String lastId = workItems.get(size - 1).getId();
                 for (int i = 0; i < (size*2*10); i++) {
                     try {
@@ -134,6 +138,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                     }
                     int workItemStatus = getDataAccess().getWorkItemStatus(lastId);
                     if (workItemStatus > 0) {
+                        logger.info("Waiting done, status {}", workItemStatus);
                         response.setStatus(workItemStatus);
                         request.setHandled(true);
                         return;
