@@ -63,7 +63,7 @@ public class CreateHostAction extends Action {
             return;
         }
         logger.warn("Callback for {} recorded a failure", host.getHostId());
-        dataAccess.deleteHost(host.getServiceId(), host.getHostId());
+        dataAccess.deleteHost(host);
     }
 
 }

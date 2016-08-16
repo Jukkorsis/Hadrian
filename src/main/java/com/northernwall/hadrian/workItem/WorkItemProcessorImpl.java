@@ -303,7 +303,7 @@ public class WorkItemProcessorImpl implements WorkItemProcessor {
             return;
         }
         if (result == Result.success) {
-            dataAccess.deleteHost(host.getServiceId(), host.getHostId());
+            dataAccess.deleteHost(host);
         } else {
             logger.warn("Callback for {} failed with status {}", host.getHostId(), result);
             host.setStatus(false, Const.NO_STATUS);

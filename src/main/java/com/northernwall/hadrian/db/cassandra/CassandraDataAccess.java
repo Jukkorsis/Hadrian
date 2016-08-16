@@ -83,6 +83,9 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement hostInsert;
     private final PreparedStatement hostUpdate;
     private final PreparedStatement hostDelete;
+    private final PreparedStatement hostNameSelect;
+    private final PreparedStatement hostNameInsert;
+    private final PreparedStatement hostNameDelete;
     private final PreparedStatement moduleSelect;
     private final PreparedStatement moduleSelect2;
     private final PreparedStatement moduleInsert;
@@ -170,6 +173,14 @@ public class CassandraDataAccess implements DataAccess {
         hostUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         hostDelete = session.prepare("DELETE FROM host WHERE serviceId = ? AND id = ?;");
         hostDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        logger.info("Praparing host name statements...");
+        hostNameSelect = session.prepare("SELECT * FROM hostName WHERE hostName = ?;");
+        hostNameSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        hostNameInsert = session.prepare("INSERT INTO hostName (hostName, serviceId, hostId) VALUES (?, ?, ?);");
+        hostNameInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        hostNameDelete = session.prepare("DELETE FROM hostName WHERE hostName = ?;");
+        hostNameDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing module statements...");
         moduleSelect = session.prepare("SELECT * FROM module WHERE serviceId = ?;");
@@ -399,6 +410,17 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public Host getHost(String hostName) {
+        BoundStatement boundStatement = new BoundStatement(hostNameSelect);
+        ResultSet results = session.execute(boundStatement.bind(hostName.toLowerCase()));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        Row row = results.one();
+        return getHost(row.getString("serviceId"), row.getString("hostId"));
+    }
+
+    @Override
     public Host getHost(String serviceId, String hostId) {
         return getServiceData(serviceId, hostId, hostSelect2, Host.class);
     }
@@ -406,6 +428,11 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveHost(Host host) {
         saveServiceData(host.getServiceId(), host.getHostId(), gson.toJson(host), hostInsert);
+        BoundStatement boundStatement = new BoundStatement(hostNameInsert);
+        session.execute(boundStatement.bind(
+                host.getHostName().toLowerCase(), 
+                host.getServiceId(), 
+                host.getHostId()));
     }
 
     @Override
@@ -414,8 +441,10 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteHost(String serviceId, String hostId) {
-        deleteServiceData(serviceId, hostId, hostDelete);
+    public void deleteHost(Host host) {
+        deleteServiceData(host.getServiceId(), host.getHostId(), hostDelete);
+        BoundStatement boundStatement = new BoundStatement(hostNameDelete);
+        session.execute(boundStatement.bind(host.getHostName().toLowerCase()));
     }
 
     @Override

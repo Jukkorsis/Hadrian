@@ -30,13 +30,11 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 /**
  *
@@ -163,6 +161,16 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public Host getHost(String hostName) {
+        for (Host host : hosts.values()) {
+            if (host.getHostName().equalsIgnoreCase(hostName)) {
+                return host;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Host getHost(String serviceId, String hostId) {
         return hosts.get(hostId);
     }
@@ -178,8 +186,8 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteHost(String serviceId, String hostId) {
-        hosts.remove(hostId);
+    public void deleteHost(Host host) {
+        hosts.remove(host.getHostId());
     }
 
     @Override

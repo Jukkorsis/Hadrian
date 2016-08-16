@@ -55,10 +55,11 @@ public interface DataAccess {
     void updateService(Service service);
 
     List<Host> getHosts(String serviceId);
+    Host getHost(String hostName);
     Host getHost(String serviceId, String hostId);
     void saveHost(Host host);
     void updateHost(Host host);
-    void deleteHost(String serviceId, String hostId);
+    void deleteHost(Host host);
 
     List<Vip> getVips(String serviceId);
     Vip getVip(String serviceId, String vipId);
