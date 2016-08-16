@@ -5,3 +5,5 @@
 /hadrian.properties
 /target/
 /other/
+.idea
+Hadrian.iml
