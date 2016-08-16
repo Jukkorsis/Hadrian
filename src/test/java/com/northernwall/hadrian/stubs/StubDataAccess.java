@@ -86,6 +86,11 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
+    public Host getHost(String hostName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public Host getHost(String serviceId, String hostId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -101,7 +106,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteHost(String serviceId, String hostId) {
+    public void deleteHost(Host host) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
