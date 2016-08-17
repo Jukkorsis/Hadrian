@@ -75,11 +75,20 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
 hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
     function ($scope, $http) {
         $scope.findHostName = "";
+        $scope.findStatus = "";
+        $scope.findHost = null;
 
         $scope.doFindHost = function () {
+            $scope.findStatus = "Searching...";
+            $scope.findHost = null;
             var responsePromise = $http.get("/v1/host/find?hostName=" + $scope.findHostName, {});
             responsePromise.success(function (data, status, headers, config) {
+                $scope.findStatus = "";
                 $scope.findHost = data;
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.findStatus = "Could not find host " + $scope.findHostName;
+                $scope.findHost = null;
             });
         }
     }]);
