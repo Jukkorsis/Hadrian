@@ -74,11 +74,13 @@ import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.service.DocumentCreateHandler;
 import com.northernwall.hadrian.service.DocumentDeleteHandler;
 import com.northernwall.hadrian.service.DocumentGetHandler;
+import com.northernwall.hadrian.service.HostFindHandler;
 import com.northernwall.hadrian.service.VipGetDetailsHandler;
 import com.northernwall.hadrian.service.helper.InfoHelper;
 import com.northernwall.hadrian.tree.TreeHandler;
 import com.northernwall.hadrian.utilityHandlers.AvailabilityHandler;
 import com.northernwall.hadrian.utilityHandlers.ContentHandler;
+import com.northernwall.hadrian.utilityHandlers.ConvertHandler;
 import com.northernwall.hadrian.utilityHandlers.FaviconHandler;
 import com.northernwall.hadrian.utilityHandlers.HealthHandler;
 import com.northernwall.hadrian.utilityHandlers.MetricHandler;
@@ -208,6 +210,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/file", new ModuleFileCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/details", new HostGetDetailsHandler(dataAccess, hostDetailsHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/find", new HostFindHandler(dataAccess, infoHelper, hostDetailsHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/create", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, configHelper, infoHelper, dataAccess, workItemProcess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess), true);
@@ -228,6 +231,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/audit", new AuditCreateHandler(dataAccess, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/sendMessage", new MessageSendHandler(dataAccess, accessHelper, messagingCoodinator), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/convert", new ConvertHandler(dataAccess), true);
         //Catch all handler
         routingHandler.add(MethodRule.ANY, TargetRule.ANY, "/", new RedirectHandler(), true);
         handlers.addHandler(routingHandler);

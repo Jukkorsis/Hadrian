@@ -191,6 +191,10 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public void backfillHostName(Host host) {
+    }
+
+    @Override
     public List<Vip> getVips(String serviceId) {
         List<Vip> temp = new LinkedList<>();
         for (Vip vip : vips.values()) {

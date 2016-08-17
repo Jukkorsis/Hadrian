@@ -61,6 +61,8 @@ public interface DataAccess {
     void updateHost(Host host);
     void deleteHost(Host host);
 
+    void backfillHostName(Host host);
+
     List<Vip> getVips(String serviceId);
     Vip getVip(String serviceId, String vipId);
     void saveVip(Vip vip);

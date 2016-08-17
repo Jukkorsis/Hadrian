@@ -448,6 +448,15 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public void backfillHostName(Host host) {
+        BoundStatement boundStatement = new BoundStatement(hostNameInsert);
+        session.execute(boundStatement.bind(
+                host.getHostName().toLowerCase(), 
+                host.getServiceId(), 
+                host.getHostId()));
+    }
+
+    @Override
     public List<Module> getModules(String serviceId) {
         return getServiceData(serviceId, moduleSelect, Module.class);
     }

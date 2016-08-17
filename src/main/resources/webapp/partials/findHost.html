@@ -1,1 +1,70 @@
 <h3>Find Host</h3>
+<div class="row">
+    <div class="col-md-6">
+        <input ng-model="findHostName" type="text" class="form-control">
+    </div>
+    <div class="col-md-6">
+        <a ng-click="doFindHost()" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-refresh"></span> Find Host</a>
+    </div>
+</div>
+<br/>
+<div ng-if="findHost">
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Team:</dt>
+                <dd>{{findHost.teamName}}</dd>
+                <dt>Service:</dt>
+                <dd>{{findHost.serviceName}}</dd>
+                <dt>Module:</dt>
+                <dd>{{findHost.moduleName}}</dd>
+                <dt>Host:</dt>
+                <dd>{{findHost.hostName}}</dd>
+                <div ng-if="findHost.status !== '-'">
+                    <dt>Status:</dt>
+                    <dd>{{findHost.status}}</dd>
+                </div>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Data Center:</dt>
+                <dd>{{findHost.dataCenter}}</dd>
+                <dt>Network:</dt>
+                <dd>{{findHost.network}}</dd>
+                <dt>Env:</dt>
+                <dd>{{findHost.env}}</dd>
+                <dt>Availability:</dt>
+                <dd>
+                    <span ng-if="findHost.availability === -1">
+                        <span class="label label-danger">Time Out</span>
+                    </span>
+                    <span ng-if="findHost.availability < 300 && findHost.availability > 99">
+                        <span class="label label-success">{{findHost.availability}}</span>
+                    </span>
+                    <span ng-if="findHost.availability > 299">
+                        <span class="label label-danger">{{findHost.availability}}</span>
+                    </span>
+                </dd>
+                <dt>Version:</dt>
+                <dd>{{findHost.version}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <div ng-repeat="d in findHost.details.left">
+                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                </div>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <div ng-repeat="d in findHost.details.right">
+                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>

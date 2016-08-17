@@ -72,8 +72,16 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
         }
     }]);
 
-hadrianControllers.controller('FindHostCtrl', ['$scope',
-    function ($scope) {
+hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.findHostName = "";
+
+        $scope.doFindHost = function () {
+            var responsePromise = $http.get("/v1/host/find?hostName=" + $scope.findHostName, {});
+            responsePromise.success(function (data, status, headers, config) {
+                $scope.findHost = data;
+            });
+        }
     }]);
 
 hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',

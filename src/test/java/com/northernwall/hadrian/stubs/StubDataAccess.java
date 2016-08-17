@@ -15,7 +15,6 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 public class StubDataAccess implements DataAccess {
@@ -107,6 +106,11 @@ public class StubDataAccess implements DataAccess {
 
     @Override
     public void deleteHost(Host host) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void backfillHostName(Host host) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
