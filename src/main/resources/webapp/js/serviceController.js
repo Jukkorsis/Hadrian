@@ -894,7 +894,12 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
+        $scope.refreshCount = 0;
         var stopRefresh = $interval(function () {
+            if ($scope.refreshCount > 80) {
+                return;
+            }
+            $scope.refreshCount++;
             ServiceRefresh.get({serviceId: $routeParams.serviceId}, function (newService) {
                 $scope.service.serviceName = newService.serviceName;
                 $scope.service.description = newService.description;
@@ -925,6 +930,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                                             for (var newHostIndex = 0; newHostIndex < newNetwork.hosts.length; newHostIndex++) {
                                                 var newHost = newNetwork.hosts[newHostIndex];
                                                 if (host.hostId === newHost.hostId) {
+                                                    host.busy = newHost.busy;
                                                     host.status = newHost.status;
                                                     host.version = newHost.version;
                                                     host.availability = newHost.availability;
@@ -942,6 +948,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         $scope.$on('$destroy', function () {
             $interval.cancel(stopRefresh);
+            $scope.refreshCount = 0;
         });
     }]);
 
