@@ -10,10 +10,16 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
             $location.path("Activty");
             $scope.menuMode = "home";
         }
-        $scope.selectDevTeam = function (team) {
+        $scope.selectDevTeam = function (team, reset) {
             $location.path("Team/" + team.teamId);
             $scope.team = team;
             $scope.menuMode = "devTeam";
+            if (reset) {
+                $scope.showInactive = false;
+            }
+        }
+        $scope.selectShowActive = function (state) {
+            $scope.showInactive = state;
         }
         $scope.selectService = function (service) {
             $location.path("Service/" + service.serviceId);

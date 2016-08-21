@@ -57,7 +57,7 @@ public class TreeHandler extends AbstractHandler {
         treeData.isAdmin = user.isAdmin();
 
         List<Team> teams = dataAccess.getTeams();
-        List<Service> services = dataAccess.getActiveServices();
+        List<Service> services = dataAccess.getAllServices();
         Collections.sort(teams);
         for (Team team : teams) {
             TreeTeamData teamData = new TreeTeamData();
@@ -69,6 +69,8 @@ public class TreeHandler extends AbstractHandler {
                 TreeServiceData serviceData = new TreeServiceData();
                 serviceData.serviceId = service.getServiceId();
                 serviceData.serviceName = service.getServiceName();
+                serviceData.isActive = service.isActive();
+                serviceData.isService = service.getServiceType().equals(Const.SERVICE_TYPE_SERVICE);
                 teamData.services.add(serviceData);
             }
             treeData.teams.add(teamData);

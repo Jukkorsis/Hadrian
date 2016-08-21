@@ -50,32 +50,45 @@ limitations under the License.
                         <div class="panel-body">
                             <div ng-if="menuMode == 'home'">
                                 <b>Dev Teams</b>
-                                <ul>
-                                    <li ng-repeat="team in treeData.teams">
-                                        <a ng-click="selectDevTeam(team);">{{team.teamName}}</a>
-                                    </li>
-                                </ul>
-                                <b>Tools</b>
-                                <ul>
-                                    <li><a ng-click="selectActivity();">Recent Activity</a></li>
-                                    <li><a ng-click="selectGraphs();">Graphs</a></li>
-                                    <li><a ng-click="selectFindHost();">Find Host</a></li>
-                                    <div ng-if="treeData.isAdmin">
-                                        <li><a ng-click="selectWorkItems();">Work Items</a></li>
-                                        <li><a ng-click="selectUsers();">Users</a></li>
-                                        <li><a ng-click="selectParameters();">Parameters</a></li>
+                                <div style="padding-left: 20px;">
+                                    <div ng-repeat="team in treeData.teams">
+                                        <a ng-click="selectDevTeam(team, true);"><span class="glyphicon glyphicon-chevron-right"></span> {{team.teamName}}</a>
                                     </div>
-                                    <li><a ng-click="selectHelp();">Help</a></li>
-                                </ul>
+                                </div>
+                                <b>Tools</b>
+                                <div style="padding-left: 20px;">
+                                    <div><a ng-click="selectActivity();"><span class="glyphicon glyphicon-chevron-right"></span> Recent Activity</a></div>
+                                    <div><a ng-click="selectGraphs();"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
+                                    <div><a ng-click="selectFindHost();"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
+                                    <div ng-if="treeData.isAdmin">
+                                        <a ng-click="selectWorkItems();"><span class="glyphicon glyphicon-chevron-right"></span> Work Items</a><br/>
+                                        <a ng-click="selectUsers();"><span class="glyphicon glyphicon-chevron-right"></span> Users</a><br/>
+                                        <a ng-click="selectParameters();"><span class="glyphicon glyphicon-chevron-right"></span> Parameters</a>
+                                    </div>
+                                    <a ng-click="selectHelp();"><span class="glyphicon glyphicon-chevron-right"></span> Help</a>
+                                </div>
                             </div>
                             <div ng-if="menuMode == 'devTeam'">
-                                <b><a ng-click="selectDevTeam(team);">{{team.teamName}}</a></b>
-                                <ul>
-                                    <li ng-repeat="service in team.services">
-                                        <a ng-click="selectService(service);">{{service.serviceName}}</a>
-                                    </li>
-                                </ul>
-                                <a ng-click="selectActivity();">Back</a><br/>
+                                <p class="text-right"><a ng-click="selectActivity();">Back to Teams and Tools</a></p>
+                                <b><a ng-click="selectDevTeam(team, false);">{{team.teamName}}</a></b>
+                                <div style="padding-left: 20px;">
+                                    <div ng-repeat="service in team.services">
+                                        <div ng-if="service.isActive || showInactive">
+                                            <a ng-click="selectService(service);">
+                                                <span ng-if="service.isActive" class="glyphicon glyphicon-chevron-right"></span>
+                                                <span ng-if="!service.isActive" class="glyphicon glyphicon-chevron-right text-danger"></span>
+                                                {{service.serviceName}}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <p ng-if="showInactive" class="text-right">
+                                    <a ng-click="selectShowActive(false);" class="btn btn-info btn-xs">Hide Deleted</a>
+                                </p>
+                                <p ng-if="!showInactive" class="text-right">
+                                    <a ng-click="selectShowActive(true);" class="btn btn-info btn-xs">Show Deleted</a>
+                                </p>
                             </div>
                         </div>
                     </div>

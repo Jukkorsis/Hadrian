@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.service.dao;
 
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import java.util.Collections;
@@ -34,7 +33,6 @@ public class GetTeamData {
     public String calendarId;
     public String colour;
     public List<User> users;
-    public List<GetServiceData> services;
     public boolean canModify;
 
     public static GetTeamData create(Team team, DataAccess dataAccess) {
@@ -53,10 +51,6 @@ public class GetTeamData {
             temp.users.add(dataAccess.getUser(username));
         }
         Collections.sort(temp.users);
-        temp.services = new LinkedList<>();
-        for (Service service : Service.filterTeam(team.getTeamId(), dataAccess.getAllServices())) {
-            temp.services.add(GetServiceData.create(service));
-        }
         return temp;
     }
 

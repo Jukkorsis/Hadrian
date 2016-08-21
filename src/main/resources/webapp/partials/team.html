@@ -58,21 +58,4 @@
             </dl>
         </div>
     </div>
-    <table class="table table-hover table-striped table-condensed">
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>
-                Active
-                <button id="toggleFilter-button" type="button" class="btn btn btn-info btn-xs" ng-click="toggleFilter();">
-                    <span class="glyphicon glyphicon glyphicon-filter"></span>
-                </button>
-            </th>
-        </tr>
-        <tr ng-repeat="s in team.services| filter: {active:activeFilter}">
-            <td><a href="#/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
-            <td>{{s.serviceType}}</td>
-            <td>{{s.active}}</td>
-        </tr>
-    </table>
 </div>
