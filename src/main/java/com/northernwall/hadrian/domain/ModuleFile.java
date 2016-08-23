@@ -55,4 +55,15 @@ public class ModuleFile {
         this.contents = contents;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        hash += 13 + serviceId.hashCode();
+        hash += 17 + moduleId.hashCode();
+        hash += 31 + network.hashCode();
+        hash += 37 + name.hashCode();
+
+        return hash;
+    }
+
 }

@@ -60,35 +60,28 @@ public class ModuleFileCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("attribute network is missing");
         }
 
-        if (data.name == null || data.name.trim().isEmpty() || data.contents == null || data.contents.trim().isEmpty()) {
-            ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), data.network);
-            if (moduleFile != null) {
-                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Deleted file " + moduleFile.getName() + " in " + data.network);
+        data.name = data.name.trim();
+        if (data.name.contains(" ")) {
+            throw new Http400BadRequestException("attribute name is illegal");
+        }
+        ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(),
+                data.network, data.originalName);
+        if (moduleFile == null) {
+            moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+            getDataAccess().saveModuleFile(moduleFile);
+            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
+        } else if (data.name.equalsIgnoreCase(moduleFile.getName())) {
+            if (!data.contents.equals(moduleFile.getContents())) {
+                moduleFile.setContents(data.contents);
+                getDataAccess().updateModuleFile(moduleFile);
+                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " in " + data.network);
             }
         } else {
-            data.name = data.name.trim();
-            if (data.name.contains(" ")) {
-                throw new Http400BadRequestException("attribute name is illegal");
-            }
-            ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), data.network);
-            if (moduleFile == null) {
-                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
-                getDataAccess().saveModuleFile(moduleFile);
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
-            } else if (data.name.equalsIgnoreCase(moduleFile.getName())) {
-                if (!data.contents.equals(moduleFile.getContents())) {
-                    moduleFile.setContents(data.contents);
-                    getDataAccess().updateModuleFile(moduleFile);
-                    createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " in " + data.network);
-                  }
-            } else {
-                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Deleted file " + moduleFile.getName() + " in " + data.network);
-                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
-                getDataAccess().saveModuleFile(moduleFile);
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
-            }
+            getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
+            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Deleted file " + moduleFile.getName() + " in " + data.network);
+            moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+            getDataAccess().saveModuleFile(moduleFile);
+            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
         }
 
         response.setStatus(200);

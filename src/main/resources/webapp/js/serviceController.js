@@ -1201,39 +1201,84 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         };
     }]);
 
-hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module', 'network',
-    function ($scope, $http, $modalInstance, $route, config, service, module, network) {
+hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$scope', '$http', 'items',
+    function ($modalInstance, $scope, $http, items){
+        $scope.fileName = items.fileName;
+        $scope.fileNumber = items.fileNumber;
+        $scope.service = items.service;
+        $scope.module = items.module;
+        $scope.network = items.network;
+        $scope.dataFromServer = items.dataFromServer;
+
+        $scope.delete = function() {
+            var responsePromise = $http.delete("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" +
+                $scope.module.moduleId + "&network=" + $scope.network + "&fileName=" + $scope.fileName);
+
+            responsePromise.success(function (status) {
+                $scope.dataFromServer.splice($scope.fileNumber, 1);
+                $modalInstance.dismiss('cancel');
+            });
+        };
+
+        $scope.close = function () {
+            $modalInstance.dismiss('cancel');
+        };
+
+    }]);
+
+hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'module', 'network', '$uibModal',
+    function ($scope, $http, $modalInstance, $route, config, service, module, network, $uibModal) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.module = module;
         $scope.network = network;
         $scope.config = config;
 
-        $scope.formFile = {};
-        $scope.formFile.name = "";
-        $scope.formFile.contents = "";
-
-        $scope.loading = true;
-
         var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.module.moduleId + "&network=" + $scope.network, {});
         responsePromise.success(function (dataFromServer, status, headers, config) {
-            $scope.formFile.name = dataFromServer.name;
-            $scope.formFile.contents = dataFromServer.contents;
-            $scope.loading = false;
+            $scope.dataFromServer = dataFromServer;
+
+            angular.forEach($scope.dataFromServer, function(value, index) {
+                value.originalName = value.name;
+            });
+
+            $scope.openDeleteModal = function(fileName, fileNumber) {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    controller: 'ModalModuleFileDeleteCtrl',
+                    templateUrl: 'partials/deleteModuleFile.html',
+                    size: 'md',
+                    resolve: {
+                        items: function() {
+                            return {
+                                fileName: fileName,
+                                fileNumber: fileNumber,
+                                service: $scope.service,
+                                module: $scope.module,
+                                network: $scope.network,
+                                dataFromServer: $scope.dataFromServer
+                            };
+                        }
+                    }
+                });
+            };
         });
 
-        $scope.save = function () {
+        $scope.save = function (fileNumber) {
+
             var dataObject = {
+                fileNumber: fileNumber,
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 network: $scope.network,
-                name: $scope.formFile.name,
-                contents: $scope.formFile.contents
+                originalName: $scope.dataFromServer[fileNumber].originalName,
+                name: $scope.dataFromServer[fileNumber].name,
+                contents: $scope.dataFromServer[fileNumber].contents
             };
 
             var responsePromise = $http.put("/v1/module/file", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+                $scope.dataFromServer[fileNumber].originalName = $scope.dataFromServer[fileNumber].name
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
@@ -1241,7 +1286,11 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
             });
         };
 
-        $scope.cancel = function () {
+        $scope.addNewFile = function() {
+            $scope.dataFromServer.push({name: "New File", contents: ""});
+        };
+
+        $scope.close = function () {
             $modalInstance.dismiss('cancel');
         };
     }]);

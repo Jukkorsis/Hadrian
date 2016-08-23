@@ -122,6 +122,10 @@ public abstract class BasicHandler extends AbstractHandler {
         throw new Http404NotFoundException("Could not find module");
     }
 
+    protected String getFileName(Request request) {
+        return request.getParameter("fileName");
+    }
+
     protected Host getHost(Request request, Service service) {
         return getHost(
                 request.getParameter("hostId"),

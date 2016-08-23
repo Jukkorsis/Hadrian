@@ -20,4 +20,8 @@ public class GetModuleFileData {
     public String name;
     public String contents;
 
+    public GetModuleFileData(String name, String contents) {
+        this.name = name;
+        this.contents = contents;
+    }
 }

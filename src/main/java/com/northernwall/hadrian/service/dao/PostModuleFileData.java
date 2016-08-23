@@ -21,6 +21,7 @@ public class PostModuleFileData {
     public String moduleId;
     public String network;
     public String name;
+    public String originalName;
     public String contents;
 
 }

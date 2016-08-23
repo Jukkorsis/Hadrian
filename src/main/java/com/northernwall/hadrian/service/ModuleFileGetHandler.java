@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.service;
 
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -26,6 +27,9 @@ import com.northernwall.hadrian.service.dao.GetModuleFileData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.Pack200;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -56,18 +60,16 @@ public class ModuleFileGetHandler extends BasicHandler {
             throw new Http400BadRequestException("parameter network is missing");
         }
 
-        GetModuleFileData getModuleFileData = new GetModuleFileData();
-        ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), network);
-        if (moduleFile == null) {
-            getModuleFileData.name = "";
-            getModuleFileData.contents = "";
-        } else {
-            getModuleFileData.name = moduleFile.getName();
-            getModuleFileData.contents = moduleFile.getContents();
+        List<GetModuleFileData> getModuleFileDataList = new ArrayList<>();
+        List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), network);
+        if (!moduleFiles.isEmpty()) {
+            for (ModuleFile moduleFile : moduleFiles) {
+                getModuleFileDataList.add(new GetModuleFileData(moduleFile.getName(), moduleFile.getContents()));
+            }
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getModuleFileData, GetModuleFileData.class, jw);
+            getGson().toJson(getModuleFileDataList, new TypeToken<List<GetModuleFileData>>(){}.getType(), jw);
         }
         response.setStatus(200);
         request.setHandled(true);

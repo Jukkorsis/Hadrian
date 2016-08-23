@@ -86,7 +86,8 @@ public interface DataAccess {
     void deleteModule(String serviceId, String moduleId);
     
     List<ModuleFile> getModuleFiles(String serviceId);
-    ModuleFile getModuleFile(String serviceId, String moduleId, String network);
+    List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network);
+    ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name);
     void saveModuleFile(ModuleFile moduleFile);
     void updateModuleFile(ModuleFile moduleFile);
     void deleteModuleFile(String serviceId, String moduleId, String network, String name);

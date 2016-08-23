@@ -9,7 +9,8 @@ var hadrianApp = angular.module('HadrianApp', [
     'hadrianDirectives',
     'hadrianControllers',
     'hadrianFilters',
-    'hadrianServices'
+    'hadrianServices',
+    'ui.ace'
 ]);
 
 hadrianApp.config(['$routeProvider',
