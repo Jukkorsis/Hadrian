@@ -29,10 +29,13 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,6 +57,7 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, WorkItem> workItems;
     private final Map<String, User> users;
     private final List<Audit> audits;
+    private final Map<String, ModuleFile> moduleFiles;
 
     public InMemoryDataAccess() {
         version = null;
@@ -68,6 +72,7 @@ public class InMemoryDataAccess implements DataAccess {
         workItems = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
         audits = new LinkedList<>();
+        moduleFiles = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -329,16 +334,47 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public List<ModuleFile> getModuleFiles(String serviceId) {
-        return null;
+        List<ModuleFile> moduleFileList = new ArrayList<>();
+        for (ModuleFile moduleFile : moduleFiles.values()) {
+            if (moduleFile.getServiceId().equals(serviceId)) {
+                moduleFileList.add(moduleFile);
+            }
+        }
+
+        return moduleFileList;
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
+        List<ModuleFile> moduleFileList = new ArrayList<>();
+
+        for (ModuleFile moduleFile : moduleFiles.values()) {
+            if (moduleFile.getServiceId().equals(serviceId) &&
+                    moduleFile.getModuleId().equals(moduleId) &&
+                    moduleFile.getNetwork().equals(network)) {
+                moduleFileList.add(moduleFile);
+            }
+        }
+
+        return moduleFileList;
+    }
+
+    @Override
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
+        for (ModuleFile moduleFile : moduleFiles.values()) {
+            if (moduleFile.getServiceId().equals(serviceId) &&
+                    moduleFile.getModuleId().equals(moduleId) &&
+                    moduleFile.getNetwork().equals(network) &&
+                    moduleFile.getName().equals(name)) {
+               return moduleFile;
+            }
+        }
         return null;
     }
     
     @Override
     public void saveModuleFile(ModuleFile moduleFile) {
+        moduleFiles.put(String.valueOf(moduleFile.hashCode()), moduleFile);
     }
     
     @Override
@@ -347,6 +383,15 @@ public class InMemoryDataAccess implements DataAccess {
     
     @Override
     public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
+        for (Iterator<Map.Entry<String, ModuleFile>> it = moduleFiles.entrySet().iterator(); it.hasNext();) {
+            ModuleFile moduleFile = it.next().getValue();
+            if (moduleFile.getServiceId().equals(serviceId) &&
+                    moduleFile.getModuleId().equals(moduleId) &&
+                    moduleFile.getNetwork().equals(network) &&
+                    moduleFile.getName().equals(name)) {
+                it.remove();
+            }
+        }
     }
 
     @Override

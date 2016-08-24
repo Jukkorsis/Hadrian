@@ -197,7 +197,7 @@ public class CassandraDataAccess implements DataAccess {
         logger.info("Praparing moduleFile statements...");
         moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ?;");
         moduleFileSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        moduleFileSelect2 = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
+        moduleFileSelect2 = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ? AND name = ?;");
         moduleFileSelect2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleFileInsert = session.prepare("INSERT INTO moduleFile (serviceId, moduleId, network, name, data) VALUES (?, ?, ?, ?, ?);");
         moduleFileInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -501,7 +501,28 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
+        BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
+        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        List<ModuleFile> moduleFiles = new LinkedList<>();
+        for (Row row: results) {
+            moduleFiles.add(new ModuleFile(
+                    serviceId,
+                    moduleId,
+                    network,
+                    row.getString("name"),
+                    row.getString("data")));
+        }
+
+        return moduleFiles;
+
+    }
+
+    @Override
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
         ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
         for (Row row : results) {
@@ -509,7 +530,7 @@ public class CassandraDataAccess implements DataAccess {
                     serviceId,
                     moduleId,
                     network,
-                    row.getString("name"),
+                    name,
                     row.getString("data"));
         }
         return null;
