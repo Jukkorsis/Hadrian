@@ -44,11 +44,13 @@ public class ConvertHandler extends BasicHandler {
                             module.getNetworkNames().remove(oldValue);
                             getDataAccess().saveModule(module);
                         }
-                        ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(), oldValue);
-                        if (moduleFile != null) {
-                            logger.info("Found a module file with '{}' network, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
-                            moduleFile.setNetwork(newValue);
-                            getDataAccess().saveModuleFile(moduleFile);
+                        List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), oldValue);
+                        if (moduleFiles != null && !moduleFiles.isEmpty()) {
+                            for (ModuleFile moduleFile : moduleFiles) {
+                                logger.info("Found a module file with '{}' network, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
+                                moduleFile.setNetwork(newValue);
+                                getDataAccess().saveModuleFile(moduleFile);
+                            }
                         }
                     }
                 }

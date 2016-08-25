@@ -333,18 +333,6 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ModuleFile> getModuleFiles(String serviceId) {
-        List<ModuleFile> moduleFileList = new ArrayList<>();
-        for (ModuleFile moduleFile : moduleFiles.values()) {
-            if (moduleFile.getServiceId().equals(serviceId)) {
-                moduleFileList.add(moduleFile);
-            }
-        }
-
-        return moduleFileList;
-    }
-
-    @Override
     public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
         List<ModuleFile> moduleFileList = new ArrayList<>();
 

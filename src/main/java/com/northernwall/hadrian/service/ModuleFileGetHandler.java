@@ -62,7 +62,7 @@ public class ModuleFileGetHandler extends BasicHandler {
 
         List<GetModuleFileData> getModuleFileDataList = new ArrayList<>();
         List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), network);
-        if (!moduleFiles.isEmpty()) {
+        if (moduleFiles != null && !moduleFiles.isEmpty()) {
             for (ModuleFile moduleFile : moduleFiles) {
                 getModuleFileDataList.add(new GetModuleFileData(moduleFile.getName(), moduleFile.getContents()));
             }

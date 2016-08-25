@@ -30,7 +30,6 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.utilityHandlers.HealthWriter;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,7 +86,6 @@ public interface DataAccess {
     void updateModule(Module module);
     void deleteModule(String serviceId, String moduleId);
     
-    List<ModuleFile> getModuleFiles(String serviceId);
     List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network);
     ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name);
     void saveModuleFile(ModuleFile moduleFile);

@@ -195,7 +195,7 @@ public class CassandraDataAccess implements DataAccess {
         moduleDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         logger.info("Praparing moduleFile statements...");
-        moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ?;");
+        moduleFileSelect = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ?;");
         moduleFileSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         moduleFileSelect2 = session.prepare("SELECT * FROM moduleFile WHERE serviceId = ? AND moduleId = ? AND network = ? AND name = ?;");
         moduleFileSelect2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -482,27 +482,8 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ModuleFile> getModuleFiles(String serviceId) {
-        BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
-        ResultSet results = session.execute(boundStatement.bind(serviceId));
-        if (results == null || results.isExhausted()) {
-            return null;
-        }
-        List<ModuleFile> moduleFiles = new LinkedList<>();
-        for (Row row : results) {
-            moduleFiles.add(new ModuleFile(
-                    serviceId,
-                    row.getString("moduleId"),
-                    row.getString("network"),
-                    row.getString("name"),
-                    row.getString("data")));
-        }
-        return moduleFiles;
-    }
-
-    @Override
     public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
-        BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
+        BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
         ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
         if (results == null || results.isExhausted()) {
             return null;
@@ -518,22 +499,22 @@ public class CassandraDataAccess implements DataAccess {
         }
 
         return moduleFiles;
-
     }
 
     @Override
     public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
-        for (Row row : results) {
-            return new ModuleFile(
-                    serviceId,
-                    moduleId,
-                    network,
-                    name,
-                    row.getString("data"));
+        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network, name));
+        Row row = results.one();
+        if (row == null) {
+            return null;
         }
-        return null;
+        return new ModuleFile(
+                serviceId,
+                moduleId,
+                network,
+                name,
+                row.getString("data"));
     }
 
     @Override

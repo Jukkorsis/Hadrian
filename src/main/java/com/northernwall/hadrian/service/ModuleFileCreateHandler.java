@@ -27,6 +27,7 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.service.dao.PostModuleFileData;
 import com.northernwall.hadrian.utilityHandlers.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,24 +65,32 @@ public class ModuleFileCreateHandler extends BasicHandler {
         if (data.name.contains(" ")) {
             throw new Http400BadRequestException("attribute name is illegal");
         }
-        ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(), module.getModuleId(),
-                data.network, data.originalName);
-        if (moduleFile == null) {
-            moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+
+        if (data.originalName == null || data.originalName.isEmpty()) {
+            ModuleFile moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
             getDataAccess().saveModuleFile(moduleFile);
-            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
-        } else if (data.name.equalsIgnoreCase(moduleFile.getName())) {
-            if (!data.contents.equals(moduleFile.getContents())) {
-                moduleFile.setContents(data.contents);
-                getDataAccess().updateModuleFile(moduleFile);
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " in " + data.network);
-            }
+            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " on " + data.network);
         } else {
-            getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, moduleFile.getName());
-            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Deleted file " + moduleFile.getName() + " in " + data.network);
-            moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
-            getDataAccess().saveModuleFile(moduleFile);
-            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " in " + data.network);
+            ModuleFile moduleFile = getDataAccess().getModuleFile(
+                service.getServiceId(),
+                module.getModuleId(),
+                data.network,
+                data.originalName);
+            if (moduleFile == null) {
+                throw new Http404NotFoundException("Could not find existing module file");
+            }
+            if (data.name.equalsIgnoreCase(data.originalName)) {
+                if (!data.contents.equals(moduleFile.getContents())) {
+                    moduleFile.setContents(data.contents);
+                    getDataAccess().updateModuleFile(moduleFile);
+                    createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " on " + data.network);
+                }
+            } else {
+                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.originalName);
+                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+                getDataAccess().saveModuleFile(moduleFile);
+                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Rename file " + data.originalName + " to " + data.name + " on " + data.network);
+            }
         }
 
         response.setStatus(200);
