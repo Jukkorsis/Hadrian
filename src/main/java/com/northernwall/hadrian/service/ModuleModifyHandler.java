@@ -142,13 +142,13 @@ public class ModuleModifyHandler extends BasicHandler {
             if (data.hostAbbr.contains("-")) {
                 throw new Http400BadRequestException("Can not have '-' in host abbr");
             }
-            data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder);
-            data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder);
+            data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder, "deploy", false);
+            data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder, "logs", false);
             if (ModuleCreateHandler.isSubFolder(data.logsFolder, data.deploymentFolder)) {
                 throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
             }
-            data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder);
-            if (ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
+            data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder, "data", true);
+            if (data.dataFolder != null && ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
                 throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
             }
         }

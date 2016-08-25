@@ -125,6 +125,7 @@ public class ModuleCreateHandler extends BasicHandler {
             data.artifactSuffix = "";
             data.versionUrl = "";
             data.availabilityUrl = "";
+            data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
             data.dataFolder = "";
             data.logsFolder = "";
             data.stopCmdLine = "";
@@ -137,13 +138,13 @@ public class ModuleCreateHandler extends BasicHandler {
             if (data.hostAbbr.contains("-")) {
                 throw new Http400BadRequestException("Can not have '-' in host abbr");
             }
-            data.deploymentFolder = scrubFolder(data.deploymentFolder);
-            data.logsFolder = scrubFolder(data.logsFolder);
+            data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
+            data.logsFolder = scrubFolder(data.logsFolder, "logs", false);
             if (isSubFolder(data.logsFolder, data.deploymentFolder)) {
                 throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
             }
-            data.dataFolder = scrubFolder(data.dataFolder);
-            if (isSubFolder(data.dataFolder, data.deploymentFolder)) {
+            data.dataFolder = scrubFolder(data.dataFolder, "data", true);
+            if (data.dataFolder != null && isSubFolder(data.dataFolder, data.deploymentFolder)) {
                 throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
             }
         }
@@ -256,13 +257,24 @@ public class ModuleCreateHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    public static String scrubFolder(String folder) {
+    public static String scrubFolder(String folder, String name, boolean nullAllowed) {
         if (folder == null || folder.isEmpty()) {
-            return "/";
+            if (nullAllowed) {
+                return null;
+            } else {
+                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
+            }
         }
         String temp = folder.trim();
         if (temp == null || temp.isEmpty()) {
-            return "/";
+           if (nullAllowed) {
+                return null;
+            } else {
+                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
+            }
+        }
+        if (temp.equals("/")) {
+            throw new Http400BadRequestException("Folder " + name + " can not be root");
         }
         if (!folder.startsWith("/")) {
             temp = "/" + temp;
