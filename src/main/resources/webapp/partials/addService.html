@@ -7,7 +7,7 @@
         <dt>Name:</dt>
         <dd><input ng-model="formSaveService.serviceName" type="text" maxlength="30" class="form-control"></dd>
         <dt>Description:</dt>
-        <dd><input ng-model="formSaveService.description" type="text" maxlength="500" class="form-control"></dd>
+        <dd><textarea ng-model="formSaveService.description" type="text" maxlength="500" class="form-control"></textarea></dd>
         <dt>Type:</dt>
         <dd><select ng-model="formSaveService.serviceType" ng-options="c for c in config.serviceTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
         <div ng-if="formSaveService.serviceType === 'Service'">
