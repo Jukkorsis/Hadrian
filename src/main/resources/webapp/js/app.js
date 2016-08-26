@@ -16,7 +16,7 @@ var hadrianApp = angular.module('HadrianApp', [
 hadrianApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
-                when('/Activty', {
+                when('/Activity', {
                     templateUrl: 'partials/activity.html',
                     controller: 'ActivityCtrl'
                 }).
@@ -53,6 +53,6 @@ hadrianApp.config(['$routeProvider',
                     controller: 'HelpCtrl'
                 }).
                 otherwise({
-                    redirectTo: '/Activty'
+                    redirectTo: '/Activity'
                 });
     }]);

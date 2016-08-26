@@ -6,8 +6,9 @@ var hadrianControllers = angular.module('hadrianControllers', []);
 
 hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
     function ($scope, $location, Tree) {
+        $scope.menuMode = "home";
         $scope.selectActivity = function () {
-            $location.path("Activty");
+            $location.path("Activity");
             $scope.menuMode = "home";
         }
         $scope.selectDevTeam = function (team, reset) {
@@ -43,7 +44,7 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
             $location.path("Help");
         }
         $scope.treeData = Tree.query();
-        $scope.selectActivity();
+        //$scope.selectActivity();
     }]);
 
 hadrianControllers.controller('ActivityCtrl', ['$scope',
