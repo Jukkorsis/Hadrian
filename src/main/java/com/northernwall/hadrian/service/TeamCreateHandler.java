@@ -73,7 +73,7 @@ public class TeamCreateHandler extends BasicHandler {
                 throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
             }
             if (temp.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
-                logger.warn("Creating new teamwith name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
+                logger.warn("Creating new team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
             }
         }
 

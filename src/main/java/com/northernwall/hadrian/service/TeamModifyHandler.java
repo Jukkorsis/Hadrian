@@ -27,9 +27,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TeamModifyHandler extends BasicHandler {
 
+    private final static Logger logger = LoggerFactory.getLogger(TeamModifyHandler.class);
     private final AccessHelper accessHelper;
 
     public TeamModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
@@ -60,10 +63,10 @@ public class TeamModifyHandler extends BasicHandler {
         for (Team temp : getDataAccess().getTeams()) {
             if (!temp.getTeamId().equals(data.teamId)) {
                 if (temp.getTeamName().equals(data.teamName)) {
-                    throw new Http405NotAllowedException("Can not chnage team name, as a team with name " + data.teamName + " already exists");
+                    throw new Http405NotAllowedException("Can not change team name, as a team with name " + data.teamName + " already exists");
                 }
                 if (temp.getGitGroup().equals(data.gitGroup)) {
-                    throw new Http405NotAllowedException("Can not chnage team name, as a team with name " + data.teamName + " already exists");
+                    logger.warn("Modifying team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
                 }
             }
         }
