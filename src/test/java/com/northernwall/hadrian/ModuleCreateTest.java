@@ -24,34 +24,51 @@ import org.junit.Test;
  * @author rthursto
  */
 public class ModuleCreateTest {
-    
+
     public ModuleCreateTest() {
     }
-    
+
     @Test
     public void scrubFolderTest() {
-        Assert.assertEquals("/", ModuleCreateHandler.scrubFolder(null));
-        Assert.assertEquals("/", ModuleCreateHandler.scrubFolder(""));
-        Assert.assertEquals("/", ModuleCreateHandler.scrubFolder(" "));
-        Assert.assertEquals("/", ModuleCreateHandler.scrubFolder("/"));
-        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("foo"));
-        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder(" foo "));
-        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("/foo"));
-        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("/foo/"));
-        Assert.assertEquals("/foo/bar", ModuleCreateHandler.scrubFolder("/foo/bar"));
-        Assert.assertEquals("/foo/bar", ModuleCreateHandler.scrubFolder("/foo/bar/"));
+        Assert.assertNull(ModuleCreateHandler.scrubFolder(null, "deploy", true));
+        try {
+            ModuleCreateHandler.scrubFolder(null, "deploy", false);
+            Assert.fail("should have thrown an exception");
+        } catch (Exception e) {
+        }
+        try {
+            ModuleCreateHandler.scrubFolder("", "deploy", false);
+            Assert.fail("should have thrown an exception");
+        } catch (Exception e) {
+        }
+        try {
+            ModuleCreateHandler.scrubFolder(" ", "deploy", false);
+            Assert.fail("should have thrown an exception");
+        } catch (Exception e) {
+        }
+        try {
+            ModuleCreateHandler.scrubFolder("/", "deploy", false);
+            Assert.fail("should have thrown an exception");
+        } catch (Exception e) {
+        }
+        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("foo", "deploy", false));
+        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder(" foo ", "deploy", false));
+        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("/foo", "deploy", false));
+        Assert.assertEquals("/foo", ModuleCreateHandler.scrubFolder("/foo/", "deploy", false));
+        Assert.assertEquals("/foo/bar", ModuleCreateHandler.scrubFolder("/foo/bar", "deploy", false));
+        Assert.assertEquals("/foo/bar", ModuleCreateHandler.scrubFolder("/foo/bar/", "deploy", false));
     }
-    
+
     @Test
     public void isSubFolderTest() {
         Assert.assertTrue(ModuleCreateHandler.isSubFolder("/foo/bar", "/"));
         Assert.assertTrue(ModuleCreateHandler.isSubFolder("/foo/bar", "/foo"));
         Assert.assertTrue(ModuleCreateHandler.isSubFolder("/foo/bar", "/foo/bar"));
-        
+
         Assert.assertFalse(ModuleCreateHandler.isSubFolder("/foo/other", "/foo/bar"));
         Assert.assertFalse(ModuleCreateHandler.isSubFolder("/foo", "/foo/bar"));
         Assert.assertFalse(ModuleCreateHandler.isSubFolder("/", "/foo/bar"));
         Assert.assertFalse(ModuleCreateHandler.isSubFolder("/other/bar", "/foo/bar"));
     }
-    
+
 }
