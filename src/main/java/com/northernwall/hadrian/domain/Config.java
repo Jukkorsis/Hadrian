@@ -27,6 +27,12 @@ public class Config {
     public String logsFolder = "";
     public String gitUiURL = "";
     public String moduleConfigName = "";
+    public int minCpu = 2;
+    public int maxCpu = 4;
+    public int minMemory = 2;
+    public int maxMemory = 8;
+    public int minStorage = 25;
+    public int maxStorage = 100;
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networkNames = new LinkedList<>();
     public List<Network> networks = new LinkedList<>();

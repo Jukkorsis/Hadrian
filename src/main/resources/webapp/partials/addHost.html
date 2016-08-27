@@ -14,19 +14,19 @@
         </dd>
         <dt>Size CPU:</dt>
         <dd>
-            <input ng-model="formSaveHost.sizeCpu" type="number" class="form-control">
+            <input ng-model="formSaveHost.sizeCpu" type="number" min="{{config.minCpu}}" max="{{config.maxCpu}}" class="form-control">
         </dd>
         <dt>Size Memory:</dt>
         <dd>
             <div class="input-group">
-                <input ng-model="formSaveHost.sizeMemory" type="number" class="form-control">
+                <input ng-model="formSaveHost.sizeMemory" type="number" min="{{config.minMemory}}" max="{{config.maxMemory}}" class="form-control">
                 <div class="input-group-addon">GB</div>
             </div>
         </dd>
         <dt>Size Storage:</dt>
         <dd>
             <div class="input-group">
-                <input ng-model="formSaveHost.sizeStorage" type="number" class="form-control">
+                <input ng-model="formSaveHost.sizeStorage" type="number" min="{{config.minStorage}}" max="{{config.maxStorage}}" step="5" class="form-control">
                 <div class="input-group-addon">GB</div>
             </div>
         </dd>

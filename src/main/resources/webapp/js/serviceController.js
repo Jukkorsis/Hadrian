@@ -1464,9 +1464,9 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost = {};
         $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
         $scope.formSaveHost.env = $scope.config.envs[0];
-        $scope.formSaveHost.sizeCpu = 1;
-        $scope.formSaveHost.sizeMemory = 1;
-        $scope.formSaveHost.sizeStorage = 1;
+        $scope.formSaveHost.sizeCpu = $scope.config.minCpu;
+        $scope.formSaveHost.sizeMemory = $scope.config.minMemory;
+        $scope.formSaveHost.sizeStorage = $scope.config.minStorage;
         $scope.formSaveHost.version = "";
         $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.count = 1;
