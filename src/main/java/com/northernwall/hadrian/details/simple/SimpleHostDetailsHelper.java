@@ -93,7 +93,6 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
     @Override
     public GetHostDetailsData getDetails(Host host) {
         List<GetPairData> pairs = new LinkedList<>();
-        pairs.add(new GetPairData("host id", host.getHostId()));
         if (!urlTemplates.isEmpty()) {
             for (String urlTemplate : urlTemplates) {
                 String url = urlTemplate.replace(Const.HOST, host.getHostName());

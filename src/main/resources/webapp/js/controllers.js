@@ -89,7 +89,7 @@ hadrianControllers.controller('CatalogCtrl', ['$scope', '$http',
         var responsePromise = $http.get("/v1/catalog", {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.catalogSortType = 'teamName';
-            $scope.catalogSortReverse = true;
+            $scope.catalogSortReverse = false;
             $scope.catalogFilter = null;
             $scope.catalog = data;
             $scope.catalogLoading = false;

@@ -28,8 +28,8 @@
             </th>
         </tr>
         <tr ng-repeat="s in catalog.services | orderBy:catalogSortType:catalogSortReverse | filter:catalogFilter">
-            <td>{{s.teamName}}</td>
-            <td>{{s.serviceName}}</td>
+            <td><a href="#/Team/{{s.teamId}}">{{s.teamName}}</a></td>
+            <td><a href="#/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
             <td><span style="white-space:pre-wrap;">{{s.serviceDescription}}</span></td>
         </tr>
     </table>
