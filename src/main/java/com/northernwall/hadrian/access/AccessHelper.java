@@ -19,8 +19,8 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http401UnauthorizedException;
-import com.northernwall.hadrian.utilityHandlers.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http401UnauthorizedException;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
 
 import java.util.List;
 

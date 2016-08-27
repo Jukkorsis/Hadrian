@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.details;
 
 import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.service.dao.GetHostDetailsData;
+import com.northernwall.hadrian.handlers.service.dao.GetHostDetailsData;
 
 public interface HostDetailsHelper {
 

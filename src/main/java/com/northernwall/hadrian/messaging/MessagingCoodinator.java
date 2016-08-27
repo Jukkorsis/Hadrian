@@ -24,7 +24,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.HashSet;

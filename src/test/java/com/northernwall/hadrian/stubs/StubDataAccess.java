@@ -13,7 +13,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.utilityHandlers.HealthWriter;
+import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import java.io.IOException;
 import java.util.List;
 

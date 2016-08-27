@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian;
 
-import com.northernwall.hadrian.service.HostBackfillHandler;
+import com.northernwall.hadrian.handlers.service.HostBackfillHandler;
 import org.junit.Assert;
 import org.junit.Test;
 

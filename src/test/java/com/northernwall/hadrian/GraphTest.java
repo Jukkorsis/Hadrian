@@ -17,7 +17,7 @@ package com.northernwall.hadrian;
 
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.graph.Graph;
+import com.northernwall.hadrian.handlers.graph.Graph;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

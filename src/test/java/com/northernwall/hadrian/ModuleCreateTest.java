@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian;
 
-import com.northernwall.hadrian.service.ModuleCreateHandler;
+import com.northernwall.hadrian.handlers.service.ModuleCreateHandler;
 import org.junit.Assert;
 import org.junit.Test;
 

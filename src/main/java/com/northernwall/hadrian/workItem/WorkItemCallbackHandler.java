@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.workItem;
 
-import com.northernwall.hadrian.service.BasicHandler;
+import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
 import javax.servlet.ServletException;
