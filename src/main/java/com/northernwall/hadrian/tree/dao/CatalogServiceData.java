@@ -15,12 +15,20 @@
  */
 package com.northernwall.hadrian.tree.dao;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 
-public class TreeTeamData {
-    public String teamId;
+public class CatalogServiceData {
     public String teamName;
-    public List<TreeServiceData> services = new LinkedList<>();
+    public String serviceName;
+    public String serviceDescription;
+
+    public static CatalogServiceData create(Team team, Service service) {
+        CatalogServiceData serviceData = new CatalogServiceData();
+        serviceData.teamName = team.getTeamName();
+        serviceData.serviceName = service.getServiceName();
+        serviceData.serviceDescription = service.getDescription();
+        return serviceData;
+    }
 
 }

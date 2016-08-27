@@ -28,6 +28,9 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
         $scope.selectGraphs = function () {
             $location.path("Graph");
         }
+        $scope.selectCatalog = function () {
+            $location.path("Catalog");
+        }
         $scope.selectFindHost = function () {
             $location.path("FindHost");
         }
@@ -77,6 +80,20 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
                 });
             }
         }
+    }]);
+
+hadrianControllers.controller('CatalogCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.catalogLoading = true;
+        $scope.catalog = null;
+        var responsePromise = $http.get("/v1/catalog", {});
+        responsePromise.success(function (data, status, headers, config) {
+            $scope.catalogSortType = 'teamName';
+            $scope.catalogSortReverse = true;
+            $scope.catalogFilter = null;
+            $scope.catalog = data;
+            $scope.catalogLoading = false;
+        });
     }]);
 
 hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',

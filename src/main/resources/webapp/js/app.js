@@ -32,6 +32,10 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/graph.html',
                     controller: 'GraphCtrl'
                 }).
+                when('/Catalog', {
+                    templateUrl: 'partials/catalog.html',
+                    controller: 'CatalogCtrl'
+                }).
                 when('/FindHost', {
                     templateUrl: 'partials/findHost.html',
                     controller: 'FindHostCtrl'

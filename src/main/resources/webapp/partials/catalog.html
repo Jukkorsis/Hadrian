@@ -1,0 +1,36 @@
+<h3>Service Catalog</h3>
+<div ng-if="catalogLoading">Loading...</div>
+<div ng-if="!catalogLoading">
+    <form>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                <input type="text" class="form-control" placeholder="Filter services" ng-model="catalogFilter">
+            </div>      
+        </div>
+    </form>
+    <table class="table table-hover table-striped table-condensed">
+        <tr>
+            <th>
+                <a ng-click="catalogSortType = 'teamName';
+                            catalogSortReverse = !catalogSortReverse">
+                    Team Name
+                </a>
+            </th>
+            <th>
+                <a ng-click="catalogSortType = 'serviceName';
+                            catalogSortReverse = !catalogSortReverse">
+                    Service Name
+                </a>
+            </th>
+            <th>
+                Service Description
+            </th>
+        </tr>
+        <tr ng-repeat="s in catalog.services | orderBy:catalogSortType:catalogSortReverse | filter:catalogFilter">
+            <td>{{s.teamName}}</td>
+            <td>{{s.serviceName}}</td>
+            <td><span style="white-space:pre-wrap;">{{s.serviceDescription}}</span></td>
+        </tr>
+    </table>
+</div>
