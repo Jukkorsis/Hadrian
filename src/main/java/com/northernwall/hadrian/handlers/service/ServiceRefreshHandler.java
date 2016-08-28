@@ -57,12 +57,9 @@ public class ServiceRefreshHandler extends BasicHandler {
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         if (service.isActive()) {
+            getModuleInfo(service, getServiceData, false);
             List<Future> futures = new LinkedList<>();
-
-            getModuleInfo(service, getServiceData, false, futures);
-
             getHostInfo(service, getServiceData, futures);
-
             waitForFutures(futures, 151, 100);
         }
 
@@ -73,16 +70,38 @@ public class ServiceRefreshHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    protected void getModuleInfo(Service service, GetServiceData getServiceData, boolean includeStuff, List<Future> futures) {
+    protected void getModuleInfo(Service service, GetServiceData getServiceData, boolean includeStuff) {
         List<Module> modules = getDataAccess().getModules(service.getServiceId());
         Collections.sort(modules);
+
+        List<String> activeNetworks = new LinkedList<>();
         for (Module module : modules) {
-            module.cleanNetworkNames();
+            module.cleanNetworkNames(activeNetworks);
+        }
+        arrangeNetworks(getServiceData, activeNetworks, modules);
+        for (Module module : modules) {
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
             if (includeStuff) {
                 getModuleRefInfo(module, getModuleData);
             }
             getServiceData.modules.add(getModuleData);
+        }
+    }
+
+    private void arrangeNetworks(GetServiceData getServiceData, List<String> activeNetworks, List<Module> modules) {
+        for (String network : configHelper.getConfig().networkNames) {
+            if (activeNetworks.contains(network)) {
+                getServiceData.addNetwork(network);
+            }
+        }
+        for (String network : activeNetworks) {
+            for (Module module : modules) {
+                if (module.getNetworkNames() != null
+                        && !module.getNetworkNames().isEmpty()
+                        && module.getNetworkNames().containsKey(network)) {
+                    getServiceData.addModuleNetwork(module, network);
+                }
+            }
         }
     }
 
@@ -94,9 +113,9 @@ public class ServiceRefreshHandler extends BasicHandler {
             tempRef.moduleName = getModule(ref.getServerModuleId(), null, serverService).getModuleName();
             getModuleData.uses.add(tempRef);
         }
-        
+
         Collections.sort(getModuleData.uses);
-        
+
         for (ModuleRef ref : getDataAccess().getModuleRefsByServer(module.getServiceId(), module.getModuleId())) {
             GetModuleRefData tempRef = GetModuleRefData.create(ref);
             Service clientService = getService(ref.getClientServiceId(), null);
@@ -104,7 +123,7 @@ public class ServiceRefreshHandler extends BasicHandler {
             tempRef.moduleName = getModule(ref.getClientModuleId(), null, clientService).getModuleName();
             getModuleData.usedBy.add(tempRef);
         }
-        
+
         Collections.sort(getModuleData.usedBy);
     }
 
@@ -120,9 +139,9 @@ public class ServiceRefreshHandler extends BasicHandler {
             }
             if (getModuleData != null) {
                 GetHostData getHostData = GetHostData.create(host);
+                getServiceData.addHost(getHostData, getModuleData);
                 futures.add(executorService.submit(new ReadVersionRunnable(getHostData, getModuleData, infoHelper)));
                 futures.add(executorService.submit(new ReadAvailabilityRunnable(getHostData, getModuleData, infoHelper)));
-                getModuleData.addHost(getHostData);
             }
         }
     }

@@ -19,14 +19,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GetModuleNetworkData {
+    public String moduleId;
+    public String moduleName;
     public String network;
-    public List<GetHostData> hosts;
-    public List<GetVipData> vips;
+    public List<GetHostData> hosts = new LinkedList<>();
+    public List<GetVipData> vips = new LinkedList<>();
 
-    public GetModuleNetworkData(String network) {
+    public GetModuleNetworkData(String moduleId, String moduleName, String network) {
+        this.moduleId = moduleId;
+        this.moduleName = moduleName;
         this.network = network;
-        this.hosts = new LinkedList<>();
-        this.vips = new LinkedList<>();
     }
 
 }

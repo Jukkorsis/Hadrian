@@ -288,24 +288,27 @@ public class Module implements Comparable<Module> {
         this.networkNames = networkNames;
     }
     
-    public void cleanNetworkNames() {
+    public void cleanNetworkNames(List<String> activeNetworks) {
         if (networkNames == null || networkNames.isEmpty()) {
             return;
         }
-        List<String> keys = null;
+        List<String> keysToRemove = null;
         for (String key : networkNames.keySet()) {
-            if (!networkNames.get(key).booleanValue()) {
-                if (keys == null) {
-                    keys = new LinkedList<>();
+            if (networkNames.get(key).booleanValue()) {
+                if (activeNetworks != null && !activeNetworks.contains(key)) {
+                    activeNetworks.add(key);
                 }
-                keys.add(key);
+            } else {
+                if (keysToRemove == null) {
+                    keysToRemove = new LinkedList<>();
+                }
+                keysToRemove.add(key);
             }
         }
-        if (keys == null) {
-            return;
-        }
-        for (String key : keys) {
-            networkNames.remove(key);
+        if (keysToRemove != null && !keysToRemove.isEmpty()) {
+            for (String key : keysToRemove) {
+                networkNames.remove(key);
+            }
         }
     }
 

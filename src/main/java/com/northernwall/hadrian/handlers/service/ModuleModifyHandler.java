@@ -174,7 +174,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setStopTimeOut(data.stopTimeOut);
         module.setConfigName(data.configName);
         module.setNetworkNames(data.networkNames);
-        module.cleanNetworkNames();
+        module.cleanNetworkNames(null);
 
         if (module.getOrder() != data.order) {
             if (module.getOrder() > 0) {

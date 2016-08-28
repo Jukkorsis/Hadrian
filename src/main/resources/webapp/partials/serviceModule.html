@@ -42,10 +42,6 @@
                             <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                             <li class="divider"></li>
-                            <li role="menuitem"ng-repeat="(nname, val) in m.networkNames">
-                                <a ng-click="openModuleFileModal(m, nname);">Manage file for {{nname}}</a>
-                            </li>
-                            <li class="divider"></li>
                             <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
                             <li role="menuitem" ng-repeat="sr in m.uses">
                                 <a ng-click="deleteServiceRef(service.serviceId, m.moduleId, sr.serverServiceId, sr.serverModuleId);">Remove dependence on {{sr.moduleName}}</a>
@@ -74,9 +70,6 @@
                             <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                             <li class="divider"></li>
-                            <li role="menuitem"ng-repeat="(nname, val) in m.networkNames">
-                                <a ng-click="openModuleFileModal(m, nname);">Manage file for {{nname}}</a>
-                            </li>
                             <li class="divider"></li>
                             <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
                             <li role="menuitem"ng-repeat="sr in m.uses">
@@ -92,9 +85,6 @@
                             <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                             <li class="divider"></li>
-                            <li role="menuitem"ng-repeat="(nname, val) in m.networkNames">
-                                <a ng-click="openModuleFileModal(m, nname);">Manage file for {{nname}}</a>
-                            </li>
                         </ul>
                     </div>
                     {{m.moduleName}}

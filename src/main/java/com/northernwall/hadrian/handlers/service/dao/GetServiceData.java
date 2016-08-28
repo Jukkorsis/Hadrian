@@ -17,6 +17,7 @@ package com.northernwall.hadrian.handlers.service.dao;
 
 import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.GitMode;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import java.util.Collections;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class GetServiceData {
     public Date deletionDate;
     public boolean active;
     public List<GetModuleData> modules;
+    public List<GetNetworkData> networks;
     public List<GetDataStoreData> dataStores;
     public boolean canModify;
 
@@ -51,7 +53,7 @@ public class GetServiceData {
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
-        
+
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();
         temp.rightDocuments = new LinkedList<>();
@@ -67,13 +69,52 @@ public class GetServiceData {
                 temp.rightDocuments.add(doc);
             }
         }
-        
+
         temp.creationDate = service.getCreationDate();
         temp.deletionDate = service.getDeletionDate();
         temp.active = service.isActive();
         temp.modules = new LinkedList<>();
+        temp.networks = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
         return temp;
+    }
+
+    public void addNetwork(String network) {
+        for (GetNetworkData networkData : networks) {
+            if (networkData.network.equals(network)) {
+                return;
+            }
+        }
+        GetNetworkData networkData = new GetNetworkData();
+        networkData.network = network;
+        networks.add(networkData);
+    }
+
+    public void addModuleNetwork(Module module, String network) {
+        for (GetNetworkData networkData : networks) {
+            if (networkData.network.equals(network)) {
+                networkData.addModule(module);
+                return;
+            }
+        }
+    }
+
+    public void addHost(GetHostData hostData, GetModuleData moduleData) {
+        for (GetNetworkData networkData : networks) {
+            if (networkData.network.equals(hostData.network)) {
+                networkData.addHost(hostData, moduleData);
+                return;
+            }
+        }
+    }
+
+    public void addVip(GetVipData vipData, GetModuleData moduleData) {
+        for (GetNetworkData networkData : networks) {
+            if (networkData.network.equals(vipData.network)) {
+                networkData.addVip(vipData, moduleData);
+                return;
+            }
+        }
     }
 
 }

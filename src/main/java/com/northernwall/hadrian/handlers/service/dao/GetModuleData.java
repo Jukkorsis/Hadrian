@@ -52,7 +52,6 @@ public class GetModuleData {
     public Map<String,Boolean> networkNames = new HashMap<>();
     public List<String> versions;
     public List<String> configVersions;
-    public List<GetModuleNetworkData> networks;
     public List<GetCustomFunctionData> customFunctions;
     public List<GetModuleRefData> uses;
     public List<GetModuleRefData> usedBy;
@@ -85,41 +84,10 @@ public class GetModuleData {
         temp.configName = module.getConfigName();
         temp.networkNames = module.getNetworkNames();
         temp.versions = new LinkedList<>();
-        temp.networks = new LinkedList<>();
-        for (String network : config.networkNames) {
-            temp.networks.add(new GetModuleNetworkData(network));
-        }
         temp.customFunctions = new LinkedList<>();
         temp.uses = new LinkedList<>();
         temp.usedBy = new LinkedList<>();
         return temp;
-    }
-
-    public void addHost(GetHostData hostData) {
-        for (GetModuleNetworkData getModuleNetworkData : networks) {
-            if (getModuleNetworkData.network.equals(hostData.network)) {
-                getModuleNetworkData.hosts.add(hostData);
-                return;
-            }
-        }
-    }
-
-    public void addVip(GetVipData vipData) {
-        for (GetModuleNetworkData getModuleNetworkData : networks) {
-            if (getModuleNetworkData.network.equals(vipData.network)) {
-                getModuleNetworkData.vips.add(vipData);
-                return;
-            }
-        }
-    }
-    
-    public List<GetVipData> getVips(String network) {
-        for (GetModuleNetworkData getModuleNetworkData : networks) {
-            if (getModuleNetworkData.network.equals(network)) {
-                return getModuleNetworkData.vips;
-            }
-        }
-        return new LinkedList<>();
     }
 
     public void addCustomFunction(GetCustomFunctionData customFunctionData) {

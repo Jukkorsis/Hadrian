@@ -4,17 +4,13 @@
 <div class="modal-body">
     <dl class="dl-horizontal">
         <dt>Module:</dt>
-        <dd>{{module.moduleName}}</dd>
+        <dd>{{moduleNetwork.moduleName}}</dd>
         <dt>Network:</dt>
-        <dd>{{network}}</dd>
+        <dd>{{moduleNetwork.network}}</dd>
         <dt>Host:</dt>
-        <dd>
-            <div ng-repeat="hostName in hostNames">{{hostName}} </div>
-        </dd>
+        <dd><div ng-repeat="hostName in hostNames">{{hostName}} </div></dd>
         <dt>Reason:</dt>
-        <dd>
-            <input ng-model="formDeleteHost.reason" type="text" class="form-control">
-        </dd>
+        <dd><input ng-model="formDeleteHost.reason" type="text" class="form-control"></dd>
     </dl>
 </div>
 <div class="modal-footer">

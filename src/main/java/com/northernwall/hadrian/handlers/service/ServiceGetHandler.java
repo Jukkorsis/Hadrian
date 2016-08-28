@@ -23,8 +23,6 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
-import com.northernwall.hadrian.domain.Document;
-import com.northernwall.hadrian.domain.DocumentType;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.handlers.service.dao.GetCustomFunctionData;
@@ -65,21 +63,16 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         if (service.isActive()) {
+            getModuleInfo(service, getServiceData, true);
+
             List<Future> futures = new LinkedList<>();
-
-            getModuleInfo(service, getServiceData, true, futures);
-
             getVipInfo(service, getServiceData);
-
             getHostInfo(service, getServiceData, futures);
-
             getDataStoreInfo(service, getServiceData);
-
             getCustomFunctionInfo(service, getServiceData);
-
             waitForFutures(futures, 151, 100);
         }
-        
+
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             getGson().toJson(getServiceData, GetServiceData.class, jw);
         }
@@ -121,7 +114,7 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
             }
             if (getModuleData != null) {
                 GetVipData getVipData = GetVipData.create(vip);
-                getModuleData.addVip(getVipData);
+                getServiceData.addVip(getVipData, getModuleData);
             }
         }
     }
