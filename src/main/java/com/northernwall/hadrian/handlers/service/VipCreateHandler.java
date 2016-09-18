@@ -42,12 +42,12 @@ import org.eclipse.jetty.server.Request;
 public class VipCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public VipCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public VipCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -84,8 +84,8 @@ public class VipCreateHandler extends BasicHandler {
         getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);
-        getDataAccess().saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
+        
         response.setStatus(200);
         request.setHandled(true);
     }

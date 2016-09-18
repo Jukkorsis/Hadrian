@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.workItem.noop;
+package com.northernwall.hadrian.workItem.action;
 
-import com.codahale.metrics.MetricRegistry;
-import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemSender;
-import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
-import com.squareup.okhttp.OkHttpClient;
+import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
 
-public class NoopWorkItemSenderFactory implements WorkItemSenderFactory {
+public class ModuleUpdateAction extends Action {
 
     @Override
-    public WorkItemSender create(Parameters parameters, DataAccess dataAccess, OkHttpClient client, MetricRegistry metricRegistry) {
-        return new NoopWorkItemSender(parameters);
+    public Result process(WorkItem workItem) {
+        Result result = Result.success;
+        recordAudit(workItem, result, null, null);
+        return result;
+    }
+
+    @Override
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

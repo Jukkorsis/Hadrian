@@ -40,12 +40,12 @@ import org.eclipse.jetty.server.Request;
 public class VipDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public VipDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public VipDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -61,8 +61,8 @@ public class VipDeleteHandler extends BasicHandler {
         getDataAccess().updateVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.delete, user, team, service, null, null, vip);
-        getDataAccess().saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
+        
         response.setStatus(200);
         request.setHandled(true);
     }

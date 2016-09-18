@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -43,12 +42,12 @@ import org.eclipse.jetty.server.Request;
 public class HostDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public HostDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -70,10 +69,10 @@ public class HostDeleteHandler extends BasicHandler {
                     if (!host.isBusy()) {
                         host.setStatus(true, "Deleting...");
                         getDataAccess().updateHost(host);
+                        
                         WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
                         workItem.getHost().reason = data.reason;
-                        getDataAccess().saveWorkItem(workItem);
-                        workItemProcess.sendWorkItem(workItem);
+                        workItemProcessor.processWorkItem(workItem);
                     }
                 }
             }

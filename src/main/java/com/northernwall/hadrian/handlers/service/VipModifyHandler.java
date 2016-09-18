@@ -40,12 +40,12 @@ import org.eclipse.jetty.server.Request;
 public class VipModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public VipModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public VipModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -63,8 +63,8 @@ public class VipModifyHandler extends BasicHandler {
         WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
         workItem.getVip().external = data.external;
         workItem.getVip().servicePort = data.servicePort;
-        getDataAccess().saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
+        
         response.setStatus(200);
         request.setHandled(true);
     }

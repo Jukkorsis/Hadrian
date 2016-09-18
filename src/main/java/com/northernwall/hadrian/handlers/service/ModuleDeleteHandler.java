@@ -46,12 +46,12 @@ import org.eclipse.jetty.server.Request;
 public class ModuleDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ModuleDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public ModuleDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -102,8 +102,7 @@ public class ModuleDeleteHandler extends BasicHandler {
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
-        getDataAccess().saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
 
         response.setStatus(200);
         request.setHandled(true);

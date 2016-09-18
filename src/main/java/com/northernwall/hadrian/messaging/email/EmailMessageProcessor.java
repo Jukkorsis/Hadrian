@@ -22,11 +22,11 @@ public class EmailMessageProcessor extends MessageProcessor {
 
     @Override
     public void init(Parameters parameters, Gson gson, OkHttpClient client) {
-        smtpHostname = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_HOSTNAME, null);
-        smtpPort = parameters.getInt(Const.EMAIL_WORK_ITEM_SMTP_POST, Const.EMAIL_WORK_ITEM_SMTP_POST_DEFAULT);
-        smtpSsl = parameters.getBoolean(Const.EMAIL_WORK_ITEM_SMTP_SSL, Const.EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT);
-        String smtpUsername = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_USERNAME, null);
-        String smtpPassword = parameters.getString(Const.EMAIL_WORK_ITEM_SMTP_PASSWORD, null);
+        smtpHostname = parameters.getString(Const.EMAIL_SMTP_HOSTNAME, null);
+        smtpPort = parameters.getInt(Const.EMAIL_SMTP_POST, Const.EMAIL_SMTP_POST_DEFAULT);
+        smtpSsl = parameters.getBoolean(Const.EMAIL_SMTP_SSL, Const.EMAIL_SMTP_SSL_DEFAULT);
+        String smtpUsername = parameters.getString(Const.EMAIL_SMTP_USERNAME, null);
+        String smtpPassword = parameters.getString(Const.EMAIL_SMTP_PASSWORD, null);
         if (smtpUsername != null && !smtpUsername.isEmpty() && smtpPassword != null && !smtpPassword.isEmpty()) {
             authenticator = new DefaultAuthenticator(smtpUsername, smtpPassword);
         }

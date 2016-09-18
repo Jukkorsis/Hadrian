@@ -35,6 +35,7 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PostHostData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -53,13 +54,13 @@ public class HostCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public HostCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -126,24 +127,24 @@ public class HostCreateHandler extends BasicHandler {
                     data.env);
             getDataAccess().saveHost(host);
 
+            List<WorkItem> workItems = new ArrayList<>(2);
+            
             WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
-            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
-
             workItemCreate.getHost().sizeCpu = data.sizeCpu;
             workItemCreate.getHost().sizeMemory = data.sizeMemory;
             workItemCreate.getHost().sizeStorage = data.sizeStorage;
             workItemCreate.getHost().version = data.version;
             workItemCreate.getHost().configVersion = data.configVersion;
             workItemCreate.getHost().reason = data.reason;
-            workItemCreate.setNextId(workItemDeploy.getId());
+            workItems.add(workItemCreate);
+
+            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
             workItemDeploy.getHost().version = data.version;
             workItemDeploy.getHost().configVersion = data.configVersion;
             workItemDeploy.getHost().reason = data.reason;
+            workItems.add(workItemDeploy);
 
-            getDataAccess().saveWorkItem(workItemCreate);
-            getDataAccess().saveWorkItem(workItemDeploy);
-
-            workItemProcess.sendWorkItem(workItemCreate);
+            workItemProcessor.processWorkItems(workItems);
         }
 
         response.setStatus(200);

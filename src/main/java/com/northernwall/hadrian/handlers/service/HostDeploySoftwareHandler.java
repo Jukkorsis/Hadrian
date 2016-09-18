@@ -39,8 +39,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -48,19 +46,17 @@ import org.slf4j.LoggerFactory;
  */
 public class HostDeploySoftwareHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostDeploySoftwareHandler.class);
-
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
     private final InfoHelper infoHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.infoHelper = infoHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -87,11 +83,11 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         if (data.version != null && data.versionUrl != null) {
             throw new Http400BadRequestException("Only one of version and versionUrl can be specified");
         }
-        if ((data.version == null || data.version.isEmpty()) 
+        if ((data.version == null || data.version.isEmpty())
                 && (data.versionUrl == null || data.versionUrl.isEmpty())) {
             throw new Http400BadRequestException("One of version and versionUrl must be specified");
         }
-        
+
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
             return;
@@ -119,35 +115,18 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             }
         }
 
-        String prevId = null;
-        int size = workItems.size();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                WorkItem workItem = workItems.get(size - i - 1);
-                workItem.setNextId(prevId);
-                prevId = workItem.getId();
-                getDataAccess().saveWorkItem(workItem);
-            }
-            workItemProcess.sendWorkItem(workItems.get(0));
-            if (data.wait) {
-                logger.info("Waiting for deployment, {} {} {}", service.getServiceName(), module.getModuleName(), data.version);
-                String lastId = workItems.get(size - 1).getId();
-                for (int i = 0; i < (size*2*10); i++) {
-                    try {
-                        Thread.sleep(module.getStartTimeOut() * 100);
-                    } catch (InterruptedException ex) {
-                    }
-                    int workItemStatus = getDataAccess().getWorkItemStatus(lastId);
-                    if (workItemStatus > 0) {
-                        logger.info("Waiting done, status {}", workItemStatus);
-                        response.setStatus(workItemStatus);
-                        request.setHandled(true);
-                        return;
-                    }
-                }
-            }
+        workItemProcessor.processWorkItems(workItems);
+
+        int status = 200;
+        if (data.wait) {
+            status = workItemProcessor.waitForProcess(
+                    workItems.get(workItems.size() - 1).getId(),
+                    module.getStartTimeOut() * 100,
+                    workItems.size() * module.getStartTimeOut() * 1_500,
+                    service.getServiceName()+" "+module.getModuleName()+" "+data.version);
         }
-        response.setStatus(200);
+
+        response.setStatus(status);
         request.setHandled(true);
     }
 

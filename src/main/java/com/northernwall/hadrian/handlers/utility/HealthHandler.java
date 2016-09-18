@@ -22,7 +22,6 @@ import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.WorkItemSender;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -48,18 +47,16 @@ public class HealthHandler extends AbstractHandler {
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final Parameters parameters;
-    private final WorkItemSender workItemSender;
     private final MessagingCoodinator messagingCoodinator;
     private final String version;
     
-    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, WorkItemSender workItemSender, MessagingCoodinator messagingCoodinator) {
+    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, MessagingCoodinator messagingCoodinator) {
         this.accessHandler = accessHandler;
         this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
         this.parameters = parameters;
-        this.workItemSender = workItemSender;
         this.messagingCoodinator = messagingCoodinator;
         String temp = getClass().getPackage().getImplementationVersion();
         if (temp == null) {
@@ -97,7 +94,6 @@ public class HealthHandler extends AbstractHandler {
         writer.addClassLine("Class - Module Artifact Helper", moduleArtifactHelper);
         writer.addClassLine("Class - Module Config Helper", moduleConfigHelper);
         writer.addClassLine("Class - Parameters", parameters);
-        writer.addClassLine("Class - Work Item Sender", workItemSender);
         dataAccess.getHealth(writer);
         messagingCoodinator.getHealth(writer);
         writer.close();

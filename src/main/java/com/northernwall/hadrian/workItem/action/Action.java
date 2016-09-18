@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2016 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,69 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.google.gson.Gson;
+import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.WorkItemProcessor;
-import java.io.IOException;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
+import java.util.Map;
 
+/**
+ *
+ * @author rthursto
+ */
 public abstract class Action {
-    protected final DataAccess dataAccess;
-    protected final WorkItemProcessor workItemProcessor;
 
-    public Action(DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
+    protected DataAccess dataAccess;
+    protected Gson gson;
+
+    public Action() {
+    }
+
+    public void init(DataAccess dataAccess, Gson gson) {
         this.dataAccess = dataAccess;
-        this.workItemProcessor = workItemProcessor;
+        this.gson = gson;
     }
 
-    public void process(WorkItem workItem, Result result) throws IOException {
-        if (result == Result.success) {
-            success(workItem);
-        } else if (result == Result.error) {
-            error(workItem);
-        }        
+    public abstract Result process(WorkItem workItem);
+
+    public abstract Result processCallback(WorkItem workItem, CallbackData callbackData);
+
+    protected void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
+        Audit audit = new Audit();
+        audit.serviceId = workItem.getService().serviceId;
+        audit.timePerformed = GMT.getGmtAsDate();
+        audit.timeRequested = workItem.getRequestDate();
+        audit.requestor = workItem.getUsername();
+        audit.type = workItem.getType();
+        audit.operation = workItem.getOperation();
+        audit.successfull = (result == Result.success);
+        if (workItem.getMainModule() != null) {
+            audit.moduleName = workItem.getMainModule().moduleName;
+        }
+        if (workItem.getHost() != null) {
+            audit.hostName = workItem.getHost().hostName;
+        }
+        if (workItem.getVip() != null) {
+            audit.vipName = workItem.getVip().dns;
+        }
+        if (notes == null || notes.isEmpty()) {
+            audit.notes = "";
+        } else {
+            audit.notes = gson.toJson(notes);
+        }
+        dataAccess.saveAudit(audit, output);
     }
 
-    protected abstract void success(WorkItem workItem) throws IOException;
-
-    protected abstract void error(WorkItem workItem) throws IOException;
+    protected String getGitUrl(WorkItem workItem) {
+        String gitUrl = "";
+        //String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
+        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_GROUP, workItem.getTeam().gitGroup);
+        gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_PROJECT, workItem.getMainModule().gitProject);
+        return gitUrl;
+    }
 
 }

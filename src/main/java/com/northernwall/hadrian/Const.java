@@ -77,21 +77,15 @@ public class Const {
     
     public static final String DOCUMENT_TOKENS = "document.tokens";
 
-    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME = "workItemSender.factoryClassName";
-    public static final String WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.workItem.noop.NoopWorkItemSenderFactory";
-
-    public static final String SIMPLE_WORK_ITEM_URL = "simpleWorkItem.url";
-    public static final String SIMPLE_WORK_ITEM_URL_DEFAULT = "http://127.0.0.1:9090/webhook/simple";
-
-    public static final String EMAIL_WORK_ITEM_SMTP_HOSTNAME = "emailWorkItem.smtp.hostname";
-    public static final String EMAIL_WORK_ITEM_SMTP_POST = "emailWorkItem.smtp.port";
-    public static final int EMAIL_WORK_ITEM_SMTP_POST_DEFAULT = 25; //465;
-    public static final String EMAIL_WORK_ITEM_SMTP_SSL = "emailWorkItem.smtp.ssl";
-    public static final boolean EMAIL_WORK_ITEM_SMTP_SSL_DEFAULT = false;
-    public static final String EMAIL_WORK_ITEM_SMTP_USERNAME = "emailWorkItem.smtp.username";
-    public static final String EMAIL_WORK_ITEM_SMTP_PASSWORD = "emailWorkItem.smtp.password";
-    public static final String EMAIL_WORK_ITEM_EMAIL_TO = "emailWorkItem.emailTo";
-    public static final String EMAIL_WORK_ITEM_EMAIL_FROM = "emailWorkItem.emailFrom";
+    public static final String EMAIL_SMTP_HOSTNAME = "email.smtp.hostname";
+    public static final String EMAIL_SMTP_POST = "email.smtp.port";
+    public static final int EMAIL_SMTP_POST_DEFAULT = 25; //465;
+    public static final String EMAIL_SMTP_SSL = "email.smtp.ssl";
+    public static final boolean EMAIL_SMTP_SSL_DEFAULT = false;
+    public static final String EMAIL_SMTP_USERNAME = "email.smtp.username";
+    public static final String EMAIL_SMTP_PASSWORD = "email.smtp.password";
+    public static final String EMAIL_TO=  "email.emailTo";
+    public static final String EMAIL_FROM = "email.emailFrom";
 
     public static final String MESSAGE_PROCESSORS = "messageProcessors";
     public static final String MESSAGE_PROCESSORS_DEFAULT = "com.northernwall.hadrian.messaging.email.EmailMessageProcessor";

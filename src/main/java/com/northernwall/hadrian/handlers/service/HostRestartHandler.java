@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -44,12 +43,12 @@ import org.eclipse.jetty.server.Request;
 public class HostRestartHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public HostRestartHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public HostRestartHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -84,34 +83,18 @@ public class HostRestartHandler extends BasicHandler {
             }
         }
 
-        String prevId = null;
-        int size = workItems.size();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                WorkItem workItem = workItems.get(size - i - 1);
-                workItem.setNextId(prevId);
-                prevId = workItem.getId();
-                getDataAccess().saveWorkItem(workItem);
-            }
-            workItemProcess.sendWorkItem(workItems.get(0));
-            if (data.wait) {
-                String lastId = workItems.get(size - 1).getId();
-                for (int i = 0; i < 30; i++) {
-                    try {
-                        Thread.sleep(20_000);
-                    } catch (InterruptedException ex) {
-                    }
-                    WorkItem workItem = getDataAccess().getWorkItem(lastId);
-                    if (workItem == null) {
-                        response.setStatus(200);
-                        request.setHandled(true);
-                        return;
-                    }
-                }
-            }
+        workItemProcessor.processWorkItems(workItems);
+
+        int status = 200;
+        if (data.wait) {
+            status = workItemProcessor.waitForProcess(
+                    workItems.get(workItems.size() - 1).getId(), 
+                    (module.getStartTimeOut() + module.getStopTimeOut()) * 100, 
+                    workItems.size() * (module.getStartTimeOut() + module.getStopTimeOut()) * 1_500, 
+                    service.getServiceName()+" "+module.getModuleName());
         }
 
-        response.setStatus(200);
+        response.setStatus(status);
         request.setHandled(true);
     }
 

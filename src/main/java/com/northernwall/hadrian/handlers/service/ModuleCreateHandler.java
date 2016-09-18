@@ -41,8 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -50,17 +48,15 @@ import org.slf4j.LoggerFactory;
  */
 public class ModuleCreateHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ModuleCreateHandler.class);
-
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ModuleCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public ModuleCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -251,9 +247,7 @@ public class ModuleCreateHandler extends BasicHandler {
             workItem.addModule(temp);
         }
 
-        getDataAccess().saveWorkItem(workItem);
-
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
         response.setStatus(200);
         request.setHandled(true);
     }

@@ -21,6 +21,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
+import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.calendar.CalendarHelper;
@@ -38,9 +39,6 @@ import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
-import com.northernwall.hadrian.workItem.WorkItemProcessorImpl;
-import com.northernwall.hadrian.workItem.WorkItemSender;
-import com.northernwall.hadrian.workItem.WorkItemSenderFactory;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import com.sun.management.OperatingSystemMXBean;
@@ -67,7 +65,6 @@ public class HadrianBuilder {
     private VipDetailsHelper vipDetailsHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
-    private WorkItemSender workItemSender;
     private MetricRegistry metricRegistry;
 
     public static HadrianBuilder create(Parameters parameters) {
@@ -90,11 +87,6 @@ public class HadrianBuilder {
 
     public HadrianBuilder setAccessHandler(Handler accessHandler) {
         this.accessHandler = accessHandler;
-        return this;
-    }
-
-    public HadrianBuilder setWorkItemSender(WorkItemSender workItemSender) {
-        this.workItemSender = workItemSender;
         return this;
     }
 
@@ -294,31 +286,11 @@ public class HadrianBuilder {
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
 
-        if (workItemSender == null) {
-            String factoryName = parameters.getString(Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME, Const.WORK_ITEM_SENDER_FACTORY_CLASS_NAME_DEFAULT);
-            Class c;
-            try {
-                c = Class.forName(factoryName);
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find WorkItemSender class " + factoryName);
-            }
-            WorkItemSenderFactory workItemSenderFactory;
-            try {
-                workItemSenderFactory = (WorkItemSenderFactory) c.newInstance();
-            } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation WorkItemSender class " + factoryName);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access WorkItemSender class " + factoryName);
-            }
-            workItemSender = workItemSenderFactory.create(parameters, dataAccess, client, metricRegistry);
-        }
-
-        WorkItemProcessor workItemProcessor = new WorkItemProcessorImpl(dataAccess, workItemSender, metricRegistry);
-        workItemSender.setWorkItemProcessor(workItemProcessor);
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, dataAccess, new Gson());
 
         DataAccessUpdater.update(dataAccess);
 
-        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, workItemSender, metricRegistry);
+        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, metricRegistry);
     }
 
     private String getHostname() {

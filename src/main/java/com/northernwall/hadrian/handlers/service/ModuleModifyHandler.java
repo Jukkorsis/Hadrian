@@ -51,12 +51,12 @@ public class ModuleModifyHandler extends BasicHandler {
     private final static Logger logger = LoggerFactory.getLogger(ModuleModifyHandler.class);
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcess) {
+    public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -206,8 +206,7 @@ public class ModuleModifyHandler extends BasicHandler {
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
-        getDataAccess().saveWorkItem(workItem);
-        workItemProcess.sendWorkItem(workItem);
+        workItemProcessor.processWorkItem(workItem);
 
         response.setStatus(200);
         request.setHandled(true);

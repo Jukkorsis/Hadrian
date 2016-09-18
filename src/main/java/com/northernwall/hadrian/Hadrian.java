@@ -93,7 +93,6 @@ import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
-import com.northernwall.hadrian.workItem.WorkItemSender;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.BindException;
 import org.slf4j.LoggerFactory;
@@ -121,8 +120,7 @@ public class Hadrian {
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
     private final CalendarHelper calendarHelper;
-    private final WorkItemProcessor workItemProcess;
-    private final WorkItemSender workItemSender;
+    private final WorkItemProcessor workItemProcessor;
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
     private final VipDetailsHelper vipDetailsHelper;
@@ -130,7 +128,7 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcess, WorkItemSender workItemSender, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -142,8 +140,7 @@ public class Hadrian {
         this.hostDetailsHelper = hostDetailsHelper;
         this.vipDetailsHelper = vipDetailsHelper;
         this.calendarHelper = calendarHelper;
-        this.workItemProcess = workItemProcess;
-        this.workItemSender = workItemSender;
+        this.workItemProcessor = workItemProcessor;
         this.metricRegistry = metricRegistry;
 
         infoHelper = new InfoHelper(parameters, client);
@@ -173,9 +170,9 @@ public class Hadrian {
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, workItemSender, messagingCoodinator), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webcontent"), false);
-        routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcess), true);
+        routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/favicon.ico", new FaviconHandler(), false);
         //Accees Handler
         routingHandler.add(MethodRule.ANY, TargetRule.ANY, "/", accessHandler, false);
@@ -204,21 +201,21 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/createRef", new ServiceRefCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/deleteRef", new ServiceRefDeleteHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/vip/details", new VipGetDetailsHandler(dataAccess, vipDetailsHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(accessHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(accessHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(accessHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(accessHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/module/file", new ModuleFileGetHandler(accessHelper, dataAccess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(accessHelper, dataAccess, workItemProcess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(accessHelper, configHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/file", new ModuleFileCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.DELETE, TargetRule.EQUALS, "/v1/module/file", new ModuleFileDeleteHandler(accessHelper, dataAccess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/details", new HostGetDetailsHandler(dataAccess, hostDetailsHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/find", new HostFindHandler(dataAccess, infoHelper, hostDetailsHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/create", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, configHelper, infoHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(accessHelper, dataAccess, workItemProcess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/create", new HostCreateHandler(accessHelper, configHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/deploy", new HostDeploySoftwareHandler(accessHelper, configHelper, infoHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(accessHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(accessHelper, configHelper, dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(accessHelper, dataAccess, client), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(accessHelper, dataAccess), true);

@@ -16,23 +16,48 @@
 package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RestartHostAction extends Action {
+public class HostRestartAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(RestartHostAction.class);
+    private final static Logger logger = LoggerFactory.getLogger(HostRestartAction.class);
 
-    public RestartHostAction(DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
-        super(dataAccess, workItemProcessor);
+    @Override
+    public Result process(WorkItem workItem) {
+        Result result = Result.success;
+        recordAudit(workItem, result, null);
+        return result;
     }
 
     @Override
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected void updateStatusBeforeProcessing(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            logger.warn("Could not find host {} being restarted too", workItem.getHost().hostId);
+            return;
+        }
+        host.setStatus(true, "Restarting...");
+        dataAccess.updateHost(host);
+    }
+
+    protected void recordAudit(WorkItem workItem, Result result, String output) {
+        Map<String, String> notes = new HashMap<>();
+        notes.put("Reason", workItem.getHost().reason);
+        recordAudit(workItem, result, notes, null);
+    }
+
     protected void success(WorkItem workItem) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
@@ -41,36 +66,17 @@ public class RestartHostAction extends Action {
         }
         host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
-
-        if (workItem.getNextId() == null) {
-            //No more hosts to restart in the chain
-            return;
-        }
-
-        WorkItem nextWorkItem = dataAccess.getWorkItem(workItem.getNextId());
-        Host nextHost = dataAccess.getHost(nextWorkItem.getService().serviceId, nextWorkItem.getHost().hostId);
-        if (nextHost == null) {
-            logger.error("Finished restarting {}, next work item is {}, but could not find it.", workItem.getHost().hostId, nextWorkItem.getHost().hostId);
-            return;
-        }
-        nextHost.setStatus(true, "Restarting...");
-        dataAccess.saveHost(nextHost);
-
-        workItemProcessor.sendWorkItem(nextWorkItem);
     }
 
-    @Override
     protected void error(WorkItem workItem) throws IOException {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        
+
         host.setStatus(false, "Last restart failed");
         dataAccess.updateHost(host);
-        
-        logger.warn("Callback for {} recorded a failure", workItem.getHost().hostId);
     }
 
 }

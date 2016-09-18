@@ -33,18 +33,18 @@ public class WorkItemCallbackHandler extends BasicHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(WorkItemCallbackHandler.class);
 
-    private final WorkItemProcessor workItemProcess;
+    private final WorkItemProcessor workItemProcessor;
 
-    public WorkItemCallbackHandler(WorkItemProcessor workItemProcess) {
+    public WorkItemCallbackHandler(WorkItemProcessor workItemProcessor) {
         super(null);
-        this.workItemProcess = workItemProcess;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         CallbackData data = fromJson(request, CallbackData.class);
         logger.info("Received {} callback {}", data.status, data.requestId);
-        workItemProcess.processCallback(data);
+        workItemProcessor.processCallback(data);
         response.setStatus(200);
         request.setHandled(true);
     }
