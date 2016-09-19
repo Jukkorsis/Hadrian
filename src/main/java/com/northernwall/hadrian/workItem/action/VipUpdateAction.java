@@ -16,12 +16,10 @@
 package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -53,7 +51,7 @@ public class VipUpdateAction extends Action {
         recordAudit(workItem, result, notes, null);
     }
 
-    protected void success(WorkItem workItem) throws IOException {
+    protected void success(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);
@@ -65,7 +63,7 @@ public class VipUpdateAction extends Action {
         dataAccess.updateVip(vip);
     }
 
-    protected void error(WorkItem workItem) throws IOException {
+    protected void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);

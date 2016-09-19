@@ -15,8 +15,6 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;

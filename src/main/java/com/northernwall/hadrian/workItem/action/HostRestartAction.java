@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -58,7 +57,7 @@ public class HostRestartAction extends Action {
         recordAudit(workItem, result, notes, null);
     }
 
-    protected void success(WorkItem workItem) throws IOException {
+    protected void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
@@ -68,7 +67,7 @@ public class HostRestartAction extends Action {
         dataAccess.updateHost(host);
     }
 
-    protected void error(WorkItem workItem) throws IOException {
+    protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);

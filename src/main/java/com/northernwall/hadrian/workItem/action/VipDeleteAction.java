@@ -15,14 +15,10 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +42,11 @@ public class VipDeleteAction extends Action {
         recordAudit(workItem, result, null, null);
     }
 
-    protected void success(WorkItem workItem) throws IOException {
+    protected void success(WorkItem workItem) {
         dataAccess.deleteVip(workItem.getService().serviceId, workItem.getVip().vipId);
     }
 
-    protected void error(WorkItem workItem) throws IOException {
+    protected void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             return;

@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -33,6 +32,7 @@ public class HostDeployAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
+        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }
@@ -70,7 +70,7 @@ public class HostDeployAction extends Action {
         recordAudit(workItem, result, notes, output);
     }
 
-    protected void success(WorkItem workItem) throws IOException {
+    protected void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
@@ -81,7 +81,7 @@ public class HostDeployAction extends Action {
         dataAccess.updateHost(host);
     }
 
-    protected void error(WorkItem workItem) throws IOException {
+    protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             logger.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
