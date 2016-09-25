@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -26,10 +27,11 @@ import org.slf4j.LoggerFactory;
 
 public class VipCreateAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(VipCreateAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(VipCreateAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
+        LOGGER.info("Creating vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         Result result = Result.success;
         recordAudit(workItem, result, null);
         return result;
@@ -50,13 +52,24 @@ public class VipCreateAction extends Action {
         recordAudit(workItem, result, notes, null);
     }
 
+    protected void success(WorkItem workItem) {
+        Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
+        if (vip == null) {
+            LOGGER.warn("Could not find vip {} being created", workItem.getVip().vipId);
+            return;
+        }
+
+        vip.setStatus(Const.NO_STATUS);
+        dataAccess.updateVip(vip);
+    }
+
     protected void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            logger.warn("Could not find vip {} being created", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being created", workItem.getVip().vipId);
             return;
         }
-        logger.warn("Deleting host record due to failure in creating host {]", vip.getVipId());
+        LOGGER.warn("Deleting host record due to failure in creating host {]", vip.getVipId());
         dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
     }
 

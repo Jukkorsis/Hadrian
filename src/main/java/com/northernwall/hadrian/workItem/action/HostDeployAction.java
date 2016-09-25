@@ -27,10 +27,11 @@ import org.slf4j.LoggerFactory;
 
 public class HostDeployAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostDeployAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostDeployAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
+        LOGGER.info("Deploying to host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
         Result result = Result.success;
         success(workItem);
         recordAudit(workItem, result, null);
@@ -45,7 +46,7 @@ public class HostDeployAction extends Action {
     protected void updateStatusBeforeProcessing(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
             return;
         }
         host.setStatus(true, "Deploying...");
@@ -73,7 +74,7 @@ public class HostDeployAction extends Action {
     protected void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
             return;
         }
 
@@ -84,7 +85,7 @@ public class HostDeployAction extends Action {
     protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
             return;
         }
 

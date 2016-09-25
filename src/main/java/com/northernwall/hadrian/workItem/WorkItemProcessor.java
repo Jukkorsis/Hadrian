@@ -29,6 +29,8 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.action.HostDisableAction;
+import com.northernwall.hadrian.workItem.action.HostEnableAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class WorkItemProcessor {
 
-    private final static Logger logger = LoggerFactory.getLogger(WorkItemProcessor.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WorkItemProcessor.class);
 
     private final DataAccess dataAccess;
     private final Gson gson;
@@ -51,6 +53,8 @@ public class WorkItemProcessor {
     private final Action hostDeploy;
     private final Action hostRestart;
     private final Action hostDelete;
+    private final Action hostDisable;
+    private final Action hostEnable;
     private final Action vipCreate;
     private final Action vipUpdate;
     private final Action vipDelete;
@@ -61,10 +65,14 @@ public class WorkItemProcessor {
         moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class, parameters);
         moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class, parameters);
         moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class, parameters);
+        
         hostCreate = constructAction("hostCreate", HostCreateAction.class, parameters);
         hostDeploy = constructAction("hostDeploy", HostDeployAction.class, parameters);
         hostRestart = constructAction("hostRestart", HostRestartAction.class, parameters);
+        hostDisable = constructAction("hostDisable", HostDisableAction.class, parameters);
+        hostEnable = constructAction("hostEnable", HostEnableAction.class, parameters);
         hostDelete = constructAction("hostDelete", HostDeleteAction.class, parameters);
+        
         vipCreate = constructAction("moduleCreate", VipCreateAction.class, parameters);
         vipUpdate = constructAction("moduleUpdate", VipUpdateAction.class, parameters);
         vipDelete = constructAction("moduleDelete", VipDeleteAction.class, parameters);
@@ -131,19 +139,19 @@ public class WorkItemProcessor {
 
         switch (result) {
             case success:
-                logger.info("Work item {} has been successfully processed, no callback expected.", workItem.getId());
+                LOGGER.info("Work item {} has been successfully processed, no callback expected.", workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
-                logger.warn("Work item {} failed to be process, no callback expected.", workItem.getId());
+                LOGGER.warn("Work item {} failed to be process, no callback expected.", workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 stopNext(workItem);
                 break;
             case wip:
-                logger.info("Work item {} is being processed, waiting for callback.", workItem.getId());
+                LOGGER.info("Work item {} is being processed, waiting for callback.", workItem.getId());
         }
     }
 
@@ -154,26 +162,26 @@ public class WorkItemProcessor {
 
         switch (result) {
             case success:
-                logger.info("Work item {} has been successfully processed.", workItem.getId());
+                LOGGER.info("Work item {} has been successfully processed.", workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
-                logger.warn("Work item {} failed to be process.", workItem.getId());
+                LOGGER.warn("Work item {} failed to be process.", workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 stopNext(workItem);
                 break;
             case wip:
-                logger.info("Work item {} is still being processed.", workItem.getId());
+                LOGGER.info("Work item {} is still being processed.", workItem.getId());
                 return;
         }
 
     }
 
     public int waitForProcess(String lastId, long step, long max, String note) {
-        logger.info("Waiting for deployment, {}", note);
+        LOGGER.info("Waiting for deployment, {}", note);
         long total = 0;
         while (total < max) {
             total = total + step;
@@ -183,11 +191,11 @@ public class WorkItemProcessor {
             }
             int workItemStatus = dataAccess.getWorkItemStatus(lastId);
             if (workItemStatus > 0) {
-                logger.info("Waiting done, status {}, {}", workItemStatus, note);
+                LOGGER.info("Waiting done, status {}, {}", workItemStatus, note);
                 return workItemStatus;
             }
         }
-        logger.warn("Done waiting, but work items are not done, {}", note);
+        LOGGER.warn("Done waiting, but work items are not done, {}", note);
         return 500;
     }
 
@@ -210,6 +218,10 @@ public class WorkItemProcessor {
                         return hostDeploy;
                     case restart:
                         return hostRestart;
+                    case disableVips:
+                        return hostDisable;
+                    case enableVips:
+                        return hostEnable;
                     case delete:
                         return hostDelete;
                 }

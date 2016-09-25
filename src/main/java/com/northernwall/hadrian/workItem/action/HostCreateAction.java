@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -26,11 +27,13 @@ import org.slf4j.LoggerFactory;
 
 public class HostCreateAction extends Action {
     
-    private final static Logger logger = LoggerFactory.getLogger(HostCreateAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostCreateAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
+        LOGGER.info("Creating host {} for {}", workItem.getHost().hostName, workItem.getService().serviceName);
         Result result = Result.success;
+        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }
@@ -52,13 +55,24 @@ public class HostCreateAction extends Action {
         recordAudit(workItem, result, notes, output);
     }
 
+    protected void success(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
+            return;
+        }
+
+        host.setStatus(false, Const.NO_STATUS);
+        dataAccess.updateHost(host);
+    }
+
     protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being created", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
-        logger.warn("Deleting host record due to failure in creating host {]", host.getHostId());
+        LOGGER.warn("Deleting host record due to failure in creating host {]", host.getHostId());
         dataAccess.deleteHost(host);
     }
 

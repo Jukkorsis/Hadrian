@@ -97,18 +97,25 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
-                        WorkItem workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
-                        workItem.getHost().version = data.version;
-                        workItem.getHost().prevVersion = infoHelper.readVersion(host.getHostName(), module.getVersionUrl());
-                        workItem.getHost().versionUrl = data.versionUrl;
-                        workItem.getHost().configVersion = data.configVersion;
-                        workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus(true, "Deploying...");
                         } else {
                             host.setStatus(true, "Deploy Queued");
                         }
                         getDataAccess().updateHost(host);
+
+                        WorkItem workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                        workItems.add(workItem);
+
+                        workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+                        workItem.getHost().version = data.version;
+                        workItem.getHost().prevVersion = infoHelper.readVersion(host.getHostName(), module.getVersionUrl());
+                        workItem.getHost().versionUrl = data.versionUrl;
+                        workItem.getHost().configVersion = data.configVersion;
+                        workItem.getHost().reason = data.reason;
+                        workItems.add(workItem);
+
+                        workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
                         workItems.add(workItem);
                     }
                 }
