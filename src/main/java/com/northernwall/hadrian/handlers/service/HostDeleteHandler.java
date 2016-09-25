@@ -29,6 +29,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.DeleteHostData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -69,10 +70,17 @@ public class HostDeleteHandler extends BasicHandler {
                     if (!host.isBusy()) {
                         host.setStatus(true, "Deleting...");
                         getDataAccess().updateHost(host);
-                        
-                        WorkItem workItem = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
-                        workItem.getHost().reason = data.reason;
-                        workItemProcessor.processWorkItem(workItem);
+
+                        List<WorkItem> workItems = new ArrayList<>(2);
+
+                        WorkItem workItemDisable = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                        workItems.add(workItemDisable);
+
+                        WorkItem workItemDelete = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
+                        workItemDelete.getHost().reason = data.reason;
+                        workItems.add(workItemDelete);
+
+                        workItemProcessor.processWorkItems(workItems);
                     }
                 }
             }

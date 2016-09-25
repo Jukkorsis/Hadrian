@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HostCreateHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostCreateHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostCreateHandler.class);
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
@@ -73,7 +73,7 @@ public class HostCreateHandler extends BasicHandler {
         if (data.count < 1) {
             throw new Http400BadRequestException("count must to at least 1");
         } else if (data.count > 10) {
-            logger.warn("Reducing count to 10, was {}", data.count);
+            LOGGER.warn("Reducing count to 10, was {}", data.count);
             data.count = 10;
         }
 
@@ -109,7 +109,7 @@ public class HostCreateHandler extends BasicHandler {
                         num = temp;
                     }
                 } catch (Exception e) {
-                    logger.warn("Error parsing int from last part of {}", existingHostName);
+                    LOGGER.warn("Error parsing int from last part of {}", existingHostName);
                 }
             }
         }
@@ -127,7 +127,7 @@ public class HostCreateHandler extends BasicHandler {
                     data.env);
             getDataAccess().saveHost(host);
 
-            List<WorkItem> workItems = new ArrayList<>(2);
+            List<WorkItem> workItems = new ArrayList<>(3);
             
             WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
             workItemCreate.getHost().sizeCpu = data.sizeCpu;
@@ -144,6 +144,9 @@ public class HostCreateHandler extends BasicHandler {
             workItemDeploy.getHost().reason = data.reason;
             workItems.add(workItemDeploy);
 
+            WorkItem workItemEnable = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+            workItems.add(workItemEnable);
+                        
             workItemProcessor.processWorkItems(workItems);
         }
 
