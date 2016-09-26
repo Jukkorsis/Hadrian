@@ -48,12 +48,14 @@ public class HostEnableAction extends Action {
         Result result = Result.success;
         List<Vip> successVips = new LinkedList<>();
         for (Vip vip : vips) {
-            result = enableVip(workItem, vip);
-            if (result == Result.error) {
-                recordAudit(workItem, result, successVips, vip);
-                return result;
+            if (vip.getAutoStyle().equals("Auto")) {
+                result = enableVip(workItem, vip);
+                if (result == Result.error) {
+                    recordAudit(workItem, result, successVips, vip);
+                    return result;
+                }
+                successVips.add(vip);
             }
-            successVips.add(vip);
         }
         
         recordAudit(workItem, result, successVips, null);

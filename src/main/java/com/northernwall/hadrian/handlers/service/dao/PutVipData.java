@@ -25,5 +25,6 @@ public class PutVipData {
     public String serviceId;
     public boolean external;
     public int servicePort;
+    public String autoStyle;
 
 }

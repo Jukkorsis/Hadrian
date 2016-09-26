@@ -1373,6 +1373,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.formSaveVip.protocol = $scope.config.protocols[0];
         $scope.formSaveVip.vipPort = 80;
         $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip.autoStyle = "Auto";
 
         $scope.save = function () {
             var dataObject = {
@@ -1384,7 +1385,8 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 network: $scope.networkModule.network,
                 protocol: $scope.formSaveVip.protocol,
                 vipPort: $scope.formSaveVip.vipPort,
-                servicePort: $scope.formSaveVip.servicePort
+                servicePort: $scope.formSaveVip.servicePort,
+                autoStyle: $scope.formSaveVip.autoStyle
             };
 
             var responsePromise = $http.post("/v1/vip/create", dataObject, {});
@@ -1411,13 +1413,15 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         $scope.formUpdateVip = {};
         $scope.formUpdateVip.external = vip.external;
         $scope.formUpdateVip.servicePort = vip.servicePort;
+        $scope.formUpdateVip.autoStyle = vip.autoStyle;
 
         $scope.save = function () {
             var dataObject = {
                 vipId: $scope.vip.vipId,
                 serviceId: $scope.service.serviceId,
                 external: $scope.formUpdateVip.external,
-                servicePort: $scope.formUpdateVip.servicePort
+                servicePort: $scope.formUpdateVip.servicePort,
+                autoStyle: $scope.formUpdateVip.autoStyle
             };
 
             var responsePromise = $http.put("/v1/vip/modify", dataObject, {});

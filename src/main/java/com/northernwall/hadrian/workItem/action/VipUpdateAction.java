@@ -32,6 +32,7 @@ public class VipUpdateAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
+        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }
@@ -60,6 +61,7 @@ public class VipUpdateAction extends Action {
         vip.setStatus(Const.NO_STATUS);
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
+        vip.setAutoStyle(workItem.getVip().autoStyle);
         dataAccess.updateVip(vip);
     }
 

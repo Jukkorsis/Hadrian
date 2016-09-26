@@ -33,6 +33,7 @@ public class VipCreateAction extends Action {
     public Result process(WorkItem workItem) {
         LOGGER.info("Creating vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         Result result = Result.success;
+        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }

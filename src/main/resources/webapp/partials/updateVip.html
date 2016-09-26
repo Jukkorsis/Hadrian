@@ -6,6 +6,8 @@
     <dl class="dl-horizontal">
         <dt>DNS:</dt>
         <dd>{{vip.dns}}</dd>
+        <dt>Root Domain:</dt>
+        <dd>{{vip.domain}}</dd>
         <dt>External:</dt>
         <dd><select ng-model="formUpdateVip.external" class="form-control"><option value="false">False</option><option value="true">True</option></select></dd>
         <dt>Network:</dt>
@@ -16,6 +18,13 @@
         <dd>{{vip.vipPort}}</dd>
         <dt>Service Port:</dt>
         <dd><input ng-model="formUpdateVip.servicePort" type="number" class="form-control"></dd>
+        <dt>Disable/Enable:</dt>
+        <dd>
+            <select ng-model="formUpdateVip.autoStyle" class="form-control">
+                <option>Auto</option>
+                <option>Manual</option>
+            </select>
+        </dd>
     </dl>
 </div>
 <div class="modal-footer">

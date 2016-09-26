@@ -34,6 +34,7 @@ public class Vip implements Comparable<Vip>{
     private String protocol;
     private int vipPort;
     private int servicePort;
+    private String autoStyle;
 
     public Vip() {
         this.vipId = UUID.randomUUID().toString();
@@ -49,7 +50,7 @@ public class Vip implements Comparable<Vip>{
         this.servicePort = 8080;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort, String autoStyle) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.status = status;
@@ -61,6 +62,7 @@ public class Vip implements Comparable<Vip>{
         this.protocol = protocol;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
+        this.autoStyle = autoStyle;
     }
 
     public String getVipId() {
@@ -149,6 +151,17 @@ public class Vip implements Comparable<Vip>{
 
     public void setServicePort(int servicePort) {
         this.servicePort = servicePort;
+    }
+
+    public String getAutoStyle() {
+        if (autoStyle == null) {
+            autoStyle = "Auto";
+        }
+        return autoStyle;
+    }
+
+    public void setAutoStyle(String autoStyle) {
+        this.autoStyle = autoStyle;
     }
 
     @Override

@@ -32,6 +32,7 @@ public class HostRestartAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
+        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }

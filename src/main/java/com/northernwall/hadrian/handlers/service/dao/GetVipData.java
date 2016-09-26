@@ -33,6 +33,7 @@ public class GetVipData {
     public String protocol;
     public int vipPort;
     public int servicePort;
+    public String autoStyle;
 
     public static GetVipData create(Vip vip) {
         GetVipData temp = new GetVipData();
@@ -46,6 +47,7 @@ public class GetVipData {
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        temp.autoStyle = vip.getAutoStyle();
         return temp;
     }
 

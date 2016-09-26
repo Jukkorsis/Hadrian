@@ -31,6 +31,7 @@ public class VipData {
     public String protocol;
     public int vipPort;
     public int servicePort;
+    public String autoStyle;
 
     public static VipData create(Vip vip) {
         if (vip == null) {
@@ -45,6 +46,7 @@ public class VipData {
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        temp.autoStyle = vip.getAutoStyle();
         return temp;
     }
 

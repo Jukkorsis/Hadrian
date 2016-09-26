@@ -25,5 +25,6 @@ public class PostVipData {
     public String protocol;
     public int vipPort;
     public int servicePort;
+    public String autoStyle;
 
 }
