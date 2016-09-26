@@ -49,6 +49,7 @@ public class GetModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
+    public String testStyle;
     public Map<String,Boolean> networkNames = new HashMap<>();
     public List<String> versions;
     public List<String> configVersions;
@@ -82,6 +83,7 @@ public class GetModuleData {
         temp.stopCmdLine = module.getStopCmdLine();
         temp.stopTimeOut = module.getStopTimeOut();
         temp.configName = module.getConfigName();
+        temp.testStyle = module.getTestStyle();
         temp.networkNames = module.getNetworkNames();
         temp.versions = new LinkedList<>();
         temp.customFunctions = new LinkedList<>();

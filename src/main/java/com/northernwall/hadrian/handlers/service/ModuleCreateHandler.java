@@ -102,48 +102,59 @@ public class ModuleCreateHandler extends BasicHandler {
             data.moduleType = ModuleType.Library;
         }
 
-        if (data.moduleType.equals(ModuleType.Library)) {
-            data.hostAbbr = "";
-            data.hostname = "";
-            data.versionUrl = "";
-            data.availabilityUrl = "";
-            data.runAs = "";
-            data.deploymentFolder = "";
-            data.dataFolder = "";
-            data.logsFolder = "";
-            data.startCmdLine = "";
-            data.startTimeOut = 0;
-            data.stopCmdLine = "";
-            data.stopTimeOut = 0;
-        } else if (data.moduleType.equals(ModuleType.Test)) {
-            data.hostAbbr = "";
-            data.mavenGroupId = "";
-            data.mavenArtifactId = "";
-            data.artifactSuffix = "";
-            data.versionUrl = "";
-            data.availabilityUrl = "";
-            data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
-            data.dataFolder = "";
-            data.logsFolder = "";
-            data.stopCmdLine = "";
-            data.stopTimeOut = 0;
-            if (data.hostname == null || data.hostname.isEmpty()) {
-                throw new Http400BadRequestException("Can not have an empty hostname");
-            }
-        } else {
-            data.hostname = "";
-            if (data.hostAbbr.contains("-")) {
-                throw new Http400BadRequestException("Can not have '-' in host abbr");
-            }
-            data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
-            data.logsFolder = scrubFolder(data.logsFolder, "logs", false);
-            if (isSubFolder(data.logsFolder, data.deploymentFolder)) {
-                throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
-            }
-            data.dataFolder = scrubFolder(data.dataFolder, "data", true);
-            if (data.dataFolder != null && isSubFolder(data.dataFolder, data.deploymentFolder)) {
-                throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
-            }
+        switch (data.moduleType) {
+            case Library:
+                data.hostAbbr = "";
+                data.hostname = "";
+                data.versionUrl = "";
+                data.availabilityUrl = "";
+                data.runAs = "";
+                data.deploymentFolder = "";
+                data.dataFolder = "";
+                data.logsFolder = "";
+                data.startCmdLine = "";
+                data.startTimeOut = 0;
+                data.stopCmdLine = "";
+                data.stopTimeOut = 0;
+                break;
+            case Test:
+                data.hostAbbr = "";
+                data.mavenGroupId = "";
+                data.mavenArtifactId = "";
+                data.artifactSuffix = "";
+                data.versionUrl = "";
+                data.availabilityUrl = "";
+                data.dataFolder = "";
+                data.logsFolder = "";
+                data.stopCmdLine = "";
+                data.stopTimeOut = 0;
+                if (data.testStyle.equals("Script")) {
+                    if (data.hostname == null || data.hostname.isEmpty()) {
+                        throw new Http400BadRequestException("Can not have an empty hostname");
+                    }
+                    data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
+                } else {
+                    data.hostname = null;
+                    data.deploymentFolder = null;
+                    data.runAs = null;
+                    data.startCmdLine = null;
+                }   
+                break;
+            default:
+                data.hostname = "";
+                if (data.hostAbbr.contains("-")) {
+                    throw new Http400BadRequestException("Can not have '-' in host abbr");
+                }  
+                data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
+                data.logsFolder = scrubFolder(data.logsFolder, "logs", false);
+                if (isSubFolder(data.logsFolder, data.deploymentFolder)) {
+                    throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
+                }  
+                data.dataFolder = scrubFolder(data.dataFolder, "data", true);
+                if (data.dataFolder != null && isSubFolder(data.dataFolder, data.deploymentFolder)) {
+                    throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
+                }   
+                break;
         }
 
         if (service.getGitMode().equals(GitMode.Consolidated)) {
@@ -229,6 +240,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine,
                 data.stopTimeOut,
                 data.configName,
+                data.testStyle,
                 data.networkNames);
         module.cleanNetworkNames(null);
         getDataAccess().saveModule(module);

@@ -1080,6 +1080,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.stopCmdLine = "";
         $scope.formSaveModule.stopTimeOut = 60;
         $scope.formSaveModule.configName = "";
+        $scope.formSaveModule.testStyle = "Maven";
 
         $scope.save = function () {
             var dataObject = {
@@ -1110,6 +1111,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
                 stopTimeOut: $scope.formSaveModule.stopTimeOut,
                 configName: $scope.formSaveModule.configName,
+                testStyle: $scope.formSaveModule.testStyle,
                 networkNames: $scope.formSaveModule.networkNames
             };
 

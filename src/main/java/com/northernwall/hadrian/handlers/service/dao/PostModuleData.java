@@ -52,6 +52,7 @@ public class PostModuleData {
     public String deployableTemplate;
     public String libraryTemplate;
     public String testTemplate;
+    public String testStyle;
     public Map<String,Boolean> networkNames = new HashMap<>();
 
 }

@@ -123,11 +123,15 @@
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
                                 </div>
-                                <div ng-if="m.moduleType === 'Test'">
+                                <div ng-if="m.moduleType === 'Test' && m.testStyle === 'Script'">
                                     <dt>Host Name:</dt>
                                     <dd>{{m.hostname}}</dd>
+                                    <dt>Run As:</dt>
+                                    <dd>{{m.runAs}}</dd>
+                                    <dt>Deployment Folder:</dt>
+                                    <dd>{{m.deploymentFolder}}</dd>
                                 </div>
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator' || m.moduleType === 'Test'">
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Run As:</dt>
                                     <dd>{{m.runAs}}</dd>
                                     <dt>Deployment Folder:</dt>
@@ -153,9 +157,11 @@
                                         <dd>{{m.configName}}</dd>
                                     </div>
                                 </div>
-                                <div ng-if="m.moduleType === 'Test'">
+                                <div ng-if="m.moduleType === 'Test' && m.testStyle === 'Script'">
                                     <dt>Test Cmd Line:</dt>
                                     <dd>{{m.startCmdLine}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Test'">
                                     <dt>Test Timeout:</dt>
                                     <dd>{{m.startTimeOut}} sec</dd>
                                 </div>

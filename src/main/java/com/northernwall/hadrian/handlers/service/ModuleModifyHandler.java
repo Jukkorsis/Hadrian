@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ModuleModifyHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ModuleModifyHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ModuleModifyHandler.class);
 
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
@@ -99,7 +99,7 @@ public class ModuleModifyHandler extends BasicHandler {
             }
         }
         if (module == null) {
-            logger.warn("Could not find module with id {} in service {}", data.moduleId, data.serviceId);
+            LOGGER.warn("Could not find module with id {} in service {}", data.moduleId, data.serviceId);
             return;
         }
         modules.removeAll(zeroModules);
@@ -111,47 +111,53 @@ public class ModuleModifyHandler extends BasicHandler {
             data.order = modules.size();
         }
 
-        if (module.getModuleType().equals(ModuleType.Library)) {
-            data.hostAbbr = "";
-            data.hostname = "";
-            data.versionUrl = "";
-            data.availabilityUrl = "";
-            data.runAs = "";
-            data.deploymentFolder = "";
-            data.dataFolder = "";
-            data.logsFolder = "";
-            data.startCmdLine = "";
-            data.startTimeOut = 0;
-            data.stopCmdLine = "";
-            data.stopTimeOut = 0;
-        } else if (module.getModuleType().equals(ModuleType.Test)) {
-            data.hostAbbr = "";
-            data.mavenGroupId = "";
-            data.mavenArtifactId = "";
-            data.artifactSuffix = "";
-            data.versionUrl = "";
-            data.availabilityUrl = "";
-            data.dataFolder = "";
-            data.logsFolder = "";
-            data.stopCmdLine = "";
-            data.stopTimeOut = 0;
-            if (data.hostname == null || data.hostname.isEmpty()) {
-                throw new Http400BadRequestException("Can not have an empty hostname");
-            }
-        } else {
-            data.hostname = "";
-            if (data.hostAbbr.contains("-")) {
-                throw new Http400BadRequestException("Can not have '-' in host abbr");
-            }
-            data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder, "deploy", false);
-            data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder, "logs", false);
-            if (ModuleCreateHandler.isSubFolder(data.logsFolder, data.deploymentFolder)) {
-                throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
-            }
-            data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder, "data", true);
-            if (data.dataFolder != null && ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
-                throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
-            }
+        switch (module.getModuleType()) {
+            case Library:
+                data.hostAbbr = "";
+                data.hostname = "";
+                data.versionUrl = "";
+                data.availabilityUrl = "";
+                data.runAs = "";
+                data.deploymentFolder = "";
+                data.dataFolder = "";
+                data.logsFolder = "";
+                data.startCmdLine = "";
+                data.startTimeOut = 0;
+                data.stopCmdLine = "";
+                data.stopTimeOut = 0;
+                break;
+            case Test:
+                data.hostAbbr = "";
+                data.mavenGroupId = "";
+                data.mavenArtifactId = "";
+                data.artifactSuffix = "";
+                data.versionUrl = "";
+                data.availabilityUrl = "";
+                data.dataFolder = "";
+                data.logsFolder = "";
+                data.stopCmdLine = "";
+                data.stopTimeOut = 0;
+                if (module.getTestStyle().equals("Script")) {
+                    if (data.hostname == null || data.hostname.isEmpty()) {
+                        throw new Http400BadRequestException("Can not have an empty hostname");
+                    }
+                }
+                break;
+            default:
+                data.hostname = "";
+                if (data.hostAbbr.contains("-")) {
+                    throw new Http400BadRequestException("Can not have '-' in host abbr");
+                }
+                data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder, "deploy", false);
+                data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder, "logs", false);
+                if (ModuleCreateHandler.isSubFolder(data.logsFolder, data.deploymentFolder)) {
+                    throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
+                }
+                data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder, "data", true);
+                if (data.dataFolder != null && ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
+                    throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
+                }
+                break;
         }
 
         module.setModuleName(data.moduleName);

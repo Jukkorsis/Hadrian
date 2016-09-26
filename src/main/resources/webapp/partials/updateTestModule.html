@@ -8,14 +8,16 @@
         <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
         <dt>Build Order:</dt>
         <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
-        <dt>Host Name:</dt>
-        <dd><input ng-model="formUpdateModule.hostname" type="text" class="form-control"></dd>
-        <dt>Run As User:</dt>
-        <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
-        <dt>Deployment Folder:</dt>
-        <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
-        <dt>Test Cmd Line:</dt>
-        <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        <div ng-if="module.testStyle === 'Script'">
+            <dt>Host Name:</dt>
+            <dd><input ng-model="formUpdateModule.hostname" type="text" class="form-control"></dd>
+            <dt>Run As User:</dt>
+            <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
+            <dt>Deployment Folder:</dt>
+            <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
+            <dt>Test Cmd Line:</dt>
+            <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        </div>
         <dt>Test Time Out:</dt>
         <dd>
             <div class="input-group">

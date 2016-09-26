@@ -29,14 +29,23 @@
         </div>
         <dt>Template:</dt>
         <dd><select ng-model="formSaveModule.testTemplate" ng-options="c for c in config.testTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
-        <dt>Host Name:</dt>
-        <dd><input ng-model="formSaveModule.hostname" type="text" class="form-control"></dd>
-        <dt>Run As User:</dt>
-        <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
-        <dt>Deployment Folder:</dt>
-        <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
-        <dt>Test Cmd Line:</dt>
-        <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        <dt>Style:</dt>
+        <dd>
+            <select ng-model="formSaveModule.testStyle" class="form-control">
+                <option>Maven</option>
+                <option>Script</option>
+            </select>
+        </dd>
+        <div ng-if="formSaveModule.testStyle === 'Script'">
+            <dt>Host Name:</dt>
+            <dd><input ng-model="formSaveModule.hostname" type="text" class="form-control"></dd>
+            <dt>Run As User:</dt>
+            <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+            <dt>Deployment Folder:</dt>
+            <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+            <dt>Test Cmd Line:</dt>
+            <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+        </div>
         <dt>Test Time Out:</dt>
         <dd>
             <div class="input-group">

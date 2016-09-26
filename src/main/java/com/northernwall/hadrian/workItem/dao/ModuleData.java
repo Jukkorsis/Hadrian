@@ -44,6 +44,7 @@ public class ModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
+    public String testStyle;
 
     public static ModuleData create(Module module) {
         if (module == null) {
@@ -74,6 +75,7 @@ public class ModuleData {
         temp.stopCmdLine = module.getStopCmdLine();
         temp.stopTimeOut = module.getStopTimeOut();
         temp.configName = module.getConfigName();
+        temp.testStyle = module.getTestStyle();
         return temp;
     }
 
