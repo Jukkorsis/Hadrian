@@ -21,8 +21,10 @@ import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import com.squareup.okhttp.OkHttpClient;
 import java.util.Map;
 
 /**
@@ -32,13 +34,17 @@ import java.util.Map;
 public abstract class Action {
 
     protected DataAccess dataAccess;
+    protected Parameters parameters;
+    protected OkHttpClient client;
     protected Gson gson;
 
     public Action() {
     }
 
-    public void init(DataAccess dataAccess, Gson gson) {
+    public void init(DataAccess dataAccess, Parameters parameters, OkHttpClient client, Gson gson) {
         this.dataAccess = dataAccess;
+        this.parameters = parameters;
+        this.client = client;
         this.gson = gson;
     }
 

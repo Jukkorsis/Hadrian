@@ -286,7 +286,7 @@ public class HadrianBuilder {
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
 
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, dataAccess, new Gson());
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, dataAccess, client, new Gson());
 
         DataAccessUpdater.update(dataAccess);
 

@@ -35,6 +35,7 @@ import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
@@ -59,26 +60,26 @@ public class WorkItemProcessor {
     private final Action vipUpdate;
     private final Action vipDelete;
 
-    public WorkItemProcessor(Parameters parameters, DataAccess dataAccess, Gson gson) {
+    public WorkItemProcessor(Parameters parameters, DataAccess dataAccess, OkHttpClient client, Gson gson) {
         this.dataAccess = dataAccess;
         this.gson = gson;
-        moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class, parameters);
-        moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class, parameters);
-        moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class, parameters);
+        moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class, parameters, client);
+        moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class, parameters, client);
+        moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class, parameters, client);
         
-        hostCreate = constructAction("hostCreate", HostCreateAction.class, parameters);
-        hostDeploy = constructAction("hostDeploy", HostDeployAction.class, parameters);
-        hostRestart = constructAction("hostRestart", HostRestartAction.class, parameters);
-        hostDisable = constructAction("hostDisable", HostDisableAction.class, parameters);
-        hostEnable = constructAction("hostEnable", HostEnableAction.class, parameters);
-        hostDelete = constructAction("hostDelete", HostDeleteAction.class, parameters);
+        hostCreate = constructAction("hostCreate", HostCreateAction.class, parameters, client);
+        hostDeploy = constructAction("hostDeploy", HostDeployAction.class, parameters, client);
+        hostRestart = constructAction("hostRestart", HostRestartAction.class, parameters, client);
+        hostDisable = constructAction("hostDisable", HostDisableAction.class, parameters, client);
+        hostEnable = constructAction("hostEnable", HostEnableAction.class, parameters, client);
+        hostDelete = constructAction("hostDelete", HostDeleteAction.class, parameters, client);
         
-        vipCreate = constructAction("moduleCreate", VipCreateAction.class, parameters);
-        vipUpdate = constructAction("moduleUpdate", VipUpdateAction.class, parameters);
-        vipDelete = constructAction("moduleDelete", VipDeleteAction.class, parameters);
+        vipCreate = constructAction("moduleCreate", VipCreateAction.class, parameters, client);
+        vipUpdate = constructAction("moduleUpdate", VipUpdateAction.class, parameters, client);
+        vipDelete = constructAction("moduleDelete", VipDeleteAction.class, parameters, client);
     }
 
-    private Action constructAction(String name, Class defaultClass, Parameters parameters) {
+    private Action constructAction(String name, Class defaultClass, Parameters parameters, OkHttpClient client) {
         String factoryName = parameters.getString("action." + name, null);
         try {
             Class c;
@@ -89,7 +90,7 @@ public class WorkItemProcessor {
                 factoryName = defaultClass.getName();
             }
             Action action = (Action) c.newInstance();
-            action.init(dataAccess, gson);
+            action.init(dataAccess, parameters, client, gson);
             return action;
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Could not build Action, could not find class " + factoryName);
