@@ -114,6 +114,10 @@
                                     </div>
                                 </div>
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
+                                    <dt>Outbound Connectivity:</dt>
+                                    <dd>{{m.outbound}}</dd>
+                                </div>
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Host Abbr:</dt>
                                     <dd>{{m.hostAbbr}}</dd>
                                     <dt>Networks:</dt>

@@ -74,9 +74,9 @@ public class WorkItemProcessor {
         hostEnable = constructAction("hostEnable", HostEnableAction.class, parameters, client);
         hostDelete = constructAction("hostDelete", HostDeleteAction.class, parameters, client);
         
-        vipCreate = constructAction("moduleCreate", VipCreateAction.class, parameters, client);
-        vipUpdate = constructAction("moduleUpdate", VipUpdateAction.class, parameters, client);
-        vipDelete = constructAction("moduleDelete", VipDeleteAction.class, parameters, client);
+        vipCreate = constructAction("vipCreate", VipCreateAction.class, parameters, client);
+        vipUpdate = constructAction("vipUpdate", VipUpdateAction.class, parameters, client);
+        vipDelete = constructAction("vipDelete", VipDeleteAction.class, parameters, client);
     }
 
     private Action constructAction(String name, Class defaultClass, Parameters parameters, OkHttpClient client) {
@@ -91,6 +91,7 @@ public class WorkItemProcessor {
             }
             Action action = (Action) c.newInstance();
             action.init(dataAccess, parameters, client, gson);
+            LOGGER.info("Constructed action {} with {}", name, factoryName);
             return action;
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Could not build Action, could not find class " + factoryName);

@@ -1066,6 +1066,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.mavenArtifactId = "";
         $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
         $scope.formSaveModule.artifactSuffix = "";
+        $scope.formSaveModule.outbound = "No";
         $scope.formSaveModule.hostAbbr = "";
         $scope.formSaveModule.hostname = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
@@ -1097,6 +1098,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
                 artifactType: $scope.formSaveModule.artifactType,
                 artifactSuffix: $scope.formSaveModule.artifactSuffix,
+                outbound: $scope.formSaveModule.outbound,
                 hostAbbr: $scope.formSaveModule.hostAbbr,
                 hostname: $scope.formSaveModule.hostname,
                 versionUrl: $scope.formSaveModule.versionUrl,
@@ -1144,6 +1146,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.mavenArtifactId = module.mavenArtifactId;
         $scope.formUpdateModule.artifactType = module.artifactType;
         $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
+        $scope.formUpdateModule.outbound = module.outbound;
         $scope.formUpdateModule.hostAbbr = module.hostAbbr;
         $scope.formUpdateModule.hostname = module.hostname;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
@@ -1170,6 +1173,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 mavenArtifactId: $scope.formUpdateModule.mavenArtifactId,
                 artifactType: $scope.formUpdateModule.artifactType,
                 artifactSuffix: $scope.formUpdateModule.artifactSuffix,
+                outbound: $scope.formUpdateModule.outbound,
                 hostAbbr: $scope.formUpdateModule.hostAbbr,
                 hostname: $scope.formUpdateModule.hostname,
                 versionUrl: $scope.formUpdateModule.versionUrl,

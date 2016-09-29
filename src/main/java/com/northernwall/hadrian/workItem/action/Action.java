@@ -79,8 +79,7 @@ public abstract class Action {
     }
 
     protected String getGitUrl(WorkItem workItem) {
-        String gitUrl = "";
-        //String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
+        String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_GROUP, workItem.getTeam().gitGroup);
         gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_PROJECT, workItem.getMainModule().gitProject);
         return gitUrl;

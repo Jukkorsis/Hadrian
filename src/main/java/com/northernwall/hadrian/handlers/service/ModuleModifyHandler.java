@@ -113,6 +113,7 @@ public class ModuleModifyHandler extends BasicHandler {
 
         switch (module.getModuleType()) {
             case Library:
+                data.outbound = "No";
                 data.hostAbbr = "";
                 data.hostname = "";
                 data.versionUrl = "";
@@ -127,6 +128,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.stopTimeOut = 0;
                 break;
             case Test:
+                data.outbound = "No";
                 data.hostAbbr = "";
                 data.mavenGroupId = "";
                 data.mavenArtifactId = "";
@@ -144,6 +146,9 @@ public class ModuleModifyHandler extends BasicHandler {
                 }
                 break;
             default:
+                if (module.getModuleType() == ModuleType.Simulator) {
+                    data.outbound = "No";
+                }
                 data.hostname = "";
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
@@ -165,6 +170,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setMavenArtifactId(data.mavenArtifactId);
         module.setArtifactType(data.artifactType);
         module.setArtifactSuffix(data.artifactSuffix);
+        module.setOutbound(data.outbound);
         module.setHostAbbr(data.hostAbbr.toLowerCase());
         module.setHostname(data.hostname);
         module.setVersionUrl(data.versionUrl);

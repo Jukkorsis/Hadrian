@@ -32,6 +32,7 @@ public class PutModuleData {
     public String mavenArtifactId;
     public String artifactType;
     public String artifactSuffix;
+    public String outbound;
     public String hostAbbr;
     public String hostname;
     public String versionUrl;

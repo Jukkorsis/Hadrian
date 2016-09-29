@@ -18,6 +18,13 @@
                         <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
                     </span>
                 </dd>
+                <dt>Outbound Connectivity:</dt>
+                <dd>
+                    <select ng-model="formUpdateModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
+                        <option>No</option>
+                        <option>Required</option>
+                    </select>
+                </dd>
                 <dt>Host Abbr:</dt>
                 <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
                 <dt>Run As User:</dt>

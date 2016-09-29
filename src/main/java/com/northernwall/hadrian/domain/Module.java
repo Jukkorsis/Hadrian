@@ -35,6 +35,7 @@ public class Module implements Comparable<Module> {
     private String mavenArtifactId;
     private String artifactType;
     private String artifactSuffix;
+    private String outbound;
     private String hostAbbr;
     private String hostname;
     private String versionUrl;
@@ -52,7 +53,7 @@ public class Module implements Comparable<Module> {
     private String testStyle;
     private Map<String,Boolean> networkNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, String testStyle, Map<String,Boolean> networkNames) {
+    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, String testStyle, Map<String,Boolean> networkNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -64,6 +65,7 @@ public class Module implements Comparable<Module> {
         this.mavenArtifactId = mavenArtifactId;
         this.artifactType = artifactType;
         this.artifactSuffix = artifactSuffix;
+        this.outbound = outbound;
         this.hostAbbr = hostAbbr;
         this.hostname = hostname;
         this.versionUrl = versionUrl;
@@ -168,6 +170,17 @@ public class Module implements Comparable<Module> {
 
     public void setArtifactSuffix(String artifactSuffix) {
         this.artifactSuffix = artifactSuffix;
+    }
+
+    public String getOutbound() {
+        if (outbound == null) {
+            outbound = "No";
+        }
+        return outbound;
+    }
+
+    public void setOutbound(String outbound) {
+        this.outbound = outbound;
     }
 
     public String getHostAbbr() {

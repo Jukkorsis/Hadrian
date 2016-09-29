@@ -226,6 +226,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.mavenArtifactId,
                 data.artifactType,
                 data.artifactSuffix,
+                data.outbound,
                 data.hostAbbr.toLowerCase(),
                 data.hostname,
                 data.versionUrl,

@@ -35,6 +35,7 @@ public class GetModuleData {
     public String mavenArtifactId;
     public String artifactType;
     public String artifactSuffix;
+    public String outbound;
     public String hostAbbr;
     public String hostname;
     public String versionUrl;
@@ -69,6 +70,7 @@ public class GetModuleData {
         temp.mavenArtifactId = module.getMavenArtifactId();
         temp.artifactType = module.getArtifactType();
         temp.artifactSuffix = module.getArtifactSuffix();
+        temp.outbound = module.getOutbound();
         temp.hostAbbr = module.getHostAbbr();
         temp.hostname = module.getHostname();
         temp.versionUrl = module.getVersionUrl();
