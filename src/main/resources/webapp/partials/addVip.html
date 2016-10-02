@@ -1,8 +1,9 @@
 <div class="modal-header">
-    <h3 class="modal-title">Add VIP</h3>
+    <h3 class="modal-title">Add VIP to {{networkModule.network}}</h3>
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <uib-alert ng-if="configNetwork.warning" type="warning">{{configNetwork.warning}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>Domain:</dt>
         <dd><input ng-model="formSaveVip.dns" type="text" class="form-control"></dd>

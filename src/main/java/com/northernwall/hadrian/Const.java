@@ -151,7 +151,7 @@ public class Const {
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
     public static final String CONFIG_NETWORKS = "config.networks";
-    public static final String CONFIG_NETWORKS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true}]";
+    public static final String CONFIG_NETWORKS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\",\"warning\":\"Please be aware that your change will affect Production.\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true}]";
     public static final String CONFIG_NETWORKS_DC = "{dc}";
     public static final String CONFIG_NETWORKS_ABBR = "{abbr}";
     public static final String CONFIG_ENVS = "config.envs";

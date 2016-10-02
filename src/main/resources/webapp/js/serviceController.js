@@ -394,6 +394,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 templateUrl: 'partials/updateVip.html',
                 controller: 'ModalUpdateVipCtrl',
                 resolve: {
+                    config: function () {
+                        return $scope.config;
+                    },
                     service: function () {
                         return $scope.service;
                     },
@@ -584,6 +587,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 templateUrl: 'partials/deleteHost.html',
                 controller: 'ModalDeleteHostCtrl',
                 resolve: {
+                    config: function () {
+                        return $scope.config;
+                    },
                     service: function () {
                         return $scope.service;
                     },
@@ -1238,6 +1244,13 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
         $scope.moduleNetwork = moduleNetwork;
         $scope.config = config;
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === moduleNetwork.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+
         var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleNetwork.moduleId + "&network=" + $scope.moduleNetwork.network, {});
         responsePromise.success(function (dataFromServer, status, headers, config) {
             $scope.dataFromServer = dataFromServer;
@@ -1370,6 +1383,13 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.networkModule = networkModule;
         $scope.config = config;
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === networkModule.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+                
         $scope.formSaveVip = {};
         $scope.formSaveVip.dns = "";
         $scope.formSaveVip.domain = $scope.config.domains[0];
@@ -1408,11 +1428,19 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'vip',
-    function ($scope, $http, $modalInstance, $route, service, vip) {
+hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'vip',
+    function ($scope, $http, $modalInstance, $route, config, service, vip) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.vip = vip;
+        $scope.config = config;
+
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === vip.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
 
         $scope.formUpdateVip = {};
         $scope.formUpdateVip.external = vip.external;
@@ -1450,6 +1478,13 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.moduleNetwork = moduleNetwork;
         $scope.config = config;
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === moduleNetwork.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+                
         $scope.modelOptions = {
             debounce: {
                 default: 500,
@@ -1520,6 +1555,13 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.config = config;
         $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === moduleNetwork.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+                
         $scope.modelOptions = {
             debounce: {
                 default: 500,
@@ -1580,6 +1622,13 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         $scope.moduleNetwork = moduleNetwork;
         $scope.config = config;
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === moduleNetwork.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+                
         $scope.formUpdateHost = {};
         $scope.formUpdateHost.reason = "";
 
@@ -1609,13 +1658,21 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         };
     }]);
 
-hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'hostNames', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, service, hostNames, moduleNetwork) {
+hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleNetwork',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleNetwork) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
         $scope.moduleNetwork = moduleNetwork;
+        $scope.config = config;
 
+        $scope.configNetwork = null;
+        for (var i = 0; i < config.networks.length; i++) {
+            if (config.networks[i].name === moduleNetwork.network) {
+                $scope.configNetwork = config.networks[i];
+            }
+        }
+                
         $scope.formDeleteHost = {};
         $scope.formDeleteHost.reason = "";
 

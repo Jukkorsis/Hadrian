@@ -1,21 +1,14 @@
 <div class="modal-header">
-    <h3 class="modal-title">Update VIP</h3>
+    <h3 class="modal-title">Update VIP in {{vip.network}}</h3>
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <uib-alert ng-if="configNetwork.warning" type="warning">{{configNetwork.warning}}</uib-alert>
     <dl class="dl-horizontal">
-        <dt>DNS:</dt>
-        <dd>{{vip.dns}}</dd>
-        <dt>Root Domain:</dt>
-        <dd>{{vip.domain}}</dd>
+        <dt>VIP:</dt>
+        <dd>{{vip.protocol}}://{{vip.dns}}.{{vip.domain}}:{{vip.vipPort}}</dd>
         <dt>External:</dt>
         <dd><select ng-model="formUpdateVip.external" class="form-control"><option value="false">False</option><option value="true">True</option></select></dd>
-        <dt>Network:</dt>
-        <dd>{{vip.network}}</dd>
-        <dt>Protocol:</dt>
-        <dd>{{vip.protocol}}</dd>
-        <dt>VIP Port:</dt>
-        <dd>{{vip.vipPort}}</dd>
         <dt>Service Port:</dt>
         <dd><input ng-model="formUpdateVip.servicePort" type="number" class="form-control"></dd>
         <dt>Disable/Enable:</dt>
