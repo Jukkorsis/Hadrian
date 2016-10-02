@@ -427,6 +427,22 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.fixVip = function (vipId) {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                vipId: vipId
+            };
+
+            var responsePromise = $http.post("/v1/vip/fix", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                alert("Request to fix vip has failed!");
+                $route.reload();
+            });
+        };
+
         $scope.openAddHostModal = function (moduleNetwork) {
             var modalInstance = $uibModal.open({
                 animation: true,

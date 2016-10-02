@@ -27,10 +27,11 @@ import org.slf4j.LoggerFactory;
 
 public class VipUpdateAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(VipUpdateAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(VipUpdateAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
+        LOGGER.info("Updating Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         Result result = Result.success;
         success(workItem);
         recordAudit(workItem, result, null);
@@ -49,13 +50,13 @@ public class VipUpdateAction extends Action {
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
         notes.put("External", Boolean.toString(workItem.getVip().external));
-        recordAudit(workItem, result, notes, null);
+        recordAudit(workItem, result, notes, output);
     }
 
     protected void success(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
         vip.setStatus(Const.NO_STATUS);
@@ -68,11 +69,12 @@ public class VipUpdateAction extends Action {
     protected void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            logger.warn("Could not find vip {} being updated", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
 
-        vip.setStatus("Update failed");
+        //vip.setStatus("Update failed");
+        vip.setStatus(Const.NO_STATUS);
         dataAccess.updateVip(vip);
     }
 

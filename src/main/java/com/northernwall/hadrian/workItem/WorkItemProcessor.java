@@ -34,6 +34,7 @@ import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
 import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
+import com.northernwall.hadrian.workItem.action.VipFixAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
@@ -63,6 +64,7 @@ public class WorkItemProcessor {
     private final Action vipCreate;
     private final Action vipUpdate;
     private final Action vipDelete;
+    private final Action vipFix;
     private final Action hostVipEnable;
     private final Action hostVipDisable;
     private final Action hostVipAdd;
@@ -87,6 +89,7 @@ public class WorkItemProcessor {
         vipCreate = constructAction("vipCreate", VipCreateAction.class);
         vipUpdate = constructAction("vipUpdate", VipUpdateAction.class);
         vipDelete = constructAction("vipDelete", VipDeleteAction.class);
+        vipFix = constructAction("vipFix", VipFixAction.class);
 
         hostVipEnable = constructAction("hostVipEnable", HostVipEnableAction.class);
         hostVipDisable = constructAction("hostVipDisable", HostVipDisableAction.class);
@@ -267,6 +270,8 @@ public class WorkItemProcessor {
                         return vipUpdate;
                     case delete:
                         return vipDelete;
+                    case fix:
+                        return vipFix;
                 }
         }
         throw new RuntimeException("Unknown work item - " + workItem.getType() + " " + workItem.getOperation());

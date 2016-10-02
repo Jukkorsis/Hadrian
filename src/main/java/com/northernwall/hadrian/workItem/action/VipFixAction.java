@@ -20,16 +20,18 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VipDeleteAction extends Action {
+public class VipFixAction extends Action {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(VipDeleteAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(VipFixAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Deleting Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        LOGGER.info("Fixing Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         Result result = Result.success;
         success(workItem);
         recordAudit(workItem, result, null);
@@ -42,21 +44,28 @@ public class VipDeleteAction extends Action {
     }
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
-        recordAudit(workItem, result, null, output);
+        Map<String, String> notes = new HashMap<>();
+        recordAudit(workItem, result, notes, output);
     }
 
     protected void success(WorkItem workItem) {
-        dataAccess.deleteVip(workItem.getService().serviceId, workItem.getVip().vipId);
+        Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
+        if (vip == null) {
+            LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
+            return;
+        }
+        vip.setStatus(Const.NO_STATUS);
+        dataAccess.updateVip(vip);
     }
 
     protected void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            LOGGER.warn("Could not find vip {} being deleted", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
             return;
         }
 
-        //vip.setStatus("Delete failed");
+        //vip.setStatus("Fix failed");
         vip.setStatus(Const.NO_STATUS);
         dataAccess.updateVip(vip);
     }

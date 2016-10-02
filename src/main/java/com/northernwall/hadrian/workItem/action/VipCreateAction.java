@@ -45,12 +45,12 @@ public class VipCreateAction extends Action {
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
         Map<String, String> notes = new HashMap<>();
-                            notes.put("Protocol", workItem.getVip().protocol);
-                            notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
-                            notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
-                            notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
-                            notes.put("External", Boolean.toString(workItem.getVip().external));
-        recordAudit(workItem, result, notes, null);
+        notes.put("Protocol", workItem.getVip().protocol);
+        notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
+        notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
+        notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
+        notes.put("External", Boolean.toString(workItem.getVip().external));
+        recordAudit(workItem, result, notes, output);
     }
 
     protected void success(WorkItem workItem) {
