@@ -19,9 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.GitMode;
-import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Network;
-import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -34,16 +32,14 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigHelper implements ParameterChangeListener {
 
-    private final static Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigHelper.class);
 
     private final Parameters parameters;
-    private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final AtomicReference<Config> config;
 
-    public ConfigHelper(Parameters parameters, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper) {
+    public ConfigHelper(Parameters parameters, ModuleConfigHelper moduleConfigHelper) {
         this.parameters = parameters;
-        this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
@@ -94,7 +90,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.gitModes.add(GitMode.Consolidated);
         newConfig.gitModes.add(GitMode.Flat);
 
-        logger.info("Config loaded");
+        LOGGER.info("Config loaded");
         return newConfig;
     }
 

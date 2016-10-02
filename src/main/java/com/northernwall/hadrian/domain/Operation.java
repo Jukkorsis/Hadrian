@@ -26,7 +26,9 @@ public enum Operation {
     restart,
     update,
     delete, 
+    enableVips, 
     disableVips, 
-    enableVips;
+    addVips, 
+    removeVips;
 
 }

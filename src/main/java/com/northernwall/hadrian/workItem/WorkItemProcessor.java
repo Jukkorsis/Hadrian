@@ -24,13 +24,14 @@ import com.northernwall.hadrian.workItem.action.ModuleUpdateAction;
 import com.northernwall.hadrian.workItem.action.Action;
 import com.northernwall.hadrian.workItem.action.ModuleCreateAction;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.action.HostDisableAction;
-import com.northernwall.hadrian.workItem.action.HostEnableAction;
+import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
+import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
@@ -38,6 +39,8 @@ import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +48,10 @@ public class WorkItemProcessor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WorkItemProcessor.class);
 
+    private final Parameters parameters;
+    private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
+    private final OkHttpClient client;
     private final Gson gson;
     private final Action moduleCreate;
     private final Action moduleUpdate;
@@ -54,32 +60,43 @@ public class WorkItemProcessor {
     private final Action hostDeploy;
     private final Action hostRestart;
     private final Action hostDelete;
-    private final Action hostDisable;
-    private final Action hostEnable;
     private final Action vipCreate;
     private final Action vipUpdate;
     private final Action vipDelete;
+    private final Action hostVipEnable;
+    private final Action hostVipDisable;
+    private final Action hostVipAdd;
+    private final Action hostVipRemove;
+    private final ExecutorService executor;
 
-    public WorkItemProcessor(Parameters parameters, DataAccess dataAccess, OkHttpClient client, Gson gson) {
+    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson) {
+        this.parameters = parameters;
+        this.configHelper = configHelper;
         this.dataAccess = dataAccess;
+        this.client = client;
         this.gson = gson;
-        moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class, parameters, client);
-        moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class, parameters, client);
-        moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class, parameters, client);
+        moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class);
+        moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class);
+        moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class);
         
-        hostCreate = constructAction("hostCreate", HostCreateAction.class, parameters, client);
-        hostDeploy = constructAction("hostDeploy", HostDeployAction.class, parameters, client);
-        hostRestart = constructAction("hostRestart", HostRestartAction.class, parameters, client);
-        hostDisable = constructAction("hostDisable", HostDisableAction.class, parameters, client);
-        hostEnable = constructAction("hostEnable", HostEnableAction.class, parameters, client);
-        hostDelete = constructAction("hostDelete", HostDeleteAction.class, parameters, client);
+        hostCreate = constructAction("hostCreate", HostCreateAction.class);
+        hostDeploy = constructAction("hostDeploy", HostDeployAction.class);
+        hostRestart = constructAction("hostRestart", HostRestartAction.class);
+        hostDelete = constructAction("hostDelete", HostDeleteAction.class);
         
-        vipCreate = constructAction("vipCreate", VipCreateAction.class, parameters, client);
-        vipUpdate = constructAction("vipUpdate", VipUpdateAction.class, parameters, client);
-        vipDelete = constructAction("vipDelete", VipDeleteAction.class, parameters, client);
+        vipCreate = constructAction("vipCreate", VipCreateAction.class);
+        vipUpdate = constructAction("vipUpdate", VipUpdateAction.class);
+        vipDelete = constructAction("vipDelete", VipDeleteAction.class);
+
+        hostVipEnable = constructAction("hostVipEnable", HostVipEnableAction.class);
+        hostVipDisable = constructAction("hostVipDisable", HostVipDisableAction.class);
+        hostVipAdd = constructAction("hostVipAdd", HostVipDisableAction.class);
+        hostVipRemove = constructAction("hostVipRemove", HostVipDisableAction.class);
+        
+        executor = Executors.newFixedThreadPool(10);
     }
 
-    private Action constructAction(String name, Class defaultClass, Parameters parameters, OkHttpClient client) {
+    private Action constructAction(String name, Class defaultClass) {
         String factoryName = parameters.getString("action." + name, null);
         try {
             Class c;
@@ -90,28 +107,34 @@ public class WorkItemProcessor {
                 factoryName = defaultClass.getName();
             }
             Action action = (Action) c.newInstance();
-            action.init(dataAccess, parameters, client, gson);
+            action.init(dataAccess, parameters, configHelper, client, gson);
             LOGGER.info("Constructed action {} with {}", name, factoryName);
             return action;
         } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Could not build Action, could not find class " + factoryName);
+            throw new RuntimeException("Could not build Action, could not find class " + factoryName, ex);
         } catch (InstantiationException ex) {
-            throw new RuntimeException("Could not build Action, could not instantiation class " + factoryName);
+            throw new RuntimeException("Could not build Action, could not instantiation class " + factoryName, ex);
         } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Could not build Action, could not access class " + factoryName);
+            throw new RuntimeException("Could not build Action, could not access class " + factoryName, ex);
         }
     }
 
-    public void processWorkItem(WorkItem workItem) throws IOException {
+    public void processWorkItem(final WorkItem workItem) throws IOException {
         if (workItem == null) {
             return;
         }
         workItem.setNextId(null);
         dataAccess.saveWorkItem(workItem);
-        process(workItem);
+        
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                process(workItem);
+            }
+        });
     }
 
-    public void processWorkItems(List<WorkItem> workItems) throws IOException {
+    public void processWorkItems(final List<WorkItem> workItems) throws IOException {
         if (workItems == null || workItems.isEmpty()) {
             return;
         }
@@ -132,7 +155,12 @@ public class WorkItemProcessor {
             dataAccess.saveWorkItem(workItem);
         }
 
-        process(workItems.get(0));
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                process(workItems.get(0));
+            }
+        });
     }
 
     private void process(WorkItem workItem) {
@@ -220,10 +248,14 @@ public class WorkItemProcessor {
                         return hostDeploy;
                     case restart:
                         return hostRestart;
-                    case disableVips:
-                        return hostDisable;
                     case enableVips:
-                        return hostEnable;
+                        return hostVipEnable;
+                    case disableVips:
+                        return hostVipDisable;
+                    case addVips:
+                        return hostVipAdd;
+                    case removeVips:
+                        return hostVipRemove;
                     case delete:
                         return hostDelete;
                 }

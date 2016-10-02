@@ -144,7 +144,7 @@ public class HostCreateHandler extends BasicHandler {
             workItemDeploy.getHost().reason = data.reason;
             workItems.add(workItemDeploy);
 
-            WorkItem workItemEnable = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
             workItems.add(workItemEnable);
                         
             workItemProcessor.processWorkItems(workItems);

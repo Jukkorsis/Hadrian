@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2016 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,16 @@ package com.northernwall.hadrian.workItem.action;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.util.LinkedList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HostDisableAction extends Action {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(HostDisableAction.class);
-
-    @Override
-    public Result process(WorkItem workItem) {
-        return Result.success;
-        //return disableVips(workItem);
-    }
+/**
+ *
+ * @author Richard
+ */
+public abstract class HostVipBaseAction extends Action {
     
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected Result disableVips(WorkItem workItem) {
-        LOGGER.info("Disabling vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
+    protected final Result processVips(WorkItem workItem) {
         List<Vip> vips = dataAccess.getVips(workItem.getService().serviceId);
         if (vips == null || vips.isEmpty()) {
             return Result.success;
@@ -49,7 +36,7 @@ public class HostDisableAction extends Action {
         List<Vip> successVips = new LinkedList<>();
         for (Vip vip : vips) {
             if (vip.getAutoStyle().equals("Auto")) {
-                result = disableVip(workItem, vip);
+                result = processVip(workItem, vip);
                 if (result == Result.error) {
                     recordAudit(workItem, result, successVips, vip);
                     return result;
@@ -62,29 +49,29 @@ public class HostDisableAction extends Action {
         return result;
     }
 
-    protected Result disableVip(WorkItem workItem, Vip vip) {
-        LOGGER.info("Disabling vip {} for {} {}", vip.getDns(), workItem.getHost().hostName, workItem.getService().serviceName);
-        return Result.success;
-    }
+    protected abstract Result processVip(WorkItem workItem, Vip vip);
 
-    protected void recordAudit(WorkItem workItem, Result result, List<Vip> successVips, Vip failedVip) {
+    private void recordAudit(WorkItem workItem, Result result, List<Vip> successVips, Vip failedVip) {
         String output = null;
         if (successVips == null || successVips.isEmpty()) {
             if (failedVip == null) {
-                output = "No VIPs to disable";
+                output = "No VIPs to " + getVerb();
             } else {
-                output = "Failed to disable VIP " + failedVip.getDns();
+                output = "Failed to enable VIP " + failedVip.getDns();
             }
         } else {
-            output = "VIPs successfully disabled:\n";
+            output = "VIPs successfully "+getVerbPastTense()+":\n";
             for (Vip vip : successVips) {
                 output = output + " - " + vip.getDns() +"\n";
             }
             if (failedVip != null) {
-                output = "Failed to disable VIP " + failedVip.getDns();
+                output = "Failed to "+getVerb()+" VIP " + failedVip.getDns();
             }
         }
         recordAudit(workItem, result, null, output);
     }
+
+    protected abstract String getVerb();
+    protected abstract String getVerbPastTense();
 
 }

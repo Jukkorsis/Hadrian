@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.workItem.action;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.db.DataAccess;
@@ -35,15 +36,17 @@ public abstract class Action {
 
     protected DataAccess dataAccess;
     protected Parameters parameters;
+    protected ConfigHelper configHelper;
     protected OkHttpClient client;
     protected Gson gson;
 
     public Action() {
     }
 
-    public void init(DataAccess dataAccess, Parameters parameters, OkHttpClient client, Gson gson) {
+    public void init(DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson) {
         this.dataAccess = dataAccess;
         this.parameters = parameters;
+        this.configHelper = configHelper;
         this.client = client;
         this.gson = gson;
     }

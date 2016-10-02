@@ -204,7 +204,7 @@ public class HadrianBuilder {
             }
         }
 
-        configHelper = new ConfigHelper(parameters, moduleArtifactHelper, moduleConfigHelper);
+        configHelper = new ConfigHelper(parameters, moduleConfigHelper);
 
         accessHelper = new AccessHelper(dataAccess);
 
@@ -286,7 +286,7 @@ public class HadrianBuilder {
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
 
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, dataAccess, client, new Gson());
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson());
 
         DataAccessUpdater.update(dataAccess);
 
