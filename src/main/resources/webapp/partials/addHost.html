@@ -4,6 +4,7 @@
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <uib-alert ng-if="configNetwork.warning" type="warning">{{configNetwork.warning}}</uib-alert>
+    <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
     <dl class="dl-horizontal">
         <dt>Data Center:</dt>
         <dd>

@@ -3,6 +3,7 @@
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <uib-alert>Backfilled hosts will NOT be automatically added to any VIPs.</uib-alert>
     <dl class="dl-horizontal">
         <dt>Data Center:</dt>
         <dd><select ng-model="formBackfillHost.dataCenter" ng-options="c for c in config.dataCenters" class="form-control"></select></dd>
