@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 
 public class HadrianBuilder {
 
-    private final static Logger logger = LoggerFactory.getLogger(HadrianBuilder.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HadrianBuilder.class);
 
     private final Parameters parameters;
     private OkHttpClient client;
@@ -300,7 +300,7 @@ public class HadrianBuilder {
             if (i > 0) {
                 hostname = hostname.substring(0, i);
             }
-            logger.info("Hostname is {}", hostname);
+            LOGGER.info("Hostname is {}", hostname);
             return hostname;
         } catch (Exception e) {
             throw new RuntimeException("Failed to find hostname", e);

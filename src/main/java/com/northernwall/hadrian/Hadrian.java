@@ -109,7 +109,7 @@ import org.slf4j.Logger;
 
 public class Hadrian {
 
-    private final static Logger logger = LoggerFactory.getLogger(Hadrian.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(Hadrian.class);
 
     private final Parameters parameters;
     private final ConfigHelper configHelper;
@@ -251,13 +251,13 @@ public class Hadrian {
     public void start() {
         try {
             server.start();
-            logger.info("Jetty server started on port {}, joining with server thread now", port);
+            LOGGER.info("Jetty server started on port {}, joining with server thread now", port);
             server.join();
         } catch (BindException be) {
-            logger.error("Can not bind to port {}, exiting", port);
+            LOGGER.error("Can not bind to port {}, exiting", port);
             System.exit(0);
         } catch (Exception ex) {
-            logger.error("Exception {} occured", ex.getMessage());
+            LOGGER.error("Exception {} occured", ex.getMessage());
         }
     }
 
