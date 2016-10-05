@@ -39,7 +39,7 @@ public class ModuleCreateAction extends Action {
         Map<String, String> notes = new HashMap<>();
         notes.put("Template", workItem.getMainModule().template);
         notes.put("Type", workItem.getMainModule().moduleType.toString());
-        recordAudit(workItem, result, notes, null);
+        recordAudit(workItem, result, notes, output);
     }
 
 }

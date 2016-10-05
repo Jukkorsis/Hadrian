@@ -69,14 +69,21 @@ public class HostRestartHandler extends BasicHandler {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
-                        WorkItem workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
-                        workItem.getHost().reason = data.reason;
                         if (workItems.isEmpty()) {
                             host.setStatus(true, "Restarting...");
                         } else {
                             host.setStatus(true, "Restart Queued");
                         }
                         getDataAccess().updateHost(host);
+
+                        WorkItem workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                        workItems.add(workItem);
+
+                        workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
+                        workItem.getHost().reason = data.reason;
+                        workItems.add(workItem);
+
+                        workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
                         workItems.add(workItem);
                     }
                 }

@@ -129,11 +129,8 @@ public class WorkItemProcessor {
         workItem.setNextId(null);
         dataAccess.saveWorkItem(workItem);
         
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                process(workItem);
-            }
+        executor.submit(() -> {
+            process(workItem);
         });
     }
 
@@ -158,17 +155,20 @@ public class WorkItemProcessor {
             dataAccess.saveWorkItem(workItem);
         }
 
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                process(workItems.get(0));
-            }
+        executor.submit(() -> {
+            process(workItems.get(0));
         });
     }
 
     private void process(WorkItem workItem) {
         Action action = getAction(workItem);
-        Result result = action.process(workItem);
+        Result result;
+        try {
+            result = action.process(workItem);
+        } catch (Exception e) {
+            LOGGER.warn("Failure while performing action {}, {}", action.getClass().getSimpleName(), e.getMessage());
+            result = Result.error;
+        }
 
         switch (result) {
             case success:
@@ -188,10 +188,16 @@ public class WorkItemProcessor {
         }
     }
 
-    public void processCallback(CallbackData callbackData) throws IOException {
+    public void processCallback(CallbackData callbackData) {
         WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
         Action action = getAction(workItem);
-        Result result = action.processCallback(workItem, callbackData);
+        Result result;
+        try {
+            result = action.processCallback(workItem, callbackData);
+        } catch (Exception e) {
+            LOGGER.warn("Failure while performing action calback {}, {}", action.getClass().getSimpleName(), e.getMessage());
+            result = Result.error;
+        }
 
         switch (result) {
             case success:
@@ -208,9 +214,7 @@ public class WorkItemProcessor {
                 break;
             case wip:
                 LOGGER.info("Work item {} is still being processed.", workItem.getId());
-                return;
         }
-
     }
 
     public int waitForProcess(String lastId, long step, long max, String note) {
