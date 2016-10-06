@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class TeamCreateHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(TeamCreateHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TeamCreateHandler.class);
     private final AccessHelper accessHelper;
 
     public TeamCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
@@ -74,7 +74,7 @@ public class TeamCreateHandler extends BasicHandler {
                 throw new Http405NotAllowedException("Failed to create new team, as a team with name " + data.teamName + " already exists");
             }
             if (temp.getGitGroup().equalsIgnoreCase(data.gitGroup)) {
-                logger.warn("Creating new team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
+                LOGGER.warn("Creating new team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
             }
         }
 

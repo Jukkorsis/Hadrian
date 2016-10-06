@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuditGetHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(AuditGetHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(AuditGetHandler.class);
 
     public AuditGetHandler(DataAccess dataAccess) {
         super(dataAccess);
@@ -72,7 +72,7 @@ public class AuditGetHandler extends BasicHandler {
                 Integer.parseInt(month), 
                 Integer.parseInt(start), 
                 Integer.parseInt(end));
-        logger.info("Got {} audit record for {} between {} {} {} and {}", 
+        LOGGER.info("Got {} audit record for {} between {} {} {} and {}", 
                 auditData.audits.size(), 
                 service.getServiceName(), 
                 year, 

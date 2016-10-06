@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleAccessHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(SimpleAccessHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleAccessHandler.class);
 
     private final SimpleSessionStore sessionStore;
 
@@ -49,7 +49,7 @@ public class SimpleAccessHandler extends AbstractHandler {
                 request.setHandled(true);
                 return;
             } else {
-                logger.warn("login failed!");
+                LOGGER.warn("login failed!");
             }
         } else {
             Cookie[] cookies = request.getCookies();
@@ -68,7 +68,7 @@ public class SimpleAccessHandler extends AbstractHandler {
             }
         }
 
-        logger.info("No session found, redirecting to login");
+        LOGGER.info("No session found, redirecting to login");
         redirect("/ui/login.html", response);
         response.addHeader("X-Login-Request", "true");
         request.setHandled(true);

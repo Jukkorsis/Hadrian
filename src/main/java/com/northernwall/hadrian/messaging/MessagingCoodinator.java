@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MessagingCoodinator implements ParameterChangeListener {
 
-    private final static Logger logger = LoggerFactory.getLogger(MessagingCoodinator.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessagingCoodinator.class);
 
     private final DataAccess dataAccess;
     private final Parameters parameters;
@@ -66,11 +66,11 @@ public class MessagingCoodinator implements ParameterChangeListener {
                     processor.init(parameters, gson, client);
                     messageProcessors.add(processor);
                 } catch (ClassNotFoundException ex) {
-                    logger.warn("Could not find MessageProcessor class {}", part);
+                    LOGGER.warn("Could not find MessageProcessor class {}", part);
                 } catch (InstantiationException ex) {
-                    logger.warn("Could not instantiation MessageProcessor class {}", part);
+                    LOGGER.warn("Could not instantiation MessageProcessor class {}", part);
                 } catch (IllegalAccessException ex) {
-                    logger.warn("Could not access MessageProcessor class {}", part);
+                    LOGGER.warn("Could not access MessageProcessor class {}", part);
                 }
             }
         }
@@ -81,11 +81,11 @@ public class MessagingCoodinator implements ParameterChangeListener {
     @Override
     public synchronized void onChange(List<String> keys) {
         messageTypes.clear();
-        logger.info("Cache of MessageTypes has been cleared.");
+        LOGGER.info("Cache of MessageTypes has been cleared.");
     }
 
     public void sendMessage(MessageType messageType, Team team, Service service, Module module, Map<String, String> data) {
-        logger.info("sendMessage {} to {} {} {}", messageType.name, team.getTeamName(), service.getServiceName(), module.getModuleName());
+        LOGGER.info("sendMessage {} to {} {} {}", messageType.name, team.getTeamName(), service.getServiceName(), module.getModuleName());
         data.put("serviceName", service.getServiceName());
         data.put("moduleName", module.getModuleName());
         data.put("teamName", team.getTeamName());
@@ -101,7 +101,7 @@ public class MessagingCoodinator implements ParameterChangeListener {
     }
 
     public void sendMessage(MessageType messageType, Team team, Service service, Map<String, String> data) {
-        logger.info("sendMessage {} to {} {}", messageType.name, team.getTeamName(), service.getServiceName());
+        LOGGER.info("sendMessage {} to {} {}", messageType.name, team.getTeamName(), service.getServiceName());
         data.put("serviceName", service.getServiceName());
         data.put("teamName", team.getTeamName());
 
@@ -137,7 +137,7 @@ public class MessagingCoodinator implements ParameterChangeListener {
         for (ModuleRef ref : refs) {
             Service tempService = dataAccess.getService(ref.getClientServiceId());
             Team tempTeam = dataAccess.getTeam(tempService.getTeamId());
-            logger.info("also sending message {} to {}", messageType.name, tempTeam.getTeamName());
+            LOGGER.info("also sending message {} to {}", messageType.name, tempTeam.getTeamName());
             teams.add(tempTeam);
         }
     }
@@ -158,7 +158,7 @@ public class MessagingCoodinator implements ParameterChangeListener {
         }
         String temp = parameters.getString("messageType." + messageTypeName, null);
         if (temp == null) {
-            logger.warn("Could not find MessageType {}", messageTypeName);
+            LOGGER.warn("Could not find MessageType {}", messageTypeName);
             return null;
         }
         MessageType messageType = gson.fromJson(temp, MessageType.class);

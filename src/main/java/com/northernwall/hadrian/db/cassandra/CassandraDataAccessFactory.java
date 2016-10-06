@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
 
-    private final static Logger logger = LoggerFactory.getLogger(CassandraDataAccessFactory.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CassandraDataAccessFactory.class);
 
     private Cluster cluster;
     private CassandraDataAccess dataAccess;
@@ -74,7 +74,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         for (String node : nodeParts) {
             node = node.trim();
             if (!node.isEmpty()) {
-                logger.info("Adding Cassandra node {}", node);
+                LOGGER.info("Adding Cassandra node {}", node);
                 builder.addContactPoint(node);
             }
         }
@@ -83,9 +83,9 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         }
         cluster = builder.build();
         Metadata metadata = cluster.getMetadata();
-        logger.info("Connected to cluster: {}", metadata.getClusterName());
+        LOGGER.info("Connected to cluster: {}", metadata.getClusterName());
         for (Host host : metadata.getAllHosts()) {
-            logger.info("Datacenter: {} Host: {} Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
+            LOGGER.info("Datacenter: {} Host: {} Rack: {}", host.getDatacenter(), host.getAddress(), host.getRack());
         }
     }
 
@@ -93,9 +93,9 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         try (Session session = cluster.connect(keyspace)) {
             if (createKeyspace) {
                 session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspace + " WITH replication = {'class':'SimpleStrategy', 'replication_factor':" + replicationFactor + "};");
-                logger.info("Keyspace {} created", keyspace);
+                LOGGER.info("Keyspace {} created", keyspace);
             } else {
-                logger.info("Not calling create keyspace for {}", keyspace);
+                LOGGER.info("Not calling create keyspace for {}", keyspace);
             }
             
             //Version tables
@@ -140,7 +140,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             }
             session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
             session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
-            logger.info("Tables created");
+            LOGGER.info("Tables created");
         }  
     }
 
@@ -148,7 +148,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     public void run() {
         dataAccess.close();
         cluster.close();
-        logger.info("Connection to cluster closed");
+        LOGGER.info("Connection to cluster closed");
     }
 
 }

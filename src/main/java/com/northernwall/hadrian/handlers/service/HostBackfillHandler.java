@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HostBackfillHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostBackfillHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostBackfillHandler.class);
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;

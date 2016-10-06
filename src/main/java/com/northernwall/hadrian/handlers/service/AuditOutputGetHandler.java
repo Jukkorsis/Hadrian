@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuditOutputGetHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(AuditOutputGetHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(AuditOutputGetHandler.class);
 
     public AuditOutputGetHandler(DataAccess dataAccess) {
         super(dataAccess);
@@ -45,7 +45,7 @@ public class AuditOutputGetHandler extends BasicHandler {
         String serviceId = request.getParameter("serviceId");
         String auditId = request.getParameter("auditId");
 
-        logger.info("Request for Audit Output for {} on service {}", auditId, serviceId);
+        LOGGER.info("Request for Audit Output for {} on service {}", auditId, serviceId);
 
         response.setContentType(Const.TEXT);
         try (Writer w = new OutputStreamWriter(response.getOutputStream())) {

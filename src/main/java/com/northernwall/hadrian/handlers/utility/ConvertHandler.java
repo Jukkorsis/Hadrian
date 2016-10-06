@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 Richard Thurston.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.northernwall.hadrian.handlers.utility;
 
 import com.northernwall.hadrian.db.DataAccess;
@@ -18,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConvertHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ConvertHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConvertHandler.class);
 
     public ConvertHandler(DataAccess dataAccess) {
         super(dataAccess);
@@ -39,7 +54,7 @@ public class ConvertHandler extends BasicHandler {
                                 && !module.getNetworkNames().isEmpty()
                                 && module.getNetworkNames().containsKey(oldValue)) {
                             boolean value = module.getNetworkNames().get(oldValue).booleanValue();
-                            logger.info("Found a module with '{}' network, {} in {} with value {}", oldValue, module.getModuleName(), service.getServiceName(), value);
+                            LOGGER.info("Found a module with '{}' network, {} in {} with value {}", oldValue, module.getModuleName(), service.getServiceName(), value);
                             module.getNetworkNames().put(newValue, value);
                             module.getNetworkNames().remove(oldValue);
                             getDataAccess().saveModule(module);
@@ -47,7 +62,7 @@ public class ConvertHandler extends BasicHandler {
                         List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), oldValue);
                         if (moduleFiles != null && !moduleFiles.isEmpty()) {
                             for (ModuleFile moduleFile : moduleFiles) {
-                                logger.info("Found a module file with '{}' network, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
+                                LOGGER.info("Found a module file with '{}' network, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
                                 moduleFile.setNetwork(newValue);
                                 getDataAccess().saveModuleFile(moduleFile);
                             }
@@ -58,7 +73,7 @@ public class ConvertHandler extends BasicHandler {
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
                         if (host.getNetwork().equals(oldValue)) {
-                            logger.info("Found a host with '{}' network, {} in {}", oldValue, host.getHostName(), service.getServiceName());
+                            LOGGER.info("Found a host with '{}' network, {} in {}", oldValue, host.getHostName(), service.getServiceName());
                             host.setNetwork(newValue);
                             getDataAccess().saveHost(host);
                         }
@@ -68,7 +83,7 @@ public class ConvertHandler extends BasicHandler {
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
                         if (vip.getNetwork().equals(oldValue)) {
-                            logger.info("Found a VIP with '{}' network, {} in {}", oldValue, vip.getDns(), service.getServiceName());
+                            LOGGER.info("Found a VIP with '{}' network, {} in {}", oldValue, vip.getDns(), service.getServiceName());
                             vip.setNetwork(newValue);
                             getDataAccess().saveVip(vip);
                         }

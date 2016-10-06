@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class HostRestartAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostRestartAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostRestartAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
@@ -45,7 +45,7 @@ public class HostRestartAction extends Action {
     protected void updateStatusBeforeProcessing(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being restarted too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being restarted too", workItem.getHost().hostId);
             return;
         }
         host.setStatus(true, "Restarting...");
@@ -61,7 +61,7 @@ public class HostRestartAction extends Action {
     protected void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
         host.setStatus(false, Const.NO_STATUS);
@@ -71,7 +71,7 @@ public class HostRestartAction extends Action {
     protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being restarted", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
 

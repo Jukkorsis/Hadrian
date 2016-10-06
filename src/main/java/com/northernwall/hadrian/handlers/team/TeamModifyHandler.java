@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class TeamModifyHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(TeamModifyHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TeamModifyHandler.class);
     private final AccessHelper accessHelper;
 
     public TeamModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
@@ -67,7 +67,7 @@ public class TeamModifyHandler extends BasicHandler {
                     throw new Http405NotAllowedException("Can not change team name, as a team with name " + data.teamName + " already exists");
                 }
                 if (temp.getGitGroup().equals(data.gitGroup)) {
-                    logger.warn("Modifying team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
+                    LOGGER.warn("Modifying team with name " + data.teamName + ", but it reuses another team's (" + temp.getTeamName() + ") GIT Group, " + data.gitGroup);
                 }
             }
         }

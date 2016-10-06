@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 Richard Thurston.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.northernwall.hadrian.details.simple;
 
 import com.google.gson.Gson;
@@ -21,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleVipDetailsRunnable implements Runnable {
 
-    private final static Logger logger = LoggerFactory.getLogger(SimpleVipDetailsRunnable.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleVipDetailsRunnable.class);
 
     private final Gson gson;
     private final OkHttpClient client;
@@ -85,11 +100,11 @@ public class SimpleVipDetailsRunnable implements Runnable {
                     VipsDao vipsInfo = gson.fromJson(reader, VipsDao.class);
                     return vipsInfo.vips.get(0);
                 } else {
-                    logger.warn("Call to {} failed with code {}", url, resp.code());
+                    LOGGER.warn("Call to {} failed with code {}", url, resp.code());
                 }
             }
         } catch (Exception ex) {
-            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
+            LOGGER.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
         }
         return null;
     }
@@ -106,11 +121,11 @@ public class SimpleVipDetailsRunnable implements Runnable {
                     VipPoolsDao vipPoolsInfo = gson.fromJson(reader, VipPoolsDao.class);
                     return vipPoolsInfo.pools.get(0);
                 } else {
-                    logger.warn("Call to {} failed with code {}", url, resp.code());
+                    LOGGER.warn("Call to {} failed with code {}", url, resp.code());
                 }
             }
         } catch (Exception ex) {
-            logger.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
+            LOGGER.warn("Error while getting secondary vip details with {}, error {}", url, ex.getMessage());
         }
         return null;
     }

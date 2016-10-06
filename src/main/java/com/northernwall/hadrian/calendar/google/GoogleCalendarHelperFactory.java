@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
 
-    private final static Logger logger = LoggerFactory.getLogger(GoogleCalendarHelperFactory.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(GoogleCalendarHelperFactory.class);
 
     @Override
     public CalendarHelper create(Parameters parameters, OkHttpClient client) {
@@ -49,19 +49,19 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
 
             String accountId = parameters.getString(Const.CALENDAR_GOOGLE_ACCOUNT_ID, null);
             if (accountId == null || accountId.isEmpty()) {
-                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_ACCOUNT_ID);
+                LOGGER.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_ACCOUNT_ID);
                 return new SimpleCalendarHelper();
             }
 
             String privateKeyId = parameters.getString(Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID, null);
             if (privateKeyId == null || privateKeyId.isEmpty()) {
-                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID);
+                LOGGER.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PRIVATE_KEY_ID);
                 return new SimpleCalendarHelper();
             }
             
             PrivateKey privateKey = getPemPrivateKey(parameters);
             if (privateKey == null) {
-                logger.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PEM_FILE);
+                LOGGER.error("{} can not be null or empty", Const.CALENDAR_GOOGLE_PEM_FILE);
                 return new SimpleCalendarHelper();
             }
 
@@ -82,13 +82,13 @@ public class GoogleCalendarHelperFactory implements CalendarHelperFactory {
             Calendar calendarClient = new Builder(httpTransport, jsonFactory, credential)
                     .setApplicationName(appName)
                     .build();
-            logger.info("Finished building GoogleCalendarHelper successfully");
+            LOGGER.info("Finished building GoogleCalendarHelper successfully");
             return new GoogleCalendarHelper(calendarClient, parameters);
         } catch (IOException ex) {
-            logger.error("IO Exception while building GoogleCalendarHelper", ex);
+            LOGGER.error("IO Exception while building GoogleCalendarHelper", ex);
             return new SimpleCalendarHelper();
         } catch (GeneralSecurityException ex) {
-            logger.error("General Security Exception while building GoogleCalendarHelper", ex);
+            LOGGER.error("General Security Exception while building GoogleCalendarHelper", ex);
             return new SimpleCalendarHelper();
         }
     }

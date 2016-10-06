@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class AccessHelper {
 
-    private final static Logger logger = LoggerFactory.getLogger(AccessHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(AccessHelper.class);
 
     private final DataAccess dataAccess;
 
@@ -43,10 +43,10 @@ public class AccessHelper {
         if (user == null) {
             List<User> users = dataAccess.getUsers();
             if (users == null || users.isEmpty()) {
-                logger.info("No users found. So creating {} as the first user", username);
+                LOGGER.info("No users found. So creating {} as the first user", username);
                 user = new User(username, username, true, false, false);
             } else {
-                logger.info("User {} not found, creating", username);
+                LOGGER.info("User {} not found, creating", username);
                 user = new User(username, username, false, false, false);
             }
             dataAccess.saveUser(user);

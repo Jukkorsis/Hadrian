@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WorkItemCallbackHandler extends BasicHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(WorkItemCallbackHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WorkItemCallbackHandler.class);
 
     private final WorkItemProcessor workItemProcessor;
 
@@ -43,7 +43,7 @@ public class WorkItemCallbackHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         CallbackData data = fromJson(request, CallbackData.class);
-        logger.info("Received {} callback {}", data.status, data.requestId);
+        LOGGER.info("Received {} callback {}", data.status, data.requestId);
         workItemProcessor.processCallback(data);
         response.setStatus(200);
         request.setHandled(true);

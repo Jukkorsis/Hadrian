@@ -38,7 +38,7 @@ import org.w3c.dom.Node;
 
 public class MavenHelper implements ModuleArtifactHelper {
 
-    private final static Logger logger = LoggerFactory.getLogger(MavenHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MavenHelper.class);
 
     private final OkHttpClient client;
     protected final Parameters parameters;
@@ -79,7 +79,7 @@ public class MavenHelper implements ModuleArtifactHelper {
                     versions = processMavenStream(inputStream);
                 }
             } catch (Exception ex) {
-                logger.error("Error reading maven version from {} {}, {}",
+                LOGGER.error("Error reading maven version from {} {}, {}",
                         module.getMavenGroupId(),
                         module.getMavenArtifactId(),
                         ex.getMessage());

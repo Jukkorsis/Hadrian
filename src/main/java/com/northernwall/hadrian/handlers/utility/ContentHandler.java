@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ContentHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ContentHandler.class);
 
     private final String rootPath;
     private final String indexPath;
@@ -72,7 +72,7 @@ public class ContentHandler extends AbstractHandler {
                         }
                         content = new CachedContent(is);
                         cache.put(resource, content);
-                        logger.info("Loaded content {} into cache, {} bytes", resource, content.getSize());
+                        LOGGER.info("Loaded content {} into cache, {} bytes", resource, content.getSize());
                     }
                 }
             }

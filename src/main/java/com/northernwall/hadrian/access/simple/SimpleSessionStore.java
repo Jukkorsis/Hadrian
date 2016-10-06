@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SimpleSessionStore {
-    private final static Logger logger = LoggerFactory.getLogger(SimpleSessionStore.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleSessionStore.class);
 
     private final AccessHelper accessHelper;
     private final Map<String, SimpleSession> sessions;
@@ -40,18 +40,18 @@ public class SimpleSessionStore {
 
         User user = accessHelper.getUser(username);
 
-        logger.info("login passed for {}, session {} started", user.getUsername(), session.getSessionId());
+        LOGGER.info("login passed for {}, session {} started", user.getUsername(), session.getSessionId());
         return session.getSessionId();
     }
 
     public User getUserForSession(String sessionId) {
         SimpleSession session = sessions.get(sessionId);
         if (session == null) {
-            logger.warn("Could not find user sesion with ID {}", sessionId);
+            LOGGER.warn("Could not find user sesion with ID {}", sessionId);
             return null;
         }
         if (session.getEndDateTime() < System.currentTimeMillis()) {
-            logger.warn("Trying to use session {} which has expried", sessionId);
+            LOGGER.warn("Trying to use session {} which has expried", sessionId);
             sessions.remove(sessionId);
             return null;
         }

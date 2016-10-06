@@ -28,16 +28,14 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.parameters.Parameters;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GoogleCalendarHelper extends CalendarHelper {
 
-    private final static Logger logger = LoggerFactory.getLogger(GoogleCalendarHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(GoogleCalendarHelper.class);
 
     private final Calendar calendarClient;
     private final Parameters parameters;
@@ -101,7 +99,7 @@ public class GoogleCalendarHelper extends CalendarHelper {
                 }
             }
         } catch (IOException ex) {
-            logger.warn("IO Exception while getting calendar entries, {}", ex.getMessage());
+            LOGGER.warn("IO Exception while getting calendar entries, {}", ex.getMessage());
         }
     }
     

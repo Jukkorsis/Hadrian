@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
-    private final static Logger logger = LoggerFactory.getLogger(InMemoryDataAccessFactory.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(InMemoryDataAccessFactory.class);
     
     private InMemoryDataAccess dataAccess;
     private String dataFileName;
@@ -43,7 +43,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
         dataAccess = load();
         
         if (dataAccess == null) {
-            logger.info("Creating a new In Memory store");
+            LOGGER.info("Creating a new In Memory store");
             dataAccess = new InMemoryDataAccess();
         }
         
@@ -63,7 +63,7 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
         try {  
             return gson.fromJson(new FileReader(file), InMemoryDataAccess.class);
         } catch (FileNotFoundException ex) {
-            logger.error("Failed to read file, {}", ex.getMessage());
+            LOGGER.error("Failed to read file, {}", ex.getMessage());
             return null;
         }
     }
@@ -74,9 +74,9 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (JsonWriter jw = new JsonWriter(new FileWriter(file))) {
             gson.toJson(dataAccess, InMemoryDataAccess.class, jw);
-            logger.info("In Memory store saved to disk, {}", file.getName());
+            LOGGER.info("In Memory store saved to disk, {}", file.getName());
         } catch (Exception ex) {
-            logger.error("Faled to save In Memory, {}", ex.getMessage());
+            LOGGER.error("Faled to save In Memory, {}", ex.getMessage());
         }
     }
 

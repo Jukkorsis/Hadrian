@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class HostDeleteAction extends Action {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostDeleteAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostDeleteAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
@@ -50,7 +50,7 @@ public class HostDeleteAction extends Action {
     protected void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being delete.", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
             return;
         }
         dataAccess.deleteHost(host);
@@ -59,7 +59,7 @@ public class HostDeleteAction extends Action {
     protected void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            logger.warn("Could not find host {} being delete.", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
             return;
         }
         host.setStatus(false, "Delete host failed");

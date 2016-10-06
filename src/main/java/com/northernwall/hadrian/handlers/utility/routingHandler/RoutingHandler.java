@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class RoutingHandler extends AbstractHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(RoutingHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoutingHandler.class);
 
     private final List<RouteEntry> getRoutes;
     private final List<RouteEntry> putRoutes;
@@ -95,20 +95,20 @@ public class RoutingHandler extends AbstractHandler {
             if (entry.targetRule.test(entry.targetPattern, target)) {
                 try {
                     if (entry.logAccess) {
-                        logger.info("{} handling {} request for {}", entry.name, request.getMethod(), target);
+                        LOGGER.info("{} handling {} request for {}", entry.name, request.getMethod(), target);
                     }
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {
                         return;
                     }
                 } catch (HttpAbstractException e) {
-                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target);
+                    LOGGER.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target);
                     response.getWriter().print(e.getMessage());
                     response.setStatus(e.getStatus());
                     request.setHandled(true);
                     return;
                 } catch (Exception e) {
-                    logger.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target, e);
+                    LOGGER.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target, e);
                     response.getWriter().print("Internal Server Error.");
                     response.setStatus(500);
                     request.setHandled(true);
@@ -116,7 +116,7 @@ public class RoutingHandler extends AbstractHandler {
                 }
             }
         }
-        logger.info("Could not find a handler for {} {}", request.getMethod(), target);
+        LOGGER.info("Could not find a handler for {} {}", request.getMethod(), target);
     }
 
 }

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChangeListener {
 
-    private final static Logger logger = LoggerFactory.getLogger(HostDetailsHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostDetailsHelper.class);
 
     private final OkHttpClient client;
     private final Parameters parameters;
@@ -61,7 +61,7 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
     @Override
     public void onChange(List<String> keys) {
         load();
-        logger.info("Reloading parameters.");
+        LOGGER.info("Reloading parameters.");
     }
 
     private void load() {
@@ -123,11 +123,11 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
                         }
                     }
                 } else {
-                    logger.warn("Call to {} failed with code {}", url, resp.code());
+                    LOGGER.warn("Call to {} failed with code {}", url, resp.code());
                 }
             }
         } catch (Exception ex) {
-            logger.warn("Error while getting secondary host details for {}, error {}", host.getHostName(), ex.getMessage());
+            LOGGER.warn("Error while getting secondary host details for {}, error {}", host.getHostName(), ex.getMessage());
         }
     }
 
