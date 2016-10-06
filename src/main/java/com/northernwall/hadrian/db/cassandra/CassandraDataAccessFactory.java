@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.db.cassandra;
 
-import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Host;
@@ -27,6 +26,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.parameters.Parameters;
+import org.dsh.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

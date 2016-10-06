@@ -15,12 +15,6 @@
  */
 package com.northernwall.hadrian;
 
-import com.codahale.metrics.ConsoleReporter;
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.Graphite;
-import com.codahale.metrics.graphite.GraphiteReporter;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -41,11 +35,12 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
-import com.sun.management.OperatingSystemMXBean;
-import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
+import org.dsh.metrics.JvmMetrics;
+import org.dsh.metrics.MetricRegistry;
+import org.dsh.metrics.listeners.ConsoleListener;
+import org.dsh.metrics.listeners.KairosDBListener;
 import org.eclipse.jetty.server.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,11 +85,6 @@ public class HadrianBuilder {
         return this;
     }
 
-    public HadrianBuilder setMetricRegistry(MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
-        return this;
-    }
-
     public Hadrian builder() {
         client = new OkHttpClient();
         client.setConnectTimeout(2, TimeUnit.SECONDS);
@@ -104,45 +94,21 @@ public class HadrianBuilder {
         client.setFollowRedirects(false);
         client.setConnectionPool(new ConnectionPool(5, 60 * 1000));
 
-        if (metricRegistry == null) {
-            metricRegistry = new MetricRegistry();
-
-            final OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            metricRegistry.register("jvm.processCpuLoad", new Gauge<Double>() {
-                @Override
-                public Double getValue() {
-                    return osBean.getProcessCpuLoad();
-                }
-            });
-            metricRegistry.register("jvm.systemCpuLoad", new Gauge<Double>() {
-                @Override
-                public Double getValue() {
-                    return osBean.getSystemCpuLoad();
-                }
-            });
-
-            if (parameters.getBoolean("metrics.console", false)) {
-                ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
-                        .convertRatesTo(TimeUnit.SECONDS)
-                        .convertDurationsTo(TimeUnit.MILLISECONDS)
-                        .build();
-                reporter.start(1, TimeUnit.MINUTES);
-            }
-
-            String graphiteUrl = parameters.getString("metrics.graphite.url", null);
-            int graphitePort = parameters.getInt("metrics.graphite.port", -1);
-            if (graphiteUrl != null && graphitePort > -1) {
-                Graphite graphite = new Graphite(new InetSocketAddress(graphiteUrl, graphitePort));
-                GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry)
-                        .prefixedWith(parameters.getString("metrics.graphite.prefix", "hadrian") + "." + getHostname())
-                        .convertRatesTo(TimeUnit.SECONDS)
-                        .convertDurationsTo(TimeUnit.MILLISECONDS)
-                        .filter(MetricFilter.ALL)
-                        .build(graphite);
-                reporter.start(parameters.getInt("metrics.graphite.poll", 20), TimeUnit.SECONDS);
-            }
+        metricRegistry = new MetricRegistry.Builder("PST", "SDT")
+                .addTag("hostName", getHostname())
+                .build();
+        JvmMetrics.addMetrics(metricRegistry, 10);
+        if (parameters.getBoolean("metrics.console", false)) {
+            metricRegistry.addEventListener(new ConsoleListener(System.out));
         }
-
+        String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
+        if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
+            metricRegistry.addEventListener(new KairosDBListener(
+                    kairosDbUrl,
+                    parameters.getString("metrics.kairosDb.username", null),
+                    parameters.getString("metrics.kairosDb.password", null)));
+        }
+        
         if (dataAccess == null) {
             String factoryName = parameters.getString(Const.DATA_ACCESS_FACTORY_CLASS_NAME, Const.DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
             Class c;
@@ -286,7 +252,7 @@ public class HadrianBuilder {
             calendarHelper = calendarHelperFactory.create(parameters, client);
         }
 
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson());
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson(), metricRegistry);
 
         DataAccessUpdater.update(dataAccess);
 

@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.db.cassandra;
 
-import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -47,6 +46,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import org.dsh.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

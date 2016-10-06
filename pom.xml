@@ -86,16 +86,11 @@
             <artifactId>okhttp</artifactId>
             <version>2.7.5</version>
         </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>3.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-graphite</artifactId>
-            <version>3.1.2</version>
-        </dependency>
+  	<dependency>
+            <groupId>org.kairosdb</groupId>
+            <artifactId>client</artifactId>
+            <version>2.1.0</version>
+        </dependency>        
         <!--For Cassandra store support-->
         <dependency>
             <groupId>com.datastax.cassandra</groupId>

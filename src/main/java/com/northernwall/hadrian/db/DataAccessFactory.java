@@ -15,8 +15,8 @@
  */
 package com.northernwall.hadrian.db;
 
-import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.parameters.Parameters;
+import org.dsh.metrics.MetricRegistry;
 
 /**
  *

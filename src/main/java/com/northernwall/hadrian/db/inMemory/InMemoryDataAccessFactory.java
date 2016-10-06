@@ -16,7 +16,6 @@
 
 package com.northernwall.hadrian.db.inMemory;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
@@ -28,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import org.dsh.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,10 +15,10 @@
  */
 package com.northernwall.hadrian.access.simple;
 
-import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.parameters.Parameters;
+import org.dsh.metrics.MetricRegistry;
 import org.eclipse.jetty.server.Handler;
 
 public class SimpleAccessHandlerFactory implements AccessHandlerFactory {

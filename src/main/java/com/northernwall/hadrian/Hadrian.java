@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian;
 
-import com.codahale.metrics.MetricRegistry;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -96,6 +95,7 @@ import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.BindException;
+import org.dsh.metrics.MetricRegistry;
 import org.slf4j.LoggerFactory;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;

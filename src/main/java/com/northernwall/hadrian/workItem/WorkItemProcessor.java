@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.dsh.metrics.MetricRegistry;
+import org.dsh.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,7 @@ public class WorkItemProcessor {
     private final DataAccess dataAccess;
     private final OkHttpClient client;
     private final Gson gson;
+    private final MetricRegistry metricRegistry;
     private final Action moduleCreate;
     private final Action moduleUpdate;
     private final Action moduleDelete;
@@ -71,21 +74,23 @@ public class WorkItemProcessor {
     private final Action hostVipRemove;
     private final ExecutorService executor;
 
-    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson) {
+    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.client = client;
         this.gson = gson;
+        this.metricRegistry = metricRegistry;
+
         moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class);
         moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class);
         moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class);
-        
+
         hostCreate = constructAction("hostCreate", HostCreateAction.class);
         hostDeploy = constructAction("hostDeploy", HostDeployAction.class);
         hostRestart = constructAction("hostRestart", HostRestartAction.class);
         hostDelete = constructAction("hostDelete", HostDeleteAction.class);
-        
+
         vipCreate = constructAction("vipCreate", VipCreateAction.class);
         vipUpdate = constructAction("vipUpdate", VipUpdateAction.class);
         vipDelete = constructAction("vipDelete", VipDeleteAction.class);
@@ -95,7 +100,7 @@ public class WorkItemProcessor {
         hostVipDisable = constructAction("hostVipDisable", HostVipDisableAction.class);
         hostVipAdd = constructAction("hostVipAdd", HostVipDisableAction.class);
         hostVipRemove = constructAction("hostVipRemove", HostVipDisableAction.class);
-        
+
         executor = Executors.newFixedThreadPool(10);
     }
 
@@ -110,15 +115,15 @@ public class WorkItemProcessor {
                 factoryName = defaultClass.getName();
             }
             Action action = (Action) c.newInstance();
-            action.init(dataAccess, parameters, configHelper, client, gson);
+            action.init(name, dataAccess, parameters, configHelper, client, gson);
             LOGGER.info("Constructed action {} with {}", name, factoryName);
             return action;
         } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Could not build Action, could not find class " + factoryName, ex);
+            throw new RuntimeException("Could not build Action " + name + ", could not find class " + factoryName, ex);
         } catch (InstantiationException ex) {
-            throw new RuntimeException("Could not build Action, could not instantiation class " + factoryName, ex);
+            throw new RuntimeException("Could not build Action " + name + ", could not instantiation class " + factoryName, ex);
         } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Could not build Action, could not access class " + factoryName, ex);
+            throw new RuntimeException("Could not build Action " + name + ", could not access class " + factoryName, ex);
         }
     }
 
@@ -128,7 +133,7 @@ public class WorkItemProcessor {
         }
         workItem.setNextId(null);
         dataAccess.saveWorkItem(workItem);
-        
+
         executor.submit(() -> {
             process(workItem);
         });
@@ -162,58 +167,68 @@ public class WorkItemProcessor {
 
     private void process(WorkItem workItem) {
         Action action = getAction(workItem);
-        Result result;
+        Result result = Result.error;
+
+        Timer timer = metricRegistry.timer(
+                "action-process",
+                "action", action.getName());
         try {
             result = action.process(workItem);
         } catch (Exception e) {
-            LOGGER.warn("Failure while performing action {}, {}", action.getClass().getSimpleName(), e.getMessage());
-            result = Result.error;
+            LOGGER.warn("Failure while performing action {}, {}", action.getName(), e.getMessage());
+        } finally {
+            timer.stop("result", result.toString());
         }
 
         switch (result) {
             case success:
-                LOGGER.info("Work item {} has been successfully processed, no callback expected.", workItem.getId());
+                LOGGER.info("Work item {} has been successfully processed, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
-                LOGGER.warn("Work item {} failed to be process, no callback expected.", workItem.getId());
+                LOGGER.warn("Work item {} failed to be process, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 stopNext(workItem);
                 break;
             case wip:
-                LOGGER.info("Work item {} is being processed, waiting for callback.", workItem.getId());
+                LOGGER.info("Work item {} is being processed, waiting for callback. {}", action.getName(), workItem.getId());
         }
     }
 
     public void processCallback(CallbackData callbackData) {
         WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
         Action action = getAction(workItem);
-        Result result;
+        Result result = Result.error;
+
+        Timer timer = metricRegistry.timer(
+                "action-processCallback",
+                "action", action.getName());
         try {
             result = action.processCallback(workItem, callbackData);
         } catch (Exception e) {
-            LOGGER.warn("Failure while performing action calback {}, {}", action.getClass().getSimpleName(), e.getMessage());
-            result = Result.error;
+            LOGGER.warn("Failure while performing action calback {}, {}", action.getName(), e.getMessage());
+        } finally {
+            timer.stop("result", result.toString());
         }
 
         switch (result) {
             case success:
-                LOGGER.info("Work item {} has been successfully processed.", workItem.getId());
+                LOGGER.info("Work item {} has been successfully processed. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
-                LOGGER.warn("Work item {} failed to be process.", workItem.getId());
+                LOGGER.warn("Work item {} failed to be process. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
                 stopNext(workItem);
                 break;
             case wip:
-                LOGGER.info("Work item {} is still being processed.", workItem.getId());
+                LOGGER.info("Work item {} is still being processed. {}", action.getName(), workItem.getId());
         }
     }
 

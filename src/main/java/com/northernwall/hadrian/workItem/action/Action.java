@@ -34,6 +34,7 @@ import java.util.Map;
  */
 public abstract class Action {
 
+    private String name;
     protected DataAccess dataAccess;
     protected Parameters parameters;
     protected ConfigHelper configHelper;
@@ -43,12 +44,17 @@ public abstract class Action {
     public Action() {
     }
 
-    public void init(DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson) {
+    public final void init(String name, DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson) {
+        this.name = name;
         this.dataAccess = dataAccess;
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.client = client;
         this.gson = gson;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract Result process(WorkItem workItem);
