@@ -54,7 +54,7 @@ public class VipFixAction extends Action {
             LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
             return;
         }
-        vip.setStatus(Const.NO_STATUS);
+        vip.setStatus(false, Const.NO_STATUS);
         dataAccess.updateVip(vip);
     }
 
@@ -65,8 +65,7 @@ public class VipFixAction extends Action {
             return;
         }
 
-        //vip.setStatus("Fix failed");
-        vip.setStatus(Const.NO_STATUS);
+        vip.setStatus(false, "Fix failed");
         dataAccess.updateVip(vip);
     }
 

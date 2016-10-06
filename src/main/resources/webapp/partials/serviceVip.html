@@ -36,7 +36,7 @@
                                 <td>
                                     <span ng-if="ep.expanded" class="glyphicon glyphicon-chevron-down" ng-click="ep.expanded = false"></span>
                                     <span ng-if="!ep.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getVipDetails(ep);"></span>
-                                    <div class="btn-group" uib-dropdown ng-if="ep.status === '-' && service.canModify" is-open="status.isopen">
+                                    <div class="btn-group" uib-dropdown ng-if="!ep.busy && service.canModify" is-open="status.isopen">
                                         <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                             <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                         </button>
@@ -45,7 +45,7 @@
                                             <li role="menuitem"><a ng-click="deleteVip(ep.vipId);">Delete VIP</a></li>
                                         </ul>
                                     </div>
-                                    <a ng-if="ep.status === '-' && treeData.isAdmin" ng-click="fixVip(ep.vipId);" class="btn btn-info btn-xs">Fix!</a>
+                                    <a ng-if="!ep.busy && treeData.isAdmin" ng-click="fixVip(ep.vipId);" class="btn btn-info btn-xs">Fix!</a>
                                     <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
                                     <span ng-if="ep.status !== '-'">
                                         <span class="label label-warning">{{ep.status}}</span>

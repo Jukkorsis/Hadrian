@@ -57,7 +57,7 @@ public class VipModifyHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
 
-        vip.setStatus("Updating...");
+        vip.setStatus(true, "Updating...");
         getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);

@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.Const;
 import java.util.UUID;
 
 /**
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class Vip implements Comparable<Vip>{
     private String vipId;
     private String serviceId;
+    private boolean busy;
     private String status;
     private String moduleId;
     private String dns;
@@ -39,7 +41,8 @@ public class Vip implements Comparable<Vip>{
     public Vip() {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = null;
-        this.status = "-";
+        this.busy = false;
+        this.status = Const.NO_STATUS;
         this.moduleId = null;
         this.dns = null;
         this.domain = null;
@@ -53,6 +56,7 @@ public class Vip implements Comparable<Vip>{
     public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort, String autoStyle) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
+        this.busy = false;
         this.status = status;
         this.moduleId = moduleId;
         this.dns = dns;
@@ -81,11 +85,16 @@ public class Vip implements Comparable<Vip>{
         this.serviceId = serviceId;
     }
 
+    public boolean isBusy() {
+        return busy;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean busy, String status) {
+        this.busy = busy;
         this.status = status;
     }
 

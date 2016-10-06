@@ -57,7 +57,7 @@ public class VipFixHandler extends BasicHandler {
 
         Vip vip = getVip(data.vipId, service);
 
-        vip.setStatus("Fixing...");
+        vip.setStatus(true, "Fixing...");
         getDataAccess().updateVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.fix, user, team, service, null, null, vip);

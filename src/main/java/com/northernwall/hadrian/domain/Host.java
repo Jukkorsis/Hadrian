@@ -16,6 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.Const;
 import java.util.UUID;
 
 /**
@@ -38,7 +39,7 @@ public class Host implements Comparable<Host> {
         this.hostName = null;
         this.serviceId = null;
         this.busy = false;
-        this.status = "-";
+        this.status = Const.NO_STATUS;
         this.dataCenter = null;
         this.network = null;
         this.env = null;

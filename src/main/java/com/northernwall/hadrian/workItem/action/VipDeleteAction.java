@@ -56,8 +56,7 @@ public class VipDeleteAction extends Action {
             return;
         }
 
-        //vip.setStatus("Delete failed");
-        vip.setStatus(Const.NO_STATUS);
+        vip.setStatus(false, "Delete failed");
         dataAccess.updateVip(vip);
     }
 

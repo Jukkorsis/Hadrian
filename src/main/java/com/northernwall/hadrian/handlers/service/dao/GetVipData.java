@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.Vip;
 public class GetVipData {
     public String vipId;
     public String serviceId;
+    public boolean busy;
     public String status;
     public String dns;
     public String domain;
@@ -39,6 +40,7 @@ public class GetVipData {
         GetVipData temp = new GetVipData();
         temp.vipId = vip.getVipId();
         temp.serviceId = vip.getServiceId();
+        temp.busy = vip.isBusy();
         temp.status = vip.getStatus();
         temp.dns = vip.getDns();
         temp.domain = vip.getDomain();
