@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -26,7 +27,7 @@ import java.util.List;
  * @author Richard
  */
 public abstract class HostVipBaseAction extends Action {
-    
+
     protected final Result processVips(WorkItem workItem) {
         List<Vip> vips = dataAccess.getVips(workItem.getService().serviceId);
         if (vips == null || vips.isEmpty()) {
@@ -38,18 +39,28 @@ public abstract class HostVipBaseAction extends Action {
             if (vip.getAutoStyle().equals("Auto")) {
                 result = processVip(workItem, vip);
                 if (result == Result.error) {
+                    updateStatusFailure(workItem);
                     recordAudit(workItem, result, successVips, vip);
                     return result;
                 }
                 successVips.add(vip);
             }
         }
-        
+
         recordAudit(workItem, result, successVips, null);
         return result;
     }
 
     protected abstract Result processVip(WorkItem workItem, Vip vip);
+
+    private void updateStatusFailure(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            return;
+        }
+        host.setStatus(false, "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
+        dataAccess.saveHost(host);
+    }
 
     private void recordAudit(WorkItem workItem, Result result, List<Vip> successVips, Vip failedVip) {
         String output = null;
@@ -57,21 +68,24 @@ public abstract class HostVipBaseAction extends Action {
             if (failedVip == null) {
                 output = "No VIPs to " + getVerb();
             } else {
-                output = "Failed to enable VIP " + failedVip.getDns();
+                output = "Failed to " + getVerb() + " host " + getPreposition() + " VIP " + failedVip.getDns();
             }
         } else {
-            output = "VIPs successfully "+getVerbPastTense()+":\n";
+            output = "VIPs successfully " + getVerbPastTense() + ":\n";
             for (Vip vip : successVips) {
-                output = output + " - " + vip.getDns() +"\n";
+                output = output + " - " + vip.getDns() + "\n";
             }
             if (failedVip != null) {
-                output = "Failed to "+getVerb()+" VIP " + failedVip.getDns();
+                output = "Failed to " + getVerb() + " host " + getPreposition() + " VIP " + failedVip.getDns();
             }
         }
         recordAudit(workItem, result, null, output);
     }
 
     protected abstract String getVerb();
+
     protected abstract String getVerbPastTense();
+
+    protected abstract String getPreposition();
 
 }

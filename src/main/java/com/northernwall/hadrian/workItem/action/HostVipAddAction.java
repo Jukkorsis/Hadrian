@@ -56,4 +56,9 @@ public class HostVipAddAction extends HostVipBaseAction {
         return "added";
     }
 
+    @Override
+    protected String getPreposition() {
+        return "to";
+    }
+
 }

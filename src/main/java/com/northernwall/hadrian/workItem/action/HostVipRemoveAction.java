@@ -56,4 +56,9 @@ public class HostVipRemoveAction extends HostVipBaseAction {
         return "removed";
     }
 
+    @Override
+    protected String getPreposition() {
+        return "from";
+    }
+
 }

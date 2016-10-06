@@ -52,4 +52,9 @@ public class HostVipDisableAction extends HostVipBaseAction {
         return "disabled";
     }
 
+    @Override
+    protected String getPreposition() {
+        return "in";
+    }
+
 }
