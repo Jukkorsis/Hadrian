@@ -15,11 +15,13 @@
  */
 package com.northernwall.hadrian.handlers.utility;
 
-import com.northernwall.hadrian.Const;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
+import com.google.common.cache.LoadingCache;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,12 +40,26 @@ public class ContentHandler extends AbstractHandler {
 
     private final String rootPath;
     private final String indexPath;
-    private final Map<String, CachedContent> cache;
+    private final LoadingCache<String, CachedContent> cache;
 
     public ContentHandler(String rootPath) {
         this.rootPath = rootPath;
         indexPath = rootPath + "/index.html";
-        cache = new ConcurrentHashMap<>();
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(1000)
+                .build(new CacheLoader<String, CachedContent>() {
+                    @Override
+                    public CachedContent load(String key) throws IOException {
+                        try (InputStream is = this.getClass().getResourceAsStream(key)) {
+                            if (is == null) {
+                                return null;
+                            }
+                            CachedContent content = new CachedContent(is);
+                            LOGGER.info("Loaded content {} into cache, {} bytes", key, content.getSize());
+                            return content;
+                        }
+                    }
+                });
     }
 
     @Override
@@ -60,32 +76,20 @@ public class ContentHandler extends AbstractHandler {
         }
     }
 
-    private boolean getContent(HttpServletResponse response, String resource) throws IOException {
-        CachedContent content = cache.get(resource);
-        if (content == null) {
-            synchronized (this) {
-                content = cache.get(resource);
-                if (content == null) {
-                    try (InputStream is = this.getClass().getResourceAsStream(resource)) {
-                        if (is == null) {
-                            return false;
-                        }
-                        content = new CachedContent(is);
-                        cache.put(resource, content);
-                        LOGGER.info("Loaded content {} into cache, {} bytes", resource, content.getSize());
-                    }
-                }
+    private boolean getContent(HttpServletResponse response, String resource) throws ServletException {
+        try {
+            CachedContent content = cache.get(resource);
+
+            if (resource.toLowerCase().endsWith(".html")) {
+                response.addHeader("X-Frame-Options", "DENY");
+                response.setContentType("text/html; charset=utf-8");
             }
+
+            content.write(response.getOutputStream());
+            return true;
+        } catch (InvalidCacheLoadException | ExecutionException | IOException ex) {
+            return false;
         }
-
-        if (resource.toLowerCase().endsWith(".html")) {
-            response.addHeader("X-Frame-Options", "DENY");
-            response.setContentType(Const.HTML);
-        }
-
-        content.write(response.getOutputStream());
-
-        return true;
     }
 
 }
