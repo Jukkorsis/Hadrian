@@ -98,6 +98,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.serviceType,
                 data.gitMode,
                 data.gitProject,
+                data.scope,
                 true);
 
         getDataAccess().saveService(service);

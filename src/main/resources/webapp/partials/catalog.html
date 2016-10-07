@@ -24,12 +24,16 @@
                 </a>
             </th>
             <th>
+                Scope
+            </th>
+            <th>
                 Service Description
             </th>
         </tr>
         <tr ng-repeat="s in catalog.services | orderBy:catalogSortType:catalogSortReverse | filter:catalogFilter">
             <td><a href="#/Team/{{s.teamId}}">{{s.teamName}}</a></td>
             <td><a href="#/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
+            <td>{{s.scope}}</td>
             <td><span style="white-space:pre-wrap;">{{s.serviceDescription}}</span></td>
         </tr>
     </table>

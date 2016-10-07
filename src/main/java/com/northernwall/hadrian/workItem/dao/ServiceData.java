@@ -25,6 +25,7 @@ public class ServiceData {
     public String serviceType;
     public GitMode gitMode;
     public String gitProject;
+    public String scope;
 
     public static ServiceData create(Service service) {
         if (service == null) {
@@ -37,6 +38,7 @@ public class ServiceData {
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
+        temp.scope = service.getScope();
         return temp;
     }
 

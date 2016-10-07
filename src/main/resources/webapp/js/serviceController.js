@@ -32,6 +32,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 resolve: {
                     service: function () {
                         return $scope.service;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -966,19 +969,22 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         });
     }]);
 
-hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
-    function ($scope, $route, $http, $modalInstance, service) {
+hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service', 'config',
+    function ($scope, $route, $http, $modalInstance, service, config) {
+        $scope.config = config;
         $scope.errorMsg = null;
         $scope.formUpdateService = {};
         $scope.formUpdateService.serviceId = service.serviceId;
         $scope.formUpdateService.serviceName = service.serviceName;
         $scope.formUpdateService.description = service.description;
+        $scope.formUpdateService.scope = service.scope;
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.formUpdateService.serviceId,
                 serviceName: $scope.formUpdateService.serviceName,
-                description: $scope.formUpdateService.description
+                description: $scope.formUpdateService.description,
+                scope: $scope.formUpdateService.scope
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});

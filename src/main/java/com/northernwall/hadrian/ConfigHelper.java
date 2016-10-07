@@ -75,6 +75,7 @@ public class ConfigHelper implements ParameterChangeListener {
         loadConfig(Const.CONFIG_PROTOCOLS, Const.CONFIG_PROTOCOLS_DEFAULT, newConfig.protocols);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, newConfig.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, newConfig.artifactTypes);
+        loadConfig(Const.CONFIG_SCOPES, Const.CONFIG_SCOPES_DEFAULT, newConfig.scopes);
         loadNetwork(newConfig);
 
         newConfig.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);

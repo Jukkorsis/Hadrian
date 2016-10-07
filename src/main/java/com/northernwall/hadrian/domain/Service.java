@@ -34,12 +34,13 @@ public class Service implements Comparable<Service>{
     private String serviceType;
     private GitMode gitMode;
     private String gitProject;
+    private String scope;
     private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, String scope, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -47,6 +48,7 @@ public class Service implements Comparable<Service>{
         this.serviceType = serviceType;
         this.gitMode = gitMode;
         this.gitProject = gitProject;
+        this.scope = scope;
         this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
@@ -107,6 +109,14 @@ public class Service implements Comparable<Service>{
 
     public void setGitProject(String gitProject) {
         this.gitProject = gitProject;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public List<Document> getDocuments() {

@@ -8,6 +8,8 @@
         <dd><input ng-model="formUpdateService.serviceName" type="text" class="form-control"></dd>
         <dt>Description:</dt>
         <dd><textarea ng-model="formUpdateService.description" type="text" class="form-control"></textarea></dd>
+        <dt>Scope:</dt>
+        <dd><select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select></dd>
     </dl>
 </div>
 <div class="modal-footer">

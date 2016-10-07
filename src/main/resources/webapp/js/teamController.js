@@ -140,6 +140,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.serviceType = $scope.config.serviceTypes[0];
             $scope.formSaveService.gitMode = $scope.config.gitModes[0];
             $scope.formSaveService.gitProject = "";
+            $scope.formSaveService.scope = $scope.config.scopes[0];
 
             $scope.save = function () {
                 var dataObject = {
@@ -148,7 +149,8 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     description: $scope.formSaveService.description,
                     serviceType: $scope.formSaveService.serviceType,
                     gitMode: $scope.formSaveService.gitMode,
-                    gitProject: $scope.formSaveService.gitProject
+                    gitProject: $scope.formSaveService.gitProject,
+                    scope: $scope.formSaveService.scope
                 };
 
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});

@@ -24,5 +24,6 @@ public class PutServiceData {
     public String serviceId;
     public String serviceName;
     public String description;
+    public String scope;
 
 }

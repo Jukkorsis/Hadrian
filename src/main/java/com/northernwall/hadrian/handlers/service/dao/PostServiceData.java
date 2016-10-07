@@ -29,5 +29,6 @@ public class PostServiceData {
     public String serviceType;
     public GitMode gitMode;
     public String gitProject;
+    public String scope;
 
 }

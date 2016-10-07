@@ -33,6 +33,7 @@ public class GetServiceData {
     public String serviceType;
     public GitMode gitMode;
     public String gitProject;
+    public String scope;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;
@@ -53,6 +54,7 @@ public class GetServiceData {
         temp.serviceType = service.getServiceType();
         temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
+        temp.scope = service.getScope();
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();

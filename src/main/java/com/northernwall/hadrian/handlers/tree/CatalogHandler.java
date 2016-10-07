@@ -24,7 +24,6 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.tree.dao.CatalogData;
 import com.northernwall.hadrian.handlers.tree.dao.CatalogServiceData;
-import com.northernwall.hadrian.handlers.tree.dao.TreeData;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;

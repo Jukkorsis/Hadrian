@@ -48,6 +48,7 @@ public class ServiceModifyHandler extends BasicHandler {
 
         service.setServiceName(putServiceData.serviceName);
         service.setDescription(putServiceData.description);
+        service.setScope(putServiceData.scope);
 
         getDataAccess().updateService(service);
         response.setStatus(200);
