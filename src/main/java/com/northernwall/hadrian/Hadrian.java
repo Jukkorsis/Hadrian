@@ -153,7 +153,7 @@ public class Hadrian {
     private void setupJetty() {
         port = parameters.getInt(Const.JETTY_PORT, Const.JETTY_PORT_DEFAULT);
 
-        server = new Server(new QueuedThreadPool(10, 5));
+        server = new Server(new QueuedThreadPool(50, 5));
         server.setStopAtShutdown(true);
 
         HttpConfiguration httpConfig = new HttpConfiguration();
