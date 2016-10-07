@@ -10,13 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.dsh.metrics.Event;
 import org.dsh.metrics.EventListener;
 
-/**
- * Echoes out metrics to the console in the Event Format, currently:
- *
- * <Timestamp> <EventName> <Tags> <value>
- *
- * NOTE: tags/value are optional
- * */
 public class ConsoleListener implements EventListener, Runnable {
 
     private final BlockingQueue<Event> queue;

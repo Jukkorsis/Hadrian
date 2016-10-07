@@ -14,21 +14,17 @@ public class Timer extends MetricBase {
         super(name, registry, customTags);
     }
 
-    /** Returns a new timer, with startTime = now */
     Timer start() {
     	startTime = System.currentTimeMillis();
     	return this;
     }
 
-    /** calculates the time from the starttime, also triggers an event for Listeners */
     public long stop() {
     	long duration = System.currentTimeMillis() - startTime;
     	registry.postEvent(name, startTime, tags, duration);
     	return duration;
     }
 
-    /** calculates the time from the startTime, and adds the provided tags,
-     * also triggers an event for Listeners */
     public long stop(String... tags) {
     	return stop(Util.buildTags(tags));
     }

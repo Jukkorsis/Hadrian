@@ -21,11 +21,6 @@ public class MetricRegistry {
         private Map<String,String> tags = new HashMap<String,String>();
         private final String prefix;
 
-        /** @param applicationDomain - application Domain (service team)
-         *  @param application  - application name
-         *  A prefix for each metric will be generated, <applicationDomain>.<application>.
-         *
-         *  */
         public Builder(String applicationDomain, String application) {
         	if (applicationDomain == null || application == null)
         		throw new IllegalArgumentException("applicationDomain and/or application cannot be null");
@@ -79,8 +74,6 @@ public class MetricRegistry {
     	return new Timer(name, this, tags).start();
     }
 
-    /** Counters not recommended for real use, but may be
-     * useful for testing/early integration. */
     public Counter counter(String name) {
         Counter c = getCounters().get(new MetricKey(name));
         if (c == null){
@@ -116,9 +109,6 @@ public class MetricRegistry {
         return c;
     }
 
-    /** Counters not recommended for real use, but may be
-     * useful for testing/early integration.
-     * Counters with tags are extra expensive. */
     public Counter.Builder counterWithTags(String name) {
         Counter.Builder cb = new Counter.Builder(name, this);
         return cb;
@@ -226,10 +216,6 @@ public class MetricRegistry {
     }
 }
 
-// used when counters/gauges are created
-// consideration: if remove counters from the system
-// and 'allow' users to create duplicate gauges, this and their internal
-// maps can be removed.
 class MetricKey {
   	final String name;
     final Map<String,String> tags;

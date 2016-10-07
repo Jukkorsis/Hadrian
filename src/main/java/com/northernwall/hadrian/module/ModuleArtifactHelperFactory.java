@@ -27,9 +27,9 @@ public interface ModuleArtifactHelperFactory {
     /**
      * Implementations of the create method must call "setup()" on MavenHelper
      * before returning the newly created instance of MavenHelper.
-     * @param parameters
-     * @param client
-     * @return 
+     * @param parameters The systems parameters
+     * @param client The HttpClient
+     * @return An implementation of ModuleArtifactHelper
      */
     ModuleArtifactHelper create(Parameters parameters, OkHttpClient client);
 
