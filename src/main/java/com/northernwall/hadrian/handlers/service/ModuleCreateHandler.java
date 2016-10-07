@@ -293,11 +293,8 @@ public class ModuleCreateHandler extends BasicHandler {
         return temp;
     }
 
-    /**
-     * This metho assumes that both folder parameters have already been scrubbed.
-     * @param subFolder
-     * @param mainFolder
-     * @return 
+    /*
+     * This method assumes that both folder parameters have already been scrubbed.
      */
     public static boolean isSubFolder(String subFolder, String mainFolder) {
         String tempSubFolder = subFolder;
