@@ -20,7 +20,8 @@ import java.util.Date;
 public class Audit implements Comparable<Audit> {
     public String auditId;
     public String serviceId;
-    public Date timePerformed;
+    private Date timePerformed;
+    private long timePerformedLong = 0;
     public Date timeRequested;
     public String requestor;
     public Type type;
@@ -35,11 +36,26 @@ public class Audit implements Comparable<Audit> {
      */
     public String notes;
 
+    public Date getTimePerformed() {
+        return timePerformed;
+    }
+
+    public void setTimePerformed(Date timePerformed) {
+        this.timePerformed = timePerformed;
+        this.timePerformedLong = timePerformed.getTime();
+    }
+
     @Override
     public int compareTo(Audit o) {
         int result = o.timePerformed.compareTo(timePerformed);
         if (result != 0) {
             return result;
+        }
+        if (timePerformedLong > 0 && o.timePerformedLong > 0) {
+            result = (int)(o.timePerformedLong - timePerformedLong);
+            if (result != 0) {
+                return result;
+            }
         }
         result = o.timeRequested.compareTo(timeRequested);
         if (result != 0) {

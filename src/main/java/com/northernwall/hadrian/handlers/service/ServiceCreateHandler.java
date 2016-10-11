@@ -113,7 +113,7 @@ public class ServiceCreateHandler extends BasicHandler {
     private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
-        audit.timePerformed = GMT.getGmtAsDate();
+        audit.setTimePerformed(GMT.getGmtAsDate());
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;
         audit.type = type;

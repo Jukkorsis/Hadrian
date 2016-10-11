@@ -64,7 +64,7 @@ public abstract class Action {
     protected void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         Audit audit = new Audit();
         audit.serviceId = workItem.getService().serviceId;
-        audit.timePerformed = GMT.getGmtAsDate();
+        audit.setTimePerformed(GMT.getGmtAsDate());
         audit.timeRequested = workItem.getRequestDate();
         audit.requestor = workItem.getUsername();
         audit.type = workItem.getType();

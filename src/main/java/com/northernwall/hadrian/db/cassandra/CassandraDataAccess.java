@@ -768,7 +768,7 @@ public class CassandraDataAccess implements DataAccess {
     public void saveAudit(Audit audit, String output) {
         audit.auditId = UUID.randomUUID().toString();
         Calendar c = new GregorianCalendar();
-        c.setTime(audit.timePerformed);
+        c.setTime(audit.getTimePerformed());
         BoundStatement boundStatement = new BoundStatement(auditInsert);
         session.execute(boundStatement.bind(
                 audit.serviceId,

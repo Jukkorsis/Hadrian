@@ -47,7 +47,7 @@ public class AuditCreateHandler extends BasicHandler {
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
-        audit.timePerformed = GMT.getGmtAsDate();
+        audit.setTimePerformed(GMT.getGmtAsDate());
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = user.getUsername();
         audit.type = data.type;

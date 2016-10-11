@@ -74,7 +74,7 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         Audit audit = new Audit();
         audit.serviceId = serviceId;
         audit.moduleName = moduleName;
-        audit.timePerformed = GMT.getGmtAsDate();
+        audit.setTimePerformed(GMT.getGmtAsDate());
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = requestor;
         audit.type = Type.serviceRef;
