@@ -36,7 +36,9 @@ public abstract class HostVipBaseAction extends Action {
         Result result = Result.success;
         List<Vip> successVips = new LinkedList<>();
         for (Vip vip : vips) {
-            if (vip.getAutoStyle().equals("Auto")) {
+            if (vip.getModuleId().equals(workItem.getMainModule().moduleId)
+                    && vip.getNetwork().equals(workItem.getHost().network)
+                    && vip.getAutoStyle().equals("Auto")) {
                 result = processVip(workItem, vip);
                 if (result == Result.error) {
                     updateStatusFailure(workItem);
