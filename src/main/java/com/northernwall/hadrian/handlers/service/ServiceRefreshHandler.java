@@ -35,7 +35,7 @@ import static com.northernwall.hadrian.handlers.BasicHandler.getGson;
 public class ServiceRefreshHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final ConfigHelper configHelper;
+    protected final ConfigHelper configHelper;
     private final InfoHelper infoHelper;
     private final ExecutorService executorService;
 
@@ -53,7 +53,7 @@ public class ServiceRefreshHandler extends BasicHandler {
         response.setContentType(Const.JSON);
         Service service = getService(request);
 
-        GetServiceData getServiceData = GetServiceData.create(service);
+        GetServiceData getServiceData = GetServiceData.create(service, configHelper.getConfig());
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         if (service.isActive()) {

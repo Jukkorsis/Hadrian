@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service.dao;
 
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
@@ -45,7 +46,7 @@ public class GetServiceData {
     public List<GetDataStoreData> dataStores;
     public boolean canModify;
 
-    public static GetServiceData create(Service service) {
+    public static GetServiceData create(Service service, Config config) {
         GetServiceData temp = new GetServiceData();
         temp.serviceId = service.getServiceId();
         temp.serviceName = service.getServiceName();
@@ -55,6 +56,11 @@ public class GetServiceData {
         temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
+        if (temp.scope == null
+                && config.scopes != null
+                && !config.scopes.isEmpty()) {
+            temp.scope = config.scopes.get(0);
+        }
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();

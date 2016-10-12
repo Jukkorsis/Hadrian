@@ -17,6 +17,7 @@ package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
@@ -38,10 +39,12 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class ServicesGetHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
+    private final ConfigHelper configHelper;
     private final Gson gson;
 
-    public ServicesGetHandler(DataAccess dataAccess) {
+    public ServicesGetHandler(DataAccess dataAccess, ConfigHelper configHelper) {
         this.dataAccess = dataAccess;
+        this.configHelper = configHelper;
         gson = new Gson();
     }
 
@@ -52,7 +55,7 @@ public class ServicesGetHandler extends AbstractHandler {
         List<Service> services = dataAccess.getActiveServices();
         GetServicesData getServicesData = new GetServicesData();
         for (Service service : services) {
-            getServicesData.services.add(GetServiceData.create(service));
+            getServicesData.services.add(GetServiceData.create(service, configHelper.getConfig()));
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
