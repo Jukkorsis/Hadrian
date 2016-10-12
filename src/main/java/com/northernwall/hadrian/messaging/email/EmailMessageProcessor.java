@@ -12,8 +12,12 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailMessageProcessor extends MessageProcessor {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(EmailMessageProcessor.class);
 
     private String smtpHostname;
     private int smtpPort;
@@ -34,6 +38,9 @@ public class EmailMessageProcessor extends MessageProcessor {
 
     @Override
     public void process(MessageType messageType, Team team, Map<String, String> data) {
+        if (team.getTeamEmail() == null || team.getTeamEmail().isEmpty()) {
+            return;
+        }
         if (messageType == null
                 || messageType.emailSubject == null
                 || messageType.emailSubject.isEmpty()
@@ -57,7 +64,7 @@ public class EmailMessageProcessor extends MessageProcessor {
             email.addTo(team.getTeamEmail());
             email.send();
         } catch (EmailException ex) {
-            throw new RuntimeException("Failure emailing work item, {}", ex);
+            LOGGER.warn("Failure emailing work item, {}", ex.getMessage());
         }
     }
 
