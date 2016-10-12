@@ -1584,6 +1584,12 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
             }
         }
                 
+        for (var i = 0; i < service.modules.length; i++) {
+            if (service.modules[i].moduleId === moduleNetwork.moduleId) {
+                $scope.module = service.modules[i];
+            }
+        }
+                
         $scope.modelOptions = {
             debounce: {
                 default: 500,
