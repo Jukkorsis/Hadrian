@@ -171,6 +171,9 @@ public class ModuleCreateHandler extends BasicHandler {
             if (data.gitFolder.endsWith("/")) {
                 data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
             }
+            if (data.gitFolder.isEmpty()) {
+                throw new Http400BadRequestException("Git folder can not be empty");
+            }
         } else {
             data.gitFolder = "";
         }
