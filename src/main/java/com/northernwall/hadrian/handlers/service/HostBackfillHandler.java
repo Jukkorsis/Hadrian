@@ -76,6 +76,10 @@ public class HostBackfillHandler extends BasicHandler {
         if (!config.envs.contains(data.env)) {
             throw new Http400BadRequestException("unknown operating env, " + data.env);
         }
+        
+        if (data.hosts == null || data.hosts.isEmpty()) {
+            throw new Http400BadRequestException("Hosts is empty");
+        }
 
         Module module = getModule(data.moduleId, null, service);
         if (module.getModuleType() != ModuleType.Deployable
@@ -83,20 +87,14 @@ public class HostBackfillHandler extends BasicHandler {
             throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
-        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
-
+        int creationCount = 0;
         String[] hostnames = data.hosts.split(",");
         for (String hostname : hostnames) {
-            String temp = scrubHostname(hostname);
-            if (temp != null && !temp.isEmpty()) {
-                boolean found = false;
-                for (Host host : hosts) {
-                    if (host.getHostName().equalsIgnoreCase(temp)) {
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    Host host = new Host(temp,
+            String scrubedHostName = scrubHostname(hostname);
+            if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
+                Host tempHost = getDataAccess().getHostByHostName(scrubedHostName);
+                if (tempHost == null) {
+                    Host host = new Host(scrubedHostName,
                             service.getServiceId(),
                             Const.NO_STATUS,
                             module.getModuleId(),
@@ -114,18 +112,28 @@ public class HostBackfillHandler extends BasicHandler {
                     audit.operation = Operation.create;
                     audit.successfull = true;
                     audit.moduleName = module.getModuleName();
-                    audit.hostName = temp;
+                    audit.hostName = scrubedHostName;
+                    
                     Map<String, String> notes = new HashMap<>();
                     notes.put("Reason", "Backfilled host.");
                     notes.put("DC", data.dataCenter);
                     notes.put("Network", data.network);
                     notes.put("Operating_Env", data.env);
                     audit.notes = getGson().toJson(notes);
+                    
                     getDataAccess().saveAudit(audit, null);
+                    
+                    creationCount++;
+                } else {
+                    LOGGER.warn("Could not backfill host {} ({}) becuase it already exists", scrubedHostName, hostname);
                 }
             }
         }
 
+        if (creationCount == 0) {
+            throw new Http400BadRequestException("The listed hosts already exist");
+        }
+        
         response.setStatus(200);
         request.setHandled(true);
     }
