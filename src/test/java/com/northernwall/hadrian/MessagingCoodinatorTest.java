@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian;
 
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;

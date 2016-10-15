@@ -18,7 +18,6 @@ package com.northernwall.hadrian;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Network;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;

@@ -15,9 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service.dao;
 
-import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Document;
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import java.util.Collections;

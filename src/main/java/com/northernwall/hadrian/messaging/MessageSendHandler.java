@@ -18,7 +18,6 @@ package com.northernwall.hadrian.messaging;
 import com.northernwall.hadrian.messaging.dao.PostMessageData;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -75,18 +74,9 @@ public class MessageSendHandler extends BasicHandler {
                 accessHelper.checkIfUserCanAudit(request, team);
                 List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
                 for (Service service : teamServices) {
-                    if (service.getGitMode().equals(GitMode.Consolidated)) {
-                        if (service.getGitProject().equalsIgnoreCase(data.gitProject)) {
-                            messagingCoodinator.sendMessage(messageType, team, service, data.data);
-                            return;
-                        }
-                    } else {
-                        for (Module module : getDataAccess().getModules(service.getServiceId())) {
-                            if (module.getGitProject().equalsIgnoreCase(data.gitProject)) {
-                                messagingCoodinator.sendMessage(messageType, team, service, module, data.data);
-                                return;
-                            }
-                        }
+                    if (service.getGitProject().equalsIgnoreCase(data.gitProject)) {
+                        messagingCoodinator.sendMessage(messageType, team, service, data.data);
+                        return;
                     }
                 }
             }
