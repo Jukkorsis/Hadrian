@@ -6,6 +6,13 @@
     <dl class="dl-horizontal">
         <dt>Name:</dt>
         <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
+        <dt>Git Folder:</dt>
+        <dd>
+            <div class="input-group">
+                <div class="input-group-addon"> / </div>
+                <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
+            </div>
+        </dd>
         <dt>Maven Artifact Id:</dt>
         <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
         <dt>Artifact Type:</dt>

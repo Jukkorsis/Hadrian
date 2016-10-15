@@ -27,6 +27,7 @@ public class PutModuleData {
     public String serviceId;
     public String moduleId;
     public String moduleName;
+    public String gitFolder;
     public String mavenArtifactId;
     public String artifactType;
     public String artifactSuffix;

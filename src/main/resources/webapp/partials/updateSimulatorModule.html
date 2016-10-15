@@ -37,6 +37,13 @@
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">
+                <dt>Git Folder:</dt>
+                <dd>
+                    <div class="input-group">
+                        <div class="input-group-addon"> / </div>
+                        <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
+                    </div>
+                </dd>
                 <dt>Artifact Type:</dt>
                 <dd><select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
                 <dt>Artifact Suffix:</dt>

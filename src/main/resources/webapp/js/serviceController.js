@@ -1119,6 +1119,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
 
         $scope.formUpdateModule = {};
         $scope.formUpdateModule.moduleName = module.moduleName;
+        $scope.formUpdateModule.gitFolder = module.gitFolder;
         $scope.formUpdateModule.mavenArtifactId = module.mavenArtifactId;
         $scope.formUpdateModule.artifactType = module.artifactType;
         $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
@@ -1143,6 +1144,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 moduleName: $scope.formUpdateModule.moduleName,
+                gitFolder: $scope.formUpdateModule.gitFolder,
                 mavenArtifactId: $scope.formUpdateModule.mavenArtifactId,
                 artifactType: $scope.formUpdateModule.artifactType,
                 artifactSuffix: $scope.formUpdateModule.artifactSuffix,

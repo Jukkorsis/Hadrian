@@ -130,6 +130,7 @@ public class ModuleModifyHandler extends BasicHandler {
         }
 
         module.setModuleName(data.moduleName);
+        module.setGitFolder(data.gitFolder);
         module.setMavenArtifactId(data.mavenArtifactId);
         module.setArtifactType(data.artifactType);
         module.setArtifactSuffix(data.artifactSuffix);

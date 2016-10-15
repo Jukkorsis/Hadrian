@@ -48,7 +48,8 @@ public class ServiceModifyHandler extends BasicHandler {
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
 
         for (Service temp : getDataAccess().getActiveServices()) {
-            if (temp.getServiceName().equalsIgnoreCase(data.serviceName)) {
+            if (temp.getServiceName().equalsIgnoreCase(data.serviceName)
+                    && !temp.getServiceId().equals(data.serviceId)) {
                 throw new Http405NotAllowedException("A service already exists with this name");
             }
         }
