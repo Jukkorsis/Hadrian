@@ -16,10 +16,6 @@ var hadrianApp = angular.module('HadrianApp', [
 hadrianApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
-                when('/Activity', {
-                    templateUrl: 'partials/activity.html',
-                    controller: 'ActivityCtrl'
-                }).
                 when('/Team/:teamId', {
                     templateUrl: 'partials/team.html',
                     controller: 'TeamCtrl'
@@ -28,13 +24,13 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/service.html',
                     controller: 'ServiceCtrl'
                 }).
-                when('/Graph', {
-                    templateUrl: 'partials/graph.html',
-                    controller: 'GraphCtrl'
-                }).
                 when('/Catalog', {
                     templateUrl: 'partials/catalog.html',
                     controller: 'CatalogCtrl'
+                }).
+                when('/Graph', {
+                    templateUrl: 'partials/graph.html',
+                    controller: 'GraphCtrl'
                 }).
                 when('/FindHost', {
                     templateUrl: 'partials/findHost.html',
@@ -57,6 +53,6 @@ hadrianApp.config(['$routeProvider',
                     controller: 'HelpCtrl'
                 }).
                 otherwise({
-                    redirectTo: '/Activity'
+                    redirectTo: '/Catalog'
                 });
     }]);

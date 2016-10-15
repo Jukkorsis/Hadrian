@@ -7,10 +7,6 @@ var hadrianControllers = angular.module('hadrianControllers', []);
 hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
     function ($scope, $location, Tree) {
         $scope.menuMode = "home";
-        $scope.selectActivity = function () {
-            $location.path("Activity");
-            $scope.menuMode = "home";
-        }
         $scope.selectDevTeam = function (team, reset) {
             $location.path("Team/" + team.teamId);
             $scope.team = team;
@@ -25,33 +21,50 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
         $scope.selectService = function (service) {
             $location.path("Service/" + service.serviceId);
         }
-        $scope.selectGraphs = function () {
-            $location.path("Graph");
-        }
         $scope.selectCatalog = function () {
             $location.path("Catalog");
+            $scope.menuMode = "home";
+        }
+        $scope.selectGraphs = function () {
+            $location.path("Graph");
+            $scope.menuMode = "home";
         }
         $scope.selectFindHost = function () {
             $location.path("FindHost");
+            $scope.menuMode = "home";
         }
         $scope.selectWorkItems = function () {
             $location.path("WorkItems");
+            $scope.menuMode = "home";
         }
         $scope.selectUsers = function () {
             $location.path("Users");
+            $scope.menuMode = "home";
         }
         $scope.selectParameters = function () {
             $location.path("Parameters");
+            $scope.menuMode = "home";
         }
         $scope.selectHelp = function () {
             $location.path("Help");
+            $scope.menuMode = "home";
         }
         $scope.treeData = Tree.query();
-        //$scope.selectActivity();
+        //$scope.selectCatalog();
     }]);
 
-hadrianControllers.controller('ActivityCtrl', ['$scope',
-    function ($scope) {
+hadrianControllers.controller('CatalogCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.catalogLoading = true;
+        $scope.catalog = null;
+        var responsePromise = $http.get("/v1/catalog", {});
+        responsePromise.success(function (data, status, headers, config) {
+            $scope.catalogSortType = 'teamName';
+            $scope.catalogSortReverse = false;
+            $scope.catalogFilter = null;
+            $scope.catalog = data;
+            $scope.catalogLoading = false;
+        });
     }]);
 
 hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
@@ -80,20 +93,6 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
                 });
             }
         }
-    }]);
-
-hadrianControllers.controller('CatalogCtrl', ['$scope', '$http',
-    function ($scope, $http) {
-        $scope.catalogLoading = true;
-        $scope.catalog = null;
-        var responsePromise = $http.get("/v1/catalog", {});
-        responsePromise.success(function (data, status, headers, config) {
-            $scope.catalogSortType = 'teamName';
-            $scope.catalogSortReverse = false;
-            $scope.catalogFilter = null;
-            $scope.catalog = data;
-            $scope.catalogLoading = false;
-        });
     }]);
 
 hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',

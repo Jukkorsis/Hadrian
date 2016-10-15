@@ -59,7 +59,6 @@ limitations under the License.
                                 </div>
                                 <b>Tools</b>
                                 <div style="padding-left: 20px;">
-                                    <div><a ng-click="selectActivity();"><span class="glyphicon glyphicon-chevron-right"></span> Recent Activity</a></div>
                                     <div><a ng-click="selectCatalog();"><span class="glyphicon glyphicon-chevron-right"></span> Service Catalog</a></div>
                                     <div><a ng-click="selectGraphs();"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
                                     <div><a ng-click="selectFindHost();"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
@@ -72,7 +71,7 @@ limitations under the License.
                                 </div>
                             </div>
                             <div ng-if="menuMode == 'devTeam'">
-                                <p class="text-right"><a ng-click="selectActivity();">Back to Teams and Tools</a></p>
+                                <p class="text-right"><a ng-click="selectCatalog();">Back to Teams and Tools</a></p>
                                 <b><a ng-click="selectDevTeam(team, false);">{{team.teamName}}</a></b>
                                 <div style="padding-left: 20px;">
                                     <div ng-repeat="service in team.services">
