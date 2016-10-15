@@ -54,6 +54,11 @@ public class ServiceModifyHandler extends BasicHandler {
             }
         }
 
+        Service tempService = getDataAccess().getServiceByServiceName(data.serviceName);
+        if (tempService != null && !tempService.getServiceId().equals(data.serviceId)) {
+             throw new Http405NotAllowedException("A service already exists with this name");
+        }
+
         if (data.testStyle.equals("Maven")) {
             data.testHostname = null;
             data.testRunAs = null;
