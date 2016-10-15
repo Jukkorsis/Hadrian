@@ -21,7 +21,6 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
@@ -34,8 +33,6 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -110,7 +107,8 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine = "";
                 data.stopTimeOut = 0;
                 break;
-            default:
+            case Deployable:
+            case Simulator:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }  
