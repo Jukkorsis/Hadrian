@@ -65,16 +65,14 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Description is to long, max is 500");
         }
 
-        for (Service temp : getDataAccess().getActiveServices()) {
-            if (temp.getServiceName().equalsIgnoreCase(data.serviceName)) {
-                throw new Http405NotAllowedException("A service already exists with this name");
-            }
-            if (temp.getGitProject().equalsIgnoreCase(data.gitProject)) {
-                throw new Http405NotAllowedException("A service already exists at this Git Project location");
-            }
-            if (temp.getMavenGroupId().equalsIgnoreCase(data.mavenGroupId)) {
-                throw new Http405NotAllowedException("A service already exists with this Maven group");
-            }
+        if (getDataAccess().getServiceByServiceName(data.serviceName) != null) {
+             throw new Http405NotAllowedException("A service already exists with this name");
+        }
+        if (getDataAccess().getServiceByGitProject(data.gitProject) != null) {
+             throw new Http405NotAllowedException("A service already exists at this Git Project location");
+        }
+        if (getDataAccess().getServiceByMavenGroup(data.mavenGroupId) != null) {
+             throw new Http405NotAllowedException("A service already exists with this Maven group");
         }
 
         if (data.gitProject == null || data.gitProject.isEmpty()) {

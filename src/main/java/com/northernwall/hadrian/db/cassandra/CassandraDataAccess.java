@@ -58,6 +58,8 @@ public class CassandraDataAccess implements DataAccess {
     private static final String CQL_SELECT_POST = ";";
 
     private static final String SEARCH_SPACE_SERVICE_NAME = "serviceName";
+    private static final String SEARCH_SPACE_GIT_PROJECT = "gitProject";
+    private static final String SEARCH_SPACE_MAVEN_GROUP = "mavenGroup";
     private static final String SEARCH_SPACE_HOST_NAME = "hostName";
 
     private final String username;
@@ -393,6 +395,45 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public Service getServiceByServiceName(String serviceName) {
+        BoundStatement boundStatement = new BoundStatement(searchSelect);
+        ResultSet results = session.execute(boundStatement.bind(
+                SEARCH_SPACE_SERVICE_NAME,
+                serviceName.toLowerCase()));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        Row row = results.one();
+        return getService(row.getString("serviceId"));
+    }
+
+    @Override
+    public Service getServiceByGitProject(String gitProject) {
+        BoundStatement boundStatement = new BoundStatement(searchSelect);
+        ResultSet results = session.execute(boundStatement.bind(
+                SEARCH_SPACE_GIT_PROJECT,
+                gitProject.toLowerCase()));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        Row row = results.one();
+        return getService(row.getString("serviceId"));
+    }
+
+    @Override
+    public Service getServiceByMavenGroup(String mavenGroupId) {
+        BoundStatement boundStatement = new BoundStatement(searchSelect);
+        ResultSet results = session.execute(boundStatement.bind(
+                SEARCH_SPACE_MAVEN_GROUP,
+                mavenGroupId.toLowerCase()));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        Row row = results.one();
+        return getService(row.getString("serviceId"));
+    }
+
+    @Override
     public Service getService(String serviceId) {
         return getData(serviceId, serviceSelect, Service.class);
     }
@@ -413,6 +454,16 @@ public class CassandraDataAccess implements DataAccess {
                 SEARCH_SPACE_SERVICE_NAME,
                 service.getServiceName().toLowerCase()));
         
+        boundStatement = new BoundStatement(searchDelete);
+        session.execute(boundStatement.bind(
+                SEARCH_SPACE_GIT_PROJECT,
+                service.getGitProject().toLowerCase()));
+        
+        boundStatement = new BoundStatement(searchDelete);
+        session.execute(boundStatement.bind(
+                SEARCH_SPACE_MAVEN_GROUP,
+                service.getMavenGroupId().toLowerCase()));
+        
         if (service.isActive()) {
             backfillService(service);
         }
@@ -423,7 +474,23 @@ public class CassandraDataAccess implements DataAccess {
         BoundStatement boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_SERVICE_NAME,
+                service.getGitProject().toLowerCase(), 
+                service.getServiceId(), 
+                null,
+                null));
+        
+        boundStatement = new BoundStatement(searchInsert);
+        session.execute(boundStatement.bind(
+                SEARCH_SPACE_GIT_PROJECT,
                 service.getServiceName().toLowerCase(), 
+                service.getServiceId(), 
+                null,
+                null));
+        
+        boundStatement = new BoundStatement(searchInsert);
+        session.execute(boundStatement.bind(
+                SEARCH_SPACE_MAVEN_GROUP,
+                service.getMavenGroupId().toLowerCase(), 
                 service.getServiceId(), 
                 null,
                 null));

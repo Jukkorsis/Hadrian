@@ -49,6 +49,9 @@ public interface DataAccess {
 
     List<Service> getAllServices();
     List<Service> getActiveServices();
+    Service getServiceByServiceName(String serviceName);
+    Service getServiceByGitProject(String gitProject);
+    Service getServiceByMavenGroup(String mavenGroupId);
     Service getService(String serviceId);
     void saveService(Service service);
     void updateService(Service service);

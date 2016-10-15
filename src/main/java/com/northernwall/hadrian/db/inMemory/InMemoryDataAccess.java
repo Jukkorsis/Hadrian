@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -136,6 +135,36 @@ public class InMemoryDataAccess implements DataAccess {
         }
         Collections.sort(temp);
         return temp;
+    }
+
+    @Override
+    public Service getServiceByServiceName(String serviceName) {
+        for (Service service : services.values()) {
+            if (service.isActive() && service.getServiceName().equalsIgnoreCase(serviceName)) {
+                return service;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Service getServiceByGitProject(String gitProject) {
+        for (Service service : services.values()) {
+            if (service.isActive() && service.getGitProject().equalsIgnoreCase(gitProject)) {
+                return service;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Service getServiceByMavenGroup(String mavenGroupId) {
+        for (Service service : services.values()) {
+            if (service.isActive() && service.getMavenGroupId().equalsIgnoreCase(mavenGroupId)) {
+                return service;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -65,6 +65,21 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
+    public Service getServiceByServiceName(String serviceName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Service getServiceByGitProject(String gitProject) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Service getServiceByMavenGroup(String mavenGroupId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public Service getService(String serviceId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
