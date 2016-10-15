@@ -27,17 +27,13 @@ import java.util.Map;
 public class PostModuleData {
     public String moduleName;
     public String serviceId;
-    public int order;
     public ModuleType moduleType;
-    public String gitProject;
     public String gitFolder;
-    public String mavenGroupId;
     public String mavenArtifactId;
     public String artifactType;
     public String artifactSuffix;
     public String outbound;
     public String hostAbbr;
-    public String hostname;
     public String versionUrl;
     public String availabilityUrl;
     public String runAs;
@@ -52,8 +48,6 @@ public class PostModuleData {
     public String configName;
     public String deployableTemplate;
     public String libraryTemplate;
-    public String testTemplate;
-    public String testStyle;
     public Map<String,Boolean> networkNames = new HashMap<>();
 
 }

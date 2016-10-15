@@ -179,32 +179,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddTestModuleModal = function () {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addTestModule.html',
-                controller: 'ModalAddModuleCtrl',
-                resolve: {
-                    team: function () {
-                        return $scope.team;
-                    },
-                    service: function () {
-                        return $scope.service;
-                    },
-                    config: function () {
-                        return $scope.config;
-                    },
-                    moduleType: function () {
-                        return 'Test';
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-
         $scope.openUpdateModuleModal = function (module) {
             if (module.moduleType === 'Deployable') {
                 var modalInstance = $uibModal.open({
@@ -257,28 +231,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     templateUrl: 'partials/updateSimulatorModule.html',
                     controller: 'ModalUpdateModuleCtrl',
                     size: 'lg',
-                    resolve: {
-                        service: function () {
-                            return $scope.service;
-                        },
-                        module: function () {
-                            return module;
-                        },
-                        config: function () {
-                            return $scope.config;
-                        }
-                    }
-                });
-                modalInstance.result.then(function () {
-                    $route.reload();
-                }, function () {
-                });
-            }
-            if (module.moduleType === 'Test') {
-                var modalInstance = $uibModal.open({
-                    animation: true,
-                    templateUrl: 'partials/updateTestModule.html',
-                    controller: 'ModalUpdateModuleCtrl',
                     resolve: {
                         service: function () {
                             return $scope.service;
@@ -978,13 +930,23 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.serviceName = service.serviceName;
         $scope.formUpdateService.description = service.description;
         $scope.formUpdateService.scope = service.scope;
+        $scope.formUpdateService.testStyle = service.testStyle;
+        $scope.formUpdateService.testHostname = service.testHostname;
+        $scope.formUpdateService.testRunAs = service.testRunAs;
+        $scope.formUpdateService.testDeploymentFolder = service.testDeploymentFolder;
+        $scope.formUpdateService.testCmdLine = service.testCmdLine;
 
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.formUpdateService.serviceId,
                 serviceName: $scope.formUpdateService.serviceName,
                 description: $scope.formUpdateService.description,
-                scope: $scope.formUpdateService.scope
+                scope: $scope.formUpdateService.scope,
+                testStyle: $scope.formUpdateService.testStyle,
+                testHostname: $scope.formUpdateService.testHostname,
+                testRunAs: $scope.formUpdateService.testRunAs,
+                testDeploymentFolder: $scope.formUpdateService.testDeploymentFolder,
+                testCmdLine: $scope.formUpdateService.testCmdLine
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});
@@ -1083,20 +1045,15 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
 
         $scope.formSaveModule = {};
         $scope.formSaveModule.moduleName = "";
-        $scope.formSaveModule.order = 1;
         $scope.formSaveModule.moduleType = moduleType;
         $scope.formSaveModule.deployableTemplate = $scope.config.deployableTemplates[0];
         $scope.formSaveModule.libraryTemplate = $scope.config.libraryTemplates[0];
-        $scope.formSaveModule.testTemplate = $scope.config.testTemplates[0];
-        $scope.formSaveModule.gitProject = "";
         $scope.formSaveModule.gitFolder = "";
-        $scope.formSaveModule.mavenGroupId = $scope.config.mavenGroupId;
         $scope.formSaveModule.mavenArtifactId = "";
         $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
         $scope.formSaveModule.artifactSuffix = "";
         $scope.formSaveModule.outbound = "No";
         $scope.formSaveModule.hostAbbr = "";
-        $scope.formSaveModule.hostname = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.runAs = "";
@@ -1109,26 +1066,20 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.stopCmdLine = "";
         $scope.formSaveModule.stopTimeOut = 60;
         $scope.formSaveModule.configName = "";
-        $scope.formSaveModule.testStyle = "Maven";
 
         $scope.save = function () {
             var dataObject = {
                 moduleName: $scope.formSaveModule.moduleName,
                 serviceId: $scope.service.serviceId,
-                order: $scope.formSaveModule.order,
                 moduleType: $scope.formSaveModule.moduleType,
                 deployableTemplate: $scope.formSaveModule.deployableTemplate,
                 libraryTemplate: $scope.formSaveModule.libraryTemplate,
-                testTemplate: $scope.formSaveModule.testTemplate,
-                gitProject: $scope.formSaveModule.gitProject,
                 gitFolder: $scope.formSaveModule.gitFolder,
-                mavenGroupId: $scope.formSaveModule.mavenGroupId,
                 mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
                 artifactType: $scope.formSaveModule.artifactType,
                 artifactSuffix: $scope.formSaveModule.artifactSuffix,
                 outbound: $scope.formSaveModule.outbound,
                 hostAbbr: $scope.formSaveModule.hostAbbr,
-                hostname: $scope.formSaveModule.hostname,
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 runAs: $scope.formSaveModule.runAs,
@@ -1141,7 +1092,6 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
                 stopTimeOut: $scope.formSaveModule.stopTimeOut,
                 configName: $scope.formSaveModule.configName,
-                testStyle: $scope.formSaveModule.testStyle,
                 networkNames: $scope.formSaveModule.networkNames
             };
 
@@ -1169,14 +1119,11 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
 
         $scope.formUpdateModule = {};
         $scope.formUpdateModule.moduleName = module.moduleName;
-        $scope.formUpdateModule.order = module.order;
-        $scope.formUpdateModule.mavenGroupId = module.mavenGroupId;
         $scope.formUpdateModule.mavenArtifactId = module.mavenArtifactId;
         $scope.formUpdateModule.artifactType = module.artifactType;
         $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
         $scope.formUpdateModule.outbound = module.outbound;
         $scope.formUpdateModule.hostAbbr = module.hostAbbr;
-        $scope.formUpdateModule.hostname = module.hostname;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.runAs = module.runAs;
@@ -1196,14 +1143,11 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.module.moduleId,
                 moduleName: $scope.formUpdateModule.moduleName,
-                order: $scope.formUpdateModule.order,
-                mavenGroupId: $scope.formUpdateModule.mavenGroupId,
                 mavenArtifactId: $scope.formUpdateModule.mavenArtifactId,
                 artifactType: $scope.formUpdateModule.artifactType,
                 artifactSuffix: $scope.formUpdateModule.artifactSuffix,
                 outbound: $scope.formUpdateModule.outbound,
                 hostAbbr: $scope.formUpdateModule.hostAbbr,
-                hostname: $scope.formUpdateModule.hostname,
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 runAs: $scope.formUpdateModule.runAs,

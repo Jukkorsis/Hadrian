@@ -9,7 +9,6 @@
                     <li role="menuitem"><a ng-click="openAddDeployableModuleModal();">Add Deployable module</a></li>
                     <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
                     <li role="menuitem"><a ng-click="openAddSimulatorModuleModal();">Add Simulator module</a></li>
-                    <li role="menuitem"><a ng-click="openAddTestModuleModal();">Add Test module</a></li>
                 </ul>
             </div>
             <div class="btn-group" uib-dropdown ng-if="service.canModify && service.serviceType !== 'Service'" is-open="status.isopen">
@@ -25,10 +24,10 @@
         <table class="table table-hover table-striped table-condensed">
             <tr>
                 <th>Name</th>
-                <th>Build Order</th>
                 <th>Type</th>
-                <th>Git Project</th>
                 <th>Git Folder</th>
+                <th>Maven Artifact</th>
+                <th>Artifact Type</th>
             </tr>
             <tr ng-repeat-start="m in service.modules">
                 <td>
@@ -77,102 +76,38 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="btn-group" uib-dropdown ng-if="service.canModify && m.moduleType === 'Test'" is-open="status.isopen">
-                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                        </button>
-                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                            <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
-                            <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
-                            <li class="divider"></li>
-                        </ul>
-                    </div>
                     {{m.moduleName}}
                 </td>
-                <td>{{m.order}}</td>
                 <td>{{m.moduleType}}</td>
-                <td>
-                    <a href="{{config.gitUiURL}}{{team.gitGroup}}/{{m.gitProject}}" target="_blank">{{team.gitGroup}}/{{m.gitProject}}.git</a>
-                </td>
                 <td>/{{m.gitFolder}}</td>
+                <td>{{m.mavenArtifactId}}</td>
+                <td>{{m.artifactType}}</td>
             </tr>
             <tr ng-if="m.expanded" ng-repeat-end="">
                 <td colspan="9">
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Library' || m.moduleType === 'Simulator'">
-                                    <dt>Maven Group ID:</dt>
-                                    <dd>{{m.mavenGroupId}}</dd>
-                                    <dt>Maven Artifact ID:</dt>
-                                    <dd>{{m.mavenArtifactId}}</dd>
-                                    <dt>Artifact Type:</dt>
-                                    <dd>{{m.artifactType}}</dd>
-                                    <div ng-if="m.artifactSuffix">
-                                        <dt>Artifact Suffix:</dt>
-                                        <dd>{{m.artifactSuffix}}</dd>
-                                    </div>
+                                <div ng-if="m.artifactSuffix">
+                                    <dt>Artifact Suffix:</dt>
+                                    <dd>{{m.artifactSuffix}}</dd>
                                 </div>
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Outbound Connectivity:</dt>
                                     <dd>{{m.outbound}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Host Abbr:</dt>
                                     <dd>{{m.hostAbbr}}</dd>
-                                    <dt>Networks:</dt>
-                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
                                     <dt>Availability URL:</dt>
                                     <dd>{{m.availabilityUrl}}</dd>
-                                    <dt>Version URL:</dt>
-                                    <dd>{{m.versionUrl}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Test' && m.testStyle === 'Script'">
-                                    <dt>Host Name:</dt>
-                                    <dd>{{m.hostname}}</dd>
-                                    <dt>Run As:</dt>
-                                    <dd>{{m.runAs}}</dd>
                                     <dt>Deployment Folder:</dt>
                                     <dd>{{m.deploymentFolder}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
-                                    <dt>Run As:</dt>
-                                    <dd>{{m.runAs}}</dd>
-                                    <dt>Deployment Folder:</dt>
-                                    <dd>{{m.deploymentFolder}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Data Folder:</dt>
                                     <dd>{{m.dataFolder}}</dd>
-                                    <dt>Logs Folder:</dt>
-                                    <dd>{{m.logsFolder}}</dd>
-                                    <dt>Logs Retention:</dt>
-                                    <dd>{{m.logsRetention}} Months</dd>
                                     <dt>Start Cmd Line:</dt>
                                     <dd>{{m.startCmdLine}}</dd>
                                     <dt>Start Timeout:</dt>
                                     <dd>{{m.startTimeOut}} sec</dd>
-                                    <dt>Stop Cmd Line:</dt>
-                                    <dd>{{m.stopCmdLine}}</dd>
-                                    <dt>Stop Timeout:</dt>
-                                    <dd>{{m.stopTimeOut}} sec</dd>
-                                    <div ng-if="m.configName">
-                                        <dt>{{config.moduleConfigName}}:</dt>
-                                        <dd>{{m.configName}}</dd>
-                                    </div>
                                 </div>
-                                <div ng-if="m.moduleType === 'Test' && m.testStyle === 'Script'">
-                                    <dt>Test Cmd Line:</dt>
-                                    <dd>{{m.startCmdLine}}</dd>
-                                </div>
-                                <div ng-if="m.moduleType === 'Test'">
-                                    <dt>Test Timeout:</dt>
-                                    <dd>{{m.startTimeOut}} sec</dd>
-                                </div>
-                            </dl>
-                        </div>
-                        <div class="col-md-6">
-                            <dl class="dl-horizontal" ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Library' || m.moduleType === 'Simulator'">
                                 <dt>Used By:</dt>
                                 <dd>
                                     <div ng-repeat="sr in m.usedBy">
@@ -180,6 +115,30 @@
                                         <br/>
                                     </div>
                                 </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
+                                    <dt>Networks:</dt>
+                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
+                                    <dt>Run As:</dt>
+                                    <dd>{{m.runAs}}</dd>
+                                    <div ng-if="m.configName">
+                                        <dt>{{config.moduleConfigName}}:</dt>
+                                        <dd>{{m.configName}}</dd>
+                                    </div>
+                                    <dt>Version URL:</dt>
+                                    <dd>{{m.versionUrl}}</dd>
+                                    <dt>Logs Folder:</dt>
+                                    <dd>{{m.logsFolder}}</dd>
+                                    <dt>Logs Retention:</dt>
+                                    <dd>{{m.logsRetention}} Months</dd>
+                                    <dt>Stop Cmd Line:</dt>
+                                    <dd>{{m.stopCmdLine}}</dd>
+                                    <dt>Stop Timeout:</dt>
+                                    <dd>{{m.stopTimeOut}} sec</dd>
+                                </div>
                                 <dt>Uses:</dt>
                                 <dd>
                                     <div ng-repeat="sr in m.uses">

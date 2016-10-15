@@ -254,7 +254,7 @@ public class HadrianBuilder {
 
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson(), metricRegistry);
 
-        DataAccessUpdater.update(dataAccess);
+        DataAccessUpdater.update(dataAccess, configHelper.getConfig());
 
         return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, metricRegistry);
     }

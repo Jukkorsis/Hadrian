@@ -87,12 +87,6 @@ public class ModuleCreateHandler extends BasicHandler {
                 }
                 template = data.deployableTemplate;
                 break;
-            case Test:
-                if (!config.testTemplates.contains(data.testTemplate)) {
-                    throw new Http400BadRequestException("Unknown test template");
-                }
-                template = data.testTemplate;
-                break;
         }
         if (!config.artifactTypes.contains(data.artifactType)) {
             throw new Http400BadRequestException("Unknown artifact");
@@ -105,7 +99,6 @@ public class ModuleCreateHandler extends BasicHandler {
         switch (data.moduleType) {
             case Library:
                 data.hostAbbr = "";
-                data.hostname = "";
                 data.versionUrl = "";
                 data.availabilityUrl = "";
                 data.runAs = "";
@@ -117,31 +110,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine = "";
                 data.stopTimeOut = 0;
                 break;
-            case Test:
-                data.hostAbbr = "";
-                data.mavenGroupId = "";
-                data.mavenArtifactId = "";
-                data.artifactSuffix = "";
-                data.versionUrl = "";
-                data.availabilityUrl = "";
-                data.dataFolder = "";
-                data.logsFolder = "";
-                data.stopCmdLine = "";
-                data.stopTimeOut = 0;
-                if (data.testStyle.equals("Script")) {
-                    if (data.hostname == null || data.hostname.isEmpty()) {
-                        throw new Http400BadRequestException("Can not have an empty hostname");
-                    }
-                    data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
-                } else {
-                    data.hostname = null;
-                    data.deploymentFolder = null;
-                    data.runAs = null;
-                    data.startCmdLine = null;
-                }   
-                break;
             default:
-                data.hostname = "";
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }  
@@ -157,38 +126,19 @@ public class ModuleCreateHandler extends BasicHandler {
                 break;
         }
 
-        if (service.getGitMode().equals(GitMode.Consolidated)) {
-            data.gitProject = service.getGitProject();
-            if (data.gitFolder == null) {
-                data.gitFolder = "";
-            }
-            if (data.gitFolder.startsWith("/")) {
-                data.gitFolder = data.gitFolder.substring(1);
-            }
-            if (data.gitFolder.endsWith(".")) {
-                data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
-            }
-            if (data.gitFolder.endsWith("/")) {
-                data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
-            }
-            if (data.gitFolder.isEmpty()) {
-                throw new Http400BadRequestException("Git folder can not be empty");
-            }
-        } else {
-            data.gitFolder = "";
-        }
-
         List<Module> modules = getDataAccess().getModules(data.serviceId);
-        List<Module> zeroModules = new LinkedList<>();
-        for (Module temp : modules) {
-            if (data.moduleName.equalsIgnoreCase(temp.getModuleName())) {
-                throw new Http400BadRequestException("Error there already exists a module named " + data.moduleName + " on service " + data.serviceId);
-            }
-            if (data.gitProject.equalsIgnoreCase(temp.getGitProject())) {
+        if (modules != null && !modules.isEmpty()){
+            for (Module temp : modules) {
+                if (temp.getGitFolder() == null || temp.getGitFolder().isEmpty()) {
+                    throw new Http400BadRequestException("Can not create new module while module " + temp.getModuleName() + " is at the git folder root.");
+                }
+                if (data.moduleName.equalsIgnoreCase(temp.getModuleName())) {
+                    throw new Http400BadRequestException("Error there already exists a module named " + data.moduleName);
+                }
                 String gitFolder = "/" + data.gitFolder.toUpperCase() + "/";
                 String tempGitFolder = "/" + temp.getGitFolder().toUpperCase() + "/";
                 if (gitFolder.equals(tempGitFolder)) {
-                    throw new Http400BadRequestException("Error there already exists a module with git project " + data.gitProject + " and folder " + data.gitFolder + " on service " + data.serviceId);
+                    throw new Http400BadRequestException("Error there already exists a module in folder " + data.gitFolder);
                 }
                 if (gitFolder.startsWith(tempGitFolder)) {
                     throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
@@ -197,41 +147,34 @@ public class ModuleCreateHandler extends BasicHandler {
                     throw new Http400BadRequestException("A Module's git folder may not be a sub folder of another module");
                 }
             }
-            if (temp.getOrder() == 0) {
-                zeroModules.add(temp);
-            }
         }
-        modules.removeAll(zeroModules);
-        Collections.sort(modules);
-        if (data.order < 0) {
-            data.order = 0;
+
+        if (data.gitFolder == null) {
+            data.gitFolder = "";
         }
-        if (data.order > 0) {
-            if (data.order > (modules.size() + 1)) {
-                data.order = modules.size() + 1;
-            }
-            for (Module temp : modules) {
-                if (temp.getOrder() >= data.order) {
-                    temp.setOrder(temp.getOrder() + 1);
-                    getDataAccess().updateModule(temp);
-                }
-            }
+        if (data.gitFolder.startsWith("/")) {
+            data.gitFolder = data.gitFolder.substring(1);
+        }
+        if (data.gitFolder.endsWith(".")) {
+            data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
+        }
+        if (data.gitFolder.endsWith("/")) {
+            data.gitFolder = data.gitFolder.substring(0, data.gitFolder.length() - 1);
+        }
+        if (data.gitFolder.isEmpty() && modules != null && !modules.isEmpty()) {
+            throw new Http400BadRequestException("This module can not be at the git folder root, if there is another module");
         }
 
         Module module = new Module(
                 data.moduleName,
                 data.serviceId,
-                data.order,
                 data.moduleType,
-                data.gitProject,
                 data.gitFolder,
-                data.mavenGroupId,
                 data.mavenArtifactId,
                 data.artifactType,
                 data.artifactSuffix,
                 data.outbound,
                 data.hostAbbr.toLowerCase(),
-                data.hostname,
                 data.versionUrl,
                 data.availabilityUrl,
                 data.runAs,
@@ -244,21 +187,12 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine,
                 data.stopTimeOut,
                 data.configName,
-                data.testStyle,
                 data.networkNames);
         module.cleanNetworkNames(null);
         getDataAccess().saveModule(module);
-        if (module.getOrder() > 0) {
-            modules.add(module.getOrder() - 1, module);
-        } else {
-            zeroModules.add(module);
-        }
 
         WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null);
         workItem.getMainModule().template = template;
-        for (Module temp : zeroModules) {
-            workItem.addModule(temp);
-        }
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

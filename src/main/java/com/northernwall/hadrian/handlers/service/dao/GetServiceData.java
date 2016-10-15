@@ -32,9 +32,14 @@ public class GetServiceData {
     public String teamId;
     public String description;
     public String serviceType;
-    public GitMode gitMode;
     public String gitProject;
     public String scope;
+    public String mavenGroupId;
+    public String testStyle;
+    public String testHostname;
+    public String testRunAs;
+    public String testDeploymentFolder;
+    public String testCmdLine;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;
@@ -46,21 +51,21 @@ public class GetServiceData {
     public List<GetDataStoreData> dataStores;
     public boolean canModify;
 
-    public static GetServiceData create(Service service, Config config) {
+    public static GetServiceData create(Service service) {
         GetServiceData temp = new GetServiceData();
         temp.serviceId = service.getServiceId();
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
         temp.description = service.getDescription();
         temp.serviceType = service.getServiceType();
-        temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
-        if (temp.scope == null
-                && config.scopes != null
-                && !config.scopes.isEmpty()) {
-            temp.scope = config.scopes.get(0);
-        }
+        temp.mavenGroupId = service.getMavenGroupId();
+        temp.testStyle = service.getTestStyle();
+        temp.testHostname = service.getTestHostname();
+        temp.testRunAs = service.getTestRunAs();
+        temp.testDeploymentFolder = service.getTestDeploymentFolder();
+        temp.testCmdLine = service.getTestCmdLine();
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();

@@ -25,5 +25,10 @@ public class PutServiceData {
     public String serviceName;
     public String description;
     public String scope;
+    public String testStyle;
+    public String testHostname;
+    public String testRunAs;
+    public String testDeploymentFolder;
+    public String testCmdLine;
 
 }

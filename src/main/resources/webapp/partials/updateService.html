@@ -10,6 +10,26 @@
         <dd><textarea ng-model="formUpdateService.description" type="text" class="form-control"></textarea></dd>
         <dt>Scope:</dt>
         <dd><select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select></dd>
+        <dt>Test Style:</dt>
+        <dd>
+            <select ng-model="formUpdateService.testStyle" class="form-control">
+                <option>Maven</option>
+                <option>Script</option>
+            </select>
+            <div ng-if="formUpdateService.testStyle === 'Script'">
+                Note: This test style has been deprecated, please consider use Maven. 
+            </div>
+        </dd>
+        <div ng-if="formUpdateService.testStyle === 'Script'">
+            <dt>Test Host Name:</dt>
+            <dd><input ng-model="formUpdateService.testHostname" type="text" class="form-control"></dd>
+            <dt>Test Run As User:</dt>
+            <dd><input ng-model="formUpdateService.testRunAs" type="text" class="form-control"></dd>
+            <dt>Test Deployment Folder:</dt>
+            <dd><input ng-model="formUpdateService.testDeploymentFolder" type="text" class="form-control"></dd>
+            <dt>Test Cmd Line:</dt>
+            <dd><input ng-model="formUpdateService.testCmdLine" type="text" class="form-control"></dd>
+        </div>
     </dl>
 </div>
 <div class="modal-footer">

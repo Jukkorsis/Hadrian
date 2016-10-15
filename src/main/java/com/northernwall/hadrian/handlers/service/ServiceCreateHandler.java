@@ -16,12 +16,10 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
@@ -36,16 +34,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard Thurston
  */
 public class ServiceCreateHandler extends BasicHandler {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(ServiceCreateHandler.class);
 
     private final AccessHelper accessHelper;
 
@@ -71,34 +65,45 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Description is to long, max is 500");
         }
 
-        for (Service temp : Service.filterTeam(data.teamId, getDataAccess().getActiveServices())) {
-            if (temp.getServiceName().equalsIgnoreCase(data.serviceName) && temp.isActive()) {
-                throw new Http405NotAllowedException("A service already exists with that name, " + data.serviceName);
+        for (Service temp : getDataAccess().getActiveServices()) {
+            if (temp.getServiceName().equalsIgnoreCase(data.serviceName)) {
+                throw new Http405NotAllowedException("A service already exists with this name");
+            }
+            if (temp.getGitProject().equalsIgnoreCase(data.gitProject)) {
+                throw new Http405NotAllowedException("A service already exists at this Git Project location");
+            }
+            if (temp.getMavenGroupId().equalsIgnoreCase(data.mavenGroupId)) {
+                throw new Http405NotAllowedException("A service already exists with this Maven group");
             }
         }
 
-        if (data.serviceType.equals(Const.SERVICE_TYPE_SHARED_LIBRARY)) {
-            data.gitMode = GitMode.Flat;
+        if (data.gitProject == null || data.gitProject.isEmpty()) {
+            throw new Http400BadRequestException("Git Project is mising or empty");
         }
-        if (data.gitMode == GitMode.Flat) {
-            data.gitProject = null;
-        } else {
-            if (data.gitProject == null || data.gitProject.isEmpty()) {
-                throw new Http400BadRequestException("Git Project is mising or empty");
-            }
-            if (data.gitProject.length() > 30) {
-                throw new Http400BadRequestException("Git Project is to long, max is 30");
-            }
+        if (data.gitProject.length() > 30) {
+            throw new Http400BadRequestException("Git Project is to long, max is 30");
         }
-
+        
+        if (data.testStyle.equals("Maven")) {
+            data.testHostname = null;
+            data.testRunAs = null;
+            data.testDeploymentFolder = null;
+            data.testCmdLine = null;
+        }
+        
         Service service = new Service(
                 data.serviceName,
                 data.teamId,
                 data.description,
                 data.serviceType,
-                data.gitMode,
                 data.gitProject,
                 data.scope,
+                data.mavenGroupId,
+                data.testStyle,
+                data.testHostname,
+                data.testRunAs,
+                data.testDeploymentFolder,
+                data.testCmdLine,
                 true);
 
         getDataAccess().saveService(service);

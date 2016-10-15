@@ -138,9 +138,14 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
             $scope.formSaveService.serviceType = $scope.config.serviceTypes[0];
-            $scope.formSaveService.gitMode = $scope.config.gitModes[0];
             $scope.formSaveService.gitProject = "";
             $scope.formSaveService.scope = $scope.config.scopes[0];
+            $scope.formSaveService.mavenGroupId =  $scope.config.mavenGroupId;
+            $scope.formSaveService.testStyle = "Maven";
+            $scope.formSaveService.testHostname = "";
+            $scope.formSaveService.testRunAs = "";
+            $scope.formSaveService.testDeploymentFolder = "";
+            $scope.formSaveService.testCmdLine = "";
 
             $scope.save = function () {
                 var dataObject = {
@@ -148,9 +153,14 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     teamId: $scope.team.teamId,
                     description: $scope.formSaveService.description,
                     serviceType: $scope.formSaveService.serviceType,
-                    gitMode: $scope.formSaveService.gitMode,
                     gitProject: $scope.formSaveService.gitProject,
-                    scope: $scope.formSaveService.scope
+                    scope: $scope.formSaveService.scope,
+                    mavenGroupId: $scope.formSaveService.mavenGroupId,
+                    testStyle: $scope.formSaveService.testStyle,
+                    testHostname: $scope.formSaveService.testHostname,
+                    testRunAs: $scope.formSaveService.testRunAs,
+                    testDeploymentFolder: $scope.formSaveService.testDeploymentFolder,
+                    testCmdLine: $scope.formSaveService.testCmdLine
                 };
 
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});

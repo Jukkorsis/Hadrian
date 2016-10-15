@@ -80,16 +80,11 @@ public class ConfigHelper implements ParameterChangeListener {
 
         newConfig.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
         newConfig.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        newConfig.testTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
         loadConfig(Const.CONFIG_DEPLOYABLE_TEMPLATES, null, newConfig.deployableTemplates);
         loadConfig(Const.CONFIG_LIBRARY_TEMPLATES, null, newConfig.libraryTemplates);
-        loadConfig(Const.CONFIG_TEST_TEMPLATES, null, newConfig.testTemplates);
 
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
-
-        newConfig.gitModes.add(GitMode.Consolidated);
-        newConfig.gitModes.add(GitMode.Flat);
 
         LOGGER.info("Config loaded");
         return newConfig;

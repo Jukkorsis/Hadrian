@@ -27,17 +27,17 @@ public class Module implements Comparable<Module> {
     private String moduleId;
     private String moduleName;
     private String serviceId;
-    private int order;
+    private int order;//-
     private ModuleType moduleType;
-    private String gitProject;
+    private String gitProject;//-
     private String gitFolder;
-    private String mavenGroupId;
+    private String mavenGroupId;//-
     private String mavenArtifactId;
     private String artifactType;
     private String artifactSuffix;
     private String outbound;
     private String hostAbbr;
-    private String hostname;
+    private String hostname;//-
     private String versionUrl;
     private String availabilityUrl;
     private String runAs;
@@ -50,24 +50,20 @@ public class Module implements Comparable<Module> {
     private String stopCmdLine;
     private int stopTimeOut;
     private String configName;
-    private String testStyle;
+    private String testStyle;//-
     private Map<String,Boolean> networkNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, int order, ModuleType moduleType, String gitProject, String gitFolder, String mavenGroupId, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String hostname,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, String testStyle, Map<String,Boolean> networkNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
-        this.order = order;
         this.moduleType = moduleType;
-        this.gitProject = gitProject;
         this.gitFolder = gitFolder;
-        this.mavenGroupId = mavenGroupId;
         this.mavenArtifactId = mavenArtifactId;
         this.artifactType = artifactType;
         this.artifactSuffix = artifactSuffix;
         this.outbound = outbound;
         this.hostAbbr = hostAbbr;
-        this.hostname = hostname;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.runAs = runAs;
@@ -80,7 +76,6 @@ public class Module implements Comparable<Module> {
         this.stopCmdLine = stopCmdLine;
         this.stopTimeOut = stopTimeOut;
         this.configName = configName;
-        this.testStyle = testStyle;
         this.networkNames = networkNames;
     }
 

@@ -39,12 +39,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class ServicesGetHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
-    private final ConfigHelper configHelper;
     private final Gson gson;
 
-    public ServicesGetHandler(DataAccess dataAccess, ConfigHelper configHelper) {
+    public ServicesGetHandler(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
-        this.configHelper = configHelper;
         gson = new Gson();
     }
 
@@ -55,7 +53,7 @@ public class ServicesGetHandler extends AbstractHandler {
         List<Service> services = dataAccess.getActiveServices();
         GetServicesData getServicesData = new GetServicesData();
         for (Service service : services) {
-            getServicesData.services.add(GetServiceData.create(service, configHelper.getConfig()));
+            getServicesData.services.add(GetServiceData.create(service));
         }
 
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

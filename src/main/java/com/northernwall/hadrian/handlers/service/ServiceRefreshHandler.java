@@ -53,7 +53,7 @@ public class ServiceRefreshHandler extends BasicHandler {
         response.setContentType(Const.JSON);
         Service service = getService(request);
 
-        GetServiceData getServiceData = GetServiceData.create(service, configHelper.getConfig());
+        GetServiceData getServiceData = GetServiceData.create(service);
         getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
 
         if (service.isActive()) {

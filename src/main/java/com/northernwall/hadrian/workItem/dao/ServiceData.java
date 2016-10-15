@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.workItem.dao;
 
-import com.northernwall.hadrian.domain.GitMode;
 import com.northernwall.hadrian.domain.Service;
 
 public class ServiceData {
@@ -23,9 +22,14 @@ public class ServiceData {
     public String serviceName;
     public String teamId;
     public String serviceType;
-    public GitMode gitMode;
     public String gitProject;
     public String scope;
+    public String mavenGroupId;
+    public String testStyle;
+    public String testHostname;
+    public String testRunAs;
+    public String testDeploymentFolder;
+    public String testCmdLine;
 
     public static ServiceData create(Service service) {
         if (service == null) {
@@ -36,9 +40,15 @@ public class ServiceData {
         temp.serviceName = service.getServiceName();
         temp.teamId = service.getTeamId();
         temp.serviceType = service.getServiceType();
-        temp.gitMode = service.getGitMode();
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
+        temp.mavenGroupId = service.getMavenGroupId();
+        temp.testStyle = service.getTestStyle();
+        temp.testHostname = service.getTestHostname();
+        temp.testRunAs = service.getTestRunAs();
+        temp.testDeploymentFolder = service.getTestDeploymentFolder();
+        temp.testCmdLine = service.getTestCmdLine();
+
         return temp;
     }
 

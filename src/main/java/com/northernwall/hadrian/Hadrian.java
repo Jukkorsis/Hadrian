@@ -189,7 +189,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/modify", new TeamModifyHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/addUser", new TeamAddUserHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/removeUser", new TeamRemoveUserHandler(accessHelper, dataAccess), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess, configHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, infoHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, infoHelper), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/version", new VersionsGetHandler(dataAccess, moduleArtifactHelper, moduleConfigHelper), true);

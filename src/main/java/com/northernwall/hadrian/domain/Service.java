@@ -32,23 +32,34 @@ public class Service implements Comparable<Service>{
     private String teamId;
     private String description;
     private String serviceType;
-    private GitMode gitMode;
+    private GitMode gitMode;//-
     private String gitProject;
     private String scope;
+    private String mavenGroupId;
+    private String testStyle;
+    private String testHostname;
+    private String testRunAs;
+    private String testDeploymentFolder;
+    private String testCmdLine;
     private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, GitMode gitMode, String gitProject, String scope, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
         this.description = description;
         this.serviceType = serviceType;
-        this.gitMode = gitMode;
         this.gitProject = gitProject;
         this.scope = scope;
+        this.mavenGroupId = mavenGroupId;
+        this.testStyle = testStyle;
+        this.testHostname = testHostname;
+        this.testRunAs = testRunAs;
+        this.testDeploymentFolder = testDeploymentFolder;
+        this.testCmdLine = testCmdLine;
         this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
@@ -117,6 +128,54 @@ public class Service implements Comparable<Service>{
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getMavenGroupId() {
+        return mavenGroupId;
+    }
+
+    public void setMavenGroupId(String mavenGroupId) {
+        this.mavenGroupId = mavenGroupId;
+    }
+
+    public String getTestStyle() {
+        return testStyle;
+    }
+
+    public void setTestStyle(String testStyle) {
+        this.testStyle = testStyle;
+    }
+
+    public String getTestHostname() {
+        return testHostname;
+    }
+
+    public void setTestHostname(String testHostname) {
+        this.testHostname = testHostname;
+    }
+
+    public String getTestRunAs() {
+        return testRunAs;
+    }
+
+    public void setTestRunAs(String testRunAs) {
+        this.testRunAs = testRunAs;
+    }
+
+    public String getTestDeploymentFolder() {
+        return testDeploymentFolder;
+    }
+
+    public void setTestDeploymentFolder(String testDeploymentFolder) {
+        this.testDeploymentFolder = testDeploymentFolder;
+    }
+
+    public String getTestCmdLine() {
+        return testCmdLine;
+    }
+
+    public void setTestCmdLine(String testCmdLine) {
+        this.testCmdLine = testCmdLine;
     }
 
     public List<Document> getDocuments() {

@@ -8,8 +8,6 @@
             <dl class="dl-horizontal">
                 <dt>Name:</dt>
                 <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
-                <dt>Maven Group Id:</dt>
-                <dd><input ng-model="formUpdateModule.mavenGroupId" type="text" class="form-control"></dd>
                 <dt>Maven Artifact Id:</dt>
                 <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
                 <dt>Networks:</dt>
@@ -39,8 +37,6 @@
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">
-                <dt>Build Order:</dt>
-                <dd><input ng-model="formUpdateModule.order" type="text" class="form-control" uib-popover="The order the modules are built. Zero for modules that are built outside of the tool." popover-trigger="mouseenter"></dd>
                 <dt>Artifact Type:</dt>
                 <dd><select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
                 <dt>Artifact Suffix:</dt>

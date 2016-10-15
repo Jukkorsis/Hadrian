@@ -20,6 +20,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.handlers.service.dao.PutServiceData;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,16 +42,35 @@ public class ServiceModifyHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        PutServiceData putServiceData = fromJson(request, PutServiceData.class);
-        Service service = getService(putServiceData.serviceId, null);
+        PutServiceData data = fromJson(request, PutServiceData.class);
+        Service service = getService(data.serviceId, null);
         
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
 
-        service.setServiceName(putServiceData.serviceName);
-        service.setDescription(putServiceData.description);
-        service.setScope(putServiceData.scope);
+        for (Service temp : getDataAccess().getActiveServices()) {
+            if (temp.getServiceName().equalsIgnoreCase(data.serviceName)) {
+                throw new Http405NotAllowedException("A service already exists with this name");
+            }
+        }
+
+        if (data.testStyle.equals("Maven")) {
+            data.testHostname = null;
+            data.testRunAs = null;
+            data.testDeploymentFolder = null;
+            data.testCmdLine = null;
+        }
+        
+        service.setServiceName(data.serviceName);
+        service.setDescription(data.description);
+        service.setScope(data.scope);
+        service.setTestStyle(data.testStyle);
+        service.setTestHostname(data.testHostname);
+        service.setTestRunAs(data.testRunAs);
+        service.setTestDeploymentFolder(data.testDeploymentFolder);
+        service.setTestCmdLine(data.testCmdLine);
 
         getDataAccess().updateService(service);
+        
         response.setStatus(200);
         request.setHandled(true);
     }

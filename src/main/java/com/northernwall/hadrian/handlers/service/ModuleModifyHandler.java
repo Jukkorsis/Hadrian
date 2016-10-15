@@ -20,7 +20,6 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -32,8 +31,6 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -88,34 +85,21 @@ public class ModuleModifyHandler extends BasicHandler {
         }
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
-        List<Module> zeroModules = new LinkedList<>();
         Module module = null;
         for (Module temp : modules) {
             if (temp.getModuleId().equals(data.moduleId)) {
                 module = temp;
-            }
-            if (temp.getOrder() == 0) {
-                zeroModules.add(temp);
             }
         }
         if (module == null) {
             LOGGER.warn("Could not find module with id {} in service {}", data.moduleId, data.serviceId);
             return;
         }
-        modules.removeAll(zeroModules);
-        Collections.sort(modules);
-        if (data.order < 0) {
-            data.order = 0;
-        }
-        if (data.order > modules.size()) {
-            data.order = modules.size();
-        }
 
         switch (module.getModuleType()) {
             case Library:
                 data.outbound = "No";
                 data.hostAbbr = "";
-                data.hostname = "";
                 data.versionUrl = "";
                 data.availabilityUrl = "";
                 data.runAs = "";
@@ -127,29 +111,9 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.stopCmdLine = "";
                 data.stopTimeOut = 0;
                 break;
-            case Test:
+            case Simulator:
                 data.outbound = "No";
-                data.hostAbbr = "";
-                data.mavenGroupId = "";
-                data.mavenArtifactId = "";
-                data.artifactSuffix = "";
-                data.versionUrl = "";
-                data.availabilityUrl = "";
-                data.dataFolder = "";
-                data.logsFolder = "";
-                data.stopCmdLine = "";
-                data.stopTimeOut = 0;
-                if (module.getTestStyle().equals("Script")) {
-                    if (data.hostname == null || data.hostname.isEmpty()) {
-                        throw new Http400BadRequestException("Can not have an empty hostname");
-                    }
-                }
-                break;
-            default:
-                if (module.getModuleType() == ModuleType.Simulator) {
-                    data.outbound = "No";
-                }
-                data.hostname = "";
+            case Deployable:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }
@@ -166,13 +130,11 @@ public class ModuleModifyHandler extends BasicHandler {
         }
 
         module.setModuleName(data.moduleName);
-        module.setMavenGroupId(data.mavenGroupId);
         module.setMavenArtifactId(data.mavenArtifactId);
         module.setArtifactType(data.artifactType);
         module.setArtifactSuffix(data.artifactSuffix);
         module.setOutbound(data.outbound);
         module.setHostAbbr(data.hostAbbr.toLowerCase());
-        module.setHostname(data.hostname);
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setRunAs(data.runAs);
@@ -188,33 +150,9 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setNetworkNames(data.networkNames);
         module.cleanNetworkNames(null);
 
-        if (module.getOrder() != data.order) {
-            if (module.getOrder() > 0) {
-                modules.remove(module);
-            } else {
-                zeroModules.remove(module);
-            }
-            module.setOrder(data.order);
-            if (data.order > 0) {
-                modules.add(data.order - 1, module);
-            } else {
-                zeroModules.add(module);
-            }
-            int i = 1;
-            for (Module temp : modules) {
-                if (temp.getOrder() != i) {
-                    temp.setOrder(i);
-                    getDataAccess().saveModule(temp);
-                }
-                i++;
-            }
-        }
         getDataAccess().saveModule(module);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null);
-        for (Module temp : zeroModules) {
-            workItem.addModule(temp);
-        }
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
