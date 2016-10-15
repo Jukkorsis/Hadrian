@@ -57,7 +57,7 @@ public class HostFindHandler extends BasicHandler {
             throw new Http400BadRequestException("hostName is empty");
         }
         
-        Host host = getDataAccess().getHost(hostName);
+        Host host = getDataAccess().getHostByHostName(hostName);
         if (host == null) {
             throw new Http404NotFoundException("Could not find host " + hostName);
         }

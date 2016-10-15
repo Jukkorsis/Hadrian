@@ -53,8 +53,10 @@ public interface DataAccess {
     void saveService(Service service);
     void updateService(Service service);
 
+    void backfillService(Service service);
+
     List<Host> getHosts(String serviceId);
-    Host getHost(String hostName);
+    Host getHostByHostName(String hostName);
     Host getHost(String serviceId, String hostId);
     void saveHost(Host host);
     void updateHost(Host host);

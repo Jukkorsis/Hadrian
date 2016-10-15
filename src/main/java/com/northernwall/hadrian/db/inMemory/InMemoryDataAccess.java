@@ -154,6 +154,10 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public void backfillService(Service service) {
+    }
+
+    @Override
     public List<Host> getHosts(String serviceId) {
         List<Host> temp = new LinkedList<>();
         for (Host host : hosts.values()) {
@@ -166,7 +170,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Host getHost(String hostName) {
+    public Host getHostByHostName(String hostName) {
         for (Host host : hosts.values()) {
             if (host.getHostName().equalsIgnoreCase(hostName)) {
                 return host;

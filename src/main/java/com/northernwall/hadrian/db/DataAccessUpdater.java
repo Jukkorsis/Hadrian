@@ -37,8 +37,8 @@ public class DataAccessUpdater {
         } else if (!version.equals("1.6")) {
             LOGGER.info("Upgrading DB version to 1.6");
             fixGitMode(dataAccess, config);
-            //dataAccess.setVersion("1.6");
-            //update(dataAccess, config);
+            dataAccess.setVersion("1.6");
+            update(dataAccess, config);
         }
 
         fixHost(dataAccess);
@@ -113,20 +113,23 @@ public class DataAccessUpdater {
     }
 
     private static void fixHost(DataAccess dataAccess) {
-        int count = 0;
+        int serviceCount = 0;
+        int hostCount = 0;
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
+                dataAccess.backfillService(service);
+                serviceCount++;
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
                         dataAccess.backfillHostName(host);
-                        count++;
+                        hostCount++;
                     }
                 }
             }
         }
-        LOGGER.info("Backfilled {} hosts", count);
+        LOGGER.info("Backfilled {} service, {} hosts", serviceCount, hostCount);
     }
 
     private DataAccessUpdater() {

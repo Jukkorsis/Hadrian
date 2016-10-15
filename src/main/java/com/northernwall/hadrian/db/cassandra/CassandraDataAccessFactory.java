@@ -110,7 +110,6 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             session.execute("CREATE TABLE IF NOT EXISTS customFunction (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             session.execute("CREATE TABLE IF NOT EXISTS dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             session.execute("CREATE TABLE IF NOT EXISTS host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
-            session.execute("CREATE TABLE IF NOT EXISTS hostName (hostName text, serviceId text, hostId text, PRIMARY KEY (hostName));");
             session.execute("CREATE TABLE IF NOT EXISTS module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             session.execute("CREATE TABLE IF NOT EXISTS moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
             session.execute("CREATE TABLE IF NOT EXISTS vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
@@ -133,6 +132,12 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             }
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
+            //Search table
+            try {
+                session.execute("DROP TABLE hostName;");
+            } catch (InvalidQueryException e) {
+            }
+            session.execute("CREATE TABLE IF NOT EXISTS searchName (searchSpace text, searchText text, serviceId text, moduleId text, hostId text, PRIMARY KEY ((searchSpace), searchText));");
             //Audit table
             try {
                 session.execute("DROP TABLE audit;");

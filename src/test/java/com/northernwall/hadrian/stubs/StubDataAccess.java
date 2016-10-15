@@ -80,12 +80,17 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
+    public void backfillService(Service service) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public List<Host> getHosts(String serviceId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Host getHost(String hostName) {
+    public Host getHostByHostName(String hostName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
