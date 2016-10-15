@@ -70,14 +70,13 @@ public class HostCreateHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
 
-        if (data.count < 1) {
-            throw new Http400BadRequestException("count must to at least 1");
-        } else if (data.count > 10) {
-            LOGGER.warn("Reducing count to 10, was {}", data.count);
-            data.count = 10;
-        }
-
         Config config = configHelper.getConfig();
+        
+        checkRange(data.count, 1, config.maxCount, "host count");
+        checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
+        checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
+        checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
+        
         if (!config.dataCenters.contains(data.dataCenter)) {
             throw new Http400BadRequestException("Unknown data center");
         }
@@ -87,71 +86,70 @@ public class HostCreateHandler extends BasicHandler {
         if (!config.envs.contains(data.env)) {
             throw new Http400BadRequestException("Unknown operating env");
         }
-
+        
         Module module = getModule(data.moduleId, null, service);
-        if (module.getModuleType() != ModuleType.Deployable
-                && module.getModuleType() != ModuleType.Simulator) {
+        if (module.getModuleType() == ModuleType.Library) {
             throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
-        //calc host name
         String prefix = buildPrefix(data.network, config, data.dataCenter, module.getHostAbbr());
-        int len = prefix.length();
-        int num = 0;
-        List<Host> hosts = getDataAccess().getHosts(data.serviceId);
-        for (Host existingHost : hosts) {
-            String existingHostName = existingHost.getHostName();
-            if (existingHostName.startsWith(prefix) && existingHostName.length() > len) {
-                String numPart = existingHostName.substring(len);
-                try {
-                    int temp = Integer.parseInt(numPart);
-                    if (temp > num) {
-                        num = temp;
-                    }
-                } catch (Exception e) {
-                    LOGGER.warn("Error parsing int from last part of {}", existingHostName);
-                }
+        int num = 1;
+        int createdCount = 0;
+        while (createdCount < data.count && num <= config.maxTotalCount) {
+            String hostName = buildHostName(prefix, num);
+            num++;
+            if (getDataAccess().getHostByHostName(hostName) == null) {
+                createdCount++;
+                LOGGER.info("Building host {} - {}/{}", hostName, createdCount, data.count);
+                
+                Host host = new Host(hostName,
+                        data.serviceId,
+                        "Creating...",
+                        data.moduleId,
+                        data.dataCenter,
+                        data.network,
+                        data.env);
+                getDataAccess().saveHost(host);
+
+                List<WorkItem> workItems = new ArrayList<>(3);
+
+                WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
+                workItemCreate.getHost().sizeCpu = data.sizeCpu;
+                workItemCreate.getHost().sizeMemory = data.sizeMemory;
+                workItemCreate.getHost().sizeStorage = data.sizeStorage;
+                workItemCreate.getHost().version = data.version;
+                workItemCreate.getHost().configVersion = data.configVersion;
+                workItemCreate.getHost().reason = data.reason;
+                workItems.add(workItemCreate);
+
+                WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+                workItemDeploy.getHost().version = data.version;
+                workItemDeploy.getHost().configVersion = data.configVersion;
+                workItemDeploy.getHost().reason = data.reason;
+                workItems.add(workItemDeploy);
+
+                WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
+                workItems.add(workItemEnable);
+
+                workItemProcessor.processWorkItems(workItems);
             }
         }
-        num++;
-        for (int c = 0; c < data.count; c++) {
-            String numStr = Integer.toString(num + c);
-            numStr = "000".substring(numStr.length()) + numStr;
-
-            Host host = new Host(prefix + numStr,
-                    data.serviceId,
-                    "Creating...",
-                    data.moduleId,
-                    data.dataCenter,
-                    data.network,
-                    data.env);
-            getDataAccess().saveHost(host);
-
-            List<WorkItem> workItems = new ArrayList<>(3);
-            
-            WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
-            workItemCreate.getHost().sizeCpu = data.sizeCpu;
-            workItemCreate.getHost().sizeMemory = data.sizeMemory;
-            workItemCreate.getHost().sizeStorage = data.sizeStorage;
-            workItemCreate.getHost().version = data.version;
-            workItemCreate.getHost().configVersion = data.configVersion;
-            workItemCreate.getHost().reason = data.reason;
-            workItems.add(workItemCreate);
-
-            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
-            workItemDeploy.getHost().version = data.version;
-            workItemDeploy.getHost().configVersion = data.configVersion;
-            workItemDeploy.getHost().reason = data.reason;
-            workItems.add(workItemDeploy);
-
-            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
-            workItems.add(workItemEnable);
-                        
-            workItemProcessor.processWorkItems(workItems);
+        
+        if (createdCount == 0) {
+            throw new Http400BadRequestException("Could not create any hosts, max host count per data center reached");
         }
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
+        if (value < min) {
+            throw new Http400BadRequestException("Requested "+text+" is less than allowed");
+        }
+        if (value > max) {
+            throw new Http400BadRequestException("Requested "+text+" is greater than allowed");
+        }
     }
 
     private String buildPrefix(String networkName, Config config, String dataCenter, String abbr) {
@@ -164,6 +162,12 @@ public class HostCreateHandler extends BasicHandler {
             }
         }
         throw new Http400BadRequestException("Unknown network");
+    }
+
+    private String buildHostName(String prefix, int num) {
+        String numStr = Integer.toString(num);
+        numStr = "000".substring(numStr.length()) + numStr;
+        return prefix + numStr;
     }
 
 }

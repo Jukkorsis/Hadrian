@@ -44,7 +44,7 @@
         </div>
         <dt>Count:</dt>
         <dd>
-            <input ng-model="formSaveHost.count" type="number" class="form-control">
+            <input ng-model="formSaveHost.count" type="number" min="1" max="{{config.maxCount}}" class="form-control">
         </dd>
         <dt>Reason:</dt>
         <dd>

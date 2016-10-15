@@ -33,6 +33,8 @@ public class Config {
     public int maxMemory = 8;
     public int minStorage = 25;
     public int maxStorage = 100;
+    public int maxCount = 10;
+    public int maxTotalCount = 100;
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networkNames = new LinkedList<>();
     public List<Network> networks = new LinkedList<>();
