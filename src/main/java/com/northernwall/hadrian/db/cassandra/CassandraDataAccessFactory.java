@@ -52,10 +52,11 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
 
         setup(createKeyspace, keyspace, replicationFactor);
 
+        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, metricRegistry);
+        
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, metricRegistry);
         return dataAccess;
     }
 
@@ -151,8 +152,12 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
 
     @Override
     public void run() {
-        dataAccess.close();
-        cluster.close();
+        if (dataAccess != null) {
+            dataAccess.close();
+        }
+        if (cluster != null) {
+            cluster.close();
+        }
         LOGGER.info("Connection to cluster closed");
     }
 
