@@ -30,6 +30,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
 import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
@@ -63,6 +64,7 @@ public class WorkItemProcessor {
     private final Action hostCreate;
     private final Action hostDeploy;
     private final Action hostRestart;
+    private final Action hostSmokeTest;
     private final Action hostDelete;
     private final Action vipCreate;
     private final Action vipUpdate;
@@ -89,6 +91,7 @@ public class WorkItemProcessor {
         hostCreate = constructAction("hostCreate", HostCreateAction.class);
         hostDeploy = constructAction("hostDeploy", HostDeployAction.class);
         hostRestart = constructAction("hostRestart", HostRestartAction.class);
+        hostSmokeTest = constructAction("hostSmokeTest", HostSmokeTestAction.class);
         hostDelete = constructAction("hostDelete", HostDeleteAction.class);
 
         vipCreate = constructAction("vipCreate", VipCreateAction.class);
@@ -278,6 +281,8 @@ public class WorkItemProcessor {
                         return hostVipAdd;
                     case removeVips:
                         return hostVipRemove;
+                    case smokeTest:
+                        return hostSmokeTest;
                     case delete:
                         return hostDelete;
                 }

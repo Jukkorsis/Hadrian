@@ -693,11 +693,19 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
-        $scope.getCustomFunctions = function (s, mn) {
-            for (var i in s.modules) {
-                var temp = s.modules[i];
+        $scope.getCustomFunctions = function (service, mn) {
+            for (var i in service.modules) {
+                var temp = service.modules[i];
                 if (temp.moduleId === mn.moduleId) {
-                    return temp.customFunctions;
+                    if (service.canModify) {
+                        return temp.customFunctions;
+                    }
+                    var cfs = [];
+                    for (var ii in temp.customFunctions) {
+                        if (!temp.customFunctions[ii].teamOnly)
+                        cfs.push(temp.customFunctions[ii]);
+                    }
+                    return cfs;
                 }
             }
             return null;
@@ -1187,7 +1195,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
     }]);
 
 hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$scope', '$http', 'items',
-    function ($modalInstance, $scope, $http, items){
+    function ($modalInstance, $scope, $http, items) {
         $scope.fileName = items.fileName;
         $scope.fileNumber = items.fileNumber;
         $scope.service = items.service;
@@ -1195,9 +1203,9 @@ hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$
         $scope.network = items.network;
         $scope.dataFromServer = items.dataFromServer;
 
-        $scope.delete = function() {
+        $scope.delete = function () {
             var responsePromise = $http.delete("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" +
-                $scope.module.moduleId + "&network=" + $scope.network + "&fileName=" + $scope.fileName);
+                    $scope.module.moduleId + "&network=" + $scope.network + "&fileName=" + $scope.fileName);
 
             responsePromise.success(function (status) {
                 $scope.dataFromServer.splice($scope.fileNumber, 1);
@@ -1229,18 +1237,18 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
         responsePromise.success(function (dataFromServer, status, headers, config) {
             $scope.dataFromServer = dataFromServer;
 
-            angular.forEach($scope.dataFromServer, function(value, index) {
+            angular.forEach($scope.dataFromServer, function (value, index) {
                 value.originalName = value.name;
             });
 
-            $scope.openDeleteModal = function(fileName, fileNumber) {
+            $scope.openDeleteModal = function (fileName, fileNumber) {
                 var modalInstance = $uibModal.open({
                     animation: true,
                     controller: 'ModalModuleFileDeleteCtrl',
                     templateUrl: 'partials/deleteModuleFile.html',
                     size: 'md',
                     resolve: {
-                        items: function() {
+                        items: function () {
                             return {
                                 fileName: fileName,
                                 fileNumber: fileNumber,
@@ -1276,7 +1284,7 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
             });
         };
 
-        $scope.addNewFile = function() {
+        $scope.addNewFile = function () {
             $scope.dataFromServer.push({name: "New File", contents: ""});
         };
 
@@ -1363,7 +1371,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 $scope.configNetwork = config.networks[i];
             }
         }
-                
+
         $scope.formSaveVip = {};
         $scope.formSaveVip.dns = "";
         $scope.formSaveVip.domain = $scope.config.domains[0];
@@ -1458,7 +1466,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 $scope.configNetwork = config.networks[i];
             }
         }
-                
+
         $scope.modelOptions = {
             debounce: {
                 default: 500,
@@ -1535,13 +1543,13 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 $scope.configNetwork = config.networks[i];
             }
         }
-                
+
         for (var i = 0; i < service.modules.length; i++) {
             if (service.modules[i].moduleId === moduleNetwork.moduleId) {
                 $scope.module = service.modules[i];
             }
         }
-                
+
         $scope.modelOptions = {
             debounce: {
                 default: 500,
@@ -1608,7 +1616,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
                 $scope.configNetwork = config.networks[i];
             }
         }
-                
+
         $scope.formUpdateHost = {};
         $scope.formUpdateHost.reason = "";
 
@@ -1652,7 +1660,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
                 $scope.configNetwork = config.networks[i];
             }
         }
-                
+
         $scope.formDeleteHost = {};
         $scope.formDeleteHost.reason = "";
 

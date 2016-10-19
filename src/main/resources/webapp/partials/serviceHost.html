@@ -33,18 +33,18 @@
                                 <li role="menuitem"><a ng-click="openBackfillModal(mn);">Backfill existing hosts</a></li>
                                 <li role="menuitem"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
                                 <li class="divider"></li>
-                                <li role="menuitem" ng-repeat="cf in m.customFunctions">
+                                <li role="menuitem" ng-repeat="cf in getCustomFunctions(service, mn)">
                                     <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
                                 </li>
                             </ul>
                         </div>
-                        <div class="btn-group" uib-dropdown ng-if="!service.canModify && mn.hosts.length > 0 && m.customFunctions.length > 0" is-open="status.isopen">
+                        <div class="btn-group" uib-dropdown ng-if="!service.canModify && mn.hosts.length > 0 && getCustomFunctions(service, mn).length > 0" is-open="status.isopen">
                             <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                 <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                <li role="menuitem" ng-repeat="cf in m.customFunctions| filter:cf.teamOnly == false">
-                                    <a ng-click="openDoCustomFunctionModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                                <li role="menuitem" ng-repeat="cf in getCustomFunctions(service, mn)">
+                                    <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
                                 </li>
                             </ul>
                         </div>
@@ -102,7 +102,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify" is-open="status.isopen">
+                                    <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify && getCustomFunctions(service, mn).length > 0" is-open="status.isopen">
                                         <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
                                             <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                                         </button>

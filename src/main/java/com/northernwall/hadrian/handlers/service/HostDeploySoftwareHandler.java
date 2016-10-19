@@ -33,7 +33,7 @@ import com.northernwall.hadrian.handlers.service.dao.PutDeploySoftwareData;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +92,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
-        List<WorkItem> workItems = new ArrayList<>(hosts.size());
+        List<WorkItem> workItems = new LinkedList<>();
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
@@ -114,6 +114,11 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         workItem.getHost().configVersion = data.configVersion;
                         workItem.getHost().reason = data.reason;
                         workItems.add(workItem);
+
+                        if (module.getSmokeTestUrl() != null && !module.getSmokeTestUrl().isEmpty()) {
+                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
 
                         workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
                         workItems.add(workItem);

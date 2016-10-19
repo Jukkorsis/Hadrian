@@ -29,7 +29,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutRestartHostData;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +64,7 @@ public class HostRestartHandler extends BasicHandler {
         if (hosts == null || hosts.isEmpty()) {
             return;
         }
-        List<WorkItem> workItems = new ArrayList<>(hosts.size());
+        List<WorkItem> workItems = new LinkedList<>();
         for (Host host : hosts) {
             if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
@@ -82,6 +82,11 @@ public class HostRestartHandler extends BasicHandler {
                         workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
                         workItem.getHost().reason = data.reason;
                         workItems.add(workItem);
+
+                        if (module.getSmokeTestUrl() != null && !module.getSmokeTestUrl().isEmpty()) {
+                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
 
                         workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
                         workItems.add(workItem);
