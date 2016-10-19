@@ -31,6 +31,7 @@ public class ModuleData {
     public String hostAbbr;
     public String versionUrl;
     public String availabilityUrl;
+    public String smokeTestUrl;
     public String runAs;
     public String deploymentFolder;
     public String dataFolder;
@@ -58,6 +59,7 @@ public class ModuleData {
         temp.hostAbbr = module.getHostAbbr();
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
+        temp.smokeTestUrl = module.getSmokeTestUrl();
         temp.runAs = module.getRunAs();
         temp.deploymentFolder = module.getDeploymentFolder();
         temp.dataFolder = module.getDataFolder();

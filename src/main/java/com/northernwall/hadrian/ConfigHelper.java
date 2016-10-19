@@ -59,6 +59,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.mavenGroupId = parameters.getString(Const.CONFIG_MAVEN_GROUP_ID, Const.CONFIG_MAVEN_GROUP_ID_DEFAULT);
         newConfig.versionUrl = parameters.getString(Const.CONFIG_VERSION_URL, Const.CONFIG_VERSION_URL_DEFAULT);
         newConfig.availabilityUrl = parameters.getString(Const.CONFIG_AVAILABILITY_URL, Const.CONFIG_AVAILABILITY_URL_DEFAULT);
+        newConfig.smokeTestUrl = parameters.getString(Const.CONFIG_SMOKE_TEST_URL, Const.CONFIG_SMOKE_TEST_URL_DEFAULT);
         newConfig.deploymentFolder = parameters.getString(Const.CONFIG_DEPLOYMENT_FOLDER, Const.CONFIG_DEPLOYMENT_FOLDER_DEFAULT);
         newConfig.dataFolder = parameters.getString(Const.CONFIG_DATA_FOLDER, Const.CONFIG_DATA_FOLDER_DEFAULT);
         newConfig.logsFolder = parameters.getString(Const.CONFIG_LOGS_FOLDER, Const.CONFIG_LOGS_FOLDER_DEFAULT);

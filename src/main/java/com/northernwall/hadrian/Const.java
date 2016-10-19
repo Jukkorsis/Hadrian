@@ -30,6 +30,7 @@ public class Const {
     public static final String COOKIE_PORTAL_NAME = "portalname";
     public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
+    public static final String END_POINT = "{endPoint}";
 
     public static final String SERVICE_TYPE_SERVICE = "Service";
     public static final String SERVICE_TYPE_SHARED_LIBRARY = "Shared Library";
@@ -141,6 +142,8 @@ public class Const {
     public static final String CONFIG_VERSION_URL_DEFAULT = HOST+".mydomain.com:9090/version";
     public static final String CONFIG_AVAILABILITY_URL = "config.availabilityUrl";
     public static final String CONFIG_AVAILABILITY_URL_DEFAULT = HOST+".mydomain.com:9090/availability";
+    public static final String CONFIG_SMOKE_TEST_URL = "config.smokeTestUrl";
+    public static final String CONFIG_SMOKE_TEST_URL_DEFAULT = "service.mydomain.com:9090/smokeTest?endPoint="+END_POINT;
     public static final String CONFIG_DEPLOYMENT_FOLDER = "config.deploymentFolder";
     public static final String CONFIG_DEPLOYMENT_FOLDER_DEFAULT = "/home/app";
     public static final String CONFIG_DATA_FOLDER = "config.dataFolder";

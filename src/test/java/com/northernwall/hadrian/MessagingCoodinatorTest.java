@@ -56,7 +56,7 @@ public class MessagingCoodinatorTest {
         MessageType mt = mc.getMessageType("TEST");
         Team team = new Team("test Team", null, null, "myTeam", null, null, null, "black");
         Service service = new Service("Test Service", team.getTeamId(), "Desc", "service", "gitGroup", "Not in scope", "com.northernwall", "Maven", null, null, null, null, 60, true);
-        Module module = new Module("Test Module", service.getServiceId(), ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, null);
+        Module module = new Module("Test Module", service.getServiceId(), ModuleType.Deployable, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, null);
         Map<String, String> data = new HashMap<>();
         data.put("A", "a");
         data.put("B", "b");

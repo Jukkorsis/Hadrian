@@ -102,6 +102,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.hostAbbr = "";
                 data.versionUrl = "";
                 data.availabilityUrl = "";
+                data.smokeTestUrl = "";
                 data.runAs = "";
                 data.deploymentFolder = "";
                 data.dataFolder = "";
@@ -113,6 +114,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 break;
             case Simulator:
                 data.outbound = "No";
+                data.smokeTestUrl = "";
             case Deployable:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
@@ -138,6 +140,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setHostAbbr(data.hostAbbr.toLowerCase());
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
+        module.setSmokeTestUrl(data.smokeTestUrl);
         module.setRunAs(data.runAs);
         module.setDeploymentFolder(data.deploymentFolder);
         module.setDataFolder(data.dataFolder);

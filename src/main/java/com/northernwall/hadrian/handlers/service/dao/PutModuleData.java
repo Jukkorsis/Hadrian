@@ -35,6 +35,7 @@ public class PutModuleData {
     public String hostAbbr;
     public String versionUrl;
     public String availabilityUrl;
+    public String smokeTestUrl;
     public String runAs;
     public String deploymentFolder;
     public String dataFolder;

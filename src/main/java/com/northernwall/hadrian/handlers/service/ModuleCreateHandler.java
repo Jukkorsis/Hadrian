@@ -175,6 +175,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.hostAbbr.toLowerCase(),
                 data.versionUrl,
                 data.availabilityUrl,
+                data.smokeTestUrl,
                 data.runAs,
                 data.deploymentFolder,
                 data.dataFolder,

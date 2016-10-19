@@ -1058,6 +1058,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.hostAbbr = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
+        $scope.formSaveModule.smokeTestUrl = $scope.config.smokeTestUrl;
         $scope.formSaveModule.runAs = "";
         $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
         $scope.formSaveModule.dataFolder = $scope.config.dataFolder;
@@ -1084,6 +1085,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 hostAbbr: $scope.formSaveModule.hostAbbr,
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
+                smokeTestUrl: $scope.formSaveModule.smokeTestUrl,
                 runAs: $scope.formSaveModule.runAs,
                 deploymentFolder: $scope.formSaveModule.deploymentFolder,
                 dataFolder: $scope.formSaveModule.dataFolder,
@@ -1129,6 +1131,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.hostAbbr = module.hostAbbr;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
+        $scope.formUpdateModule.smokeTestUrl = module.smokeTestUrl;
         $scope.formUpdateModule.runAs = module.runAs;
         $scope.formUpdateModule.deploymentFolder = module.deploymentFolder;
         $scope.formUpdateModule.dataFolder = module.dataFolder;
@@ -1154,6 +1157,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 hostAbbr: $scope.formUpdateModule.hostAbbr,
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
+                smokeTestUrl: $scope.formUpdateModule.smokeTestUrl,
                 runAs: $scope.formUpdateModule.runAs,
                 deploymentFolder: $scope.formUpdateModule.deploymentFolder,
                 dataFolder: $scope.formUpdateModule.dataFolder,

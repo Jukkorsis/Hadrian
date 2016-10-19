@@ -22,6 +22,7 @@ public class Config {
     public String mavenGroupId = "";
     public String versionUrl = "";
     public String availabilityUrl = "";
+    public String smokeTestUrl = "";
     public String deploymentFolder = "";
     public String dataFolder = "";
     public String logsFolder = "";
