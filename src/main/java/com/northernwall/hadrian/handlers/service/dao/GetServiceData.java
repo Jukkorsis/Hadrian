@@ -38,6 +38,7 @@ public class GetServiceData {
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
+    public int testTimeOut;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;
@@ -59,11 +60,13 @@ public class GetServiceData {
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
         temp.mavenGroupId = service.getMavenGroupId();
+        
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();
         temp.testRunAs = service.getTestRunAs();
         temp.testDeploymentFolder = service.getTestDeploymentFolder();
         temp.testCmdLine = service.getTestCmdLine();
+        temp.testTimeOut = service.getTestTimeOut();
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();

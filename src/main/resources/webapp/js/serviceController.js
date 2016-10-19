@@ -935,6 +935,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.testRunAs = service.testRunAs;
         $scope.formUpdateService.testDeploymentFolder = service.testDeploymentFolder;
         $scope.formUpdateService.testCmdLine = service.testCmdLine;
+        $scope.formUpdateService.testTimeOut = service.testTimeOut;
 
         $scope.save = function () {
             var dataObject = {
@@ -946,7 +947,8 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 testHostname: $scope.formUpdateService.testHostname,
                 testRunAs: $scope.formUpdateService.testRunAs,
                 testDeploymentFolder: $scope.formUpdateService.testDeploymentFolder,
-                testCmdLine: $scope.formUpdateService.testCmdLine
+                testCmdLine: $scope.formUpdateService.testCmdLine,
+                testTimeOut: $scope.formUpdateService.testTimeOut
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});

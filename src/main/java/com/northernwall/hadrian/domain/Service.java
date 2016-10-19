@@ -41,12 +41,13 @@ public class Service implements Comparable<Service>{
     private String testRunAs;
     private String testDeploymentFolder;
     private String testCmdLine;
+    private int testTimeOut;
     private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -60,6 +61,7 @@ public class Service implements Comparable<Service>{
         this.testRunAs = testRunAs;
         this.testDeploymentFolder = testDeploymentFolder;
         this.testCmdLine = testCmdLine;
+        this.testTimeOut = testTimeOut;
         this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
@@ -176,6 +178,17 @@ public class Service implements Comparable<Service>{
 
     public void setTestCmdLine(String testCmdLine) {
         this.testCmdLine = testCmdLine;
+    }
+
+    public int getTestTimeOut() {
+        if (testTimeOut == 0) {
+            return 300;
+        }
+        return testTimeOut;
+    }
+
+    public void setTestTimeOut(int testTimeOut) {
+        this.testTimeOut = testTimeOut;
     }
 
     public List<Document> getDocuments() {

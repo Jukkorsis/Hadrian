@@ -74,6 +74,7 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setTestRunAs(data.testRunAs);
         service.setTestDeploymentFolder(data.testDeploymentFolder);
         service.setTestCmdLine(data.testCmdLine);
+        service.setTestTimeOut(data.testTimeOut);
 
         getDataAccess().updateService(service);
         

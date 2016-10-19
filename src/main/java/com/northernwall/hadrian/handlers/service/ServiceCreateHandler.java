@@ -102,6 +102,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.testRunAs,
                 data.testDeploymentFolder,
                 data.testCmdLine,
+                data.testTimeOut,
                 true);
 
         getDataAccess().saveService(service);

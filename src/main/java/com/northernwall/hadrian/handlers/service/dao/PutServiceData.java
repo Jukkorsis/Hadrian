@@ -30,5 +30,6 @@ public class PutServiceData {
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
+    public int testTimeOut;
 
 }

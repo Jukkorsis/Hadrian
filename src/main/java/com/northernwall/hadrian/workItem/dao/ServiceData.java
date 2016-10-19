@@ -30,6 +30,7 @@ public class ServiceData {
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
+    public int testTimeOut;
 
     public static ServiceData create(Service service) {
         if (service == null) {
@@ -48,6 +49,7 @@ public class ServiceData {
         temp.testRunAs = service.getTestRunAs();
         temp.testDeploymentFolder = service.getTestDeploymentFolder();
         temp.testCmdLine = service.getTestCmdLine();
+        temp.testTimeOut = service.getTestTimeOut();
 
         return temp;
     }
