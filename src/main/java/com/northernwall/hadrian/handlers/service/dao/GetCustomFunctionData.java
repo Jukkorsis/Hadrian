@@ -18,14 +18,6 @@ package com.northernwall.hadrian.handlers.service.dao;
 import com.northernwall.hadrian.domain.CustomFunction;
 
 public class GetCustomFunctionData {
-    public String customFunctionId;
-    public String name;
-    public String serviceId;
-    public String moduleId;
-    public String method;
-    public String url;
-    public boolean teamOnly;
-
     public static GetCustomFunctionData create(CustomFunction customFunction) {
         GetCustomFunctionData temp = new GetCustomFunctionData();
         temp.customFunctionId = customFunction.getCustomFunctionId();
@@ -37,5 +29,14 @@ public class GetCustomFunctionData {
         temp.teamOnly = customFunction.isTeamOnly();
         return temp;
     }
+    
+    public String customFunctionId;
+    public String name;
+    public String serviceId;
+    public String moduleId;
+    public String method;
+    public String url;
+    public boolean teamOnly;
+
 
 }

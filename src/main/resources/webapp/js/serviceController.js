@@ -587,6 +587,31 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openDoSmokeTestHostModal = function (host, mn) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/smokeTest.html',
+                controller: 'ModalSmokeTestCtrl',
+                resolve: {
+                    config: function () {
+                        return $scope.config;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    moduleId: function () {
+                        return mn.moduleId;
+                    },
+                    endPoint: function () {
+                        return host.hostName;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+            }, function () {
+            });
+        };
+
         $scope.getVipDetails = function (vip) {
             vip.loaded = false;
             vip.expanded = true;
@@ -691,24 +716,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     }
                 }
             }
-        };
-
-        $scope.getCustomFunctions = function (service, mn) {
-            for (var i in service.modules) {
-                var temp = service.modules[i];
-                if (temp.moduleId === mn.moduleId) {
-                    if (service.canModify) {
-                        return temp.customFunctions;
-                    }
-                    var cfs = [];
-                    for (var ii in temp.customFunctions) {
-                        if (!temp.customFunctions[ii].teamOnly)
-                        cfs.push(temp.customFunctions[ii]);
-                    }
-                    return cfs;
-                }
-            }
-            return null;
         };
 
         $scope.openDoCustomFunctionHostModal = function (host, cf) {
@@ -1685,6 +1692,29 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
 
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$modalInstance', 'config', 'service', 'moduleId', 'endPoint',
+    function ($scope, $http, $modalInstance, config, service, moduleId, endPoint) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.endPoint = endPoint;
+        $scope.config = config;
+
+        $scope.status = "Loading";
+        $scope.output = "";
+        var responsePromise = $http.get("/v1/st/exec?serviceId=" + service.serviceId + "&moduleId=" + moduleId + "&endPoint=" + endPoint, {});
+        responsePromise.success(function (data, status, headers, config) {
+            $scope.status = data.result;
+            $scope.output = data.output;
+        });
+        responsePromise.error(function (data, status, headers, config) {
+            $scope.status = "Error";
+        });
+                
+        $scope.cancel = function () {
+            $modalInstance.close();
         };
     }]);
 

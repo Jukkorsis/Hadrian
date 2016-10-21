@@ -24,32 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GetServiceData {
-
-    public String serviceId;
-    public String serviceName;
-    public String teamId;
-    public String description;
-    public String serviceType;
-    public String gitProject;
-    public String scope;
-    public String mavenGroupId;
-    public String testStyle;
-    public String testHostname;
-    public String testRunAs;
-    public String testDeploymentFolder;
-    public String testCmdLine;
-    public int testTimeOut;
-    public List<Document> leftDocuments;
-    public List<Document> middleDocuments;
-    public List<Document> rightDocuments;
-    public Date creationDate;
-    public Date deletionDate;
-    public boolean active;
-    public List<GetModuleData> modules;
-    public List<GetNetworkData> networks;
-    public List<GetDataStoreData> dataStores;
-    public boolean canModify;
-
     public static GetServiceData create(Service service) {
         GetServiceData temp = new GetServiceData();
         temp.serviceId = service.getServiceId();
@@ -93,6 +67,32 @@ public class GetServiceData {
         return temp;
     }
 
+    public String serviceId;
+    public String serviceName;
+    public String teamId;
+    public String description;
+    public String serviceType;
+    public String gitProject;
+    public String scope;
+    public String mavenGroupId;
+    public String testStyle;
+    public String testHostname;
+    public String testRunAs;
+    public String testDeploymentFolder;
+    public String testCmdLine;
+    public int testTimeOut;
+    public List<Document> leftDocuments;
+    public List<Document> middleDocuments;
+    public List<Document> rightDocuments;
+    public Date creationDate;
+    public Date deletionDate;
+    public boolean active;
+    public List<GetModuleData> modules;
+    public List<GetNetworkData> networks;
+    public List<GetDataStoreData> dataStores;
+    public boolean canModify;
+
+
     public void addNetwork(String network) {
         for (GetNetworkData networkData : networks) {
             if (networkData.network.equals(network)) {
@@ -128,6 +128,17 @@ public class GetServiceData {
                 networkData.addVip(vipData, moduleData);
                 return;
             }
+        }
+    }
+
+    public void addCustomFunction(GetCustomFunctionData customFunctionData) {
+        for (GetModuleData moduleData : modules) {
+            if (customFunctionData.moduleId.equals(moduleData.moduleId)) {
+                moduleData.customFunctions.add(customFunctionData);
+            }
+        }
+        for (GetNetworkData networkData : networks) {
+            networkData.addCustomFunction(customFunctionData);
         }
     }
 

@@ -24,36 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GetModuleData {
-
-    public String moduleId;
-    public String moduleName;
-    public ModuleType moduleType;
-    public String gitFolder;
-    public String mavenArtifactId;
-    public String artifactType;
-    public String artifactSuffix;
-    public String outbound;
-    public String hostAbbr;
-    public String versionUrl;
-    public String availabilityUrl;
-    public String smokeTestUrl;
-    public String runAs;
-    public String deploymentFolder;
-    public String dataFolder;
-    public String logsFolder;
-    public int logsRetention;
-    public String startCmdLine;
-    public int startTimeOut;
-    public String stopCmdLine;
-    public int stopTimeOut;
-    public String configName;
-    public Map<String,Boolean> networkNames = new HashMap<>();
-    public List<String> versions;
-    public List<String> configVersions;
-    public List<GetCustomFunctionData> customFunctions;
-    public List<GetModuleRefData> uses;
-    public List<GetModuleRefData> usedBy;
-    
     public static GetModuleData create(Module module, Config config) {
         GetModuleData temp = new GetModuleData();
         temp.moduleId = module.getModuleId();
@@ -85,6 +55,36 @@ public class GetModuleData {
         temp.usedBy = new LinkedList<>();
         return temp;
     }
+
+    public String moduleId;
+    public String moduleName;
+    public ModuleType moduleType;
+    public String gitFolder;
+    public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
+    public String outbound;
+    public String hostAbbr;
+    public String versionUrl;
+    public String availabilityUrl;
+    public String smokeTestUrl;
+    public String runAs;
+    public String deploymentFolder;
+    public String dataFolder;
+    public String logsFolder;
+    public int logsRetention;
+    public String startCmdLine;
+    public int startTimeOut;
+    public String stopCmdLine;
+    public int stopTimeOut;
+    public String configName;
+    public Map<String,Boolean> networkNames = new HashMap<>();
+    public List<String> versions;
+    public List<String> configVersions;
+    public List<GetCustomFunctionData> customFunctions;
+    public List<GetModuleRefData> uses;
+    public List<GetModuleRefData> usedBy;
+    
 
     public void addCustomFunction(GetCustomFunctionData customFunctionData) {
         customFunctions.add(customFunctionData);

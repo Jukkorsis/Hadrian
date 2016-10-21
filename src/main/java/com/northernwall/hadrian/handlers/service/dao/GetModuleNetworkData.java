@@ -22,13 +22,16 @@ public class GetModuleNetworkData {
     public String moduleId;
     public String moduleName;
     public String network;
+    public boolean hasSmokeTest;
     public List<GetHostData> hosts = new LinkedList<>();
     public List<GetVipData> vips = new LinkedList<>();
+    public List<GetCustomFunctionData> cfs = new LinkedList<>();
 
-    public GetModuleNetworkData(String moduleId, String moduleName, String network) {
+    public GetModuleNetworkData(String moduleId, String moduleName, String network, boolean hasSmokeTest) {
         this.moduleId = moduleId;
         this.moduleName = moduleName;
         this.network = network;
+        this.hasSmokeTest = hasSmokeTest;
     }
 
 }

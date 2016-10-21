@@ -9,20 +9,24 @@ public class GetNetworkData {
     public String network;
     public List<GetModuleNetworkData> modules = new LinkedList<>();
 
-    public void addModule(Module module) {
+    void addModule(Module module) {
         for (GetModuleNetworkData moduleNetworkData : modules) {
             if (moduleNetworkData.moduleId.equals(module.getModuleId())) {
                 return;
             }
         }
+        boolean hasSmokeTest = (module.getSmokeTestUrl() != null 
+                && !module.getSmokeTestUrl().isEmpty());
+        
         GetModuleNetworkData moduleNetworkData = new GetModuleNetworkData(
                 module.getModuleId(),
                 module.getModuleName(),
-                network);
+                network,
+                hasSmokeTest);
         modules.add(moduleNetworkData);
     }
 
-    public void addHost(GetHostData hostData, GetModuleData moduleData) {
+    void addHost(GetHostData hostData, GetModuleData moduleData) {
         for (GetModuleNetworkData moduleNetworkData : modules) {
             if (moduleNetworkData.moduleId.equals(moduleData.moduleId)) {
                 moduleNetworkData.hosts.add(hostData);
@@ -35,6 +39,15 @@ public class GetNetworkData {
         for (GetModuleNetworkData moduleNetworkData : modules) {
             if (moduleNetworkData.moduleId.equals(moduleData.moduleId)) {
                 moduleNetworkData.vips.add(vipData);
+                return;
+            }
+        }
+    }
+
+    void addCustomFunction(GetCustomFunctionData customFunctionData) {
+        for (GetModuleNetworkData moduleNetworkData : modules) {
+            if (moduleNetworkData.moduleId.equals(customFunctionData.moduleId)) {
+                moduleNetworkData.cfs.add(customFunctionData);
                 return;
             }
         }

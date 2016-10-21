@@ -15,13 +15,16 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.Credentials;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
@@ -34,22 +37,17 @@ import org.slf4j.LoggerFactory;
 public class HostSmokeTestAction extends Action {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostSmokeTestAction.class);
-
-    @Override
-    public Result process(WorkItem workItem) {
-        String smokeTestUrl = workItem.getMainModule().smokeTestUrl;
-        if (smokeTestUrl == null || smokeTestUrl.isEmpty()) {
-            return Result.success;
+    
+    public static SmokeTestData ExecuteSmokeTest(String smokeTestUrl, String endPoint, Parameters parameters, Gson gson, OkHttpClient client) {
+        if (smokeTestUrl == null || smokeTestUrl.isEmpty() || endPoint == null || endPoint.isEmpty()) {
+            return null;
         }
-
-        LOGGER.info("Smoke testing host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
-
-        smokeTestUrl = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, workItem.getHost().hostName);
-        Result result = Result.success;
-        String output = null;
+        
+        LOGGER.info("Smoke testing EP {} with {}", endPoint, smokeTestUrl);
+        
+        String url = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, endPoint);
         try {
-            Request.Builder builder = new Request.Builder()
-                    .url(smokeTestUrl);
+            Request.Builder builder = new Request.Builder().url(url);
             if (parameters.getUsername() != null
                     && parameters.getUsername().isEmpty()
                     && parameters.getPassword() != null
@@ -63,19 +61,42 @@ public class HostSmokeTestAction extends Action {
             if (response.isSuccessful()) {
                 try (InputStream stream = response.body().byteStream()) {
                     Reader reader = new InputStreamReader(stream);
-                    SmokeTestData smokeTestData = gson.fromJson(reader, SmokeTestData.class);
-                    if (!smokeTestData.result.equalsIgnoreCase("PASS")) {
-                        result = Result.error;
-                    }
-                    output = smokeTestData.output;
+                    return gson.fromJson(reader, SmokeTestData.class);
                 }
             } else {
-                LOGGER.warn("Call to {} failed with code {}", smokeTestUrl, response.code());
-                result = Result.error;
+                LOGGER.warn("Call to {} failed with code {}", url, response.code());
+                return null;
             }
         } catch (IOException ex) {
-            LOGGER.warn("Call to {} failed with exception {}", smokeTestUrl, ex.getMessage());
+            LOGGER.warn("Call to {} failed with exception {}", url, ex.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Result process(WorkItem workItem) {
+        String smokeTestUrl = workItem.getMainModule().smokeTestUrl;
+        if (smokeTestUrl == null || smokeTestUrl.isEmpty()) {
+            return Result.success;
+        }
+
+        SmokeTestData smokeTestData = ExecuteSmokeTest(
+                smokeTestUrl,
+                workItem.getHost().hostName,
+                parameters,
+                gson,
+                client);
+
+        Result result;
+        String output = null;
+        if (smokeTestData == null) {
             result = Result.error;
+        } else if (!smokeTestData.result.equalsIgnoreCase("PASS")) {
+            result = Result.error;
+            output = smokeTestData.output;
+        } else {
+            result = Result.success;
+            output = smokeTestData.output;
         }
 
         recordAudit(workItem, result, output);

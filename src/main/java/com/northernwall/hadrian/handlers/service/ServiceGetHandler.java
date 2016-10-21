@@ -84,11 +84,9 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
         List<CustomFunction> customFunctions = getDataAccess().getCustomFunctions(service.getServiceId());
         Collections.sort(customFunctions);
         for (CustomFunction customFunction : customFunctions) {
-            for (GetModuleData temp : getServiceData.modules) {
-                if (customFunction.getModuleId().equals(temp.moduleId)) {
-                    GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
-                    temp.customFunctions.add(getCustomFunctionData);
-                }
+            if (!customFunction.isTeamOnly() || getServiceData.canModify) {
+                GetCustomFunctionData getCustomFunctionData = GetCustomFunctionData.create(customFunction);
+                getServiceData.addCustomFunction(getCustomFunctionData);
             }
         }
     }
