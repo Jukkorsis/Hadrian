@@ -27,12 +27,23 @@ import java.util.UUID;
  * @author Richard Thurston
  */
 public class Service implements Comparable<Service>{
+    public static List<Service> filterTeam(String teamId, List<Service> services) {
+        List<Service> temp = new LinkedList<>();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                if (service.getTeamId().equals(teamId)) {
+                    temp.add(service);
+                }
+            }
+        }
+        return temp;
+    }
+    
     private String serviceId;
     private String serviceName;
     private String teamId;
     private String description;
     private String serviceType;
-    private GitMode gitMode;//-
     private String gitProject;
     private String scope;
     private String mavenGroupId;
@@ -106,14 +117,6 @@ public class Service implements Comparable<Service>{
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
-    }
-
-    public GitMode getGitMode() {
-        return gitMode;
-    }
-
-    public void setGitMode(GitMode gitMode) {
-        this.gitMode = gitMode;
     }
 
     public String getGitProject() {
@@ -227,16 +230,4 @@ public class Service implements Comparable<Service>{
         return serviceName.compareToIgnoreCase(o.serviceName);
     }
     
-    public static List<Service> filterTeam(String teamId, List<Service> services) {
-        List<Service> temp = new LinkedList<>();
-        if (services != null && !services.isEmpty()) {
-            for (Service service : services) {
-                if (service.getTeamId().equals(teamId)) {
-                    temp.add(service);
-                }
-            }
-        }
-        return temp;
-    }
-
 }
