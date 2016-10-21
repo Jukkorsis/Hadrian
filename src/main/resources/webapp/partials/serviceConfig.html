@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h4>Configuration</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>Type:</dt>
+                    <dd>{{service.serviceType}}</dd>
+                    <dt>Scope:</dt>
+                    <dd>{{service.scope}}</dd>
+                    <dt>Git Project:</dt>
+                    <dd><a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a></dd>
+                    <dt>Maven Group:</dt>
+                    <dd>{{service.mavenGroupId}}</dd>
+                    <dt>Creation Date:</dt>
+                    <dd>{{service.creationDate}}</dd>
+                    <div  ng-if="!service.active">
+                        <dt>Deletion Date:</dt>
+                        <dd>{{service.deletionDate}}</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>Test Style:</dt>
+                    <dd>{{service.testStyle}}</dd>
+                    <div ng-if="service.testStyle == 'Script'">
+                        <dt>Test Host Name:</dt>
+                        <dd>{{service.testHostname}}</dd>
+                        <dt>Test Run As:</dt>
+                        <dd>{{service.testRunAs}}</dd>
+                        <dt>Test Deploy Folder:</dt>
+                        <dd>{{service.testDeploymentFolder}}</dd>
+                        <dt>Test Cmd Line:</dt>
+                        <dd>{{service.testCmdLine}}</dd>
+                    </div>
+                    <dt>Test Time Out:</dt>
+                    <dd>{{service.testTimeOut}} sec</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
