@@ -69,12 +69,16 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setServiceName(data.serviceName);
         service.setDescription(data.description);
         service.setScope(data.scope);
+        service.setDoBuilds(data.doBuilds);
+        service.setDoDeploys(data.doDeploys);
+        service.setDoCheckJar(data.doCheckJar);
         service.setTestStyle(data.testStyle);
         service.setTestHostname(data.testHostname);
         service.setTestRunAs(data.testRunAs);
         service.setTestDeploymentFolder(data.testDeploymentFolder);
         service.setTestCmdLine(data.testCmdLine);
         service.setTestTimeOut(data.testTimeOut);
+        service.setSmokeTestCron(data.smokeTestCron);
 
         getDataAccess().updateService(service);
         

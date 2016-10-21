@@ -25,6 +25,9 @@ public class ServiceData {
     public String gitProject;
     public String scope;
     public String mavenGroupId;
+    public boolean doBuilds;
+    public boolean doDeploys;
+    public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
     public String testRunAs;
@@ -44,6 +47,9 @@ public class ServiceData {
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
         temp.mavenGroupId = service.getMavenGroupId();
+        temp.doBuilds = service.isDoBuilds();
+        temp.doDeploys = service.isDoDeploys();
+        temp.doCheckJar = service.isDoCheckJar();
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();
         temp.testRunAs = service.getTestRunAs();

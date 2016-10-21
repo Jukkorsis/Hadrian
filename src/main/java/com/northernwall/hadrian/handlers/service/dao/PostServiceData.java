@@ -28,11 +28,15 @@ public class PostServiceData {
     public String gitProject;
     public String scope;
     public String mavenGroupId;
+    public boolean doBuilds;
+    public boolean doDeploys;
+    public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
+    public String smokeTestCron;
 
 }

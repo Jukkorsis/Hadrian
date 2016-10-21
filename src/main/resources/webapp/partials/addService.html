@@ -3,53 +3,69 @@
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Name:</dt>
-        <dd><input ng-model="formSaveService.serviceName" type="text" maxlength="30" class="form-control"></dd>
-        <dt>Description:</dt>
-        <dd><textarea ng-model="formSaveService.description" type="text" maxlength="500" class="form-control"></textarea></dd>
-        <dt>Type:</dt>
-        <dd><select ng-model="formSaveService.serviceType" ng-options="c for c in config.serviceTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
-        <dt>Git Project</dt>
-        <dd>
-            <div class="input-group">
-                <div class="input-group-addon">{{team.gitGroup}} / </div>
-                <input ng-model="formSaveService.gitProject" type="text" maxlength="30" class="form-control">
-                <div class="input-group-addon">.git</div>
-            </div>
-        </dd>
-        <dt>Scope:</dt>
-        <dd><select ng-model="formSaveService.scope" ng-options="c for c in config.scopes" class="form-control"></select></dd>
-        <dt>Maven Group:</dt>
-        <dd><input ng-model="formSaveService.mavenGroupId" type="text" class="form-control"></dd>
-        <dt>Test Style:</dt>
-        <dd>
-            <select ng-model="formSaveService.testStyle" class="form-control">
-                <option>Maven</option>
-                <option>Script</option>
-            </select>
-            <div ng-if="formSaveService.testStyle === 'Script'">
-                Note: This test style has been deprecated, please consider use Maven. 
-            </div>
-        </dd>
-        <div ng-if="formSaveService.testStyle === 'Script'">
-            <dt>Test Host Name:</dt>
-            <dd><input ng-model="formSaveService.testHostname" type="text" class="form-control"></dd>
-            <dt>Test Run As User:</dt>
-            <dd><input ng-model="formSaveService.testRunAs" type="text" class="form-control"></dd>
-            <dt>Test Deployment Folder:</dt>
-            <dd><input ng-model="formSaveService.testDeploymentFolder" type="text" class="form-control"></dd>
-            <dt>Test Cmd Line:</dt>
-            <dd><input ng-model="formSaveService.testCmdLine" type="text" class="form-control"></dd>
-        </div> 
-        <dt>Test Time Out:</dt>
-        <dd>
-            <div class="input-group">
-                <input ng-model="formSaveService.testTimeOut" type="number" min="30" max="900" step="30" class="form-control">
-                <div class="input-group-addon">sec</div>
-            </div>
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Name:</dt>
+                <dd><input ng-model="formSaveService.serviceName" type="text" maxlength="30" class="form-control"></dd>
+                <dt>Description:</dt>
+                <dd><textarea ng-model="formSaveService.description" type="text" maxlength="500" class="form-control"></textarea></dd>
+                <dt>Type:</dt>
+                <dd><select ng-model="formSaveService.serviceType" ng-options="c for c in config.serviceTypes" class="form-control" uib-popover="The selected the type of module." popover-trigger="mouseenter"></select></dd>
+                <dt>Git Project</dt>
+                <dd>
+                    <div class="input-group">
+                        <div class="input-group-addon">{{team.gitGroup}} / </div>
+                        <input ng-model="formSaveService.gitProject" type="text" maxlength="30" class="form-control">
+                        <div class="input-group-addon">.git</div>
+                    </div>
+                </dd>
+                <dt>Scope:</dt>
+                <dd><select ng-model="formSaveService.scope" ng-options="c for c in config.scopes" class="form-control"></select></dd>
+                <dt>Maven Group:</dt>
+                <dd><input ng-model="formSaveService.mavenGroupId" type="text" class="form-control"></dd>
+                <dt>Do Builds:</dt>
+                <dd><input ng-model="formSaveService.doBuilds" type="checkbox"></dd>
+                <dt>Do Deploys:</dt>
+                <dd><input ng-model="formSaveService.doDeploys" type="checkbox"></dd>
+                <dt>Check jars are signed:</dt>
+                <dd><input ng-model="formSaveService.doCheckJar" type="checkbox"></dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Test Style:</dt>
+                <dd>
+                    <select ng-model="formSaveService.testStyle" class="form-control">
+                        <option>Maven</option>
+                        <option>Script</option>
+                    </select>
+                    <div ng-if="formSaveService.testStyle === 'Script'">
+                        Note: This test style has been deprecated, please consider use Maven. 
+                    </div>
+                </dd>
+                <div ng-if="formSaveService.testStyle === 'Script'">
+                    <dt>Test Host Name:</dt>
+                    <dd><input ng-model="formSaveService.testHostname" type="text" class="form-control"></dd>
+                    <dt>Test Run As User:</dt>
+                    <dd><input ng-model="formSaveService.testRunAs" type="text" class="form-control"></dd>
+                    <dt>Test Deployment Folder:</dt>
+                    <dd><input ng-model="formSaveService.testDeploymentFolder" type="text" class="form-control"></dd>
+                    <dt>Test Cmd Line:</dt>
+                    <dd><input ng-model="formSaveService.testCmdLine" type="text" class="form-control"></dd>
+                </div> 
+                <dt>Test Time Out:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formSaveService.testTimeOut" type="number" min="30" max="900" step="30" class="form-control">
+                        <div class="input-group-addon">sec</div>
+                    </div>
+                </dd>
+                <dt>Smoke Test Cron:</dt>
+                <dd><input ng-model="formSaveService.smokeTestCron" type="text" class="form-control"></dd>
+            </dl>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="save()">Add Service</button>

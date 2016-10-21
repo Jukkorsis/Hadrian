@@ -2,7 +2,7 @@
     <div class="panel-body">
         <h4>Configuration</h4>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <dl class="dl-horizontal">
                     <dt>Type:</dt>
                     <dd>{{service.serviceType}}</dd>
@@ -20,7 +20,17 @@
                     </div>
                 </dl>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <dl class="dl-horizontal">
+                    <dt>Do Builds:</dt>
+                    <dd>{{service.doBuilds}}</dd>
+                    <dt>Do Deploys:</dt>
+                    <dd>{{service.doDeploys}}</dd>
+                    <dt>Check jars are signed:</dt>
+                    <dd>{{service.doCheckJar}}</dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
                 <dl class="dl-horizontal">
                     <dt>Test Style:</dt>
                     <dd>{{service.testStyle}}</dd>
@@ -36,6 +46,8 @@
                     </div>
                     <dt>Test Time Out:</dt>
                     <dd>{{service.testTimeOut}} sec</dd>
+                    <dt>Smoke Test Cron:</dt>
+                    <dd>{{service.smokeTestCron}}</dd>
                 </dl>
             </div>
         </div>

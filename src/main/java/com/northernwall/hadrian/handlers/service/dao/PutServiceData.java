@@ -25,11 +25,15 @@ public class PutServiceData {
     public String serviceName;
     public String description;
     public String scope;
+    public boolean doBuilds;
+    public boolean doDeploys;
+    public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
+    public String smokeTestCron;
 
 }

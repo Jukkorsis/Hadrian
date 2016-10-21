@@ -97,12 +97,16 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.gitProject,
                 data.scope,
                 data.mavenGroupId,
+                data.doBuilds,
+                data.doDeploys,
+                data.doCheckJar,
                 data.testStyle,
                 data.testHostname,
                 data.testRunAs,
                 data.testDeploymentFolder,
                 data.testCmdLine,
                 data.testTimeOut,
+                data.smokeTestCron,
                 true);
 
         getDataAccess().saveService(service);

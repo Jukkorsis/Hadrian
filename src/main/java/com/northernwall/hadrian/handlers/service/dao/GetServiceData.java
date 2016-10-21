@@ -34,6 +34,9 @@ public class GetServiceData {
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
         temp.mavenGroupId = service.getMavenGroupId();
+        temp.doBuilds = service.isDoBuilds();
+        temp.doDeploys = service.isDoDeploys();
+        temp.doCheckJar = service.isDoCheckJar();
         
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();
@@ -41,6 +44,7 @@ public class GetServiceData {
         temp.testDeploymentFolder = service.getTestDeploymentFolder();
         temp.testCmdLine = service.getTestCmdLine();
         temp.testTimeOut = service.getTestTimeOut();
+        temp.smokeTestCron = service.getSmokeTestCron();
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();
@@ -75,12 +79,16 @@ public class GetServiceData {
     public String gitProject;
     public String scope;
     public String mavenGroupId;
+    public boolean doBuilds;
+    public boolean doDeploys;
+    public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
     public String testRunAs;
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
+    private String smokeTestCron;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;

@@ -29,6 +29,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 animation: true,
                 templateUrl: 'partials/updateService.html',
                 controller: 'ModalUpdateServiceCtrl',
+                size: 'lg',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -945,12 +946,16 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.serviceName = service.serviceName;
         $scope.formUpdateService.description = service.description;
         $scope.formUpdateService.scope = service.scope;
+        $scope.formUpdateService.doBuilds = service.doBuilds;
+        $scope.formUpdateService.doDeploys = service.doDeploys;
+        $scope.formUpdateService.doCheckJar = service.doCheckJar;
         $scope.formUpdateService.testStyle = service.testStyle;
         $scope.formUpdateService.testHostname = service.testHostname;
         $scope.formUpdateService.testRunAs = service.testRunAs;
         $scope.formUpdateService.testDeploymentFolder = service.testDeploymentFolder;
         $scope.formUpdateService.testCmdLine = service.testCmdLine;
         $scope.formUpdateService.testTimeOut = service.testTimeOut;
+        $scope.formUpdateService.smokeTestCron = service.smokeTestCron;
 
         $scope.save = function () {
             var dataObject = {
@@ -958,12 +963,16 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 serviceName: $scope.formUpdateService.serviceName,
                 description: $scope.formUpdateService.description,
                 scope: $scope.formUpdateService.scope,
+                doBuilds: $scope.formUpdateService.doBuilds,
+                doDeploys: $scope.formUpdateService.doDeploys,
+                doCheckJar: $scope.formUpdateService.doCheckJar,
                 testStyle: $scope.formUpdateService.testStyle,
                 testHostname: $scope.formUpdateService.testHostname,
                 testRunAs: $scope.formUpdateService.testRunAs,
                 testDeploymentFolder: $scope.formUpdateService.testDeploymentFolder,
                 testCmdLine: $scope.formUpdateService.testCmdLine,
-                testTimeOut: $scope.formUpdateService.testTimeOut
+                testTimeOut: $scope.formUpdateService.testTimeOut,
+                smokeTestCron: $scope.formUpdateService.smokeTestCron
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});

@@ -35,6 +35,7 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
                 animation: true,
                 templateUrl: 'partials/addService.html',
                 controller: 'ModalAddServiceCtrl',
+                size: 'lg',
                 resolve: {
                     team: function () {
                         return $scope.team;
@@ -141,12 +142,16 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.gitProject = "";
             $scope.formSaveService.scope = $scope.config.scopes[0];
             $scope.formSaveService.mavenGroupId =  $scope.config.mavenGroupId;
+            $scope.formSaveService.doBuilds = true;
+            $scope.formSaveService.doDeploys = true;
+            $scope.formSaveService.doCheckJar = true;
             $scope.formSaveService.testStyle = "Maven";
             $scope.formSaveService.testHostname = "";
             $scope.formSaveService.testRunAs = "";
             $scope.formSaveService.testDeploymentFolder = "";
             $scope.formSaveService.testCmdLine = "";
             $scope.formSaveService.testTimeOut = 300;
+            $scope.formSaveService.smokeTestCron = "";
 
             $scope.save = function () {
                 var dataObject = {
@@ -155,6 +160,9 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     description: $scope.formSaveService.description,
                     serviceType: $scope.formSaveService.serviceType,
                     gitProject: $scope.formSaveService.gitProject,
+                    doBuilds: $scope.formSaveService.doBuilds,
+                    doDeploys: $scope.formSaveService.doDeploys,
+                    doCheckJar: $scope.formSaveService.doCheckJar,
                     scope: $scope.formSaveService.scope,
                     mavenGroupId: $scope.formSaveService.mavenGroupId,
                     testStyle: $scope.formSaveService.testStyle,
@@ -162,7 +170,8 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     testRunAs: $scope.formSaveService.testRunAs,
                     testDeploymentFolder: $scope.formSaveService.testDeploymentFolder,
                     testCmdLine: $scope.formSaveService.testCmdLine,
-                    testTimeOut: $scope.formSaveService.testTimeOut
+                    testTimeOut: $scope.formSaveService.testTimeOut,
+                    smokeTestCron: $scope.formSaveService.smokeTestCron
                 };
 
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});

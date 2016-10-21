@@ -47,18 +47,22 @@ public class Service implements Comparable<Service>{
     private String gitProject;
     private String scope;
     private String mavenGroupId;
+    private boolean doBuilds;
+    private boolean doDeploys;
+    private boolean doCheckJar;
     private String testStyle;
     private String testHostname;
     private String testRunAs;
     private String testDeploymentFolder;
     private String testCmdLine;
     private int testTimeOut;
+    private String smokeTestCron;
     private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doCheckJar, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -67,12 +71,16 @@ public class Service implements Comparable<Service>{
         this.gitProject = gitProject;
         this.scope = scope;
         this.mavenGroupId = mavenGroupId;
+        this.doBuilds = doBuilds;
+        this.doDeploys = doDeploys;
+        this.doCheckJar = doCheckJar;
         this.testStyle = testStyle;
         this.testHostname = testHostname;
         this.testRunAs = testRunAs;
         this.testDeploymentFolder = testDeploymentFolder;
         this.testCmdLine = testCmdLine;
         this.testTimeOut = testTimeOut;
+        this.smokeTestCron = smokeTestCron;
         this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
@@ -143,6 +151,30 @@ public class Service implements Comparable<Service>{
         this.mavenGroupId = mavenGroupId;
     }
 
+    public boolean isDoBuilds() {
+        return doBuilds;
+    }
+
+    public void setDoBuilds(boolean doBuilds) {
+        this.doBuilds = doBuilds;
+    }
+
+    public boolean isDoDeploys() {
+        return doDeploys;
+    }
+
+    public void setDoDeploys(boolean doDeploys) {
+        this.doDeploys = doDeploys;
+    }
+
+    public boolean isDoCheckJar() {
+        return doCheckJar;
+    }
+
+    public void setDoCheckJar(boolean doCheckJar) {
+        this.doCheckJar = doCheckJar;
+    }
+
     public String getTestStyle() {
         return testStyle;
     }
@@ -192,6 +224,14 @@ public class Service implements Comparable<Service>{
 
     public void setTestTimeOut(int testTimeOut) {
         this.testTimeOut = testTimeOut;
+    }
+
+    public String getSmokeTestCron() {
+        return smokeTestCron;
+    }
+
+    public void setSmokeTestCron(String smokeTestCron) {
+        this.smokeTestCron = smokeTestCron;
     }
 
     public List<Document> getDocuments() {
