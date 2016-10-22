@@ -28,6 +28,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutRestartHostData;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +59,10 @@ public class HostRestartHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
 
+        if (!service.isDoDeploys()) {
+            throw new Http400BadRequestException("Service is configurationed to not allow deployments");
+        }
+        
         Module module = getModule(data.moduleId, data.moduleName, service);
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());

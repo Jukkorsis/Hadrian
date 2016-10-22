@@ -66,6 +66,10 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
 
+        if (!service.isDoDeploys()) {
+            throw new Http400BadRequestException("Service is configurationed to not allow deployments");
+        }
+        
         Module module = getModule(data.moduleId, data.moduleName, service);
 
         Network network = null;

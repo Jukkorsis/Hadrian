@@ -122,14 +122,16 @@ public class HostCreateHandler extends BasicHandler {
                 workItemCreate.getHost().reason = data.reason;
                 workItems.add(workItemCreate);
 
-                WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
-                workItemDeploy.getHost().version = data.version;
-                workItemDeploy.getHost().configVersion = data.configVersion;
-                workItemDeploy.getHost().reason = data.reason;
-                workItems.add(workItemDeploy);
+                if (service.isDoDeploys()) {
+                    WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+                    workItemDeploy.getHost().version = data.version;
+                    workItemDeploy.getHost().configVersion = data.configVersion;
+                    workItemDeploy.getHost().reason = data.reason;
+                    workItems.add(workItemDeploy);
 
-                WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
-                workItems.add(workItemEnable);
+                    WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
+                    workItems.add(workItemEnable);
+                }
 
                 workItemProcessor.processWorkItems(workItems);
             }
