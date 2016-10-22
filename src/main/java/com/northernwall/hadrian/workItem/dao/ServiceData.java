@@ -27,6 +27,7 @@ public class ServiceData {
     public String mavenGroupId;
     public boolean doBuilds;
     public boolean doDeploys;
+    public boolean doManageVip;
     public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
@@ -49,6 +50,7 @@ public class ServiceData {
         temp.mavenGroupId = service.getMavenGroupId();
         temp.doBuilds = service.isDoBuilds();
         temp.doDeploys = service.isDoDeploys();
+        temp.doManageVip = service.isDoManageVip();
         temp.doCheckJar = service.isDoCheckJar();
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();

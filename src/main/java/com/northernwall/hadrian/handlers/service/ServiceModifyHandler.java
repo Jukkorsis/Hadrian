@@ -71,6 +71,7 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setScope(data.scope);
         service.setDoBuilds(data.doBuilds);
         service.setDoDeploys(data.doDeploys);
+        service.setDoManageVip(data.doManageVip);
         service.setDoCheckJar(data.doCheckJar);
         service.setTestStyle(data.testStyle);
         service.setTestHostname(data.testHostname);

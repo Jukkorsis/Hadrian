@@ -49,6 +49,7 @@ public class Service implements Comparable<Service>{
     private String mavenGroupId;
     private boolean doBuilds;
     private boolean doDeploys;
+    private boolean doManageVip;
     private boolean doCheckJar;
     private String testStyle;
     private String testHostname;
@@ -62,7 +63,7 @@ public class Service implements Comparable<Service>{
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doCheckJar, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -73,6 +74,7 @@ public class Service implements Comparable<Service>{
         this.mavenGroupId = mavenGroupId;
         this.doBuilds = doBuilds;
         this.doDeploys = doDeploys;
+        this.doManageVip = doManageVip;
         this.doCheckJar = doCheckJar;
         this.testStyle = testStyle;
         this.testHostname = testHostname;
@@ -169,6 +171,14 @@ public class Service implements Comparable<Service>{
 
     public boolean isDoCheckJar() {
         return doCheckJar;
+    }
+
+    public boolean isDoManageVip() {
+        return doManageVip;
+    }
+
+    public void setDoManageVip(boolean doManageVip) {
+        this.doManageVip = doManageVip;
     }
 
     public void setDoCheckJar(boolean doCheckJar) {

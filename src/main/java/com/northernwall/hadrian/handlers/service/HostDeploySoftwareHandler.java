@@ -108,8 +108,11 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         }
                         getDataAccess().updateHost(host);
 
-                        WorkItem workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
-                        workItems.add(workItem);
+                        WorkItem workItem;
+                        if (service.isDoManageVip()) {
+                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
 
                         workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
                         workItem.getHost().version = data.version;
@@ -124,8 +127,10 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                             workItems.add(workItem);
                         }
 
-                        workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
-                        workItems.add(workItem);
+                        if (service.isDoManageVip()) {
+                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
                     }
                 }
             }

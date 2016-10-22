@@ -73,8 +73,10 @@ public class HostDeleteHandler extends BasicHandler {
 
                         List<WorkItem> workItems = new ArrayList<>(2);
 
-                        WorkItem workItemDisable = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, null);
-                        workItems.add(workItemDisable);
+                        if (service.isDoManageVip()) {
+                            WorkItem workItemDisable = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, null);
+                            workItems.add(workItemDisable);
+                        }
 
                         WorkItem workItemDelete = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
                         workItemDelete.getHost().reason = data.reason;

@@ -99,6 +99,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.mavenGroupId,
                 data.doBuilds,
                 data.doDeploys,
+                data.doManageVip,
                 data.doCheckJar,
                 data.testStyle,
                 data.testHostname,

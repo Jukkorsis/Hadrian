@@ -144,6 +144,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.mavenGroupId =  $scope.config.mavenGroupId;
             $scope.formSaveService.doBuilds = true;
             $scope.formSaveService.doDeploys = true;
+            $scope.formSaveService.doManageVip = true;
             $scope.formSaveService.doCheckJar = true;
             $scope.formSaveService.testStyle = "Maven";
             $scope.formSaveService.testHostname = "";
@@ -162,6 +163,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     gitProject: $scope.formSaveService.gitProject,
                     doBuilds: $scope.formSaveService.doBuilds,
                     doDeploys: $scope.formSaveService.doDeploys,
+                    doManageVip: $scope.formSaveService.doManageVip,
                     doCheckJar: $scope.formSaveService.doCheckJar,
                     scope: $scope.formSaveService.scope,
                     mavenGroupId: $scope.formSaveService.mavenGroupId,

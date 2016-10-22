@@ -62,7 +62,7 @@ public class HostRestartHandler extends BasicHandler {
         if (!service.isDoDeploys()) {
             throw new Http400BadRequestException("Service is configurationed to not allow deployments");
         }
-        
+
         Module module = getModule(data.moduleId, data.moduleName, service);
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
@@ -81,8 +81,11 @@ public class HostRestartHandler extends BasicHandler {
                         }
                         getDataAccess().updateHost(host);
 
-                        WorkItem workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
-                        workItems.add(workItem);
+                        WorkItem workItem;
+                        if (service.isDoManageVip()) {
+                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
 
                         workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
                         workItem.getHost().reason = data.reason;
@@ -93,8 +96,10 @@ public class HostRestartHandler extends BasicHandler {
                             workItems.add(workItem);
                         }
 
-                        workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
-                        workItems.add(workItem);
+                        if (service.isDoManageVip()) {
+                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+                            workItems.add(workItem);
+                        }
                     }
                 }
             }
@@ -105,10 +110,10 @@ public class HostRestartHandler extends BasicHandler {
         int status = 200;
         if (data.wait) {
             status = workItemProcessor.waitForProcess(
-                    workItems.get(workItems.size() - 1).getId(), 
-                    (module.getStartTimeOut() + module.getStopTimeOut()) * 100, 
-                    workItems.size() * (module.getStartTimeOut() + module.getStopTimeOut()) * 1_500, 
-                    service.getServiceName()+" "+module.getModuleName());
+                    workItems.get(workItems.size() - 1).getId(),
+                    (module.getStartTimeOut() + module.getStopTimeOut()) * 100,
+                    workItems.size() * (module.getStartTimeOut() + module.getStopTimeOut()) * 1_500,
+                    service.getServiceName() + " " + module.getModuleName());
         }
 
         response.setStatus(status);

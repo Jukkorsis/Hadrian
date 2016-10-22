@@ -62,7 +62,6 @@ public class VipUpdateAction extends Action {
         vip.setStatus(false, Const.NO_STATUS);
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
-        vip.setAutoStyle(workItem.getVip().autoStyle);
         dataAccess.updateVip(vip);
     }
 

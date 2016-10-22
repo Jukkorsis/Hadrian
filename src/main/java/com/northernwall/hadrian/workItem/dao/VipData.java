@@ -23,16 +23,6 @@ import com.northernwall.hadrian.domain.Vip;
  * @author Richard Thurston
  */
 public class VipData {
-    public String vipId;
-    public String dns;
-    public String domain;
-    public boolean external;
-    public String network;
-    public String protocol;
-    public int vipPort;
-    public int servicePort;
-    public String autoStyle;
-
     public static VipData create(Vip vip) {
         if (vip == null) {
             return null;
@@ -46,8 +36,17 @@ public class VipData {
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
-        temp.autoStyle = vip.getAutoStyle();
         return temp;
     }
+    
+    public String vipId;
+    public String dns;
+    public String domain;
+    public boolean external;
+    public String network;
+    public String protocol;
+    public int vipPort;
+    public int servicePort;
+
 
 }

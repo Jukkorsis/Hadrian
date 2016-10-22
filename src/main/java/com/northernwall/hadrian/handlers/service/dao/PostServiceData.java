@@ -30,6 +30,7 @@ public class PostServiceData {
     public String mavenGroupId;
     public boolean doBuilds;
     public boolean doDeploys;
+    public boolean doManageVip;
     public boolean doCheckJar;
     public String testStyle;
     public String testHostname;

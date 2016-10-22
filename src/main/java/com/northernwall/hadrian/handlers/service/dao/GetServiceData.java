@@ -36,6 +36,7 @@ public class GetServiceData {
         temp.mavenGroupId = service.getMavenGroupId();
         temp.doBuilds = service.isDoBuilds();
         temp.doDeploys = service.isDoDeploys();
+        temp.doManageVip = service.isDoManageVip();
         temp.doCheckJar = service.isDoCheckJar();
         
         temp.testStyle = service.getTestStyle();
@@ -81,6 +82,7 @@ public class GetServiceData {
     public String mavenGroupId;
     public boolean doBuilds;
     public boolean doDeploys;
+    public boolean doManageVip;
     public boolean doCheckJar;
     public String testStyle;
     public String testHostname;
@@ -88,7 +90,7 @@ public class GetServiceData {
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
-    private String smokeTestCron;
+    public String smokeTestCron;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;

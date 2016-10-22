@@ -128,7 +128,9 @@ public class HostCreateHandler extends BasicHandler {
                     workItemDeploy.getHost().configVersion = data.configVersion;
                     workItemDeploy.getHost().reason = data.reason;
                     workItems.add(workItemDeploy);
+                }
 
+                if (service.isDoManageVip()) {
                     WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
                     workItems.add(workItemEnable);
                 }

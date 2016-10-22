@@ -34,7 +34,6 @@ import com.northernwall.hadrian.handlers.service.dao.PostBackfillHostData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +49,28 @@ import org.slf4j.LoggerFactory;
 public class HostBackfillHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostBackfillHandler.class);
+    
+    public static String scrubHostname(String hostname) {
+        if (hostname == null) {
+            return null;
+        }
+        String temp = hostname.trim();
+        if (temp == null || temp.isEmpty()) {
+            return null;
+        }
+        int index = temp.indexOf(".");
+        if (index == -1) {
+            return temp;
+        }
+        if (index == 0) {
+            return null;
+        }
+        temp = temp.substring(0, index).trim();
+        if (temp == null || temp.isEmpty()) {
+            return null;
+        }
+        return temp;
+    }
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
@@ -138,26 +159,5 @@ public class HostBackfillHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    public static String scrubHostname(String hostname) {
-        if (hostname == null) {
-            return null;
-        }
-        String temp = hostname.trim();
-        if (temp == null || temp.isEmpty()) {
-            return null;
-        }
-        int index = temp.indexOf(".");
-        if (index == -1) {
-            return temp;
-        }
-        if (index == 0) {
-            return null;
-        }
-        temp = temp.substring(0, index).trim();
-        if (temp == null || temp.isEmpty()) {
-            return null;
-        }
-        return temp;
-    }
 
 }
