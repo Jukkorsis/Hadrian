@@ -32,6 +32,8 @@ import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.schedule.Leader;
+import com.northernwall.hadrian.schedule.Scheduler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
@@ -49,6 +51,10 @@ public class HadrianBuilder {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HadrianBuilder.class);
 
+    public static HadrianBuilder create(Parameters parameters) {
+        return new HadrianBuilder(parameters);
+    }
+
     private final Parameters parameters;
     private OkHttpClient client;
     private ConfigHelper configHelper;
@@ -61,10 +67,6 @@ public class HadrianBuilder {
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
     private MetricRegistry metricRegistry;
-
-    public static HadrianBuilder create(Parameters parameters) {
-        return new HadrianBuilder(parameters);
-    }
 
     private HadrianBuilder(Parameters parameters) {
         this.parameters = parameters;
@@ -108,66 +110,17 @@ public class HadrianBuilder {
                     parameters.getString("metrics.kairosDb.username", null),
                     parameters.getString("metrics.kairosDb.password", null)));
         }
-        
+
         if (dataAccess == null) {
-            String factoryName = parameters.getString(Const.DATA_ACCESS_FACTORY_CLASS_NAME, Const.DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
-            Class c;
-            try {
-                c = Class.forName(factoryName);
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find DataAccess class " + factoryName);
-            }
-            DataAccessFactory factory;
-            try {
-                factory = (DataAccessFactory) c.newInstance();
-            } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation DataAccess class " + factoryName);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access DataAccess class " + factoryName);
-            }
-            dataAccess = factory.createDataAccess(parameters, metricRegistry);
+            buildDataAccess();
         }
 
         if (moduleArtifactHelper == null) {
-            String factoryName = parameters.getString(Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME, Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME_DEFAULT);
-            if (factoryName != null && !factoryName.isEmpty()) {
-                Class c;
-                try {
-                    c = Class.forName(factoryName);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not find ModuleArtifactHelper class " + factoryName);
-                }
-                ModuleArtifactHelperFactory moduleArtifactHelperFactory;
-                try {
-                    moduleArtifactHelperFactory = (ModuleArtifactHelperFactory) c.newInstance();
-                } catch (InstantiationException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleArtifactHelper class " + factoryName);
-                } catch (IllegalAccessException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not access ModuleArtifactHelper class " + factoryName);
-                }
-                moduleArtifactHelper = moduleArtifactHelperFactory.create(parameters, client);
-            }
+            buildModuleArtifactHelper();
         }
 
         if (moduleConfigHelper == null) {
-            String factoryName = parameters.getString(Const.MODULE_CONFIG_HELPER_FACTORY_CLASS_NAME, null);
-            if (factoryName != null && !factoryName.isEmpty()) {
-                Class c;
-                try {
-                    c = Class.forName(factoryName);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not find ModuleConfigHelper class " + factoryName);
-                }
-                ModuleConfigHelperFactory moduleConfigHelperFactory;
-                try {
-                    moduleConfigHelperFactory = (ModuleConfigHelperFactory) c.newInstance();
-                } catch (InstantiationException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleConfigHelper class " + factoryName);
-                } catch (IllegalAccessException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not access ModuleConfigHelper class " + factoryName);
-                }
-                moduleConfigHelper = moduleConfigHelperFactory.create(parameters, client);
-            }
+            buildModuleConfigHelper();
         }
 
         configHelper = new ConfigHelper(parameters, moduleConfigHelper);
@@ -175,88 +128,190 @@ public class HadrianBuilder {
         accessHelper = new AccessHelper(dataAccess);
 
         if (accessHandler == null) {
-            String factoryName = parameters.getString(Const.ACCESS_HANDLER_FACTORY_CLASS_NAME, Const.ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT);
-            Class c;
-            try {
-                c = Class.forName(factoryName);
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Access class " + factoryName);
-            }
-            AccessHandlerFactory accessHanlderFactory;
-            try {
-                accessHanlderFactory = (AccessHandlerFactory) c.newInstance();
-            } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Access class " + factoryName);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Access class " + factoryName);
-            }
-            accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
+            buildAccessHandler();
         }
 
         if (hostDetailsHelper == null) {
-            String factoryName = parameters.getString(Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
-            Class c;
-            try {
-                c = Class.forName(factoryName);
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Host Details Helper class " + factoryName);
-            }
-            HostDetailsHelperFactory hostDetailsHelperFactory;
-            try {
-                hostDetailsHelperFactory = (HostDetailsHelperFactory) c.newInstance();
-            } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Host Details Helper class " + factoryName);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Host Details Helper class " + factoryName);
-            }
-            hostDetailsHelper = hostDetailsHelperFactory.create(client, parameters);
+            buildHostDetailsHelper();
         }
 
         if (vipDetailsHelper == null) {
-            String factoryName = parameters.getString(Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
-            if (factoryName != null && !factoryName.isEmpty()) {
-                Class c;
-                try {
-                    c = Class.forName(factoryName);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not find VIP Details Helper class " + factoryName);
-                }
-                VipDetailsHelperFactory vipDetailsHelperFactory;
-                try {
-                    vipDetailsHelperFactory = (VipDetailsHelperFactory) c.newInstance();
-                } catch (InstantiationException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not instantiation VIP Details Helper class " + factoryName);
-                } catch (IllegalAccessException ex) {
-                    throw new RuntimeException("Could not build Hadrian, could not access VIP Details Helper class " + factoryName);
-                }
-                vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters, configHelper);
-            }
+            buildVipDetailsHelper();
         }
 
         if (calendarHelper == null) {
-            String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
-            Class c;
-            try {
-                c = Class.forName(factoryName);
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not find Calendar Helper class " + factoryName);
-            }
-            CalendarHelperFactory calendarHelperFactory;
-            try {
-                calendarHelperFactory = (CalendarHelperFactory) c.newInstance();
-            } catch (InstantiationException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not instantiation Calendar Helper class " + factoryName);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Could not build Hadrian, could not access Calendar Helper class " + factoryName);
-            }
-            calendarHelper = calendarHelperFactory.create(parameters, client);
+            buildCalendarHelper();
         }
+
+        buildScheduler();
 
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson(), metricRegistry);
 
         DataAccessUpdater.update(dataAccess, configHelper.getConfig());
 
         return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, metricRegistry);
+    }
+
+    private void buildDataAccess() {
+        String factoryName = parameters.getString(Const.DATA_ACCESS_FACTORY_CLASS_NAME, Const.DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find DataAccess class " + factoryName);
+        }
+        DataAccessFactory factory;
+        try {
+            factory = (DataAccessFactory) c.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation DataAccess class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access DataAccess class " + factoryName);
+        }
+        dataAccess = factory.createDataAccess(parameters, metricRegistry);
+    }
+
+    private void buildModuleArtifactHelper() {
+        String factoryName = parameters.getString(Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME, Const.MODULE_ARTIFACT_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        if (factoryName != null && !factoryName.isEmpty()) {
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find ModuleArtifactHelper class " + factoryName);
+            }
+            ModuleArtifactHelperFactory moduleArtifactHelperFactory;
+            try {
+                moduleArtifactHelperFactory = (ModuleArtifactHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleArtifactHelper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access ModuleArtifactHelper class " + factoryName);
+            }
+            moduleArtifactHelper = moduleArtifactHelperFactory.create(parameters, client);
+        }
+    }
+
+    private void buildModuleConfigHelper() {
+        String factoryName = parameters.getString(Const.MODULE_CONFIG_HELPER_FACTORY_CLASS_NAME, null);
+        if (factoryName != null && !factoryName.isEmpty()) {
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find ModuleConfigHelper class " + factoryName);
+            }
+            ModuleConfigHelperFactory moduleConfigHelperFactory;
+            try {
+                moduleConfigHelperFactory = (ModuleConfigHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation ModuleConfigHelper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access ModuleConfigHelper class " + factoryName);
+            }
+            moduleConfigHelper = moduleConfigHelperFactory.create(parameters, client);
+        }
+    }
+
+    private void buildAccessHandler() {
+        String factoryName = parameters.getString(Const.ACCESS_HANDLER_FACTORY_CLASS_NAME, Const.ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find Access class " + factoryName);
+        }
+        AccessHandlerFactory accessHanlderFactory;
+        try {
+            accessHanlderFactory = (AccessHandlerFactory) c.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation Access class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access Access class " + factoryName);
+        }
+        accessHandler = accessHanlderFactory.create(accessHelper, parameters, metricRegistry);
+    }
+
+    private void buildHostDetailsHelper() {
+        String factoryName = parameters.getString(Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.HOST_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find Host Details Helper class " + factoryName);
+        }
+        HostDetailsHelperFactory hostDetailsHelperFactory;
+        try {
+            hostDetailsHelperFactory = (HostDetailsHelperFactory) c.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation Host Details Helper class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access Host Details Helper class " + factoryName);
+        }
+        hostDetailsHelper = hostDetailsHelperFactory.create(client, parameters);
+    }
+
+    private void buildVipDetailsHelper() {
+        String factoryName = parameters.getString(Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME, Const.VIP_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        if (factoryName != null && !factoryName.isEmpty()) {
+            Class c;
+            try {
+                c = Class.forName(factoryName);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not find VIP Details Helper class " + factoryName);
+            }
+            VipDetailsHelperFactory vipDetailsHelperFactory;
+            try {
+                vipDetailsHelperFactory = (VipDetailsHelperFactory) c.newInstance();
+            } catch (InstantiationException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not instantiation VIP Details Helper class " + factoryName);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Could not build Hadrian, could not access VIP Details Helper class " + factoryName);
+            }
+            vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters, configHelper);
+        }
+    }
+
+    private void buildCalendarHelper() {
+        String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find Calendar Helper class " + factoryName);
+        }
+        CalendarHelperFactory calendarHelperFactory;
+        try {
+            calendarHelperFactory = (CalendarHelperFactory) c.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation Calendar Helper class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access Calendar Helper class " + factoryName);
+        }
+        calendarHelper = calendarHelperFactory.create(parameters, client);
+    }
+
+    private void buildScheduler() {
+        String factoryName = parameters.getString(Const.LEADER_CLASS_NAME, Const.LEADER_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find Leader class " + factoryName);
+        }
+        try {
+            Leader leader = (Leader) c.newInstance();
+            leader.init(getHostname(), parameters, client);
+            Scheduler scheduler = new Scheduler(
+                    dataAccess,
+                    leader,
+                    parameters, 
+                    client);
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation Leader class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access Leader class " + factoryName);
+        }
     }
 
     private String getHostname() {
