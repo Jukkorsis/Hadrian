@@ -93,20 +93,24 @@
                                     <dd>{{m.artifactSuffix}}</dd>
                                 </div>
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
-                                    <dt>Outbound Connectivity:</dt>
-                                    <dd>{{m.outbound}}</dd>
                                     <dt>Host Abbr:</dt>
                                     <dd>{{m.hostAbbr}}</dd>
+                                    <dt>Networks:</dt>
+                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
+                                    <dt>Run As:</dt>
+                                    <dd>{{m.runAs}}</dd>
+                                    <dt>Outbound Connectivity:</dt>
+                                    <dd>{{m.outbound}}</dd>
+                                    <div ng-if="m.configName">
+                                        <dt>{{config.moduleConfigName}}:</dt>
+                                        <dd>{{m.configName}}</dd>
+                                    </div>
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
                                     <dt>Availability URL:</dt>
                                     <dd>{{m.availabilityUrl}}</dd>
                                     <dt>Smoke Test URL:</dt>
                                     <dd>{{m.smokeTestUrl}}</dd>
-                                    <dt>Start Cmd Line:</dt>
-                                    <dd>{{m.startCmdLine}}</dd>
-                                    <dt>Start Timeout:</dt>
-                                    <dd>{{m.startTimeOut}} sec</dd>
                                 </div>
                                 <dt>Used By:</dt>
                                 <dd>
@@ -120,14 +124,6 @@
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
-                                    <dt>Networks:</dt>
-                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
-                                    <dt>Run As:</dt>
-                                    <dd>{{m.runAs}}</dd>
-                                    <div ng-if="m.configName">
-                                        <dt>{{config.moduleConfigName}}:</dt>
-                                        <dd>{{m.configName}}</dd>
-                                    </div>
                                     <dt>Deployment Folder:</dt>
                                     <dd>{{m.deploymentFolder}}</dd>
                                     <dt>Data Folder:</dt>
@@ -136,6 +132,10 @@
                                     <dd>{{m.logsFolder}}</dd>
                                     <dt>Logs Retention:</dt>
                                     <dd>{{m.logsRetention}} Months</dd>
+                                    <dt>Start Cmd Line:</dt>
+                                    <dd>{{m.startCmdLine}}</dd>
+                                    <dt>Start Timeout:</dt>
+                                    <dd>{{m.startTimeOut}} sec</dd>
                                     <dt>Stop Cmd Line:</dt>
                                     <dd>{{m.stopCmdLine}}</dd>
                                     <dt>Stop Timeout:</dt>
