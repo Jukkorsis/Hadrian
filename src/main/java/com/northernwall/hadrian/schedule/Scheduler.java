@@ -17,33 +17,36 @@ package com.northernwall.hadrian.schedule;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Richard
  */
 public class Scheduler {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
     public static final int GROUP_COUNT = 10;
     
-    private int threadNum;
-    private final ScheduledExecutorService ScheduledExecutorService;
+    private final Leader leader;
+    private final ScheduledExecutorService scheduledExecutorService;
+    private final List<ScheduleRunner> runners;
 
     public Scheduler(DataAccess dataAccess, Leader leader, Parameters parameters, OkHttpClient client) {
         Gson gson = new Gson();
-        this.threadNum = 0;
         
-        ScheduledExecutorService = Executors.newScheduledThreadPool(GROUP_COUNT, new ThreadFactory(){
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread("Scheduler-"+threadNum++);
-            }
-        });
+        this.leader = leader;
+        scheduledExecutorService = Executors.newScheduledThreadPool(GROUP_COUNT);
+        runners = new LinkedList<>();
         
         for (int group=0; group<GROUP_COUNT; group++) {
             ScheduleRunner runner = new ScheduleRunner(
@@ -53,13 +56,23 @@ public class Scheduler {
                     parameters, 
                     gson, 
                     client);
-            ScheduledExecutorService.scheduleWithFixedDelay(
+            
+            runners.add(runner);
+            
+            scheduledExecutorService.scheduleWithFixedDelay(
                     runner, 
                     5, 
                     5, 
                     TimeUnit.MINUTES);
         }
-        
+        LOGGER.info("Scheduler started with {} groups and using {}", GROUP_COUNT, leader.getClass().getSimpleName());
+    }
+
+    public void getHealth(HealthWriter writer) throws IOException {
+        writer.addLine("Scheduler Leader", leader.getClass().getSimpleName());
+        for (ScheduleRunner runner : runners) {
+            runner.getHealth(writer);
+        }
     }
     
 }

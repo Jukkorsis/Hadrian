@@ -66,6 +66,7 @@ public class HadrianBuilder {
     private VipDetailsHelper vipDetailsHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
+    private Scheduler scheduler;
     private MetricRegistry metricRegistry;
 
     private HadrianBuilder(Parameters parameters) {
@@ -149,7 +150,7 @@ public class HadrianBuilder {
 
         DataAccessUpdater.update(dataAccess, configHelper.getConfig());
 
-        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, metricRegistry);
+        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, scheduler, metricRegistry);
     }
 
     private void buildDataAccess() {
@@ -302,7 +303,7 @@ public class HadrianBuilder {
         try {
             Leader leader = (Leader) c.newInstance();
             leader.init(getHostname(), parameters, client);
-            Scheduler scheduler = new Scheduler(
+            scheduler = new Scheduler(
                     dataAccess,
                     leader,
                     parameters, 

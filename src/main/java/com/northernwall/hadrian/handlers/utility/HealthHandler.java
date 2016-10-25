@@ -22,6 +22,7 @@ import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.schedule.Scheduler;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -48,9 +49,10 @@ public class HealthHandler extends AbstractHandler {
     private final ModuleConfigHelper moduleConfigHelper;
     private final Parameters parameters;
     private final MessagingCoodinator messagingCoodinator;
+    private final Scheduler scheduler;
     private final String version;
     
-    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, MessagingCoodinator messagingCoodinator) {
+    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, MessagingCoodinator messagingCoodinator, Scheduler scheduler) {
         this.accessHandler = accessHandler;
         this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
@@ -58,6 +60,7 @@ public class HealthHandler extends AbstractHandler {
         this.moduleConfigHelper = moduleConfigHelper;
         this.parameters = parameters;
         this.messagingCoodinator = messagingCoodinator;
+        this.scheduler = scheduler;
         String temp = getClass().getPackage().getImplementationVersion();
         if (temp == null) {
             version = "unknown";
@@ -96,6 +99,7 @@ public class HealthHandler extends AbstractHandler {
         writer.addClassLine("Class - Parameters", parameters);
         dataAccess.getHealth(writer);
         messagingCoodinator.getHealth(writer);
+        scheduler.getHealth(writer);
         writer.close();
     }
 

@@ -92,6 +92,7 @@ import com.northernwall.hadrian.messaging.MessageSendHandler;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.schedule.Scheduler;
 import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.squareup.okhttp.OkHttpClient;
@@ -127,10 +128,11 @@ public class Hadrian {
     private final HostDetailsHelper hostDetailsHelper;
     private final VipDetailsHelper vipDetailsHelper;
     private final MessagingCoodinator messagingCoodinator;
+    private final Scheduler scheduler;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -144,6 +146,7 @@ public class Hadrian {
         this.calendarHelper = calendarHelper;
         this.workItemProcessor = workItemProcessor;
         this.metricRegistry = metricRegistry;
+        this.scheduler = scheduler;
 
         infoHelper = new InfoHelper(parameters, client);
         messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
@@ -172,7 +175,7 @@ public class Hadrian {
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator, scheduler), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webcontent"), false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/favicon.ico", new FaviconHandler(), false);

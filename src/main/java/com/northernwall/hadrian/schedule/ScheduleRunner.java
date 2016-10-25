@@ -21,10 +21,12 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.OkHttpClient;
+import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +82,13 @@ public class ScheduleRunner implements Runnable {
     private void runSmokeTest(Service service) {
         LOGGER.info("Running scheduled smoke test for {} in group {}", service.getServiceName(), group);
         List<Module> modules = dataAccess.getModules(service.getServiceId());
+        if (modules == null || modules.isEmpty()) {
+            return;
+        }
         List<Host> hosts = null;
         for (Module module : modules) {
             if (module.getModuleType() == ModuleType.Deployable) {
+                LOGGER.info("Running scheduled smoke test for {} {} in group {}", service.getServiceName(), module.getModuleName(), group);
                 String smokeTestUrl = module.getSmokeTestUrl();
                 if (smokeTestUrl != null && !smokeTestUrl.isEmpty()) {
                     if (hosts == null) {
@@ -99,6 +105,10 @@ public class ScheduleRunner implements Runnable {
                             if (!results.result.equalsIgnoreCase("pass")) {
                                 LOGGER.info("Scheduled smoke test for {} in group {} failed", service.getServiceName(), group);
                             }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                            }
                         }
                     }
                 }
@@ -107,6 +117,14 @@ public class ScheduleRunner implements Runnable {
     }
 
     private void runCollectionMetrics(Service service) {
+    }
+
+    public void getHealth(HealthWriter writer) throws IOException {
+        if (leader.isLeader(group)) {
+            writer.addLine("Schedule Runner " + group, "Leader");
+        } else {
+            writer.addLine("Schedule Runner " + group, "Not leader");
+        }
     }
 
 }
