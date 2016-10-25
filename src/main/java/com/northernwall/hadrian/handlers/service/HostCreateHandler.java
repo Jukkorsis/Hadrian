@@ -113,25 +113,23 @@ public class HostCreateHandler extends BasicHandler {
 
                 List<WorkItem> workItems = new ArrayList<>(3);
 
-                WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
+                WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null, data.reason);
                 workItemCreate.getHost().sizeCpu = data.sizeCpu;
                 workItemCreate.getHost().sizeMemory = data.sizeMemory;
                 workItemCreate.getHost().sizeStorage = data.sizeStorage;
                 workItemCreate.getHost().version = data.version;
                 workItemCreate.getHost().configVersion = data.configVersion;
-                workItemCreate.getHost().reason = data.reason;
                 workItems.add(workItemCreate);
 
                 if (service.isDoDeploys()) {
-                    WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+                    WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null, data.reason);
                     workItemDeploy.getHost().version = data.version;
                     workItemDeploy.getHost().configVersion = data.configVersion;
-                    workItemDeploy.getHost().reason = data.reason;
                     workItems.add(workItemDeploy);
                 }
 
                 if (service.isDoManageVip()) {
-                    WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
+                    WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null, null);
                     workItems.add(workItemEnable);
                 }
 

@@ -60,7 +60,7 @@ public class VipDeleteHandler extends BasicHandler {
         vip.setStatus(true, "Deleting...");
         getDataAccess().updateVip(vip);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.delete, user, team, service, null, null, vip);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.delete, user, team, service, null, null, vip, null);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

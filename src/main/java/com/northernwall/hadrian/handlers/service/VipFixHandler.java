@@ -60,7 +60,7 @@ public class VipFixHandler extends BasicHandler {
         vip.setStatus(true, "Fixing...");
         getDataAccess().updateVip(vip);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.fix, user, team, service, null, null, vip);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.fix, user, team, service, null, null, vip, null);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

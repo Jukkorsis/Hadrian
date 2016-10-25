@@ -67,7 +67,7 @@ public class HostDeployAction extends Action {
         if (workItem.getHost().configVersion != null) {
             notes.put("Config_Version", workItem.getHost().configVersion);
         }
-        notes.put("Reason", workItem.getHost().reason);
+        notes.put("Reason", workItem.getReason());
         recordAudit(workItem, result, notes, output);
     }
 

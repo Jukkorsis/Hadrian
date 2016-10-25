@@ -33,6 +33,9 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
 import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
+import com.northernwall.hadrian.workItem.action.ServiceCreateAction;
+import com.northernwall.hadrian.workItem.action.ServiceDeleteAction;
+import com.northernwall.hadrian.workItem.action.ServiceUpdateAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipFixAction;
@@ -58,6 +61,9 @@ public class WorkItemProcessor {
     private final OkHttpClient client;
     private final Gson gson;
     private final MetricRegistry metricRegistry;
+    private final Action serviceCreate;
+    private final Action serviceUpdate;
+    private final Action serviceDelete;
     private final Action moduleCreate;
     private final Action moduleUpdate;
     private final Action moduleDelete;
@@ -83,6 +89,10 @@ public class WorkItemProcessor {
         this.client = client;
         this.gson = gson;
         this.metricRegistry = metricRegistry;
+
+        serviceCreate = constructAction("serviceCreate", ServiceCreateAction.class);
+        serviceUpdate = constructAction("serviceUpdate", ServiceUpdateAction.class);
+        serviceDelete = constructAction("serviceDelete", ServiceDeleteAction.class);
 
         moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class);
         moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class);
@@ -256,6 +266,15 @@ public class WorkItemProcessor {
 
     private Action getAction(WorkItem workItem) {
         switch (workItem.getType()) {
+            case service:
+                switch (workItem.getOperation()) {
+                    case create:
+                        return serviceCreate;
+                    case update:
+                        return serviceUpdate;
+                    case delete:
+                        return serviceDelete;
+                }
             case module:
                 switch (workItem.getOperation()) {
                     case create:

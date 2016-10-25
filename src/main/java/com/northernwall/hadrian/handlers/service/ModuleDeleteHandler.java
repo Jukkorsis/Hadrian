@@ -98,7 +98,7 @@ public class ModuleDeleteHandler extends BasicHandler {
         }
         getDataAccess().deleteModule(data.serviceId, data.moduleId);
 
-        WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

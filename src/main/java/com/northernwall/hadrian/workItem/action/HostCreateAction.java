@@ -51,7 +51,7 @@ public class HostCreateAction extends Action {
         notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
         notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
         notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));
-        notes.put("Reason", workItem.getHost().reason);
+        notes.put("Reason", workItem.getReason());
         recordAudit(workItem, result, notes, output);
     }
 

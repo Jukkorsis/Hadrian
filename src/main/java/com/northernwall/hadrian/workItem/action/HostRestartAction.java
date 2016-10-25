@@ -54,7 +54,7 @@ public class HostRestartAction extends Action {
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
         Map<String, String> notes = new HashMap<>();
-        notes.put("Reason", workItem.getHost().reason);
+        notes.put("Reason", workItem.getReason());
         recordAudit(workItem, result, notes, output);
     }
 

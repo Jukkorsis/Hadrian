@@ -156,7 +156,7 @@ public class ModuleModifyHandler extends BasicHandler {
 
         getDataAccess().saveModule(module);
 
-        WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

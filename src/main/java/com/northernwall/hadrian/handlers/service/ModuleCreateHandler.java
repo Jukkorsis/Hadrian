@@ -44,6 +44,51 @@ import org.eclipse.jetty.server.Request;
  * @author Richard Thurston
  */
 public class ModuleCreateHandler extends BasicHandler {
+    public static String scrubFolder(String folder, String name, boolean nullAllowed) {
+        if (folder == null || folder.isEmpty()) {
+            if (nullAllowed) {
+                return null;
+            } else {
+                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
+            }
+        }
+        String temp = folder.trim();
+        if (temp == null || temp.isEmpty()) {
+            if (nullAllowed) {
+                return null;
+            } else {
+                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
+            }
+        }
+        if (temp.equals("/")) {
+            throw new Http400BadRequestException("Folder " + name + " can not be root");
+        }
+        if (!folder.startsWith("/")) {
+            temp = "/" + temp;
+        }
+        if (temp.endsWith("/") && temp.length() > 1) {
+            temp = temp.substring(0, temp.length()-1);
+        }
+        return temp;
+    }
+    
+    /**
+     * This method assumes that both folder parameters have already been scrubbed.
+     * @param subFolder The sub folder.
+     * @param mainFolder The main folder.
+     * @return True if the sub folder is within the main folder.
+     */
+    public static boolean isSubFolder(String subFolder, String mainFolder) {
+        String tempSubFolder = subFolder;
+        if (tempSubFolder.length() > 1) {
+            tempSubFolder = tempSubFolder + "/";
+        }
+        String tempMainFolder = mainFolder;
+        if (tempMainFolder.length() > 1) {
+            tempMainFolder = tempMainFolder + "/";
+        }
+        return (tempSubFolder.equals(tempMainFolder) || tempSubFolder.startsWith(tempMainFolder));
+    }
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
@@ -190,61 +235,16 @@ public class ModuleCreateHandler extends BasicHandler {
         module.cleanNetworkNames(null);
         getDataAccess().saveModule(module);
 
-        WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null, null);
         workItem.getMainModule().template = template;
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
-
         workItemProcessor.processWorkItem(workItem);
+        
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    public static String scrubFolder(String folder, String name, boolean nullAllowed) {
-        if (folder == null || folder.isEmpty()) {
-            if (nullAllowed) {
-                return null;
-            } else {
-                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
-            }
-        }
-        String temp = folder.trim();
-        if (temp == null || temp.isEmpty()) {
-           if (nullAllowed) {
-                return null;
-            } else {
-                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
-            }
-        }
-        if (temp.equals("/")) {
-            throw new Http400BadRequestException("Folder " + name + " can not be root");
-        }
-        if (!folder.startsWith("/")) {
-            temp = "/" + temp;
-        }
-        if (temp.endsWith("/") && temp.length() > 1) {
-            temp = temp.substring(0, temp.length()-1);
-        }
-        return temp;
-    }
-
-    /**
-     * This method assumes that both folder parameters have already been scrubbed.
-     * @param subFolder The sub folder.
-     * @param mainFolder The main folder.
-     * @return True if the sub folder is within the main folder.
-     */
-    public static boolean isSubFolder(String subFolder, String mainFolder) {
-        String tempSubFolder = subFolder;
-        if (tempSubFolder.length() > 1) {
-            tempSubFolder = tempSubFolder + "/";
-        }
-        String tempMainFolder = mainFolder;
-        if (tempMainFolder.length() > 1) {
-            tempMainFolder = tempMainFolder + "/";
-        }
-        return (tempSubFolder.equals(tempMainFolder) || tempSubFolder.startsWith(tempMainFolder));
-    }
 
 }

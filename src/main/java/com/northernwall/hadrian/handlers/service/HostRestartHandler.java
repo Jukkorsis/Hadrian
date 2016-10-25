@@ -83,21 +83,20 @@ public class HostRestartHandler extends BasicHandler {
 
                         WorkItem workItem;
                         if (service.isDoManageVip()) {
-                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
 
-                        workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null);
-                        workItem.getHost().reason = data.reason;
+                        workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null, data.reason);
                         workItems.add(workItem);
 
                         if (module.getSmokeTestUrl() != null && !module.getSmokeTestUrl().isEmpty()) {
-                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
 
                         if (service.isDoManageVip()) {
-                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
                     }

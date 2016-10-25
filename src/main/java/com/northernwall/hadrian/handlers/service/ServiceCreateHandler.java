@@ -16,20 +16,19 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PostServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,10 +41,12 @@ import org.eclipse.jetty.server.Request;
 public class ServiceCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ServiceCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+    public ServiceCreateHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -55,6 +56,7 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("teamId attribute is mising");
         }
         User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
+        Team team = getTeam(data.teamId, null);
         if (data.serviceName == null || data.serviceName.isEmpty()) {
             throw new Http400BadRequestException("Service Name is mising or empty");
         }
@@ -112,24 +114,12 @@ public class ServiceCreateHandler extends BasicHandler {
 
         getDataAccess().saveService(service);
 
-        Map<String, String> notes = new HashMap<>();
-        notes.put("Name", service.getServiceName());
-        createAudit(service.getServiceId(), user.getUsername(), Type.service, Operation.create, notes);
+        WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
+        workItemProcessor.processWorkItem(workItem);
+        
         response.setStatus(200);
         request.setHandled(true);
-    }
 
-    private void createAudit(String serviceId, String requestor, Type type, Operation operation, Map<String, String> notes) {
-        Audit audit = new Audit();
-        audit.serviceId = serviceId;
-        audit.setTimePerformed(GMT.getGmtAsDate());
-        audit.timeRequested = GMT.getGmtAsDate();
-        audit.requestor = requestor;
-        audit.type = type;
-        audit.operation = operation;
-        audit.successfull = true;
-        audit.notes = getGson().toJson(notes);
-        getDataAccess().saveAudit(audit, null);
     }
 
 }

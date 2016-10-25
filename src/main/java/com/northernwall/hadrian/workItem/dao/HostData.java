@@ -18,20 +18,6 @@ package com.northernwall.hadrian.workItem.dao;
 import com.northernwall.hadrian.domain.Host;
 
 public class HostData {
-    public String hostId;
-    public String hostName;
-    public String dataCenter;
-    public String network;
-    public String env;
-    public int sizeCpu;
-    public int sizeMemory;
-    public int sizeStorage;
-    public String version;
-    public String prevVersion;
-    public String versionUrl;
-    public String configVersion;
-    public String reason;
-
     public static HostData create(Host host) {
         if (host == null) {
             return null;
@@ -46,8 +32,21 @@ public class HostData {
         temp.prevVersion = null;
         temp.versionUrl = null;
         temp.configVersion = null;
-        temp.reason = null;
         return temp;
     }
+    
+    public String hostId;
+    public String hostName;
+    public String dataCenter;
+    public String network;
+    public String env;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
+    public String version;
+    public String prevVersion;
+    public String versionUrl;
+    public String configVersion;
+
 
 }

@@ -15,23 +15,17 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HostDeleteAction extends Action {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(HostDeleteAction.class);
+public class ServiceCreateAction extends Action {
 
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
-        success(workItem);
         recordAudit(workItem, result, null);
         return result;
     }
@@ -43,27 +37,8 @@ public class HostDeleteAction extends Action {
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
         Map<String, String> notes = new HashMap<>();
-        notes.put("Reason", workItem.getReason());
+        notes.put("Name", workItem.getService().serviceName);
         recordAudit(workItem, result, notes, output);
-    }
-
-    protected void success(WorkItem workItem) {
-        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
-        if (host == null) {
-            LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
-            return;
-        }
-        dataAccess.deleteHost(host);
-    }
-
-    protected void error(WorkItem workItem) {
-        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
-        if (host == null) {
-            LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
-            return;
-        }
-        host.setStatus(false, "Delete host failed");
-        dataAccess.updateHost(host);
     }
 
 }

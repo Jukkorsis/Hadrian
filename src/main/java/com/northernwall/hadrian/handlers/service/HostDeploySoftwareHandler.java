@@ -112,25 +112,24 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
                         WorkItem workItem;
                         if (service.isDoManageVip()) {
-                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
 
-                        workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+                        workItem = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null, data.reason);
                         workItem.getHost().version = data.version;
                         workItem.getHost().prevVersion = infoHelper.readVersion(host.getHostName(), module.getVersionUrl());
                         workItem.getHost().versionUrl = data.versionUrl;
                         workItem.getHost().configVersion = data.configVersion;
-                        workItem.getHost().reason = data.reason;
                         workItems.add(workItem);
 
                         if (module.getSmokeTestUrl() != null && !module.getSmokeTestUrl().isEmpty()) {
-                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.smokeTest, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
 
                         if (service.isDoManageVip()) {
-                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
+                            workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null, null);
                             workItems.add(workItem);
                         }
                     }

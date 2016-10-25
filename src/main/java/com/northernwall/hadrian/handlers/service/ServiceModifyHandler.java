@@ -18,9 +18,15 @@ package com.northernwall.hadrian.handlers.service;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Type;
+import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PutServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +40,12 @@ import org.eclipse.jetty.server.Request;
 public class ServiceModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ServiceModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+    public ServiceModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -45,7 +53,8 @@ public class ServiceModifyHandler extends BasicHandler {
         PutServiceData data = fromJson(request, PutServiceData.class);
         Service service = getService(data.serviceId, null);
         
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
+        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
+        Team team = getTeam(service.getTeamId(), null);
 
         for (Service temp : getDataAccess().getActiveServices()) {
             if (temp.getServiceName().equalsIgnoreCase(data.serviceName)
@@ -82,6 +91,9 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setSmokeTestCron(data.smokeTestCron);
 
         getDataAccess().updateService(service);
+        
+        WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
+        workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);
         request.setHandled(true);

@@ -4,19 +4,19 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.DeleteServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,18 +25,20 @@ import org.eclipse.jetty.server.Request;
 public class ServiceDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
+    private final WorkItemProcessor workItemProcessor;
 
-    public ServiceDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess) {
+    public ServiceDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
         super(dataAccess);
         this.accessHelper = accessHelper;
+        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteServiceData data = fromJson(request, DeleteServiceData.class);
         Service service = getService(data.serviceId, null);
-        getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete service");
+        Team team = getTeam(service.getTeamId(), null);
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         if (modules != null && !modules.isEmpty()) {
@@ -52,18 +54,8 @@ public class ServiceDeleteHandler extends BasicHandler {
         service.setDeletionDate(GMT.getGmtAsDate());
         getDataAccess().saveService(service);
 
-        Audit audit = new Audit();
-        audit.serviceId = service.getServiceId();
-        audit.setTimePerformed(GMT.getGmtAsDate());
-        audit.timeRequested = GMT.getGmtAsDate();
-        audit.requestor = user.getUsername();
-        audit.type = Type.service;
-        audit.operation = Operation.delete;
-        audit.successfull = true;
-        Map<String, String> notes = new HashMap<>();
-        notes.put("Reason", data.reason);
-        audit.notes = getGson().toJson(notes);
-        getDataAccess().saveAudit(audit, null);
+        WorkItem workItem = new WorkItem(Type.service, Operation.delete, user, team, service, null, null, null, data.reason);
+        workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);
         request.setHandled(true);
