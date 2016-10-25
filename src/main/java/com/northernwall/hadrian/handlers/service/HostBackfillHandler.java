@@ -58,7 +58,7 @@ public class HostBackfillHandler extends BasicHandler {
         if (temp == null || temp.isEmpty()) {
             return null;
         }
-        int index = temp.indexOf(".");
+        int index = temp.indexOf('.');
         if (index == -1) {
             return temp;
         }
