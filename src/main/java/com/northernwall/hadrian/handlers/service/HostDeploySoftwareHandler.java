@@ -69,7 +69,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         if (!service.isDoDeploys()) {
             throw new Http400BadRequestException("Service is configurationed to not allow deployments");
         }
-        
+
         Module module = getModule(data.moduleId, data.moduleName, service);
 
         Network network = null;
@@ -94,6 +94,8 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts == null || hosts.isEmpty()) {
+            response.setStatus(200);
+            request.setHandled(true);
             return;
         }
         List<WorkItem> workItems = new LinkedList<>();
@@ -136,18 +138,25 @@ public class HostDeploySoftwareHandler extends BasicHandler {
             }
         }
 
-        workItemProcessor.processWorkItems(workItems);
-
-        int status = 200;
-        if (data.wait) {
-            status = workItemProcessor.waitForProcess(
-                    workItems.get(workItems.size() - 1).getId(),
-                    module.getStartTimeOut() * 100,
-                    workItems.size() * module.getStartTimeOut() * 1_500,
-                    service.getServiceName()+" "+module.getModuleName()+" "+data.version);
+        if (workItems.isEmpty()) {
+            response.setStatus(200);
+            request.setHandled(true);
+            return;
         }
 
-        response.setStatus(status);
+        workItemProcessor.processWorkItems(workItems);
+
+        if (!data.wait) {
+            response.setStatus(200);
+            request.setHandled(true);
+            return;
+        }
+
+        response.setStatus(workItemProcessor.waitForProcess(
+                workItems.get(workItems.size() - 1).getId(),
+                module.getStartTimeOut() * 100,
+                workItems.size() * module.getStartTimeOut() * 1_500,
+                service.getServiceName() + " " + module.getModuleName() + " " + data.version));
         request.setHandled(true);
     }
 
