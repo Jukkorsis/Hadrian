@@ -35,15 +35,14 @@ public class DataAccessUpdater {
             dataAccess.setVersion("1.7");
             LOGGER.info("New DB, initial version set.");
         } else if (version.equals("1.6")) {
-            LOGGER.info("Current DB version is {}, update started.", version);
+            LOGGER.info("Current DB version is 1.6, update started.");
             scanForNetworkAndEnv(dataAccess, config);
             dataAccess.setVersion("1.7");
-            LOGGER.info("DB update finished.", version);
-            fixHost(dataAccess);
+            LOGGER.info("DB update finished.");
         } else {
-            fixHost(dataAccess);
             LOGGER.info("Current DB version is {}, no upgrade required.", version);
         }
+        fixHost(dataAccess);
     }
 
     private static void fixHost(DataAccess dataAccess) {
