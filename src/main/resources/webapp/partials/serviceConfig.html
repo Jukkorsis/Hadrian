@@ -23,13 +23,25 @@
             <div class="col-md-4">
                 <dl class="dl-horizontal">
                     <dt>Do Builds:</dt>
-                    <dd>{{service.doBuilds}}</dd>
+                    <dd>
+                        <span ng-if="service.doBuilds" class="glyphicon glyphicon-check text-success"></span>
+                        <span ng-if="!service.doBuilds" class="glyphicon glyphicon-unchecked text-success"></span>
+                    </dd>
                     <dt>Do Deploys:</dt>
-                    <dd>{{service.doDeploys}}</dd>
+                    <dd>
+                        <span ng-if="service.doDeploys" class="glyphicon glyphicon-check text-success"></span>
+                        <span ng-if="!service.doDeploys" class="glyphicon glyphicon-unchecked text-success"></span>
+                    </dd>
                     <dt>Dis/enable VIPs:</dt>
-                    <dd>{{service.doManageVip}}</dd>
+                    <dd>
+                        <span ng-if="service.doManageVip" class="glyphicon glyphicon-check text-success"></span>
+                        <span ng-if="!service.doManageVip" class="glyphicon glyphicon-unchecked text-success"></span>
+                    </dd>
                     <dt>Check jars are signed:</dt>
-                    <dd>{{service.doCheckJar}}</dd>
+                    <dd>
+                        <span ng-if="service.doCheckJar" class="glyphicon glyphicon-check text-success"></span>
+                        <span ng-if="!service.doCheckJar" class="glyphicon glyphicon-unchecked text-success"></span>
+                    </dd>
                 </dl>
             </div>
             <div class="col-md-4">
