@@ -15,14 +15,18 @@
                         <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
                     </div>
                 </dd>
-                <dt>Maven Artifact:</dt>
-                <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
+                <dt>Template:</dt>
+                <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+                <dt>Host Abbr:</dt>
+                <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
                 <dt>Networks:</dt>
                 <dd>
                     <span ng-repeat="n in config.networkNames">
                         <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
                     </span>
                 </dd>
+                <dt>Run As User:</dt>
+                <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
                 <dt>Outbound Connectivity:</dt>
                 <dd>
                     <select ng-model="formSaveModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external servicea." popover-trigger="mouseenter">
@@ -30,37 +34,24 @@
                         <option>Required</option>
                     </select>
                 </dd>
-                <dt>Host Abbr:</dt>
-                <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
-                <dt>Run As User:</dt>
-                <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
                 <dt>Version Url:</dt>
                 <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
                 <dt>Availability Url:</dt>
                 <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
                 <dt>Smoke Test Url:</dt>
                 <dd><input ng-model="formSaveModule.smokeTestUrl" type="text" class="form-control"></dd>
-                <dt>Start Cmd Line:</dt>
-                <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-                <dt>Start Time Out:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formSaveModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
-                        <div class="input-group-addon">sec</div>
-                    </div>
-                </dd>
             </dl>
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">
-                <dt>Template:</dt>
-                <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+                <dt>Maven Artifact:</dt>
+                <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
                 <dt>Artifact Type:</dt>
                 <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
                 <dt>Artifact Suffix:</dt>
                 <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
-                <dt>{{config.moduleConfigName}}:</dt>
-                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
                 <dt>Deployment Folder:</dt>
                 <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
                 <dt>Data Folder:</dt>
@@ -72,6 +63,15 @@
                     <div class="input-group">
                         <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
                         <div class="input-group-addon">months</div>
+                    </div>
+                </dd>
+                <dt>Start Cmd Line:</dt>
+                <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Start Time Out:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formSaveModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
                     </div>
                 </dd>
                 <dt>Stop Cmd Line:</dt>

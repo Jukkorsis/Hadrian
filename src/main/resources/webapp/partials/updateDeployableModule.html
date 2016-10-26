@@ -8,44 +8,6 @@
             <dl class="dl-horizontal">
                 <dt>Name:</dt>
                 <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
-                <dt>Maven Artifact Id:</dt>
-                <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
-                <dt>Networks:</dt>
-                <dd>
-                    <span ng-repeat="n in config.networkNames">
-                        <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
-                    </span>
-                </dd>
-                <dt>Outbound Connectivity:</dt>
-                <dd>
-                    <select ng-model="formUpdateModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
-                        <option>No</option>
-                        <option>Required</option>
-                    </select>
-                </dd>
-                <dt>Host Abbr:</dt>
-                <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
-                <dt>Run As User:</dt>
-                <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
-                <dt>Version Url:</dt>
-                <dd><input ng-model="formUpdateModule.versionUrl" type="text" class="form-control"></dd>
-                <dt>Availability Url:</dt>
-                <dd><input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control"></dd>
-                <dt>Smoke Test Url:</dt>
-                <dd><input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control"></dd>
-                <dt>Start Cmd Line:</dt>
-                <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-                <dt>Start Time Out:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
-                        <div class="input-group-addon">sec</div>
-                    </div>
-                </dd>
-            </dl>
-        </div>
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
                 <dt>Git Folder:</dt>
                 <dd>
                     <div class="input-group">
@@ -53,12 +15,41 @@
                         <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
                     </div>
                 </dd>
+                <dt>Host Abbr:</dt>
+                <dd><input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control"></dd>
+                <dt>Networks:</dt>
+                <dd>
+                    <span ng-repeat="n in config.networkNames">
+                        <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
+                    </span>
+                </dd>
+                <dt>Run As User:</dt>
+                <dd><input ng-model="formUpdateModule.runAs" type="text" class="form-control"></dd>
+                <dt>Outbound Connectivity:</dt>
+                <dd>
+                    <select ng-model="formUpdateModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
+                        <option>No</option>
+                        <option>Required</option>
+                    </select>
+                </dd>
+                <dt>{{config.moduleConfigName}}:</dt>
+                <dd><input ng-model="formUpdateModule.configName" type="text" class="form-control"></dd>
+                <dt>Version Url:</dt>
+                <dd><input ng-model="formUpdateModule.versionUrl" type="text" class="form-control"></dd>
+                <dt>Availability Url:</dt>
+                <dd><input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control"></dd>
+                <dt>Smoke Test Url:</dt>
+                <dd><input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control"></dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Maven Artifact Id:</dt>
+                <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
                 <dt>Artifact Type:</dt>
                 <dd><select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
                 <dt>Artifact Suffix:</dt>
                 <dd><input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control"></dd>
-                <dt>{{config.moduleConfigName}}:</dt>
-                <dd><input ng-model="formUpdateModule.configName" type="text" class="form-control"></dd>
                 <dt>Deployment Folder:</dt>
                 <dd><input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control"></dd>
                 <dt>Data Folder:</dt>
@@ -70,6 +61,15 @@
                     <div class="input-group">
                         <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
                         <div class="input-group-addon">months</div>
+                    </div>
+                </dd>
+                <dt>Start Cmd Line:</dt>
+                <dd><input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                <dt>Start Time Out:</dt>
+                <dd>
+                    <div class="input-group">
+                        <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                        <div class="input-group-addon">sec</div>
                     </div>
                 </dd>
                 <dt>Stop Cmd Line:</dt>
