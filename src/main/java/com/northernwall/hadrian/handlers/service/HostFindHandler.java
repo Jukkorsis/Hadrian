@@ -90,7 +90,7 @@ public class HostFindHandler extends BasicHandler {
         findHostData.busy = host.isBusy();
         findHostData.dataCenter = host.getDataCenter();
         findHostData.network = host.getNetwork();
-        findHostData.env = host.getEnv();
+        findHostData.platform = host.getPlatform();
         
         findHostData.version = infoHelper.readVersion(hostName, module.getVersionUrl());
         findHostData.availability = infoHelper.readAvailability(hostName, module.getAvailabilityUrl());

@@ -25,7 +25,7 @@ public class GetHostData {
     public boolean busy;
     public String dataCenter;
     public String network;
-    public String env;
+    public String platform;
     public String version;
     public int availability;
 
@@ -38,7 +38,7 @@ public class GetHostData {
         temp.busy = host.isBusy();
         temp.dataCenter = host.getDataCenter();
         temp.network = host.getNetwork();
-        temp.env = host.getEnv();
+        temp.platform = host.getPlatform();
         temp.version = "-";
         temp.availability = 0;
         return temp;

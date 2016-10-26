@@ -83,8 +83,8 @@ public class HostCreateHandler extends BasicHandler {
         if (!config.networkNames.contains(data.network)) {
             throw new Http400BadRequestException("Unknown network");
         }
-        if (!config.envs.contains(data.env)) {
-            throw new Http400BadRequestException("Unknown operating env");
+        if (!config.platforms.contains(data.platform)) {
+            throw new Http400BadRequestException("Unknown operating platform");
         }
         
         Module module = getModule(data.moduleId, null, service);
@@ -108,7 +108,7 @@ public class HostCreateHandler extends BasicHandler {
                         data.moduleId,
                         data.dataCenter,
                         data.network,
-                        data.env);
+                        data.platform);
                 getDataAccess().saveHost(host);
 
                 List<WorkItem> workItems = new ArrayList<>(3);

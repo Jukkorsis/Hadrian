@@ -66,9 +66,9 @@
                                     </a>
                                 </th>
                                 <th width="15%">
-                                    <a ng-click="hostSortType = 'env';
+                                    <a ng-click="hostSortType = 'platform';
                                                 hostSortReverse = !hostSortReverse">
-                                        Env.
+                                        Platform
                                     </a>
                                 </th>
                                 <th width="20%">
@@ -124,7 +124,7 @@
                                     </span>
                                 </td>
                                 <td>{{i.dataCenter}}</td>
-                                <td>{{i.env}}</td>
+                                <td>{{i.platform}}</td>
                                 <td>{{i.version}}</td>
                                 <td>
                                     <span ng-if="i.availability === -1">

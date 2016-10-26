@@ -47,7 +47,7 @@ public class HostCreateAction extends Action {
         Map<String, String> notes = new HashMap<>();
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Network", workItem.getHost().network);
-        notes.put("Operating_Env", workItem.getHost().env);
+        notes.put("Platform", workItem.getHost().platform);
         notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
         notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
         notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));

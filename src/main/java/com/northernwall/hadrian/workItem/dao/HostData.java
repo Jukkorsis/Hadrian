@@ -27,7 +27,7 @@ public class HostData {
         temp.hostName = host.getHostName();
         temp.dataCenter = host.getDataCenter();
         temp.network = host.getNetwork();
-        temp.env = host.getEnv();
+        temp.platform = host.getPlatform();
         temp.version = null;
         temp.prevVersion = null;
         temp.versionUrl = null;
@@ -39,7 +39,7 @@ public class HostData {
     public String hostName;
     public String dataCenter;
     public String network;
-    public String env;
+    public String platform;
     public int sizeCpu;
     public int sizeMemory;
     public int sizeStorage;

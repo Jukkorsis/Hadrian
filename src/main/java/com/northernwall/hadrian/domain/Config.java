@@ -39,7 +39,7 @@ public class Config {
     public List<String> dataCenters = new LinkedList<>();
     public List<String> networkNames = new LinkedList<>();
     public List<Network> networks = new LinkedList<>();
-    public List<String> envs = new LinkedList<>();
+    public List<String> platforms = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> serviceTypes = new LinkedList<>();

@@ -1320,7 +1320,7 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$mod
 
         $scope.formBackfillHost = {};
         $scope.formBackfillHost.dataCenter = $scope.config.dataCenters[0];
-        $scope.formBackfillHost.env = $scope.config.envs[0];
+        $scope.formBackfillHost.platform = $scope.config.platforms[0];
         $scope.formBackfillHost.hosts = "";
 
         $scope.save = function () {
@@ -1329,7 +1329,7 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$mod
                 moduleId: $scope.moduleNetwork.moduleId,
                 dataCenter: $scope.formBackfillHost.dataCenter,
                 network: $scope.moduleNetwork.network,
-                env: $scope.formBackfillHost.env,
+                platform: $scope.formBackfillHost.platform,
                 hosts: $scope.formBackfillHost.hosts
             };
 
@@ -1491,7 +1491,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
 
         $scope.formSaveHost = {};
         $scope.formSaveHost.dataCenter = $scope.config.dataCenters[0];
-        $scope.formSaveHost.env = $scope.config.envs[0];
+        $scope.formSaveHost.platform = $scope.config.platforms[0];
         $scope.formSaveHost.sizeCpu = $scope.config.minCpu;
         $scope.formSaveHost.sizeMemory = $scope.config.minMemory;
         $scope.formSaveHost.sizeStorage = $scope.config.minStorage;
@@ -1517,7 +1517,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 moduleId: $scope.moduleNetwork.moduleId,
                 dataCenter: $scope.formSaveHost.dataCenter,
                 network: $scope.moduleNetwork.network,
-                env: $scope.formSaveHost.env,
+                platform: $scope.formSaveHost.platform,
                 sizeCpu: $scope.formSaveHost.sizeCpu,
                 sizeMemory: $scope.formSaveHost.sizeMemory,
                 sizeStorage: $scope.formSaveHost.sizeStorage,

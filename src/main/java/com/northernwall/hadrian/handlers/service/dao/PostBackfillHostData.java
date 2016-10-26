@@ -6,7 +6,7 @@ public class PostBackfillHostData {
     public String moduleId;
     public String dataCenter;
     public String network;
-    public String env;
+    public String platform;
     public String hosts;
 
 }

@@ -20,7 +20,7 @@ public class PostHostData {
     public String moduleId;
     public String dataCenter;
     public String network;
-    public String env;
+    public String platform;
     public int sizeCpu;
     public int sizeMemory;
     public int sizeStorage;
