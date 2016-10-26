@@ -580,7 +580,10 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, environment));
+        ResultSet results = session.execute(boundStatement.bind(
+                serviceId, 
+                moduleId, 
+                environment));
         if (results == null || results.isExhausted()) {
             return null;
         }
@@ -600,7 +603,11 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, environment, name));
+        ResultSet results = session.execute(boundStatement.bind(
+                serviceId, 
+                moduleId, 
+                environment, 
+                name));
         Row row = results.one();
         if (row == null) {
             return null;

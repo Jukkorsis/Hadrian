@@ -19,6 +19,7 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Vip;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,19 @@ public class DataAccessUpdater {
     public static void update(DataAccess dataAccess, Config config) {
         String version = dataAccess.getVersion();
 
-        if (version == null) {
-            dataAccess.setVersion("1.6");
+        if (version == null || version.isEmpty()) {
+            dataAccess.setVersion("1.7");
+            LOGGER.info("New DB, initial version set.");
+        } else if (version.equals("1.6")) {
+            LOGGER.info("Current DB version is {}, update started.", version);
+            scanForNetworkAndEnv(dataAccess, config);
+            dataAccess.setVersion("1.7");
+            LOGGER.info("DB update finished.", version);
+            fixHost(dataAccess);
+        } else {
+            fixHost(dataAccess);
+            LOGGER.info("Current DB version is {}, no upgrade required.", version);
         }
-
-        fixHost(dataAccess);
-
-        LOGGER.info("Current DB version is {}, no upgrade required.", version);
     }
 
     private static void fixHost(DataAccess dataAccess) {
@@ -59,6 +66,37 @@ public class DataAccessUpdater {
         LOGGER.info("Backfilled {} service, {} hosts", serviceCount, hostCount);
     }
 
+    private static void scanForNetworkAndEnv(DataAccess dataAccess, Config config) {
+        List<Service> services = dataAccess.getActiveServices();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                List<Module> modules = dataAccess.getModules(service.getServiceId());
+                if (modules != null && !modules.isEmpty()) {
+                    for (Module module : modules) {
+                        module.setEnvironmentNames(module.networkNames);
+                        dataAccess.saveModule(module);
+                    }
+                }
+                List<Host> hosts = dataAccess.getHosts(service.getServiceId());
+                if (hosts != null && !hosts.isEmpty()) {
+                    for (Host host : hosts) {
+                        host.setEnvironment(host.network);
+                        host.setPlatform(host.env);
+                        dataAccess.saveHost(host);
+                    }
+                }
+                List<Vip> vips = dataAccess.getVips(service.getServiceId());
+                if (vips != null && !vips.isEmpty()) {
+                    for (Vip vip : vips) {
+                        vip.setEnvironment(vip.network);
+                        dataAccess.saveVip(vip);
+                    }
+                }
+            }
+        }
+    }
+
     private DataAccessUpdater() {
     }
+    
 }

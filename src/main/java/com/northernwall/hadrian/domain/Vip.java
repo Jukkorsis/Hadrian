@@ -32,6 +32,7 @@ public class Vip implements Comparable<Vip>{
     private String dns;
     private String domain;
     private boolean external;
+    public String network; //TODO remove in next release
     private String environment;
     private String protocol;
     private int vipPort;

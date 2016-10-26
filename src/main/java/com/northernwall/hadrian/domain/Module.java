@@ -52,6 +52,7 @@ public class Module implements Comparable<Module> {
     private int stopTimeOut;
     private String configName;
     private String testStyle;//-
+    public Map<String,Boolean> networkNames = new HashMap<>(); //TODO remove in next release
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
     public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {

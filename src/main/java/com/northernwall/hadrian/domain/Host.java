@@ -31,7 +31,9 @@ public class Host implements Comparable<Host> {
     private boolean busy;
     private String status;
     private String dataCenter;
+    public String network; //TODO remove in next release
     private String environment;
+    public String env; //TODO remove in next release
     private String platform;
 
     public Host() {
