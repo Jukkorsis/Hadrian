@@ -28,7 +28,7 @@ public class DeleteHostData {
     public String serviceName;
     public String moduleId;
     public String moduleName;
-    public String network;
+    public String environment;
     public List<String> hostNames = new LinkedList<>();
     public String reason;
 

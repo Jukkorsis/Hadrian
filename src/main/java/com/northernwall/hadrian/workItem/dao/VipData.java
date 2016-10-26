@@ -32,7 +32,7 @@ public class VipData {
         temp.dns = vip.getDns();
         temp.domain = vip.getDomain();
         temp.external = vip.isExternal();
-        temp.network = vip.getNetwork();
+        temp.environment = vip.getEnvironment();
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
@@ -43,7 +43,7 @@ public class VipData {
     public String dns;
     public String domain;
     public boolean external;
-    public String network;
+    public String environment;
     public String protocol;
     public int vipPort;
     public int servicePort;

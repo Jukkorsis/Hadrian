@@ -65,7 +65,7 @@ public class HostDeleteHandler extends BasicHandler {
             return;
         }
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getEnvironment().equals(data.environment)) {
                 if (data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         host.setStatus(true, "Deleting...");

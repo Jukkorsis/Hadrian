@@ -9,7 +9,7 @@
             </div>
         </form>
         <uib-tabset type="pills">
-            <uib-tab ng-repeat="n in service.networks" heading="{{n.network}}">
+            <uib-tab ng-repeat="n in service.environments" heading="{{n.environment}}">
                 <div ng-repeat="mn in n.modules">
                     <h4>
                         <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">

@@ -91,11 +91,11 @@ public interface DataAccess {
     void updateModule(Module module);
     void deleteModule(String serviceId, String moduleId);
     
-    List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network);
-    ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name);
+    List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment);
+    ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name);
     void saveModuleFile(ModuleFile moduleFile);
     void updateModuleFile(ModuleFile moduleFile);
-    void deleteModuleFile(String serviceId, String moduleId, String network, String name);
+    void deleteModuleFile(String serviceId, String moduleId, String environment, String name);
 
     List<DataStore> getDataStores(String serviceId);
     DataStore getDataStore(String serviceId, String dataStoreId);

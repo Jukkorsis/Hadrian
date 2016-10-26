@@ -18,7 +18,7 @@ package com.northernwall.hadrian;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
-import com.northernwall.hadrian.domain.Network;
+import com.northernwall.hadrian.domain.Environment;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -76,7 +76,7 @@ public class ConfigHelper implements ParameterChangeListener {
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, newConfig.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, newConfig.artifactTypes);
         loadConfig(Const.CONFIG_SCOPES, Const.CONFIG_SCOPES_DEFAULT, newConfig.scopes);
-        loadNetwork(newConfig);
+        loadEnvironment(newConfig);
 
         newConfig.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
         newConfig.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
@@ -104,13 +104,13 @@ public class ConfigHelper implements ParameterChangeListener {
         }
     }
 
-    private void loadNetwork(Config newConfig) {
-        String temp = parameters.getString(Const.CONFIG_NETWORKS, Const.CONFIG_NETWORKS_DEFAULT);
+    private void loadEnvironment(Config newConfig) {
+        String temp = parameters.getString(Const.CONFIG_ENVIRONMENTS, Const.CONFIG_ENVIRONMENTS_DEFAULT);
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Network>>(){}.getType();
-        newConfig.networks = gson.fromJson(temp, listType);
-        for (Network network : newConfig.networks) {
-            newConfig.networkNames.add(network.name);
+        Type listType = new TypeToken<ArrayList<Environment>>(){}.getType();
+        newConfig.environments = gson.fromJson(temp, listType);
+        for (Environment environment : newConfig.environments) {
+            newConfig.environmentNames.add(environment.name);
         }
     }
 

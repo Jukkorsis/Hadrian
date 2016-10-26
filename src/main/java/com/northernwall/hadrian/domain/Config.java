@@ -37,8 +37,8 @@ public class Config {
     public int maxCount = 10;
     public int maxTotalCount = 100;
     public List<String> dataCenters = new LinkedList<>();
-    public List<String> networkNames = new LinkedList<>();
-    public List<Network> networks = new LinkedList<>();
+    public List<String> environmentNames = new LinkedList<>();
+    public List<Environment> environments = new LinkedList<>();
     public List<String> platforms = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();

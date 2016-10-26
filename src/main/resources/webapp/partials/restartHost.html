@@ -1,12 +1,12 @@
 <div class="modal-header">
-    <h3 class="modal-title">Restart Hosts in {{moduleNetwork.network}}</h3>
+    <h3 class="modal-title">Restart Hosts in {{moduleEnvironment.environment}}</h3>
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <uib-alert ng-if="configNetwork.warning" type="warning">{{configNetwork.warning}}</uib-alert>
+    <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
     <dl class="dl-horizontal">
         <dt>Module:</dt>
-        <dd>{{moduleNetwork.moduleName}}</dd>
+        <dd>{{moduleEnvironment.moduleName}}</dd>
         <dt>Hosts:</dt>
         <dd>
             <div ng-repeat="hostName in hostNames">{{hostName}} </div>

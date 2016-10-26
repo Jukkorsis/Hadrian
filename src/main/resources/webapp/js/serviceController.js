@@ -251,7 +251,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
-        $scope.openModuleFileModal = function (moduleNetwork) {
+        $scope.openModuleFileModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/editModuleFile.html',
@@ -261,8 +261,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     service: function () {
                         return $scope.service;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -275,7 +275,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openBackfillModal = function (moduleNetwork) {
+        $scope.openBackfillModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/backfillHost.html',
@@ -284,8 +284,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     service: function () {
                         return $scope.service;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -321,7 +321,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddVipModal = function (networkModule) {
+        $scope.openAddVipModal = function (environmentModule) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addVip.html',
@@ -330,8 +330,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     service: function () {
                         return $scope.service;
                     },
-                    networkModule: function () {
-                        return networkModule;
+                    environmentModule: function () {
+                        return environmentModule;
                     },
                     config: function () {
                         return $scope.config;
@@ -399,7 +399,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openAddHostModal = function (moduleNetwork) {
+        $scope.openAddHostModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addHost.html',
@@ -408,8 +408,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     service: function () {
                         return $scope.service;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -422,9 +422,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openDeploySoftwareHostsModal = function (moduleNetwork) {
+        $scope.openDeploySoftwareHostsModal = function (moduleEnvironment) {
             //TODO
-            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+            var filteredArray = filterFilter(moduleEnvironment.hosts, this.hostFilter);
             var hostNames = [];
             for (var i in filteredArray) {
                 for (var ii in $scope.formSelectHost) {
@@ -445,8 +445,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     hostNames: function () {
                         return hostNames;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -459,7 +459,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openDeploySoftwareHostModal = function (host, moduleNetwork) {
+        $scope.openDeploySoftwareHostModal = function (host, moduleEnvironment) {
             var hostNames = [];
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
@@ -474,8 +474,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     hostNames: function () {
                         return hostNames;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -488,8 +488,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openRestartHostsModal = function (moduleNetwork) {
-            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+        $scope.openRestartHostsModal = function (moduleEnvironment) {
+            var filteredArray = filterFilter(moduleEnvironment.hosts, this.hostFilter);
             var hostNames = [];
             for (var i in filteredArray) {
                 for (var ii in $scope.formSelectHost) {
@@ -509,8 +509,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     hostNames: function () {
                         return hostNames;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -523,7 +523,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openRestartHostModal = function (host, moduleNetwork) {
+        $scope.openRestartHostModal = function (host, moduleEnvironment) {
             var hostNames = [];
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
@@ -537,8 +537,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     hostNames: function () {
                         return hostNames;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     },
                     config: function () {
                         return $scope.config;
@@ -551,7 +551,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openDeleteHostModal = function (host, moduleNetwork) {
+        $scope.openDeleteHostModal = function (host, moduleEnvironment) {
             var hostNames = [];
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
@@ -568,8 +568,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     hostNames: function () {
                         return hostNames;
                     },
-                    moduleNetwork: function () {
-                        return moduleNetwork;
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
                     }
                 }
             });
@@ -707,8 +707,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openDoCustomFunctionHostsModal = function (moduleNetwork, cf) {
-            var filteredArray = filterFilter(moduleNetwork.hosts, this.hostFilter);
+        $scope.openDoCustomFunctionHostsModal = function (moduleEnvironment, cf) {
+            var filteredArray = filterFilter(moduleEnvironment.hosts, this.hostFilter);
             for (var key in filteredArray) {
                 var h = filteredArray[key];
                 for (var key2 in $scope.formSelectHost) {
@@ -900,15 +900,15 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                         }
                     }
                 }
-                for (var networkIndex = 0; networkIndex < $scope.service.networks.length; networkIndex++) {
-                    var network = $scope.service.networks[networkIndex];
-                    for (var newNetworkIndex = 0; newNetworkIndex < newService.networks.length; newNetworkIndex++) {
-                        var newNetwork = newService.networks[newNetworkIndex];
-                        if (network.network === newNetwork.network) {
-                            for (var moduleIndex = 0; moduleIndex < network.modules.length; moduleIndex++) {
-                                var module = network.modules[moduleIndex];
-                                for (var newModuleIndex = 0; newModuleIndex < newNetwork.modules.length; newModuleIndex++) {
-                                    var newModule = newNetwork.modules[newModuleIndex];
+                for (var environmentIndex = 0; environmentIndex < $scope.service.environments.length; environmentIndex++) {
+                    var environment = $scope.service.environments[environmentIndex];
+                    for (var newEnvironmentIndex = 0; newEnvironmentIndex < newService.environments.length; newEnvironmentIndex++) {
+                        var newEnvironment = newService.environments[newEnvironmentIndex];
+                        if (environment.environment === newEnvironment.environment) {
+                            for (var moduleIndex = 0; moduleIndex < environment.modules.length; moduleIndex++) {
+                                var module = environment.modules[moduleIndex];
+                                for (var newModuleIndex = 0; newModuleIndex < newEnvironment.modules.length; newModuleIndex++) {
+                                    var newModule = newEnvironment.modules[newModuleIndex];
                                     if (module.moduleId === newModule.moduleId) {
                                         for (var hostIndex = 0; hostIndex < module.hosts.length; hostIndex++) {
                                             var host = module.hosts[hostIndex];
@@ -1122,7 +1122,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
                 stopTimeOut: $scope.formSaveModule.stopTimeOut,
                 configName: $scope.formSaveModule.configName,
-                networkNames: $scope.formSaveModule.networkNames
+                environmentNames: $scope.formSaveModule.environmentNames
             };
 
             var responsePromise = $http.post("/v1/module/create", dataObject, {});
@@ -1168,7 +1168,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
         $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
         $scope.formUpdateModule.configName = module.configName;
-        $scope.formUpdateModule.networkNames = module.networkNames;
+        $scope.formUpdateModule.environmentNames = module.environmentNames;
 
         $scope.save = function () {
             var dataObject = {
@@ -1194,7 +1194,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,
                 stopTimeOut: $scope.formUpdateModule.stopTimeOut,
                 configName: $scope.formUpdateModule.configName,
-                networkNames: $scope.formUpdateModule.networkNames
+                environmentNames: $scope.formUpdateModule.environmentNames
             };
 
             var responsePromise = $http.put("/v1/module/modify", dataObject, {});
@@ -1218,12 +1218,12 @@ hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$
         $scope.fileNumber = items.fileNumber;
         $scope.service = items.service;
         $scope.module = items.module;
-        $scope.network = items.network;
+        $scope.environment = items.environment;
         $scope.dataFromServer = items.dataFromServer;
 
         $scope.delete = function () {
             var responsePromise = $http.delete("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" +
-                    $scope.module.moduleId + "&network=" + $scope.network + "&fileName=" + $scope.fileName);
+                    $scope.module.moduleId + "&environment=" + $scope.environment + "&fileName=" + $scope.fileName);
 
             responsePromise.success(function (status) {
                 $scope.dataFromServer.splice($scope.fileNumber, 1);
@@ -1237,21 +1237,21 @@ hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$
 
     }]);
 
-hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleNetwork', '$uibModal',
-    function ($scope, $http, $modalInstance, $route, config, service, moduleNetwork, $uibModal) {
+hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleEnvironment', '$uibModal',
+    function ($scope, $http, $modalInstance, $route, config, service, moduleEnvironment, $uibModal) {
         $scope.errorMsg = null;
         $scope.service = service;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === moduleNetwork.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
-        var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleNetwork.moduleId + "&network=" + $scope.moduleNetwork.network, {});
+        var responsePromise = $http.get("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleEnvironment.moduleId + "&environment=" + $scope.moduleEnvironment.environment, {});
         responsePromise.success(function (dataFromServer, status, headers, config) {
             $scope.dataFromServer = dataFromServer;
 
@@ -1271,8 +1271,8 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
                                 fileName: fileName,
                                 fileNumber: fileNumber,
                                 service: $scope.service,
-                                moduleId: $scope.moduleNetwork.moduleId,
-                                network: $scope.moduleNetwork.network,
+                                moduleId: $scope.moduleEnvironment.moduleId,
+                                environment: $scope.moduleEnvironment.environment,
                                 dataFromServer: $scope.dataFromServer
                             };
                         }
@@ -1285,8 +1285,8 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
             var dataObject = {
                 fileNumber: fileNumber,
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
-                network: $scope.moduleNetwork.network,
+                moduleId: $scope.moduleEnvironment.moduleId,
+                environment: $scope.moduleEnvironment.environment,
                 originalName: $scope.dataFromServer[fileNumber].originalName,
                 name: $scope.dataFromServer[fileNumber].name,
                 contents: $scope.dataFromServer[fileNumber].contents
@@ -1311,11 +1311,11 @@ hadrianControllers.controller('ModalModuleFileCtrl', ['$scope', '$http', '$modal
         };
     }]);
 
-hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, config, service, moduleNetwork) {
+hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
         $scope.formBackfillHost = {};
@@ -1326,9 +1326,9 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$mod
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
+                moduleId: $scope.moduleEnvironment.moduleId,
                 dataCenter: $scope.formBackfillHost.dataCenter,
-                network: $scope.moduleNetwork.network,
+                environment: $scope.moduleEnvironment.environment,
                 platform: $scope.formBackfillHost.platform,
                 hosts: $scope.formBackfillHost.hosts
             };
@@ -1376,17 +1376,17 @@ hadrianControllers.controller('ModalDeleteModuleCtrl', ['$scope', '$http', '$mod
         };
     }]);
 
-hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'networkModule',
-    function ($scope, $http, $modalInstance, $route, config, service, networkModule) {
+hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'environmentModule',
+    function ($scope, $http, $modalInstance, $route, config, service, environmentModule) {
         $scope.errorMsg = null;
         $scope.service = service;
-        $scope.networkModule = networkModule;
+        $scope.environmentModule = environmentModule;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === networkModule.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === environmentModule.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
@@ -1401,11 +1401,11 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.networkModule.moduleId,
+                moduleId: $scope.environmentModule.moduleId,
                 dns: $scope.formSaveVip.dns,
                 domain: $scope.formSaveVip.domain,
                 external: $scope.formSaveVip.external,
-                network: $scope.networkModule.network,
+                environment: $scope.environmentModule.environment,
                 protocol: $scope.formSaveVip.protocol,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort
@@ -1433,10 +1433,10 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         $scope.vip = vip;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === vip.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === vip.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
@@ -1467,17 +1467,17 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         };
     }]);
 
-hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, config, service, moduleNetwork) {
+hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === moduleNetwork.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
@@ -1500,7 +1500,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost.count = 1;
         $scope.formSaveHost.reason = "";
 
-        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleNetwork.moduleId, {});
+        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleEnvironment.moduleId, {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.versions = data;
             if ($scope.formSaveHost.version === "") {
@@ -1514,9 +1514,9 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
+                moduleId: $scope.moduleEnvironment.moduleId,
                 dataCenter: $scope.formSaveHost.dataCenter,
-                network: $scope.moduleNetwork.network,
+                environment: $scope.moduleEnvironment.environment,
                 platform: $scope.formSaveHost.platform,
                 sizeCpu: $scope.formSaveHost.sizeCpu,
                 sizeMemory: $scope.formSaveHost.sizeMemory,
@@ -1542,24 +1542,24 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hostNames', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hostNames, moduleNetwork) {
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
         $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === moduleNetwork.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
         for (var i = 0; i < service.modules.length; i++) {
-            if (service.modules[i].moduleId === moduleNetwork.moduleId) {
+            if (service.modules[i].moduleId === moduleEnvironment.moduleId) {
                 $scope.module = service.modules[i];
             }
         }
@@ -1577,7 +1577,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.formUpdateHost.configVersion = "";
         $scope.formUpdateHost.reason = "";
 
-        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleNetwork.moduleId, {});
+        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleEnvironment.moduleId, {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.versions = data;
             if ($scope.formUpdateHost.version === "") {
@@ -1591,8 +1591,8 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
-                network: $scope.moduleNetwork.network,
+                moduleId: $scope.moduleEnvironment.moduleId,
+                environment: $scope.moduleEnvironment.environment,
                 all: false,
                 hostNames: $scope.hostNames,
                 version: $scope.formUpdateHost.version,
@@ -1616,18 +1616,18 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         };
     }]);
 
-hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleNetwork) {
+hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === moduleNetwork.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
@@ -1637,8 +1637,8 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
-                network: $scope.moduleNetwork.network,
+                moduleId: $scope.moduleEnvironment.moduleId,
+                environment: $scope.moduleEnvironment.environment,
                 all: false,
                 hostNames: $scope.hostNames,
                 reason: $scope.formUpdateHost.reason,
@@ -1660,18 +1660,18 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         };
     }]);
 
-hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleNetwork',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleNetwork) {
+hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
-        $scope.moduleNetwork = moduleNetwork;
+        $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
-        $scope.configNetwork = null;
-        for (var i = 0; i < config.networks.length; i++) {
-            if (config.networks[i].name === moduleNetwork.network) {
-                $scope.configNetwork = config.networks[i];
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
             }
         }
 
@@ -1681,8 +1681,8 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                moduleId: $scope.moduleNetwork.moduleId,
-                network: $scope.moduleNetwork.network,
+                moduleId: $scope.moduleEnvironment.moduleId,
+                environment: $scope.moduleEnvironment.environment,
                 hostNames: $scope.hostNames,
                 reason: $scope.formDeleteHost.reason
             };

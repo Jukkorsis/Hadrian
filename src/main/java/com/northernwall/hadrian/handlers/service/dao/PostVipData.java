@@ -21,7 +21,7 @@ public class PostVipData {
     public String dns;
     public String domain;
     public boolean external;
-    public String network;
+    public String environment;
     public String protocol;
     public int vipPort;
     public int servicePort;

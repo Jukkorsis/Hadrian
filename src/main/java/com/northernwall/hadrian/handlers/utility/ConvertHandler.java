@@ -43,27 +43,27 @@ public class ConvertHandler extends BasicHandler {
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     }
     
-    private void convertNetwork(String oldValue, String newValue) {
+    private void convertEnvironment(String oldValue, String newValue) {
         List<Service> services = getDataAccess().getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
                 List<Module> modules = getDataAccess().getModules(service.getServiceId());
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
-                        if (module.getNetworkNames() != null
-                                && !module.getNetworkNames().isEmpty()
-                                && module.getNetworkNames().containsKey(oldValue)) {
-                            boolean value = module.getNetworkNames().get(oldValue).booleanValue();
-                            LOGGER.info("Found a module with '{}' network, {} in {} with value {}", oldValue, module.getModuleName(), service.getServiceName(), value);
-                            module.getNetworkNames().put(newValue, value);
-                            module.getNetworkNames().remove(oldValue);
+                        if (module.getEnvironmentNames() != null
+                                && !module.getEnvironmentNames().isEmpty()
+                                && module.getEnvironmentNames().containsKey(oldValue)) {
+                            boolean value = module.getEnvironmentNames().get(oldValue).booleanValue();
+                            LOGGER.info("Found a module with '{}' environment, {} in {} with value {}", oldValue, module.getModuleName(), service.getServiceName(), value);
+                            module.getEnvironmentNames().put(newValue, value);
+                            module.getEnvironmentNames().remove(oldValue);
                             getDataAccess().saveModule(module);
                         }
                         List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), oldValue);
                         if (moduleFiles != null && !moduleFiles.isEmpty()) {
                             for (ModuleFile moduleFile : moduleFiles) {
-                                LOGGER.info("Found a module file with '{}' network, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
-                                moduleFile.setNetwork(newValue);
+                                LOGGER.info("Found a module file with '{}' environment, {} in {}", oldValue, module.getModuleName(), service.getServiceName());
+                                moduleFile.setEnvironment(newValue);
                                 getDataAccess().saveModuleFile(moduleFile);
                             }
                         }
@@ -72,9 +72,9 @@ public class ConvertHandler extends BasicHandler {
                 List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
-                        if (host.getNetwork().equals(oldValue)) {
-                            LOGGER.info("Found a host with '{}' network, {} in {}", oldValue, host.getHostName(), service.getServiceName());
-                            host.setNetwork(newValue);
+                        if (host.getEnvironment().equals(oldValue)) {
+                            LOGGER.info("Found a host with '{}' environment, {} in {}", oldValue, host.getHostName(), service.getServiceName());
+                            host.setEnvironment(newValue);
                             getDataAccess().saveHost(host);
                         }
                     }
@@ -82,9 +82,9 @@ public class ConvertHandler extends BasicHandler {
                 List<Vip> vips = getDataAccess().getVips(service.getServiceId());
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
-                        if (vip.getNetwork().equals(oldValue)) {
-                            LOGGER.info("Found a VIP with '{}' network, {} in {}", oldValue, vip.getDns(), service.getServiceName());
-                            vip.setNetwork(newValue);
+                        if (vip.getEnvironment().equals(oldValue)) {
+                            LOGGER.info("Found a VIP with '{}' environment, {} in {}", oldValue, vip.getDns(), service.getServiceName());
+                            vip.setEnvironment(newValue);
                             getDataAccess().saveVip(vip);
                         }
                     }

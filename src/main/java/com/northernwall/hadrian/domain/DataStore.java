@@ -28,14 +28,14 @@ public class DataStore implements Comparable<DataStore>{
     private String name;
     private String serviceId;
     private String type;
-    private String network;
+    private String environment;
 
-    public DataStore(String name, String serviceId, String type, String network) {
+    public DataStore(String name, String serviceId, String type, String environment) {
         this.dataStoreId = UUID.randomUUID().toString();
         this.name = name;
         this.serviceId = serviceId;
         this.type = type;
-        this.network = network;
+        this.environment = environment;
     }
 
     public String getDataStoreId() {
@@ -70,12 +70,12 @@ public class DataStore implements Comparable<DataStore>{
         this.type = type;
     }
 
-    public String getNetwork() {
-        return network;
+    public String getEnvironment() {
+        return environment;
     }
 
-    public void setNetwork(String network) {
-        this.network = network;
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     @Override

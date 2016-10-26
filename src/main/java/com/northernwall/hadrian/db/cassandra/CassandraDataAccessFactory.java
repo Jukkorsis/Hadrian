@@ -112,6 +112,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             session.execute("CREATE TABLE IF NOT EXISTS dataStore (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             session.execute("CREATE TABLE IF NOT EXISTS host (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             session.execute("CREATE TABLE IF NOT EXISTS module (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
+            //Reminder that the attribute environment used to called network, which is way the database column is called network
             session.execute("CREATE TABLE IF NOT EXISTS moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
             session.execute("CREATE TABLE IF NOT EXISTS vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             //Ref tables

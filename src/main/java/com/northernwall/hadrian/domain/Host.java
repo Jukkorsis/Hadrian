@@ -31,7 +31,7 @@ public class Host implements Comparable<Host> {
     private boolean busy;
     private String status;
     private String dataCenter;
-    private String network;
+    private String environment;
     private String platform;
 
     public Host() {
@@ -41,11 +41,11 @@ public class Host implements Comparable<Host> {
         this.busy = false;
         this.status = Const.NO_STATUS;
         this.dataCenter = null;
-        this.network = null;
+        this.environment = null;
         this.platform = null;
     }
 
-    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String network, String platform) {
+    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String environment, String platform) {
         this.hostId = UUID.randomUUID().toString();
         this.hostName = hostName;
         this.serviceId = serviceId;
@@ -53,7 +53,7 @@ public class Host implements Comparable<Host> {
         this.status = status;
         this.moduleId = moduleId;
         this.dataCenter = dataCenter;
-        this.network = network;
+        this.environment = environment;
         this.platform = platform;
     }
 
@@ -110,12 +110,12 @@ public class Host implements Comparable<Host> {
         this.dataCenter = dataCenter;
     }
 
-    public String getNetwork() {
-        return network;
+    public String getEnvironment() {
+        return environment;
     }
 
-    public void setNetwork(String network) {
-        this.network = network;
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     public String getPlatform() {

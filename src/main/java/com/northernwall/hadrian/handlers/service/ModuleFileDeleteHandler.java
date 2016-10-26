@@ -38,19 +38,19 @@ public class ModuleFileDeleteHandler extends BasicHandler {
         Service service = getService(request);
         Module module = getModule(request, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
-        String network = request.getParameter("network");
-        if (network == null || network.isEmpty()) {
-            throw new Http400BadRequestException("parameter network is missing");
+        String environment = request.getParameter("environment");
+        if (environment == null || environment.isEmpty()) {
+            throw new Http400BadRequestException("parameter environment is missing");
         }
         String fileName = getFileName(request);
 
-        getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), network, fileName);
+        getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), environment, fileName);
         
         createAudit(
                 service.getServiceId(),
                 module.getModuleName(),
                 user.getUsername(),
-                "Delete file " + fileName + " on " + network);
+                "Delete file " + fileName + " on " + environment);
         
         response.setStatus(200);
         request.setHandled(true);

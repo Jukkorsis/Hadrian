@@ -67,9 +67,9 @@ public class ModuleModifyHandler extends BasicHandler {
         List<Host> hosts = getDataAccess().getHosts(data.serviceId);
         for (Host host : hosts) {
             if (host.getModuleId().equals(data.moduleId)) {
-                Boolean temp = data.networkNames.get(host.getNetwork());
+                Boolean temp = data.environmentNames.get(host.getEnvironment());
                 if (temp == null || !temp.booleanValue()) {
-                    throw new Http400BadRequestException("Can not remove a network from a module with an active host");
+                    throw new Http400BadRequestException("Can not remove a environment from a module with an active host");
                 }
             }
         }
@@ -77,9 +77,9 @@ public class ModuleModifyHandler extends BasicHandler {
         List<Vip> vips = getDataAccess().getVips(data.serviceId);
         for (Vip vip : vips) {
             if (vip.getModuleId().equals(data.moduleId)) {
-                Boolean temp = data.networkNames.get(vip.getNetwork());
+                Boolean temp = data.environmentNames.get(vip.getEnvironment());
                 if (temp == null || !temp.booleanValue()) {
-                    throw new Http400BadRequestException("Can not remove a network from a module with an active VIP");
+                    throw new Http400BadRequestException("Can not remove a environment from a module with an active VIP");
                 }
             }
         }
@@ -151,8 +151,8 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setStopCmdLine(data.stopCmdLine);
         module.setStopTimeOut(data.stopTimeOut);
         module.setConfigName(data.configName);
-        module.setNetworkNames(data.networkNames);
-        module.cleanNetworkNames(null);
+        module.setEnvironmentNames(data.environmentNames);
+        module.cleanEnvironmentNames(null);
 
         getDataAccess().saveModule(module);
 

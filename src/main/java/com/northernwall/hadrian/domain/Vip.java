@@ -32,7 +32,7 @@ public class Vip implements Comparable<Vip>{
     private String dns;
     private String domain;
     private boolean external;
-    private String network;
+    private String environment;
     private String protocol;
     private int vipPort;
     private int servicePort;
@@ -46,13 +46,13 @@ public class Vip implements Comparable<Vip>{
         this.dns = null;
         this.domain = null;
         this.external = false;
-        this.network = null;
+        this.environment = null;
         this.protocol = "HTTP";
         this.vipPort = 80;
         this.servicePort = 8080;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String network, String protocol, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String protocol, int vipPort, int servicePort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -61,7 +61,7 @@ public class Vip implements Comparable<Vip>{
         this.dns = dns;
         this.domain = domain;
         this.external = external;
-        this.network = network;
+        this.environment = environment;
         this.protocol = protocol;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
@@ -128,12 +128,12 @@ public class Vip implements Comparable<Vip>{
         this.external = external;
     }
 
-    public String getNetwork() {
-        return network;
+    public String getEnvironment() {
+        return environment;
     }
 
-    public void setNetwork(String network) {
-        this.network = network;
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     public String getProtocol() {

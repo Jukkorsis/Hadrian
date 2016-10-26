@@ -71,7 +71,7 @@ public class HostRestartHandler extends BasicHandler {
         }
         List<WorkItem> workItems = new LinkedList<>();
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getEnvironment().equals(data.environment)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {

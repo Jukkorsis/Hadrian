@@ -10,10 +10,10 @@
                 <dd><input ng-model="formUpdateModule.moduleName" type="text" class="form-control"></dd>
                 <dt>Maven Artifact Id:</dt>
                 <dd><input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control"></dd>
-                <dt>Networks:</dt>
+                <dt>Environments:</dt>
                 <dd>
-                    <span ng-repeat="n in config.networkNames">
-                        <input ng-model="formUpdateModule.networkNames[n]" type="checkbox">{{n}}
+                    <span ng-repeat="n in config.environmentNames">
+                        <input ng-model="formUpdateModule.environmentNames[n]" type="checkbox">{{n}}
                     </span>
                 </dd>
                 <dt>Host Abbr:</dt>

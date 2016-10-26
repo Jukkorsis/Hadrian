@@ -1,6 +1,6 @@
 package com.northernwall.hadrian.domain;
 
-public class Network {
+public class Environment {
 
     public String name = null;
     public String pattern = null;

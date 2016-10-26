@@ -74,11 +74,11 @@ public class ServiceRefreshHandler extends BasicHandler {
         List<Module> modules = getDataAccess().getModules(service.getServiceId());
         Collections.sort(modules);
 
-        List<String> activeNetworks = new LinkedList<>();
+        List<String> activeEnvironments = new LinkedList<>();
         for (Module module : modules) {
-            module.cleanNetworkNames(activeNetworks);
+            module.cleanEnvironmentNames(activeEnvironments);
         }
-        arrangeNetworks(getServiceData, activeNetworks, modules);
+        arrangeEnvironments(getServiceData, activeEnvironments, modules);
         for (Module module : modules) {
             GetModuleData getModuleData = GetModuleData.create(module, configHelper.getConfig());
             if (includeStuff) {
@@ -88,18 +88,18 @@ public class ServiceRefreshHandler extends BasicHandler {
         }
     }
 
-    private void arrangeNetworks(GetServiceData getServiceData, List<String> activeNetworks, List<Module> modules) {
-        for (String network : configHelper.getConfig().networkNames) {
-            if (activeNetworks.contains(network)) {
-                getServiceData.addNetwork(network);
+    private void arrangeEnvironments(GetServiceData getServiceData, List<String> activeEnvironments, List<Module> modules) {
+        for (String environment : configHelper.getConfig().environmentNames) {
+            if (activeEnvironments.contains(environment)) {
+                getServiceData.addEnvironment(environment);
             }
         }
-        for (String network : activeNetworks) {
+        for (String environment : activeEnvironments) {
             for (Module module : modules) {
-                if (module.getNetworkNames() != null
-                        && !module.getNetworkNames().isEmpty()
-                        && module.getNetworkNames().containsKey(network)) {
-                    getServiceData.addModuleNetwork(module, network);
+                if (module.getEnvironmentNames() != null
+                        && !module.getEnvironmentNames().isEmpty()
+                        && module.getEnvironmentNames().containsKey(environment)) {
+                    getServiceData.addModuleEnvironment(module, environment);
                 }
             }
         }

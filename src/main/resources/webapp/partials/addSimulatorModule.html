@@ -17,11 +17,11 @@
                 </dd>
                 <dt>Maven Artifact Id:</dt>
                 <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
-                <dt>Networks:</dt>
+                <dt>Environments:</dt>
                 <dd>
-                    <span ng-repeat="n in config.networkNames">
+                    <span ng-repeat="n in config.environmentNames">
                         <label class="checkbox-inline">
-                            <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
+                            <input ng-model="formSaveModule.environmentNames[n]" type="checkbox">{{n}}
                         </label>
                     </span>
                 </dd>

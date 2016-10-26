@@ -18,19 +18,19 @@ package com.northernwall.hadrian.handlers.service.dao;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GetModuleNetworkData {
+public class GetModuleEnvironmentData {
     public String moduleId;
     public String moduleName;
-    public String network;
+    public String environment;
     public boolean hasSmokeTest;
     public List<GetHostData> hosts = new LinkedList<>();
     public List<GetVipData> vips = new LinkedList<>();
     public List<GetCustomFunctionData> cfs = new LinkedList<>();
 
-    public GetModuleNetworkData(String moduleId, String moduleName, String network, boolean hasSmokeTest) {
+    public GetModuleEnvironmentData(String moduleId, String moduleName, String environment, boolean hasSmokeTest) {
         this.moduleId = moduleId;
         this.moduleName = moduleName;
-        this.network = network;
+        this.environment = environment;
         this.hasSmokeTest = hasSmokeTest;
     }
 

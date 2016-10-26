@@ -77,7 +77,7 @@ public class VipCreateHandler extends BasicHandler {
                 data.dns,
                 data.domain,
                 data.external,
-                data.network,
+                data.environment,
                 data.protocol,
                 data.vipPort,
                 data.servicePort);

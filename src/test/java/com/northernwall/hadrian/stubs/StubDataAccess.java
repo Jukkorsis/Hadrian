@@ -235,12 +235,12 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment) {
         return null;
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -255,7 +255,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
+    public void deleteModuleFile(String serviceId, String moduleId, String environment, String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -52,9 +52,9 @@ public class Module implements Comparable<Module> {
     private int stopTimeOut;
     private String configName;
     private String testStyle;//-
-    private Map<String,Boolean> networkNames = new HashMap<>();
+    private Map<String,Boolean> environmentNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> networkNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -78,7 +78,7 @@ public class Module implements Comparable<Module> {
         this.stopCmdLine = stopCmdLine;
         this.stopTimeOut = stopTimeOut;
         this.configName = configName;
-        this.networkNames = networkNames;
+        this.environmentNames = environmentNames;
     }
 
     public String getModuleId() {
@@ -311,23 +311,23 @@ public class Module implements Comparable<Module> {
         this.testStyle = testStyle;
     }
 
-    public Map<String, Boolean> getNetworkNames() {
-        return networkNames;
+    public Map<String, Boolean> getEnvironmentNames() {
+        return environmentNames;
     }
 
-    public void setNetworkNames(Map<String, Boolean> networkNames) {
-        this.networkNames = networkNames;
+    public void setEnvironmentNames(Map<String, Boolean> environmentNames) {
+        this.environmentNames = environmentNames;
     }
     
-    public void cleanNetworkNames(List<String> activeNetworks) {
-        if (networkNames == null || networkNames.isEmpty()) {
+    public void cleanEnvironmentNames(List<String> activeEnvironments) {
+        if (environmentNames == null || environmentNames.isEmpty()) {
             return;
         }
         List<String> keysToRemove = null;
-        for (String key : networkNames.keySet()) {
-            if (networkNames.get(key).booleanValue()) {
-                if (activeNetworks != null && !activeNetworks.contains(key)) {
-                    activeNetworks.add(key);
+        for (String key : environmentNames.keySet()) {
+            if (environmentNames.get(key).booleanValue()) {
+                if (activeEnvironments != null && !activeEnvironments.contains(key)) {
+                    activeEnvironments.add(key);
                 }
             } else {
                 if (keysToRemove == null) {
@@ -338,7 +338,7 @@ public class Module implements Comparable<Module> {
         }
         if (keysToRemove != null && !keysToRemove.isEmpty()) {
             for (String key : keysToRemove) {
-                networkNames.remove(key);
+                environmentNames.remove(key);
             }
         }
     }

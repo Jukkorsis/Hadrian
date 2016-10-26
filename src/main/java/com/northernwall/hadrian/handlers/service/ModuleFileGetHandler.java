@@ -56,13 +56,13 @@ public class ModuleFileGetHandler extends BasicHandler {
         Service service = getService(request);
         Module module = getModule(request, service);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
-        String network = request.getParameter("network");
-        if (network == null || network.isEmpty()) {
-            throw new Http400BadRequestException("parameter network is missing");
+        String environment = request.getParameter("environment");
+        if (environment == null || environment.isEmpty()) {
+            throw new Http400BadRequestException("parameter environment is missing");
         }
 
         List<GetModuleFileData> getModuleFileDataList = new ArrayList<>();
-        List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), network);
+        List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(service.getServiceId(), module.getModuleId(), environment);
         if (moduleFiles != null && !moduleFiles.isEmpty()) {
             for (ModuleFile moduleFile : moduleFiles) {
                 getModuleFileDataList.add(new GetModuleFileData(moduleFile.getName(), moduleFile.getContents()));

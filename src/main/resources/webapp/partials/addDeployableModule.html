@@ -19,10 +19,10 @@
                 <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
                 <dt>Host Abbr:</dt>
                 <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
-                <dt>Networks:</dt>
+                <dt>Environments:</dt>
                 <dd>
-                    <span ng-repeat="n in config.networkNames">
-                        <input ng-model="formSaveModule.networkNames[n]" type="checkbox">{{n}}
+                    <span ng-repeat="n in config.environmentNames">
+                        <input ng-model="formSaveModule.environmentNames[n]" type="checkbox">{{n}}
                     </span>
                 </dd>
                 <dt>Run As User:</dt>

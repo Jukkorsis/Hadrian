@@ -578,9 +578,9 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network));
+        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, environment));
         if (results == null || results.isExhausted()) {
             return null;
         }
@@ -589,7 +589,7 @@ public class CassandraDataAccess implements DataAccess {
             moduleFiles.add(new ModuleFile(
                     serviceId,
                     moduleId,
-                    network,
+                    environment,
                     row.getString("name"),
                     row.getString("data")));
         }
@@ -598,9 +598,9 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
-        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, network, name));
+        ResultSet results = session.execute(boundStatement.bind(serviceId, moduleId, environment, name));
         Row row = results.one();
         if (row == null) {
             return null;
@@ -608,7 +608,7 @@ public class CassandraDataAccess implements DataAccess {
         return new ModuleFile(
                 serviceId,
                 moduleId,
-                network,
+                environment,
                 name,
                 row.getString("data"));
     }
@@ -619,7 +619,7 @@ public class CassandraDataAccess implements DataAccess {
         session.execute(boundStatement.bind(
                 moduleFile.getServiceId(),
                 moduleFile.getModuleId(),
-                moduleFile.getNetwork(),
+                moduleFile.getEnvironment(),
                 moduleFile.getName(),
                 moduleFile.getContents()));
     }
@@ -631,14 +631,14 @@ public class CassandraDataAccess implements DataAccess {
                 moduleFile.getContents(),
                 moduleFile.getServiceId(),
                 moduleFile.getModuleId(),
-                moduleFile.getNetwork(),
+                moduleFile.getEnvironment(),
                 moduleFile.getName()));
     }
 
     @Override
-    public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
+    public void deleteModuleFile(String serviceId, String moduleId, String environment, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileDelete);
-        session.execute(boundStatement.bind(serviceId, moduleId, network, name));
+        session.execute(boundStatement.bind(serviceId, moduleId, environment, name));
     }
 
     @Override

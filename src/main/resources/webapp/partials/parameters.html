@@ -9,7 +9,7 @@
             </div>
         </div>
     </uib-tab>
-    <uib-tab heading="Networks">
+    <uib-tab heading="Environments">
         <div class="panel panel-default">
             <div class="panel-body">
                 <table class="table table-hover table-striped table-condensed">
@@ -18,10 +18,10 @@
                         <th>Pattern</th>
                         <th>Allow Deploy with VersionURL</th>
                     </tr>
-                    <tr ng-repeat="network in config.networks">
-                        <td>{{network.name}}</td>
-                        <td>{{network.pattern}}</td>
-                        <td>{{network.allowUrl}}</td>
+                    <tr ng-repeat="environment in config.environments">
+                        <td>{{environment.name}}</td>
+                        <td>{{environment.pattern}}</td>
+                        <td>{{environment.allowUrl}}</td>
                     </tr>
                 </table>
             </div>

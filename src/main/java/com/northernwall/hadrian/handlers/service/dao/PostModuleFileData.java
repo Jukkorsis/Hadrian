@@ -19,7 +19,7 @@ package com.northernwall.hadrian.handlers.service.dao;
 public class PostModuleFileData {
     public String serviceId;
     public String moduleId;
-    public String network;
+    public String environment;
     public String name;
     public String originalName;
     public String contents;

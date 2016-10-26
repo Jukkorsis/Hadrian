@@ -58,8 +58,8 @@ public class ModuleFileCreateHandler extends BasicHandler {
         Service service = getService(data.serviceId, null);
         Module module = getModule(data.moduleId, null, service);
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
-        if (data.network == null || data.network.isEmpty()) {
-            throw new Http400BadRequestException("attribute network is missing");
+        if (data.environment == null || data.environment.isEmpty()) {
+            throw new Http400BadRequestException("attribute environment is missing");
         }
 
         data.name = data.name.trim();
@@ -68,14 +68,13 @@ public class ModuleFileCreateHandler extends BasicHandler {
         }
 
         if (data.originalName == null || data.originalName.isEmpty()) {
-            ModuleFile moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+            ModuleFile moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.environment, data.name, data.contents);
             getDataAccess().saveModuleFile(moduleFile);
-            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " on " + data.network);
+            createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Created file " + data.name + " on " + data.environment);
         } else {
-            ModuleFile moduleFile = getDataAccess().getModuleFile(
-                service.getServiceId(),
+            ModuleFile moduleFile = getDataAccess().getModuleFile(service.getServiceId(),
                 module.getModuleId(),
-                data.network,
+                data.environment,
                 data.originalName);
             if (moduleFile == null) {
                 throw new Http404NotFoundException("Could not find existing module file");
@@ -84,13 +83,13 @@ public class ModuleFileCreateHandler extends BasicHandler {
                 if (!data.contents.equals(moduleFile.getContents())) {
                     moduleFile.setContents(data.contents);
                     getDataAccess().updateModuleFile(moduleFile);
-                    createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " on " + data.network);
+                    createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Updated file " + data.name + " on " + data.environment);
                 }
             } else {
-                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.originalName);
-                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.network, data.name, data.contents);
+                getDataAccess().deleteModuleFile(service.getServiceId(), module.getModuleId(), data.environment, data.originalName);
+                moduleFile = new ModuleFile(service.getServiceId(), module.getModuleId(), data.environment, data.name, data.contents);
                 getDataAccess().saveModuleFile(moduleFile);
-                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Rename file " + data.originalName + " to " + data.name + " on " + data.network);
+                createAudit(service.getServiceId(), module.getModuleName(), user.getUsername(), "Rename file " + data.originalName + " to " + data.name + " on " + data.environment);
             }
         }
 

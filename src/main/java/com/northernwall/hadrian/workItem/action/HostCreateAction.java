@@ -46,7 +46,7 @@ public class HostCreateAction extends Action {
     protected void recordAudit(WorkItem workItem, Result result, String output) {
         Map<String, String> notes = new HashMap<>();
         notes.put("DC", workItem.getHost().dataCenter);
-        notes.put("Network", workItem.getHost().network);
+        notes.put("Environment", workItem.getHost().environment);
         notes.put("Platform", workItem.getHost().platform);
         notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
         notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));

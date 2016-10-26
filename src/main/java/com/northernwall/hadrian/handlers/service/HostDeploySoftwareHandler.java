@@ -21,7 +21,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.Network;
+import com.northernwall.hadrian.domain.Environment;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -72,17 +72,17 @@ public class HostDeploySoftwareHandler extends BasicHandler {
 
         Module module = getModule(data.moduleId, data.moduleName, service);
 
-        Network network = null;
-        for (Network temp : configHelper.getConfig().networks) {
-            if (temp.name.equals(data.network)) {
-                network = temp;
+        Environment environment = null;
+        for (Environment temp : configHelper.getConfig().environments) {
+            if (temp.name.equals(data.environment)) {
+                environment = temp;
             }
         }
-        if (network == null) {
-            throw new Http400BadRequestException("Unknown network " + data.network);
+        if (environment == null) {
+            throw new Http400BadRequestException("Unknown environment " + data.environment);
         }
-        if (!network.allowUrl && data.versionUrl != null) {
-            throw new Http400BadRequestException(("Network " + network.name + " does not allow versionUrl"));
+        if (!environment.allowUrl && data.versionUrl != null) {
+            throw new Http400BadRequestException(("Environment " + environment.name + " does not allow versionUrl"));
         }
         if (data.version != null && data.versionUrl != null) {
             throw new Http400BadRequestException("Only one of version and versionUrl can be specified");
@@ -100,7 +100,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         }
         List<WorkItem> workItems = new LinkedList<>();
         for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getNetwork().equals(data.network)) {
+            if (host.getModuleId().equals(module.getModuleId()) && host.getEnvironment().equals(data.environment)) {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {

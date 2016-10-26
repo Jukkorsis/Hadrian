@@ -22,7 +22,7 @@ public class GetDataStoreData {
     public String name;
     public String serviceId;
     public String type;
-    public String network;
+    public String environment;
     
     public static GetDataStoreData create(DataStore dataStore) {
         GetDataStoreData temp = new GetDataStoreData();
@@ -30,7 +30,7 @@ public class GetDataStoreData {
         temp.name = dataStore.getName();
         temp.serviceId = dataStore.getServiceId();
         temp.type = dataStore.getType();
-        temp.network = dataStore.getNetwork();
+        temp.environment = dataStore.getEnvironment();
         return temp;
     }
 

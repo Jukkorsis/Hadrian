@@ -49,6 +49,6 @@ public class PostModuleData {
     public String configName;
     public String deployableTemplate;
     public String libraryTemplate;
-    public Map<String,Boolean> networkNames = new HashMap<>();
+    public Map<String,Boolean> environmentNames = new HashMap<>();
 
 }

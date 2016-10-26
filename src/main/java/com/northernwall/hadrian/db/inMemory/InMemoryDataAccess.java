@@ -366,13 +366,13 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String network) {
+    public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment) {
         List<ModuleFile> moduleFileList = new ArrayList<>();
 
         for (ModuleFile moduleFile : moduleFiles.values()) {
             if (moduleFile.getServiceId().equals(serviceId) &&
                     moduleFile.getModuleId().equals(moduleId) &&
-                    moduleFile.getNetwork().equals(network)) {
+                    moduleFile.getEnvironment().equals(environment)) {
                 moduleFileList.add(moduleFile);
             }
         }
@@ -381,11 +381,11 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public ModuleFile getModuleFile(String serviceId, String moduleId, String network, String name) {
+    public ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name) {
         for (ModuleFile moduleFile : moduleFiles.values()) {
             if (moduleFile.getServiceId().equals(serviceId) &&
                     moduleFile.getModuleId().equals(moduleId) &&
-                    moduleFile.getNetwork().equals(network) &&
+                    moduleFile.getEnvironment().equals(environment) &&
                     moduleFile.getName().equals(name)) {
                return moduleFile;
             }
@@ -403,12 +403,12 @@ public class InMemoryDataAccess implements DataAccess {
     }
     
     @Override
-    public void deleteModuleFile(String serviceId, String moduleId, String network, String name) {
+    public void deleteModuleFile(String serviceId, String moduleId, String environment, String name) {
         for (Iterator<Map.Entry<String, ModuleFile>> it = moduleFiles.entrySet().iterator(); it.hasNext();) {
             ModuleFile moduleFile = it.next().getValue();
             if (moduleFile.getServiceId().equals(serviceId) &&
                     moduleFile.getModuleId().equals(moduleId) &&
-                    moduleFile.getNetwork().equals(network) &&
+                    moduleFile.getEnvironment().equals(environment) &&
                     moduleFile.getName().equals(name)) {
                 it.remove();
             }

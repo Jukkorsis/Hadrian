@@ -95,8 +95,8 @@
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Host Abbr:</dt>
                                     <dd>{{m.hostAbbr}}</dd>
-                                    <dt>Networks:</dt>
-                                    <dd><span ng-repeat="(nname, val) in m.networkNames">{{nname}} </span></dd>
+                                    <dt>Environments:</dt>
+                                    <dd><span ng-repeat="(nname, val) in m.environmentNames">{{nname}} </span></dd>
                                     <dt>Run As:</dt>
                                     <dd>{{m.runAs}}</dd>
                                     <div ng-if="m.configName">

@@ -91,8 +91,8 @@ public class HostBackfillHandler extends BasicHandler {
         if (!config.dataCenters.contains(data.dataCenter)) {
             throw new Http400BadRequestException("unknown datacenter, " + data.dataCenter);
         }
-        if (!config.networkNames.contains(data.network)) {
-            throw new Http400BadRequestException("unknown network, " + data.network);
+        if (!config.environmentNames.contains(data.environment)) {
+            throw new Http400BadRequestException("unknown environment, " + data.environment);
         }
         if (!config.platforms.contains(data.platform)) {
             throw new Http400BadRequestException("unknown operating platform, " + data.platform);
@@ -120,7 +120,7 @@ public class HostBackfillHandler extends BasicHandler {
                             Const.NO_STATUS,
                             module.getModuleId(),
                             data.dataCenter,
-                            data.network,
+                            data.environment,
                             data.platform);
                     getDataAccess().saveHost(host);
 
@@ -138,7 +138,7 @@ public class HostBackfillHandler extends BasicHandler {
                     Map<String, String> notes = new HashMap<>();
                     notes.put("Reason", "Backfilled host.");
                     notes.put("DC", data.dataCenter);
-                    notes.put("Network", data.network);
+                    notes.put("Environment", data.environment);
                     notes.put("Plaform", data.platform);
                     audit.notes = getGson().toJson(notes);
                     

@@ -3,14 +3,14 @@ package com.northernwall.hadrian.domain;
 public class ModuleFile {
     private String serviceId;
     private String moduleId;
-    private String network;
+    private String environment;
     private String name;
     private String contents;
 
-    public ModuleFile(String serviceId, String moduleId, String network, String name, String contents) {
+    public ModuleFile(String serviceId, String moduleId, String environment, String name, String contents) {
         this.serviceId = serviceId;
         this.moduleId = moduleId;
-        this.network = network;
+        this.environment = environment;
         this.name = name;
         this.contents = contents;
     }
@@ -31,12 +31,12 @@ public class ModuleFile {
         this.moduleId = moduleId;
     }
 
-    public String getNetwork() {
-        return network;
+    public String getEnvironment() {
+        return environment;
     }
 
-    public void setNetwork(String network) {
-        this.network = network;
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     public String getName() {
@@ -60,7 +60,7 @@ public class ModuleFile {
         int hash = 1;
         hash += 13 + serviceId.hashCode();
         hash += 17 + moduleId.hashCode();
-        hash += 31 + network.hashCode();
+        hash += 31 + environment.hashCode();
         hash += 37 + name.hashCode();
 
         return hash;

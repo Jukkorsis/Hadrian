@@ -46,6 +46,6 @@ public class PutModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
-    public Map<String,Boolean> networkNames = new HashMap<>();
+    public Map<String,Boolean> environmentNames = new HashMap<>();
 
 }

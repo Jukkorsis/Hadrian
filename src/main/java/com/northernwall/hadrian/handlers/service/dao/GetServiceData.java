@@ -67,7 +67,7 @@ public class GetServiceData {
         temp.deletionDate = service.getDeletionDate();
         temp.active = service.isActive();
         temp.modules = new LinkedList<>();
-        temp.networks = new LinkedList<>();
+        temp.environments = new LinkedList<>();
         temp.dataStores = new LinkedList<>();
         return temp;
     }
@@ -98,44 +98,44 @@ public class GetServiceData {
     public Date deletionDate;
     public boolean active;
     public List<GetModuleData> modules;
-    public List<GetNetworkData> networks;
+    public List<GetEnvironmentData> environments;
     public List<GetDataStoreData> dataStores;
     public boolean canModify;
 
 
-    public void addNetwork(String network) {
-        for (GetNetworkData networkData : networks) {
-            if (networkData.network.equals(network)) {
+    public void addEnvironment(String environment) {
+        for (GetEnvironmentData environmentData : environments) {
+            if (environmentData.environment.equals(environment)) {
                 return;
             }
         }
-        GetNetworkData networkData = new GetNetworkData();
-        networkData.network = network;
-        networks.add(networkData);
+        GetEnvironmentData environmentData = new GetEnvironmentData();
+        environmentData.environment = environment;
+        environments.add(environmentData);
     }
 
-    public void addModuleNetwork(Module module, String network) {
-        for (GetNetworkData networkData : networks) {
-            if (networkData.network.equals(network)) {
-                networkData.addModule(module);
+    public void addModuleEnvironment(Module module, String environment) {
+        for (GetEnvironmentData environmentData : environments) {
+            if (environmentData.environment.equals(environment)) {
+                environmentData.addModule(module);
                 return;
             }
         }
     }
 
     public void addHost(GetHostData hostData, GetModuleData moduleData) {
-        for (GetNetworkData networkData : networks) {
-            if (networkData.network.equals(hostData.network)) {
-                networkData.addHost(hostData, moduleData);
+        for (GetEnvironmentData environmentData : environments) {
+            if (environmentData.environment.equals(hostData.environment)) {
+                environmentData.addHost(hostData, moduleData);
                 return;
             }
         }
     }
 
     public void addVip(GetVipData vipData, GetModuleData moduleData) {
-        for (GetNetworkData networkData : networks) {
-            if (networkData.network.equals(vipData.network)) {
-                networkData.addVip(vipData, moduleData);
+        for (GetEnvironmentData environmentData : environments) {
+            if (environmentData.environment.equals(vipData.environment)) {
+                environmentData.addVip(vipData, moduleData);
                 return;
             }
         }
@@ -147,8 +147,8 @@ public class GetServiceData {
                 moduleData.customFunctions.add(customFunctionData);
             }
         }
-        for (GetNetworkData networkData : networks) {
-            networkData.addCustomFunction(customFunctionData);
+        for (GetEnvironmentData environmentData : environments) {
+            environmentData.addCustomFunction(customFunctionData);
         }
     }
 

@@ -57,7 +57,7 @@ public class VipGetDetailsHandler extends BasicHandler {
         
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         for (Host host : hosts) {
-            if (host.getNetwork().equals(vip.getNetwork())) {
+            if (host.getEnvironment().equals(vip.getEnvironment())) {
                 boolean found = false;
                 for (GetVipDetailRowData row : details.rows) {
                     if (host.getHostName().equalsIgnoreCase(row.hostName)) {

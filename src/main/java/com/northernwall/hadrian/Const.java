@@ -156,10 +156,10 @@ public class Const {
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
-    public static final String CONFIG_NETWORKS = "config.networks";
-    public static final String CONFIG_NETWORKS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\",\"warning\":\"Please be aware that your change will affect Production.\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true}]";
-    public static final String CONFIG_NETWORKS_DC = "{dc}";
-    public static final String CONFIG_NETWORKS_ABBR = "{abbr}";
+    public static final String CONFIG_ENVIRONMENTS = "config.networks"; //TODO change this to config.environments
+    public static final String CONFIG_ENVIRONMENTS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\",\"warning\":\"Please be aware that your change will affect Production.\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true}]";
+    public static final String CONFIG_ENVIRONMENTS_DC = "{dc}";
+    public static final String CONFIG_ENVIRONMENTS_ABBR = "{abbr}";
     public static final String CONFIG_PLATFORMS = "config.envs"; //TODO change this to config.platforms
     public static final String CONFIG_PLATFORMS_DEFAULT = "Java7, Java8";
     public static final String CONFIG_PROTOCOLS = "config.protocols";

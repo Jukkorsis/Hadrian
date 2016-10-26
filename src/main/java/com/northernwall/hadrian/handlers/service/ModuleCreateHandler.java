@@ -231,8 +231,8 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine,
                 data.stopTimeOut,
                 data.configName,
-                data.networkNames);
-        module.cleanNetworkNames(null);
+                data.environmentNames);
+        module.cleanEnvironmentNames(null);
         getDataAccess().saveModule(module);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null, null);

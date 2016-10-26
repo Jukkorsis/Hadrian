@@ -24,7 +24,7 @@ import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
-import com.northernwall.hadrian.domain.Network;
+import com.northernwall.hadrian.domain.Environment;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -80,8 +80,8 @@ public class HostCreateHandler extends BasicHandler {
         if (!config.dataCenters.contains(data.dataCenter)) {
             throw new Http400BadRequestException("Unknown data center");
         }
-        if (!config.networkNames.contains(data.network)) {
-            throw new Http400BadRequestException("Unknown network");
+        if (!config.environmentNames.contains(data.environment)) {
+            throw new Http400BadRequestException("Unknown environment");
         }
         if (!config.platforms.contains(data.platform)) {
             throw new Http400BadRequestException("Unknown operating platform");
@@ -92,7 +92,7 @@ public class HostCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
-        String prefix = buildPrefix(data.network, config, data.dataCenter, module.getHostAbbr());
+        String prefix = buildPrefix(data.environment, config, data.dataCenter, module.getHostAbbr());
         int num = 1;
         int createdCount = 0;
         while (createdCount < data.count && num <= config.maxTotalCount) {
@@ -107,7 +107,7 @@ public class HostCreateHandler extends BasicHandler {
                         "Creating...",
                         data.moduleId,
                         data.dataCenter,
-                        data.network,
+                        data.environment,
                         data.platform);
                 getDataAccess().saveHost(host);
 
@@ -154,16 +154,16 @@ public class HostCreateHandler extends BasicHandler {
         }
     }
 
-    private String buildPrefix(String networkName, Config config, String dataCenter, String abbr) {
-        for (Network network : config.networks) {
-            if (network.name.equals(networkName)) {
-                String prefix = network.pattern;
-                prefix = prefix.replace(Const.CONFIG_NETWORKS_DC, dataCenter);
-                prefix = prefix.replace(Const.CONFIG_NETWORKS_ABBR, abbr);
+    private String buildPrefix(String environmentName, Config config, String dataCenter, String abbr) {
+        for (Environment environment : config.environments) {
+            if (environment.name.equals(environmentName)) {
+                String prefix = environment.pattern;
+                prefix = prefix.replace(Const.CONFIG_ENVIRONMENTS_DC, dataCenter);
+                prefix = prefix.replace(Const.CONFIG_ENVIRONMENTS_ABBR, abbr);
                 return prefix;
             }
         }
-        throw new Http400BadRequestException("Unknown network");
+        throw new Http400BadRequestException("Unknown environment");
     }
 
     private String buildHostName(String prefix, int num) {
