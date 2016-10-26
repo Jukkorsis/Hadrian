@@ -76,7 +76,7 @@ public class ScheduleRunner implements Runnable {
         if (cron == null || cron.isEmpty()) {
             return false;
         }
-        return true;
+        return false;
     }
     
     private void runSmokeTest(Service service) {
