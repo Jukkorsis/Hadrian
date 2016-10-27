@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.northernwall</groupId>
     <artifactId>Hadrian</artifactId>
-    <version>1.6.14</version>
+    <version>1.6.14-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Hadrian</name>
     <url>https://github.com/Jukkorsis/Hadrian</url>
@@ -56,7 +56,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <project.scm.id>github</project.scm.id>
     </properties>
     
     <dependencies>
