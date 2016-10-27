@@ -19,30 +19,6 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 
 public class ModuleData {
-    public String moduleId;
-    public String moduleName;
-    public ModuleType moduleType;
-    public String template;
-    public String gitFolder;
-    public String mavenArtifactId;
-    public String artifactType;
-    public String artifactSuffix;
-    public String outbound;
-    public String hostAbbr;
-    public String versionUrl;
-    public String availabilityUrl;
-    public String smokeTestUrl;
-    public String runAs;
-    public String deploymentFolder;
-    public String dataFolder;
-    public String logsFolder;
-    public int logsRetention;
-    public String startCmdLine;
-    public int startTimeOut;
-    public String stopCmdLine;
-    public int stopTimeOut;
-    public String configName;
-
     public static ModuleData create(Module module) {
         if (module == null) {
             return null;
@@ -70,8 +46,34 @@ public class ModuleData {
         temp.stopCmdLine = module.getStopCmdLine();
         temp.stopTimeOut = module.getStopTimeOut();
         temp.configName = module.getConfigName();
+        
         return temp;
     }
+    
+    public String moduleId;
+    public String moduleName;
+    public ModuleType moduleType;
+    public String template;
+    public String gitFolder;
+    public String mavenArtifactId;
+    public String artifactType;
+    public String artifactSuffix;
+    public String outbound;
+    public String hostAbbr;
+    public String versionUrl;
+    public String availabilityUrl;
+    public String smokeTestUrl;
+    public String runAs;
+    public String deploymentFolder;
+    public String dataFolder;
+    public String logsFolder;
+    public int logsRetention;
+    public String startCmdLine;
+    public int startTimeOut;
+    public String stopCmdLine;
+    public int stopTimeOut;
+    public String configName;
+
 
     @Override
     public String toString() {

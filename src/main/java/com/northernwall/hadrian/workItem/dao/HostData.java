@@ -32,6 +32,7 @@ public class HostData {
         temp.prevVersion = null;
         temp.versionUrl = null;
         temp.configVersion = null;
+        
         return temp;
     }
     

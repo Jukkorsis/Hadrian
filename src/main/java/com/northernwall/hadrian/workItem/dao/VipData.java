@@ -36,6 +36,7 @@ public class VipData {
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        
         return temp;
     }
     

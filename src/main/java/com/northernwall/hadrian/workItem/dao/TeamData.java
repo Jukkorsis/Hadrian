@@ -18,11 +18,6 @@ package com.northernwall.hadrian.workItem.dao;
 import com.northernwall.hadrian.domain.Team;
 
 public class TeamData {
-    public String teamName;
-    public String teamEmail;
-    public String teamIrc;
-    public String gitGroup;
-
     public static TeamData create(Team team) {
         if (team == null) {
             return null;
@@ -32,7 +27,14 @@ public class TeamData {
         temp.teamEmail = team.getTeamEmail();
         temp.teamIrc = team.getTeamIrc();
         temp.gitGroup = team.getGitGroup();
+        
         return temp;
     }
+    
+    public String teamName;
+    public String teamEmail;
+    public String teamIrc;
+    public String gitGroup;
+
 
 }

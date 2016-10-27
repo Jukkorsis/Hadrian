@@ -18,24 +18,6 @@ package com.northernwall.hadrian.workItem.dao;
 import com.northernwall.hadrian.domain.Service;
 
 public class ServiceData {
-    public String serviceId;
-    public String serviceName;
-    public String teamId;
-    public String serviceType;
-    public String gitProject;
-    public String scope;
-    public String mavenGroupId;
-    public boolean doBuilds;
-    public boolean doDeploys;
-    public boolean doManageVip;
-    public boolean doCheckJar;
-    public String testStyle;
-    public String testHostname;
-    public String testRunAs;
-    public String testDeploymentFolder;
-    public String testCmdLine;
-    public int testTimeOut;
-
     public static ServiceData create(Service service) {
         if (service == null) {
             return null;
@@ -61,5 +43,24 @@ public class ServiceData {
 
         return temp;
     }
+    
+    public String serviceId;
+    public String serviceName;
+    public String teamId;
+    public String serviceType;
+    public String gitProject;
+    public String scope;
+    public String mavenGroupId;
+    public boolean doBuilds;
+    public boolean doDeploys;
+    public boolean doManageVip;
+    public boolean doCheckJar;
+    public String testStyle;
+    public String testHostname;
+    public String testRunAs;
+    public String testDeploymentFolder;
+    public String testCmdLine;
+    public int testTimeOut;
+
 
 }
