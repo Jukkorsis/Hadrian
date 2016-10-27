@@ -1,7 +1,7 @@
 Hadrian
 =======
 
-Hadrian is a repository of storing meta-data about SOA services.
+Hadrian is a repository of storing meta-data about SOA services and integrating with backend services to coodinate the building, provisioning, and deploying of services.
 
 Features
 --------
