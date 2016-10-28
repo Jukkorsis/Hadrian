@@ -69,7 +69,7 @@ public class Scheduler {
     }
 
     public void getHealth(HealthWriter writer) throws IOException {
-        writer.addLine("Scheduler Leader", leader.getClass().getSimpleName());
+        writer.addStringLine("Scheduler Leader", leader.getClass().getSimpleName());
         for (ScheduleRunner runner : runners) {
             runner.getHealth(writer);
         }

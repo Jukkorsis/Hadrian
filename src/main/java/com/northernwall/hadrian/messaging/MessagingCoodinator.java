@@ -168,7 +168,7 @@ public class MessagingCoodinator implements ParameterChangeListener {
 
     public void getHealth(HealthWriter writer) throws IOException {
         for (MessageProcessor messageProcessor : messageProcessors) {
-            writer.addLine("MessageProcessor", messageProcessor.getClass().getCanonicalName());
+            writer.addStringLine("MessageProcessor", messageProcessor.getClass().getCanonicalName());
         }
     }
 

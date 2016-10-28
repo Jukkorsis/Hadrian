@@ -300,12 +300,12 @@ public class CassandraDataAccess implements DataAccess {
     public void getHealth(HealthWriter writer) throws IOException {
         Metadata metadata = session.getCluster().getMetadata();
         State state = session.getState();
-        writer.addLine("Cassandra - Username", username);
-        writer.addLine("Cassandra - Cluster", metadata.getClusterName());
+        writer.addStringLine("Cassandra - Username", username);
+        writer.addStringLine("Cassandra - Cluster", metadata.getClusterName());
         if (dataCenter != null) {
-            writer.addLine("Cassandra - Preferred DC", dataCenter);
+            writer.addStringLine("Cassandra - Preferred DC", dataCenter);
         }
-        writer.addLine("Cassandra - Keyspace", session.getLoggedKeyspace());
+        writer.addStringLine("Cassandra - Keyspace", session.getLoggedKeyspace());
         List<String> dcs = new LinkedList<>();
         for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
             if (!dcs.contains(host.getDatacenter())) {
@@ -315,7 +315,7 @@ public class CassandraDataAccess implements DataAccess {
         for (String dc : dcs) {
             for (com.datastax.driver.core.Host host : metadata.getAllHosts()) {
                 if (dc.equals(host.getDatacenter())) {
-                    writer.addLine(
+                    writer.addStringLine(
                             "Cassandra - " + host.getDatacenter(),
                             host.getAddress().getHostAddress()
                             + "  "

@@ -121,9 +121,9 @@ public class ScheduleRunner implements Runnable {
 
     public void getHealth(HealthWriter writer) throws IOException {
         if (leader.isLeader(group)) {
-            writer.addLine("Schedule Runner " + group, "Leader");
+            writer.addStringLine("Schedule Runner " + group, "Leader");
         } else {
-            writer.addLine("Schedule Runner " + group, "Not leader");
+            writer.addStringLine("Schedule Runner " + group, "Not leader");
         }
     }
 
