@@ -20,6 +20,13 @@
                 <dd><input ng-model="formUpdateService.doManageVip" type="checkbox"></dd>
                 <dt>Check jars are signed:</dt>
                 <dd><input ng-model="formUpdateService.doCheckJar" type="checkbox"></dd>
+                <dt>Find Bugs Level:</dt>
+                <dd>
+                    <select ng-model="formUpdateService.doFindBugsLevel" class="form-control">
+                        <option value="report">Report only</option>
+                        <option value="high">Block on High findings</option>
+                        <option value="medium">Block on High and Medium findings</option>
+                    </select>
             </dl>
         </div>
         <div class="col-md-6">

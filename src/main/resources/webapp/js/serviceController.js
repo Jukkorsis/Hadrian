@@ -950,6 +950,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.doDeploys = service.doDeploys;
         $scope.formUpdateService.doManageVip = service.doManageVip;
         $scope.formUpdateService.doCheckJar = service.doCheckJar;
+        $scope.formUpdateService.doFindBugsLevel = service.doFindBugsLevel;
         $scope.formUpdateService.testStyle = service.testStyle;
         $scope.formUpdateService.testHostname = service.testHostname;
         $scope.formUpdateService.testRunAs = service.testRunAs;
@@ -968,6 +969,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 doDeploys: $scope.formUpdateService.doDeploys,
                 doManageVip: $scope.formUpdateService.doManageVip,
                 doCheckJar: $scope.formUpdateService.doCheckJar,
+                doFindBugsLevel: $scope.formUpdateService.doFindBugsLevel,
                 testStyle: $scope.formUpdateService.testStyle,
                 testHostname: $scope.formUpdateService.testHostname,
                 testRunAs: $scope.formUpdateService.testRunAs,

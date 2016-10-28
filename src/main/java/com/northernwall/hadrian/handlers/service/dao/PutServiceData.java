@@ -16,6 +16,8 @@
 
 package com.northernwall.hadrian.handlers.service.dao;
 
+import com.northernwall.hadrian.domain.FindBugsLevel;
+
 /**
  *
  * @author Richard Thurston
@@ -29,6 +31,7 @@ public class PutServiceData {
     public boolean doDeploys;
     public boolean doManageVip;
     public boolean doCheckJar;
+    public FindBugsLevel doFindBugsLevel;
     public String testStyle;
     public String testHostname;
     public String testRunAs;

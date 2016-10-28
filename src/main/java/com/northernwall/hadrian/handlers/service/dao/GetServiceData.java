@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.handlers.service.dao;
 
 import com.northernwall.hadrian.domain.Document;
+import com.northernwall.hadrian.domain.FindBugsLevel;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import java.util.Collections;
@@ -34,10 +35,12 @@ public class GetServiceData {
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
         temp.mavenGroupId = service.getMavenGroupId();
+        
         temp.doBuilds = service.isDoBuilds();
         temp.doDeploys = service.isDoDeploys();
         temp.doManageVip = service.isDoManageVip();
         temp.doCheckJar = service.isDoCheckJar();
+        temp.doFindBugsLevel = service.getDoFindBugsLevel();
         
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();
@@ -84,6 +87,7 @@ public class GetServiceData {
     public boolean doDeploys;
     public boolean doManageVip;
     public boolean doCheckJar;
+    public FindBugsLevel doFindBugsLevel;
     public String testStyle;
     public String testHostname;
     public String testRunAs;

@@ -103,6 +103,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.doDeploys,
                 data.doManageVip,
                 data.doCheckJar,
+                data.doFindBugsLevel,
                 data.testStyle,
                 data.testHostname,
                 data.testRunAs,

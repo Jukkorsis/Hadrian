@@ -51,6 +51,7 @@ public class Service implements Comparable<Service>{
     private boolean doDeploys;
     private boolean doManageVip;
     private boolean doCheckJar;
+    private FindBugsLevel doFindBugsLevel;
     private String testStyle;
     private String testHostname;
     private String testRunAs;
@@ -63,7 +64,7 @@ public class Service implements Comparable<Service>{
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, FindBugsLevel doFindBugsLevel, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -76,6 +77,7 @@ public class Service implements Comparable<Service>{
         this.doDeploys = doDeploys;
         this.doManageVip = doManageVip;
         this.doCheckJar = doCheckJar;
+        this.doFindBugsLevel = doFindBugsLevel;
         this.testStyle = testStyle;
         this.testHostname = testHostname;
         this.testRunAs = testRunAs;
@@ -183,6 +185,17 @@ public class Service implements Comparable<Service>{
 
     public void setDoCheckJar(boolean doCheckJar) {
         this.doCheckJar = doCheckJar;
+    }
+
+    public FindBugsLevel getDoFindBugsLevel() {
+        if (doFindBugsLevel == null) {
+            return FindBugsLevel.report;
+        }
+        return doFindBugsLevel;
+    }
+
+    public void setDoFindBugsLevel(FindBugsLevel doFindBugsLevel) {
+        this.doFindBugsLevel = doFindBugsLevel;
     }
 
     public String getTestStyle() {

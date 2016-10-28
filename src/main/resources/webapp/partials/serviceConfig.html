@@ -42,6 +42,12 @@
                         <span ng-if="service.doCheckJar" class="glyphicon glyphicon-check text-success"></span>
                         <span ng-if="!service.doCheckJar" class="glyphicon glyphicon-unchecked text-success"></span>
                     </dd>
+                    <dt>Find Bugs Level:</dt>
+                    <dd>
+                        <span ng-if="service.doFindBugsLevel == 'report'">Report only</span>
+                        <span ng-if="service.doFindBugsLevel == 'high'">Block on High findings</span>
+                        <span ng-if="service.doFindBugsLevel == 'medium'">Block on High and Medium findings</span>
+                    </dd>
                 </dl>
             </div>
             <div class="col-md-4">
