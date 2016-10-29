@@ -65,6 +65,7 @@ import com.northernwall.hadrian.handlers.service.VipDeleteHandler;
 import com.northernwall.hadrian.handlers.service.VipFixHandler;
 import com.northernwall.hadrian.handlers.service.VipModifyHandler;
 import com.northernwall.hadrian.handlers.service.VipGetDetailsHandler;
+import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.handlers.team.TeamAddUserHandler;
 import com.northernwall.hadrian.handlers.team.TeamCreateHandler;
@@ -114,25 +115,26 @@ public class Hadrian {
     private final static Logger LOGGER = LoggerFactory.getLogger(Hadrian.class);
 
     private final Parameters parameters;
+    private final OkHttpClient client;
     private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
-    private final MetricRegistry metricRegistry;
-    private final OkHttpClient client;
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final AccessHelper accessHelper;
     private final Handler accessHandler;
-    private final CalendarHelper calendarHelper;
-    private final WorkItemProcessor workItemProcessor;
-    private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
     private final VipDetailsHelper vipDetailsHelper;
-    private final MessagingCoodinator messagingCoodinator;
+    private final CalendarHelper calendarHelper;
+    private final WorkItemProcessor workItemProcessor;
     private final Scheduler scheduler;
+    private final FolderHelper folderHelper;
+    private final MetricRegistry metricRegistry;
+    private final InfoHelper infoHelper;
+    private final MessagingCoodinator messagingCoodinator;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -145,8 +147,9 @@ public class Hadrian {
         this.vipDetailsHelper = vipDetailsHelper;
         this.calendarHelper = calendarHelper;
         this.workItemProcessor = workItemProcessor;
-        this.metricRegistry = metricRegistry;
         this.scheduler = scheduler;
+        this.folderHelper = folderHelper;
+        this.metricRegistry = metricRegistry;
 
         infoHelper = new InfoHelper(parameters, client);
         messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
@@ -211,8 +214,8 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/fix", new VipFixHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/module/file", new ModuleFileGetHandler(accessHelper, dataAccess), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(accessHelper, configHelper, dataAccess, workItemProcessor), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(accessHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(accessHelper, configHelper, dataAccess, workItemProcessor, folderHelper), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(accessHelper, dataAccess, workItemProcessor, folderHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/file", new ModuleFileCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.DELETE, TargetRule.EQUALS, "/v1/module/file", new ModuleFileDeleteHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);

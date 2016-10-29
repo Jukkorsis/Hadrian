@@ -31,6 +31,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleData;
+import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.List;
@@ -44,61 +45,17 @@ import org.eclipse.jetty.server.Request;
  * @author Richard Thurston
  */
 public class ModuleCreateHandler extends BasicHandler {
-    public static String scrubFolder(String folder, String name, boolean nullAllowed) {
-        if (folder == null || folder.isEmpty()) {
-            if (nullAllowed) {
-                return null;
-            } else {
-                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
-            }
-        }
-        String temp = folder.trim();
-        if (temp == null || temp.isEmpty()) {
-            if (nullAllowed) {
-                return null;
-            } else {
-                throw new Http400BadRequestException("Folder " + name + " can not be null or empty");
-            }
-        }
-        if (temp.equals("/")) {
-            throw new Http400BadRequestException("Folder " + name + " can not be root");
-        }
-        if (!folder.startsWith("/")) {
-            temp = "/" + temp;
-        }
-        if (temp.endsWith("/") && temp.length() > 1) {
-            temp = temp.substring(0, temp.length()-1);
-        }
-        return temp;
-    }
-    
-    /**
-     * This method assumes that both folder parameters have already been scrubbed.
-     * @param subFolder The sub folder.
-     * @param mainFolder The main folder.
-     * @return True if the sub folder is within the main folder.
-     */
-    public static boolean isSubFolder(String subFolder, String mainFolder) {
-        String tempSubFolder = subFolder;
-        if (tempSubFolder.length() > 1) {
-            tempSubFolder = tempSubFolder + "/";
-        }
-        String tempMainFolder = mainFolder;
-        if (tempMainFolder.length() > 1) {
-            tempMainFolder = tempMainFolder + "/";
-        }
-        return (tempSubFolder.equals(tempMainFolder) || tempSubFolder.startsWith(tempMainFolder));
-    }
-
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
+    private final FolderHelper folderHelper;
 
-    public ModuleCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
+    public ModuleCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.workItemProcessor = workItemProcessor;
+        this.folderHelper = folderHelper;
     }
 
     @Override
@@ -157,14 +114,23 @@ public class ModuleCreateHandler extends BasicHandler {
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }  
-                data.deploymentFolder = scrubFolder(data.deploymentFolder, "deploy", false);
-                data.logsFolder = scrubFolder(data.logsFolder, "logs", false);
-                if (isSubFolder(data.logsFolder, data.deploymentFolder)) {
-                    throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
-                }  
-                data.dataFolder = scrubFolder(data.dataFolder, "data", true);
-                if (data.dataFolder != null && isSubFolder(data.dataFolder, data.deploymentFolder)) {
-                    throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
+                
+                data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
+                data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", true);
+                data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+
+                folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
+                
+                if (data.logsFolder != null
+                        && !data.logsFolder.isEmpty()) { 
+                    folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
+                    folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
+                }
+
+                if (data.dataFolder != null
+                        && !data.dataFolder.isEmpty()) { 
+                    folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
+                    folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
                 }   
                 break;
         }

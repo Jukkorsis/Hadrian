@@ -27,6 +27,7 @@ import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.HostDetailsHelperFactory;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelperFactory;
+import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
@@ -57,6 +58,7 @@ public class HadrianBuilder {
 
     private final Parameters parameters;
     private OkHttpClient client;
+    private FolderHelper folderHelper;
     private ConfigHelper configHelper;
     private DataAccess dataAccess;
     private ModuleArtifactHelper moduleArtifactHelper;
@@ -124,7 +126,9 @@ public class HadrianBuilder {
             buildModuleConfigHelper();
         }
 
-        configHelper = new ConfigHelper(parameters, moduleConfigHelper);
+        folderHelper = new FolderHelper();
+        configHelper = new ConfigHelper(parameters, moduleConfigHelper, folderHelper);
+        folderHelper.init(configHelper);
 
         accessHelper = new AccessHelper(dataAccess);
 
@@ -150,7 +154,7 @@ public class HadrianBuilder {
 
         DataAccessUpdater.update(dataAccess, configHelper.getConfig());
 
-        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, scheduler, metricRegistry);
+        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, scheduler, folderHelper, metricRegistry);
     }
 
     private void buildDataAccess() {

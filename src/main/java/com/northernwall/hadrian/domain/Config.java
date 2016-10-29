@@ -47,5 +47,6 @@ public class Config {
     public List<String> scopes = new LinkedList<>();
     public List<String> deployableTemplates = new LinkedList<>();
     public List<String> libraryTemplates = new LinkedList<>();
+    public List<String> folderWhiteList = new LinkedList<>();
     
 }

@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Environment;
+import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -35,11 +36,13 @@ public class ConfigHelper implements ParameterChangeListener {
 
     private final Parameters parameters;
     private final ModuleConfigHelper moduleConfigHelper;
+    private final FolderHelper folderHelper;
     private final AtomicReference<Config> config;
 
-    public ConfigHelper(Parameters parameters, ModuleConfigHelper moduleConfigHelper) {
+    public ConfigHelper(Parameters parameters, ModuleConfigHelper moduleConfigHelper, FolderHelper folderHelper) {
         this.parameters = parameters;
         this.moduleConfigHelper = moduleConfigHelper;
+        this.folderHelper = folderHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
     }
@@ -85,6 +88,8 @@ public class ConfigHelper implements ParameterChangeListener {
 
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
+        
+        folderHelper.loadFolderWhiteList(parameters.getString(Const.CONFIG_FOLDER_WHITE_LIST, null), newConfig.folderWhiteList);
 
         LOGGER.info("Config loaded");
         return newConfig;

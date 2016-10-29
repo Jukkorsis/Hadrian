@@ -29,6 +29,7 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
+import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.util.List;
@@ -49,11 +50,13 @@ public class ModuleModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
+    private final FolderHelper folderHelper;
 
-    public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
+    public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
         super(dataAccess);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
+        this.folderHelper = folderHelper;
     }
 
     @Override
@@ -119,15 +122,24 @@ public class ModuleModifyHandler extends BasicHandler {
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }
-                data.deploymentFolder = ModuleCreateHandler.scrubFolder(data.deploymentFolder, "deploy", false);
-                data.logsFolder = ModuleCreateHandler.scrubFolder(data.logsFolder, "logs", false);
-                if (ModuleCreateHandler.isSubFolder(data.logsFolder, data.deploymentFolder)) {
-                    throw new Http400BadRequestException("Log folder can not be a sub folder of the deployment folder");
+                
+                data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
+                data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", true);
+                data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+
+                folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
+                
+                if (data.logsFolder != null
+                        && !data.logsFolder.isEmpty()) { 
+                    folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
+                    folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
                 }
-                data.dataFolder = ModuleCreateHandler.scrubFolder(data.dataFolder, "data", true);
-                if (data.dataFolder != null && ModuleCreateHandler.isSubFolder(data.dataFolder, data.deploymentFolder)) {
-                    throw new Http400BadRequestException("Data folder can not be a sub folder of the deployment folder");
-                }
+
+                if (data.dataFolder != null
+                        && !data.dataFolder.isEmpty()) { 
+                    folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
+                    folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
+                }   
                 break;
         }
 
