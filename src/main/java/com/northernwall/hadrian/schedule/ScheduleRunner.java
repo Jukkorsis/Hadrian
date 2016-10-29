@@ -15,6 +15,11 @@
  */
 package com.northernwall.hadrian.schedule;
 
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.model.time.ExecutionTime;
+import com.cronutils.parser.CronParser;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -27,6 +32,7 @@ import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +43,19 @@ import org.slf4j.LoggerFactory;
  */
 public class ScheduleRunner implements Runnable {
     private final static Logger LOGGER = LoggerFactory.getLogger(ScheduleRunner.class);
+    private final static CronParser CRON_PARSER = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
     
+    public static Cron parseCron(String cronExpression) {
+        return CRON_PARSER.parse(cronExpression);
+    }
+
     private final int group;
     private final DataAccess dataAccess;
     private final Leader leader;
     private final Parameters parameters;
     private final Gson gson;
     private final OkHttpClient client;
+    private ZonedDateTime lastChecked;
 
     public ScheduleRunner(int group, DataAccess dataAccess, Leader leader, Parameters parameters, Gson gson, OkHttpClient client) {
         this.group = group;
@@ -52,31 +64,51 @@ public class ScheduleRunner implements Runnable {
         this.parameters = parameters;
         this.gson = gson;
         this.client = client;
+        this.lastChecked = ZonedDateTime.now();
     }
 
     @Override
     public void run() {
-        if (leader.isLeader(group)) {
-            LOGGER.info("Running Schedule for group {}", group);
-            List<Service> services = dataAccess.getActiveServices();
-            for (Service service : services) {
-                int serviceGroup = service.getServiceId().hashCode() % Scheduler.GROUP_COUNT;
-                if (serviceGroup == group) {
-                    if (checkCron(service)) {
-                        runSmokeTest(service);
+        ZonedDateTime now = ZonedDateTime.now();
+        try {
+            if (leader.isLeader(group)) {
+                int serviceCount = 0;
+                int smokeTestCount = 0;
+                List<Service> services = dataAccess.getActiveServices();
+                for (Service service : services) {
+                    int serviceGroup = service.getServiceId().hashCode() % Scheduler.GROUP_COUNT;
+                    if (serviceGroup == group) {
+                        serviceCount++;
+                        if (checkCron(service, now)) {
+                            smokeTestCount++;
+                            runSmokeTest(service);
+                        }
+                        runCollectionMetrics(service);
                     }
-                    runCollectionMetrics(service);
                 }
+                LOGGER.info("Run schedule for group {}, service count {}, smoke test count {}", group, serviceCount, smokeTestCount);
             }
+        } catch (Exception e) {
+            LOGGER.error("Exception during running group {}, {}", group, e.getMessage());
         }
+        lastChecked = now;
     }
+    
 
-    private boolean checkCron(Service service) {
-        String cron = service.getSmokeTestCron();
-        if (cron == null || cron.isEmpty()) {
+    private boolean checkCron(Service service, ZonedDateTime now) {
+        try {
+            String cronExpression = service.getSmokeTestCron();
+            if (cronExpression == null || cronExpression.isEmpty()) {
+                return false;
+            }
+            Cron cron = parseCron(cronExpression);
+            ExecutionTime executionTime = ExecutionTime.forCron(cron);
+            ZonedDateTime last = executionTime.lastExecution(now);
+            return (last.isAfter(lastChecked) && last.isBefore(now));
+        } catch (Exception e) {
+            LOGGER.error("CheckCron exception, {}", e.getMessage());
             return false;
         }
-        return false;
     }
     
     private void runSmokeTest(Service service) {
@@ -96,14 +128,20 @@ public class ScheduleRunner implements Runnable {
                     }
                     if (hosts != null && !hosts.isEmpty()) {
                         for (Host host : hosts) {
-                            SmokeTestData results = HostSmokeTestAction.ExecuteSmokeTest(
+                            SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
                                     smokeTestUrl, 
                                     host.getHostName(), 
                                     parameters, 
                                     gson, 
                                     client);
-                            if (!results.result.equalsIgnoreCase("pass")) {
-                                LOGGER.info("Scheduled smoke test for {} in group {} failed", service.getServiceName(), group);
+                            if (smokeTestData == null 
+                                    || smokeTestData.result == null
+                                    || smokeTestData.result.isEmpty()
+                                    || !smokeTestData.result.equalsIgnoreCase("pass")) {
+                                LOGGER.info("Scheduled smoke test failed for {} in {} in group {}", 
+                                        host.getHostName(), 
+                                        service.getServiceName(), 
+                                        group);
                             }
                             try {
                                 Thread.sleep(1000);

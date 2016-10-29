@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory;
 public class HostSmokeTestAction extends Action {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostSmokeTestAction.class);
-    
+
     public static SmokeTestData ExecuteSmokeTest(String smokeTestUrl, String endPoint, Parameters parameters, Gson gson, OkHttpClient client) {
         if (smokeTestUrl == null || smokeTestUrl.isEmpty() || endPoint == null || endPoint.isEmpty()) {
             return null;
         }
-        
+
         LOGGER.info("Smoke testing EP {} with {}", endPoint, smokeTestUrl);
-        
+
         String url = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, endPoint);
         try {
             Request.Builder builder = new Request.Builder().url(url);
@@ -67,7 +67,7 @@ public class HostSmokeTestAction extends Action {
                 LOGGER.warn("Call to {} failed with code {}", url, response.code());
                 return null;
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOGGER.warn("Call to {} failed with exception {}", url, ex.getMessage());
             return null;
         }
@@ -91,7 +91,9 @@ public class HostSmokeTestAction extends Action {
         String output = null;
         if (smokeTestData == null) {
             result = Result.error;
-        } else if (!smokeTestData.result.equalsIgnoreCase("PASS")) {
+        } else if (smokeTestData.result == null
+                || smokeTestData.result.isEmpty()
+                ||!smokeTestData.result.equalsIgnoreCase("PASS")) {
             result = Result.error;
             output = smokeTestData.output;
         } else {

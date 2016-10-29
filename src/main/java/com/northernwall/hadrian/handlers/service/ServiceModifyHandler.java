@@ -25,7 +25,9 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PutServiceData;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.schedule.ScheduleRunner;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -52,7 +54,7 @@ public class ServiceModifyHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutServiceData data = fromJson(request, PutServiceData.class);
         Service service = getService(data.serviceId, null);
-        
+
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
         Team team = getTeam(service.getTeamId(), null);
 
@@ -65,7 +67,16 @@ public class ServiceModifyHandler extends BasicHandler {
 
         Service tempService = getDataAccess().getServiceByServiceName(data.serviceName);
         if (tempService != null && !tempService.getServiceId().equals(data.serviceId)) {
-             throw new Http405NotAllowedException("A service already exists with this name");
+            throw new Http405NotAllowedException("A service already exists with this name");
+        }
+
+        try {
+            if (data.smokeTestCron != null
+                    && !data.smokeTestCron.isEmpty()) {
+                ScheduleRunner.parseCron(data.smokeTestCron);
+            }
+        } catch (Exception e) {
+            throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
         }
 
         if (data.testStyle.equals("Maven")) {
@@ -74,17 +85,17 @@ public class ServiceModifyHandler extends BasicHandler {
             data.testDeploymentFolder = null;
             data.testCmdLine = null;
         }
-        
+
         service.setServiceName(data.serviceName);
         service.setDescription(data.description);
         service.setScope(data.scope);
-        
+
         service.setDoBuilds(data.doBuilds);
         service.setDoDeploys(data.doDeploys);
         service.setDoManageVip(data.doManageVip);
         service.setDoCheckJar(data.doCheckJar);
         service.setDoFindBugsLevel(data.doFindBugsLevel);
-        
+
         service.setTestStyle(data.testStyle);
         service.setTestHostname(data.testHostname);
         service.setTestRunAs(data.testRunAs);
@@ -94,10 +105,10 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setSmokeTestCron(data.smokeTestCron);
 
         getDataAccess().updateService(service);
-        
+
         WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);
-        
+
         response.setStatus(200);
         request.setHandled(true);
     }

@@ -27,6 +27,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PostServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.schedule.ScheduleRunner;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -82,6 +83,15 @@ public class ServiceCreateHandler extends BasicHandler {
         }
         if (data.gitProject.length() > 30) {
             throw new Http400BadRequestException("Git Project is to long, max is 30");
+        }
+        
+        try {
+            if (data.smokeTestCron != null
+                    && !data.smokeTestCron.isEmpty()) {
+                ScheduleRunner.parseCron(data.smokeTestCron);
+            }
+        } catch (Exception e) {
+            throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
         }
         
         if (data.testStyle.equals("Maven")) {
