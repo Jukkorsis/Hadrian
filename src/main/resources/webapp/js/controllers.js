@@ -116,9 +116,42 @@ hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
         }
     }]);
 
-hadrianControllers.controller('ParametersCtrl', ['$scope', 'Config',
-    function ($scope, Config) {
+hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', 'Config',
+    function ($scope, $http, Config) {
         $scope.config = Config.get();
+        
+        $scope.formEnvironmentConvert = {};
+        $scope.formEnvironmentConvert.oldValue = "";
+        $scope.formEnvironmentConvert.newValue = "";
+        $scope.formEnvironmentConvert.result = "";
+        
+        $scope.formPlatfromConvert = {};
+        $scope.formPlatfromConvert.oldValue = "";
+        $scope.formPlatfromConvert.newValue = "";
+        $scope.formPlatfromConvert.result = "";
+        
+        $scope.convertEnvironment = function () {
+            $scope.formEnvironmentConvert.result = "Converting";
+            var responsePromise = $http.post("/v1/convert?attr=environment&old=" + $scope.formEnvironmentConvert.oldValue + "&new=" + $scope.formEnvironmentConvert.newValue, {});
+            responsePromise.success(function (data, status, headers, config) {
+                $scope.formEnvironmentConvert.result = "Done";
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.formEnvironmentConvert.result = data;
+            });
+        }
+
+        $scope.convertPlatform = function () {
+            $scope.formPlatfromConvert.result = "Converting";
+            var responsePromise = $http.post("/v1/convert?attr=platform&old=" + $scope.formPlatfromConvert.oldValue + "&new=" + $scope.formPlatfromConvert.newValue, {});
+            responsePromise.success(function (data, status, headers, config) {
+                $scope.formPlatfromConvert.result = "Done";
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.formPlatfromConvert.result = data;
+            });
+        }
+
     }]);
 
 hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'WorkItem',

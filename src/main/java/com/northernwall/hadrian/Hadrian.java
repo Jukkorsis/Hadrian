@@ -242,7 +242,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/audit", new AuditCreateHandler(dataAccess, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/sendMessage", new MessageSendHandler(dataAccess, accessHelper, messagingCoodinator), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/convert", new ConvertHandler(dataAccess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/convert", new ConvertHandler(accessHelper, dataAccess, configHelper), true);
         //Catch all handler
         routingHandler.add(MethodRule.ANY, TargetRule.ANY, "/", new RedirectHandler(), true);
         handlers.addHandler(routingHandler);

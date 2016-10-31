@@ -24,6 +24,18 @@
                         <td>{{environment.allowUrl}}</td>
                     </tr>
                 </table>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="oldValue">Old Value</label>
+                        <input type="text" class="form-control" id="oldValue" ng-model="formEnvironmentConvert.oldValue" placeholder="Old Value">
+                    </div>
+                    <div class="form-group">
+                        <label for="newValue">New Value</label>
+                        <input type="text" class="form-control" id="newValue" ng-model="formEnvironmentConvert.newValue" placeholder="New Value">
+                    </div>
+                    <button class="btn btn-primary" type="button" ng-click="convertEnvironment()">Convert</button>
+                    <span ng-if="formEnvironmentConvert.result !== ''">{{formEnvironmentConvert.result}}</span>
+                </form>
             </div>
         </div>
     </uib-tab>
@@ -33,6 +45,18 @@
                 <div ng-repeat="platform in config.platforms">
                     {{platform}}<br/>
                 </div>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="oldValue">Old Value</label>
+                        <input type="text" class="form-control" id="oldValue" ng-model="formPlatfromConvert.oldValue" placeholder="Old Value">
+                    </div>
+                    <div class="form-group">
+                        <label for="newValue">New Value</label>
+                        <input type="text" class="form-control" id="newValue" ng-model="formPlatfromConvert.newValue" placeholder="New Value">
+                    </div>
+                    <button class="btn btn-primary" type="button" ng-click="convertPlatform()">Convert</button>
+                    <span ng-if="formPlatfromConvert.result !== ''">{{formPlatfromConvert.result}}</span>
+                </form>
             </div>
         </div>
     </uib-tab>
