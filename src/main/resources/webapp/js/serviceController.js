@@ -1219,13 +1219,13 @@ hadrianControllers.controller('ModalModuleFileDeleteCtrl', ['$modalInstance', '$
         $scope.fileName = items.fileName;
         $scope.fileNumber = items.fileNumber;
         $scope.service = items.service;
-        $scope.module = items.module;
+        $scope.moduleId = items.moduleId;
         $scope.environment = items.environment;
         $scope.dataFromServer = items.dataFromServer;
 
         $scope.delete = function () {
             var responsePromise = $http.delete("/v1/module/file?serviceId=" + $scope.service.serviceId + "&moduleId=" +
-                    $scope.module.moduleId + "&environment=" + $scope.environment + "&fileName=" + $scope.fileName);
+                    $scope.moduleId + "&environment=" + $scope.environment + "&fileName=" + $scope.fileName);
 
             responsePromise.success(function (status) {
                 $scope.dataFromServer.splice($scope.fileNumber, 1);
