@@ -1634,6 +1634,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         }
 
         $scope.formUpdateHost = {};
+        $scope.formUpdateHost.doOsUpgrade = false;
         $scope.formUpdateHost.reason = "";
 
         $scope.save = function () {
@@ -1643,6 +1644,7 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
                 environment: $scope.moduleEnvironment.environment,
                 all: false,
                 hostNames: $scope.hostNames,
+                doOsUpgrade: $scope.formUpdateHost.doOsUpgrade,
                 reason: $scope.formUpdateHost.reason,
                 wait: false
             };

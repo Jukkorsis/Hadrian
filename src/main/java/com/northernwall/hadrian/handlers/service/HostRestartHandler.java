@@ -88,6 +88,7 @@ public class HostRestartHandler extends BasicHandler {
                         }
 
                         workItem = new WorkItem(Type.host, Operation.restart, user, team, service, module, host, null, data.reason);
+                        workItem.getHost().doOsUpgrade = data.doOsUpgrade;
                         workItems.add(workItem);
 
                         if (module.getSmokeTestUrl() != null && !module.getSmokeTestUrl().isEmpty()) {

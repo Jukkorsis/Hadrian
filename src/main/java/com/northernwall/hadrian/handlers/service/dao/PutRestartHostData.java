@@ -31,6 +31,7 @@ public class PutRestartHostData {
     public String environment;
     public boolean all = false;
     public List<String> hostNames = new LinkedList<>();
+    public boolean doOsUpgrade = false;
     public String reason;
     public boolean wait = false;
 

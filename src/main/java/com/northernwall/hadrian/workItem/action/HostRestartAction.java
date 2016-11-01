@@ -55,6 +55,7 @@ public class HostRestartAction extends Action {
     protected void recordAudit(WorkItem workItem, Result result, String output) {
         Map<String, String> notes = new HashMap<>();
         notes.put("Reason", workItem.getReason());
+        notes.put("Check for OS Upgrade", Boolean.toString(workItem.getHost().doOsUpgrade));
         recordAudit(workItem, result, notes, output);
     }
 

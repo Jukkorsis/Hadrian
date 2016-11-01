@@ -48,6 +48,7 @@ public class HostData {
     public String prevVersion;
     public String versionUrl;
     public String configVersion;
+    public boolean doOsUpgrade = false;
 
 
 }
