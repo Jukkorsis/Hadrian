@@ -993,17 +993,17 @@ public class CassandraDataAccess implements DataAccess {
     private void saveServiceData(String serviceId, String id, String data, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(serviceId, id, data));
-    }
+        }
 
     private void updateServiceData(String serviceId, String id, String data, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(data, serviceId, id));
-    }
+        }
 
     private void deleteServiceData(String serviceId, String id, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(serviceId, id));
-    }
+        }
 
     public void close() {
         session.close();

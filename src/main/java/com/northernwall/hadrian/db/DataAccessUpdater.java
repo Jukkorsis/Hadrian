@@ -73,26 +73,68 @@ public class DataAccessUpdater {
                 List<Module> modules = dataAccess.getModules(service.getServiceId());
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
-                        LOGGER.info("Processing {} module {}", service.getServiceName(), module.getModuleName());
-                        module.setEnvironmentNames(module.networkNames);
-                        dataAccess.saveModule(module);
+                        if (module.getEnvironmentNames().size() == 0 && module.networkNames.size() > 0) {
+                            LOGGER.info("Processing {} module {} {}-{}",
+                                    service.getServiceName(),
+                                    module.getModuleName(),
+                                    module.networkNames.size(),
+                                    module.getEnvironmentNames().size());
+                            module.setEnvironmentNames(module.networkNames);
+                            dataAccess.updateModule(module);
+                        } else {
+                            LOGGER.info("Processing {} module {} {}-{} Good",
+                                    service.getServiceName(),
+                                    module.getModuleName(),
+                                    module.networkNames.size(),
+                                    module.getEnvironmentNames().size());
+                        }
                     }
                 }
+                
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
-                        LOGGER.info("Processing {} host {}", service.getServiceName(), host.getHostName());
-                        host.setEnvironment(host.network);
-                        host.setPlatform(host.env);
-                        dataAccess.saveHost(host);
+                        if (host.getEnvironment() == null || host.getPlatform() == null) {
+                            LOGGER.info("Processing {} host {} {}-{} {}-{}",
+                                    service.getServiceName(),
+                                    host.getHostName(),
+                                    host.network,
+                                    host.getEnvironment(),
+                                    host.env,
+                                    host.getPlatform());
+                            host.setEnvironment(host.network);
+                            host.setPlatform(host.env);
+                            dataAccess.updateHost(host);
+                        } else {
+                            LOGGER.info("Processing {} host {} {}-{} {}-{} Good",
+                                    service.getServiceName(),
+                                    host.getHostName(),
+                                    host.network,
+                                    host.getEnvironment(),
+                                    host.env,
+                                    host.getPlatform());
+                        }
                     }
                 }
+                
                 List<Vip> vips = dataAccess.getVips(service.getServiceId());
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
-                        LOGGER.info("Processing {} vip {}", service.getServiceName(), vip.getDns());
-                        vip.setEnvironment(vip.network);
-                        dataAccess.saveVip(vip);
+                        if (vip.getEnvironment() == null) {
+                            LOGGER.info("Processing {} vip {} {}-{}",
+                                    service.getServiceName(),
+                                    vip.getDns(),
+                                    vip.network,
+                                    vip.getEnvironment());
+                            vip.setEnvironment(vip.network);
+                            dataAccess.updateVip(vip);
+                        } else {
+                            LOGGER.info("Processing {} vip {} {}-{} Good",
+                                    service.getServiceName(),
+                                    vip.getDns(),
+                                    vip.network,
+                                    vip.getEnvironment());
+                        }
                     }
                 }
             }
@@ -103,5 +145,5 @@ public class DataAccessUpdater {
 
     private DataAccessUpdater() {
     }
-    
+
 }
