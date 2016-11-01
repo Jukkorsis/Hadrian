@@ -4,28 +4,38 @@
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Module:</dt>
-        <dd>{{moduleEnvironment.moduleName}}</dd>
-        <dt>Hosts:</dt>
-        <dd>
-            <div ng-repeat="hostName in hostNames">{{hostName}} </div>
-        </dd>
-        <dt>Artifact Version:</dt>
-        <dd>
-            <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
-        </dd>
-        <div ng-if="module.configName">
-            <dt>Config Version:</dt>
-            <dd>
-                <input type="text" ng-model="formUpdateHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
-            </dd>
+    <form class="form-horizontal">
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-sm-3 control-label">Module:</label>
+            <div class="col-sm-9">
+                {{moduleEnvironment.moduleName}}
+            </div>
         </div>
-        <dt>Reason:</dt>
-        <dd>
-            <input ng-model="formUpdateHost.reason" type="text" class="form-control">
-        </dd>
-    </dl>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-3 control-label">Hosts:</label>
+            <div class="col-sm-9">
+                <div ng-repeat="hostName in hostNames">{{hostName}} </div>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-3 control-label">Artifact Version:</label>
+            <div class="col-sm-9">
+                <input type="text" ng-model="formUpdateHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
+            </div>
+        </div>
+        <div ng-if="module.configName" class="form-group form-group-sm">
+            <label for="name" class="col-sm-3 control-label">Config Version:</label>
+            <div class="col-sm-9">
+                <input type="text" ng-model="formUpdateHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-3 control-label">Reason:</label>
+            <div class="col-sm-9">
+                <input ng-model="formUpdateHost.reason" type="text" class="form-control">
+            </div>
+        </div>
+    </form>
     <table class="table table-hover  table-condensed">
         <tr>
             <th>Calendar</th>
