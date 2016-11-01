@@ -69,9 +69,11 @@ public class DataAccessUpdater {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
+                LOGGER.info("Processing {}", service.getServiceName());
                 List<Module> modules = dataAccess.getModules(service.getServiceId());
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
+                        LOGGER.info("Processing {} module {}", service.getServiceName(), module.getModuleName());
                         module.setEnvironmentNames(module.networkNames);
                         dataAccess.saveModule(module);
                     }
@@ -79,6 +81,7 @@ public class DataAccessUpdater {
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
+                        LOGGER.info("Processing {} host {}", service.getServiceName(), host.getHostName());
                         host.setEnvironment(host.network);
                         host.setPlatform(host.env);
                         dataAccess.saveHost(host);
@@ -87,11 +90,14 @@ public class DataAccessUpdater {
                 List<Vip> vips = dataAccess.getVips(service.getServiceId());
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
+                        LOGGER.info("Processing {} vip {}", service.getServiceName(), vip.getDns());
                         vip.setEnvironment(vip.network);
                         dataAccess.saveVip(vip);
                     }
                 }
             }
+        } else {
+            LOGGER.info("No active services");
         }
     }
 
