@@ -3,24 +3,56 @@
 </div>
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Name:</dt>
-        <dd><input ng-model="formSaveTeam.name" type="text" maxlength="30" class="form-control"></dd>
-        <dt>Email:</dt>
-        <dd><input ng-model="formSaveTeam.email" type="text" class="form-control"></dd>
-        <dt>IRC:</dt>
-        <dd><input ng-model="formSaveTeam.irc" type="text" class="form-control"></dd>
-        <dt>Slack:</dt>
-        <dd><input ng-model="formSaveTeam.slack" type="text" class="form-control"></dd>
-        <dt>Git Group</dt>
-        <dd><input ng-model="formSaveTeam.gitGroup" type="text" maxlength="30" class="form-control"></dd>
-        <dt>Team Page:</dt>
-        <dd><input ng-model="formSaveTeam.teamPage" type="text" class="form-control"></dd>
-        <dt>Calendar ID:</dt>
-        <dd><input ng-model="formSaveTeam.calendarId" type="text" class="form-control"></dd>
-        <dt>Initial Team Member:</dt>
-        <dd><select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users" class="form-control"></select></dd>
-    </dl>
+    <form class="form-horizontal">
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-sm-4 control-label">Name:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.name" type="text" maxlength="30" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Email:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.email" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">IRC:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.irc" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Slack:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.slack" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Git Group:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.gitGroup" type="text" maxlength="30" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Team Page:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.teamPage" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Calendar ID:</label>
+            <div class="col-sm-8">
+                <input ng-model="formSaveTeam.calendarId" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Initial Team Member:</label>
+            <div class="col-sm-8">
+                <select ng-model="formSaveTeam.user" ng-options="u.fullName for u in users.users" class="form-control"></select>
+            </div>
+        </div>
+    </form>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="save()">Add Team</button>
