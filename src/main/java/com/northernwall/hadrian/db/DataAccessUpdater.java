@@ -20,6 +20,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
+import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,12 @@ public class DataAccessUpdater {
                 List<Module> modules = dataAccess.getModules(service.getServiceId());
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
+                        if (module.getEnvironmentNames() == null) {
+                            module.setEnvironmentNames(new HashMap<>());
+                        }
+                        if (module.networkNames == null) {
+                            module.networkNames = new HashMap<>();
+                        }
                         if (module.getEnvironmentNames().size() == 0 && module.networkNames.size() > 0) {
                             LOGGER.info("Processing {} module {} {}-{}",
                                     service.getServiceName(),
