@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.dao;
 
+import com.northernwall.hadrian.domain.FindBugsLevel;
 import com.northernwall.hadrian.domain.Service;
 
 public class ServiceData {
@@ -34,6 +35,7 @@ public class ServiceData {
         temp.doDeploys = service.isDoDeploys();
         temp.doManageVip = service.isDoManageVip();
         temp.doCheckJar = service.isDoCheckJar();
+        temp.doFindBugsLevel = service.getDoFindBugsLevel();
         temp.testStyle = service.getTestStyle();
         temp.testHostname = service.getTestHostname();
         temp.testRunAs = service.getTestRunAs();
@@ -61,6 +63,7 @@ public class ServiceData {
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
+    public FindBugsLevel doFindBugsLevel;
 
 
 }
