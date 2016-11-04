@@ -29,7 +29,7 @@
                             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                 <li role="menuitem"><a ng-click="openAddHostModal(mn);">Provision new hosts</a></li>
                                 <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostsModal(mn);">Deploy software to selected hosts</a></li>
-                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostsModal(mn);">Restart selected hosts</a></li>
+                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostsModal(mn);">Restart software on selected hosts</a></li>
                                 <li role="menuitem"><a ng-click="openBackfillModal(mn);">Backfill existing hosts</a></li>
                                 <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
                                 <li class="divider" ng-if="mn.cfs.length > 0"></li>
