@@ -116,10 +116,12 @@ hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
         }
     }]);
 
-hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', 'Config',
-    function ($scope, $http, Config) {
+hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$uibModal', 'Config', 'User',
+    function ($scope, $http, $route, $uibModal, Config, User) {
         $scope.config = Config.get();
         
+        $scope.users = User.get();
+
         $scope.formEnvironmentConvert = {};
         $scope.formEnvironmentConvert.oldValue = "";
         $scope.formEnvironmentConvert.newValue = "";
@@ -130,6 +132,8 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', 'Config',
         $scope.formPlatfromConvert.newValue = "";
         $scope.formPlatfromConvert.result = "";
         
+        $scope.adminResult = "";
+
         $scope.convertEnvironment = function () {
             $scope.formEnvironmentConvert.result = "Converting";
             var responsePromise = $http.post("/v1/convert?attr=environment&old=" + $scope.formEnvironmentConvert.oldValue + "&new=" + $scope.formEnvironmentConvert.newValue, {});
@@ -149,6 +153,35 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', 'Config',
             });
             responsePromise.error(function (data, status, headers, config) {
                 $scope.formPlatfromConvert.result = data;
+            });
+        }
+
+        $scope.openAddTeamModal = function () {
+            $scope.adminResult = "";
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/addTeam.html',
+                controller: 'ModalAddTeamCtrl',
+                resolve: {
+                    users: function () {
+                        return $scope.users;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openResetAllServicesModal = function () {
+            $scope.adminResult = "Requesting all services be reset...";
+            var responsePromise = $http.post("/v1/service/resetAll", {});
+            responsePromise.success(function (data, status, headers, config) {
+                $scope.adminResult = "Reseting all services started...";
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.adminResult = data;
             });
         }
 
@@ -210,23 +243,6 @@ hadrianControllers.controller('UsersCtrl', ['$scope', '$route', '$uibModal', 'Us
         $scope.userSortReverse = false;
 
         $scope.users = User.get();
-
-        $scope.openAddTeamModal = function () {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addTeam.html',
-                controller: 'ModalAddTeamCtrl',
-                resolve: {
-                    users: function () {
-                        return $scope.users;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
 
         $scope.openUpdateUserModal = function (user) {
             var modalInstance = $uibModal.open({

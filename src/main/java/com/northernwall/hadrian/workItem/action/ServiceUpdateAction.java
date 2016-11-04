@@ -18,19 +18,29 @@ package com.northernwall.hadrian.workItem.action;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServiceUpdateAction extends Action {
 
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
-        recordAudit(workItem, result, null, null);
+        recordAudit(workItem, result, null);
         return result;
     }
 
     @Override
     public Result processCallback(WorkItem workItem, CallbackData callbackData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected void recordAudit(WorkItem workItem, Result result, String output) {
+        Map<String, String> notes = new HashMap<>();
+        if (workItem.getReason() != null && !workItem.getReason().isEmpty()) {
+            notes.put("Reason", workItem.getReason());
+        }
+        recordAudit(workItem, result, notes, output);
     }
 
 }

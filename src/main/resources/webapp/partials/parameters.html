@@ -87,4 +87,14 @@
             </div>
         </div>
     </uib-tab>
+    <uib-tab heading="Admin">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <button class="btn btn-primary" type="button" ng-click="openAddTeamModal();">Add team</button>
+                <button class="btn btn-primary" type="button" ng-click="openResetAllServicesModal();">Reset All Services</button>
+                <br/>
+                {{adminResult}}
+            </div>
+        </div>
+    </uib-tab>
 </uib-tabset>

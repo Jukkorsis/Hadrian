@@ -57,6 +57,7 @@ import com.northernwall.hadrian.handlers.service.ServiceModifyHandler;
 import com.northernwall.hadrian.handlers.service.ServiceRefCreateHandler;
 import com.northernwall.hadrian.handlers.service.ServiceRefDeleteHandler;
 import com.northernwall.hadrian.handlers.service.ServiceRefreshHandler;
+import com.northernwall.hadrian.handlers.service.ServiceResetAllHandler;
 import com.northernwall.hadrian.handlers.service.ServicesGetHandler;
 import com.northernwall.hadrian.handlers.service.SmokeTestExecHandler;
 import com.northernwall.hadrian.handlers.service.VersionsGetHandler;
@@ -205,6 +206,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/create", new ServiceCreateHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/modify", new ServiceModifyHandler(accessHelper, dataAccess, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/resetAll", new ServiceResetAllHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/delete", new ServiceDeleteHandler(accessHelper, dataAccess, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/createRef", new ServiceRefCreateHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/deleteRef", new ServiceRefDeleteHandler(accessHelper, dataAccess), true);
