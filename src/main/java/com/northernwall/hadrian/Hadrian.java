@@ -130,12 +130,12 @@ public class Hadrian {
     private final Scheduler scheduler;
     private final FolderHelper folderHelper;
     private final MetricRegistry metricRegistry;
-    private final InfoHelper infoHelper;
     private final MessagingCoodinator messagingCoodinator;
+    private final InfoHelper infoHelper;
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, MetricRegistry metricRegistry) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -151,9 +151,9 @@ public class Hadrian {
         this.scheduler = scheduler;
         this.folderHelper = folderHelper;
         this.metricRegistry = metricRegistry;
+        this.messagingCoodinator = messagingCoodinator;
 
         infoHelper = new InfoHelper(parameters, client);
-        messagingCoodinator = new MessagingCoodinator(dataAccess, parameters, client);
 
         setupJetty();
     }

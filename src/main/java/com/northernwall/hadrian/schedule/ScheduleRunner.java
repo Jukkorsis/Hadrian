@@ -26,14 +26,20 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
+import com.northernwall.hadrian.messaging.MessageType;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,15 +61,17 @@ public class ScheduleRunner implements Runnable {
     private final Parameters parameters;
     private final Gson gson;
     private final OkHttpClient client;
+    private final MessagingCoodinator messagingCoodinator;
     private ZonedDateTime lastChecked;
 
-    public ScheduleRunner(int group, DataAccess dataAccess, Leader leader, Parameters parameters, Gson gson, OkHttpClient client) {
+    public ScheduleRunner(int group, DataAccess dataAccess, Leader leader, Parameters parameters, Gson gson, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
         this.group = group;
         this.dataAccess = dataAccess;
         this.leader = leader;
         this.parameters = parameters;
         this.gson = gson;
         this.client = client;
+        this.messagingCoodinator = messagingCoodinator;
         this.lastChecked = ZonedDateTime.now();
     }
 
@@ -118,40 +126,73 @@ public class ScheduleRunner implements Runnable {
             return;
         }
         List<Host> hosts = null;
+        List<Host> failedHosts = new LinkedList<>();
         for (Module module : modules) {
             if (module.getModuleType() == ModuleType.Deployable) {
-                LOGGER.info("Running scheduled smoke test for {} {} in group {}", service.getServiceName(), module.getModuleName(), group);
                 String smokeTestUrl = module.getSmokeTestUrl();
                 if (smokeTestUrl != null && !smokeTestUrl.isEmpty()) {
+                    LOGGER.info("Running scheduled smoke test for {} {} in group {}", service.getServiceName(), module.getModuleName(), group);
                     if (hosts == null) {
                         hosts = dataAccess.getHosts(service.getServiceId());
                     }
                     if (hosts != null && !hosts.isEmpty()) {
                         for (Host host : hosts) {
-                            SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
-                                    smokeTestUrl, 
-                                    host.getHostName(), 
-                                    parameters, 
-                                    gson, 
-                                    client);
-                            if (smokeTestData == null 
-                                    || smokeTestData.result == null
-                                    || smokeTestData.result.isEmpty()
-                                    || !smokeTestData.result.equalsIgnoreCase("pass")) {
-                                LOGGER.info("Scheduled smoke test failed for {} in {} in group {}", 
+                            if (host.getModuleId().equals(module.getModuleId())) {
+                                SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
+                                        smokeTestUrl, 
                                         host.getHostName(), 
-                                        service.getServiceName(), 
-                                        group);
-                            }
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ex) {
+                                        parameters, 
+                                        gson, 
+                                        client);
+                                if (smokeTestData == null 
+                                        || smokeTestData.result == null
+                                        || smokeTestData.result.isEmpty()
+                                        || !smokeTestData.result.equalsIgnoreCase("pass")) {
+                                    LOGGER.info("Scheduled smoke test failed for {} in {} in group {}", 
+                                            host.getHostName(), 
+                                            service.getServiceName(), 
+                                            group);
+                                    failedHosts.add(host);
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        if (failedHosts != null && !failedHosts.isEmpty()) {
+            MessageType messageType = messagingCoodinator.getMessageType("failedSmokeTest");
+            if (messageType != null) {
+                Map<String, String> data = new HashMap<>();
+                data.put("count", Integer.toString(failedHosts.size()));
+                data.put("host", JoinHosts(failedHosts));
+                Team team = dataAccess.getTeam(service.getTeamId());
+                messagingCoodinator.sendMessage(messageType, team, service, data);
+            }
+        }
+    }
+
+    private String JoinHosts(List<Host> failedHosts) {
+        String hostNames = "";
+        int size = failedHosts.size();
+        switch (size) {
+            case 1:
+                hostNames = failedHosts.get(0).getHostName();
+                break;
+            case 2:
+                hostNames = failedHosts.get(0).getHostName() + " and " + failedHosts.get(1).getHostName();
+                break;
+            default:
+                for (int i=0;i<(size-1);i++) {
+                    hostNames = hostNames + failedHosts.get(0).getHostName() + ", ";
+                }   hostNames = hostNames + " and " + failedHosts.get(size-1).getHostName();
+                break;
+        }
+        return hostNames;
     }
 
     private void runCollectionMetrics(Service service) {

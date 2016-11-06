@@ -18,6 +18,7 @@ package com.northernwall.hadrian.schedule;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class Scheduler {
     private final ScheduledExecutorService scheduledExecutorService;
     private final List<ScheduleRunner> runners;
 
-    public Scheduler(DataAccess dataAccess, Leader leader, Parameters parameters, OkHttpClient client) {
+    public Scheduler(DataAccess dataAccess, Leader leader, Parameters parameters, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
         Gson gson = new Gson();
         
         this.leader = leader;
@@ -55,7 +56,8 @@ public class Scheduler {
                     leader, 
                     parameters, 
                     gson, 
-                    client);
+                    client,
+                    messagingCoodinator);
             
             runners.add(runner);
             

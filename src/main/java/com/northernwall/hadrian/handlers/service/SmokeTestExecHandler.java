@@ -19,19 +19,15 @@ import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
-import static com.northernwall.hadrian.handlers.BasicHandler.getGson;
-import com.northernwall.hadrian.handlers.service.dao.GetServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.parameters.Parameters;
-import static com.northernwall.hadrian.workItem.action.HostSmokeTestAction.ExecuteSmokeTest;
+import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,7 +68,7 @@ public class SmokeTestExecHandler extends BasicHandler {
             throw new Http400BadRequestException("No end point provided");
         }
         
-        SmokeTestData smokeTestData = ExecuteSmokeTest(
+        SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
                 module.getSmokeTestUrl(),
                 endPoint,
                 parameters,

@@ -28,6 +28,7 @@ import com.northernwall.hadrian.details.HostDetailsHelperFactory;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelperFactory;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.ModuleArtifactHelperFactory;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
@@ -68,6 +69,7 @@ public class HadrianBuilder {
     private VipDetailsHelper vipDetailsHelper;
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
+    private MessagingCoodinator messagingCoodinator;
     private Scheduler scheduler;
     private MetricRegistry metricRegistry;
 
@@ -127,7 +129,10 @@ public class HadrianBuilder {
         }
 
         folderHelper = new FolderHelper();
-        configHelper = new ConfigHelper(parameters, moduleConfigHelper, folderHelper);
+        configHelper = new ConfigHelper(
+                parameters, 
+                moduleConfigHelper, 
+                folderHelper);
         folderHelper.init(configHelper);
 
         accessHelper = new AccessHelper(dataAccess);
@@ -148,13 +153,41 @@ public class HadrianBuilder {
             buildCalendarHelper();
         }
 
+        messagingCoodinator = new MessagingCoodinator(
+                dataAccess, 
+                parameters, 
+                client);
         buildScheduler();
 
-        WorkItemProcessor workItemProcessor = new WorkItemProcessor(parameters, configHelper, dataAccess, client, new Gson(), metricRegistry);
+        WorkItemProcessor workItemProcessor = new WorkItemProcessor(
+                parameters, 
+                configHelper, 
+                dataAccess, 
+                client, 
+                new Gson(), 
+                metricRegistry);
 
-        DataAccessUpdater.update(dataAccess, configHelper.getConfig());
+        DataAccessUpdater.update(
+                dataAccess, 
+                configHelper.getConfig());
 
-        return new Hadrian(parameters, client, configHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, accessHelper, accessHandler, hostDetailsHelper, vipDetailsHelper, calendarHelper, workItemProcessor, scheduler, folderHelper, metricRegistry);
+        return new Hadrian(
+                parameters, 
+                client, 
+                configHelper, 
+                dataAccess, 
+                moduleArtifactHelper, 
+                moduleConfigHelper, 
+                accessHelper, 
+                accessHandler, 
+                hostDetailsHelper, 
+                vipDetailsHelper, 
+                calendarHelper, 
+                workItemProcessor, 
+                scheduler, 
+                folderHelper, 
+                metricRegistry, 
+                messagingCoodinator);
     }
 
     private void buildDataAccess() {
@@ -311,7 +344,8 @@ public class HadrianBuilder {
                     dataAccess,
                     leader,
                     parameters, 
-                    client);
+                    client,
+                    messagingCoodinator);
         } catch (InstantiationException ex) {
             throw new RuntimeException("Could not build Hadrian, could not instantiation Leader class " + factoryName);
         } catch (IllegalAccessException ex) {
