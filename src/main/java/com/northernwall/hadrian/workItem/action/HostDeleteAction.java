@@ -64,6 +64,10 @@ public class HostDeleteAction extends Action {
         }
         host.setStatus(false, "Delete host failed");
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                host.getHostId(),
+                false,
+                "Delete host failed");
     }
 
 }

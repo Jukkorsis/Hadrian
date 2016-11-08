@@ -87,15 +87,6 @@ public class ModuleDeleteHandler extends BasicHandler {
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         Collections.sort(modules);
 
-        modules.remove(module.getOrder() - 1);
-        int i = 1;
-        for (Module temp : modules) {
-            if (temp.getOrder() != i) {
-                temp.setOrder(i);
-                getDataAccess().saveModule(temp);
-            }
-            i++;
-        }
         getDataAccess().deleteModule(data.serviceId, data.moduleId);
 
         WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null, null);

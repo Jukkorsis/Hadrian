@@ -28,7 +28,7 @@ public class HostVipDisableAction extends HostVipBaseAction {
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Enabling vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
+        LOGGER.info("Disabling vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
         return Result.success;
     }
     

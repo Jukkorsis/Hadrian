@@ -535,4 +535,8 @@ public class InMemoryDataAccess implements DataAccess {
         return null;
     }
 
+    @Override
+    public void updateSatus(String id, boolean busy, String status) {
+    }
+
 }

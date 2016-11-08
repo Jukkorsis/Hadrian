@@ -137,7 +137,7 @@ public class ConvertHandler extends BasicHandler {
                                     host.getHostName(), 
                                     service.getServiceName());
                             host.setEnvironment(newValue);
-                            getDataAccess().saveHost(host);
+                            getDataAccess().updateHost(host);
                         }
                     }
                 }
@@ -171,7 +171,7 @@ public class ConvertHandler extends BasicHandler {
                                     host.getHostName(), 
                                     service.getServiceName());
                             host.setPlatform(newValue);
-                            getDataAccess().saveHost(host);
+                            getDataAccess().updateHost(host);
                         }
                     }
                 }

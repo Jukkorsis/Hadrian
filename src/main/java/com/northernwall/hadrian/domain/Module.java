@@ -27,17 +27,13 @@ public class Module implements Comparable<Module> {
     private String moduleId;
     private String moduleName;
     private String serviceId;
-    private int order;//-
     private ModuleType moduleType;
-    private String gitProject;//-
     private String gitFolder;
-    private String mavenGroupId;//-
     private String mavenArtifactId;
     private String artifactType;
     private String artifactSuffix;
     private String outbound;
     private String hostAbbr;
-    private String hostname;//-
     private String versionUrl;
     private String availabilityUrl;
     private String smokeTestUrl;
@@ -51,8 +47,6 @@ public class Module implements Comparable<Module> {
     private String stopCmdLine;
     private int stopTimeOut;
     private String configName;
-    private String testStyle;//-
-    public Map<String,Boolean> networkNames = new HashMap<>(); //TODO remove in next release
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
     public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
@@ -106,14 +100,6 @@ public class Module implements Comparable<Module> {
         this.serviceId = serviceId;
     }
 
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
     public ModuleType getModuleType() {
         return moduleType;
     }
@@ -122,28 +108,12 @@ public class Module implements Comparable<Module> {
         this.moduleType = moduleType;
     }
 
-    public String getGitProject() {
-        return gitProject;
-    }
-
-    public void setGitProject(String gitProject) {
-        this.gitProject = gitProject;
-    }
-
     public String getGitFolder() {
         return gitFolder;
     }
 
     public void setGitFolder(String gitFolder) {
         this.gitFolder = gitFolder;
-    }
-
-    public String getMavenGroupId() {
-        return mavenGroupId;
-    }
-
-    public void setMavenGroupId(String mavenGroupId) {
-        this.mavenGroupId = mavenGroupId;
     }
 
     public String getMavenArtifactId() {
@@ -187,14 +157,6 @@ public class Module implements Comparable<Module> {
 
     public void setHostAbbr(String hostAbbr) {
         this.hostAbbr = hostAbbr;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
     }
 
     public String getVersionUrl() {
@@ -301,17 +263,6 @@ public class Module implements Comparable<Module> {
         this.configName = configName;
     }
 
-    public String getTestStyle() {
-        if (testStyle == null) {
-            testStyle = "Script";
-        }
-        return testStyle;
-    }
-
-    public void setTestStyle(String testStyle) {
-        this.testStyle = testStyle;
-    }
-
     public Map<String, Boolean> getEnvironmentNames() {
         return environmentNames;
     }
@@ -368,11 +319,7 @@ public class Module implements Comparable<Module> {
 
     @Override
     public int compareTo(Module o) {
-        int result = order - o.order;
-        if (result == 0) {
-            result = moduleId.compareTo(o.moduleId);
-        }
-        return result;
+        return moduleId.compareTo(o.moduleId);
     }
 
 }

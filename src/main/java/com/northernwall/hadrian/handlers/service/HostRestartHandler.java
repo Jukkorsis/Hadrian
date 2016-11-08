@@ -76,8 +76,16 @@ public class HostRestartHandler extends BasicHandler {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {
                             host.setStatus(true, "Restarting...");
+                            getDataAccess().updateSatus(
+                                    host.getHostId(),
+                                    true,
+                                    "Restarting...");
                         } else {
                             host.setStatus(true, "Restart Queued");
+                            getDataAccess().updateSatus(
+                                    host.getHostId(),
+                                    true,
+                                    "Restart Queued");
                         }
                         getDataAccess().updateHost(host);
 

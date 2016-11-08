@@ -51,6 +51,10 @@ public class HostDeployAction extends Action {
         }
         host.setStatus(true, "Deploying...");
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Deploying...");
     }
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
@@ -80,6 +84,10 @@ public class HostDeployAction extends Action {
 
         host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                Const.NO_STATUS);
     }
 
     protected void error(WorkItem workItem) {
@@ -91,6 +99,10 @@ public class HostDeployAction extends Action {
 
         host.setStatus(false, "Last deployment failed");
         dataAccess.updateHost(host);
-   }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                "Last deployment failed");
+    }
 
 }

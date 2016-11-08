@@ -127,10 +127,12 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement workItemDelete;
     private final PreparedStatement workItemStatusSelect;
     private final PreparedStatement workItemStatusInsert;
-    
+    private final PreparedStatement statusSelect;
+    private final PreparedStatement statusInsert;
+
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace, String username, String dataCenter, int auditTimeToLive, MetricRegistry metricRegistry) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, String username, String dataCenter, int auditTimeToLive, int statusTimeToLive, MetricRegistry metricRegistry) {
         this.username = username;
         this.dataCenter = dataCenter;
         session = cluster.connect(keyspace);
@@ -285,6 +287,11 @@ public class CassandraDataAccess implements DataAccess {
         auditOutputSelect = session.prepare("SELECT data FROM auditOutput WHERE serviceId = ? AND auditId = ?");
         auditOutputInsert = session.prepare("INSERT INTO auditOutput (serviceId, auditId, data) VALUES (?, ?, ?) USING TTL " + auditTimeToLive + ";");
         auditOutputInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        LOGGER.info("Praparing status statements...");
+        LOGGER.info("Status TTL {}", statusTimeToLive);
+        statusSelect = session.prepare("SELECT * FROM entityStatus WHERE id = ? ORDER BY time DESC LIMIT 1;");
+        statusInsert = session.prepare("INSERT INTO entityStatus (id, time, busy, status) VALUES (?, now(), ?, ?) USING TTL " + statusTimeToLive + ";");
 
         LOGGER.info("Prapared statements created");
 
@@ -441,29 +448,29 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveService(Service service) {
         saveData(service.getServiceId(), gson.toJson(service), serviceInsert);
-        
+
         backfillService(service);
     }
 
     @Override
     public void updateService(Service service) {
         updateData(service.getServiceId(), gson.toJson(service), serviceUpdate);
-        
+
         BoundStatement boundStatement = new BoundStatement(searchDelete);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_SERVICE_NAME,
                 service.getServiceName().toLowerCase()));
-        
+
         boundStatement = new BoundStatement(searchDelete);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_GIT_PROJECT,
                 service.getGitProject().toLowerCase()));
-        
+
         boundStatement = new BoundStatement(searchDelete);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_MAVEN_GROUP,
                 service.getMavenGroupId().toLowerCase()));
-        
+
         if (service.isActive()) {
             backfillService(service);
         }
@@ -474,31 +481,41 @@ public class CassandraDataAccess implements DataAccess {
         BoundStatement boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_SERVICE_NAME,
-                service.getGitProject().toLowerCase(), 
-                service.getServiceId(), 
+                service.getGitProject().toLowerCase(),
+                service.getServiceId(),
                 null,
                 null));
-        
+
         boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_GIT_PROJECT,
-                service.getServiceName().toLowerCase(), 
-                service.getServiceId(), 
+                service.getServiceName().toLowerCase(),
+                service.getServiceId(),
                 null,
                 null));
-        
+
         boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_MAVEN_GROUP,
-                service.getMavenGroupId().toLowerCase(), 
-                service.getServiceId(), 
+                service.getMavenGroupId().toLowerCase(),
+                service.getServiceId(),
                 null,
                 null));
     }
 
     @Override
     public List<Host> getHosts(String serviceId) {
-        return getServiceData(serviceId, hostSelect, Host.class);
+        List<Host> hosts = getServiceData(serviceId, hostSelect, Host.class);
+        if (hosts == null || hosts.isEmpty()) {
+            return hosts;
+        }
+        for (Host host : hosts) {
+            Row row = getStatus(host.getHostId());
+            if (row != null) {
+                host.setStatus(row.getBool("busy"), row.getString("status"));
+            }
+        }
+        return hosts;
     }
 
     @Override
@@ -516,13 +533,24 @@ public class CassandraDataAccess implements DataAccess {
 
     @Override
     public Host getHost(String serviceId, String hostId) {
-        return getServiceData(serviceId, hostId, hostSelect2, Host.class);
+        Host host = getServiceData(serviceId, hostId, hostSelect2, Host.class);
+        if (host == null) {
+            return null;
+        }
+        
+        Row row = getStatus(host.getHostId());
+        if (row == null) {
+            return host;
+        }
+        
+        host.setStatus(row.getBool("busy"), row.getString("status"));
+        return host;
     }
 
     @Override
     public void saveHost(Host host) {
         saveServiceData(host.getServiceId(), host.getHostId(), gson.toJson(host), hostInsert);
-        
+
         backfillHostName(host);
     }
 
@@ -534,7 +562,7 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteHost(Host host) {
         deleteServiceData(host.getServiceId(), host.getHostId(), hostDelete);
-        
+
         BoundStatement boundStatement = new BoundStatement(searchDelete);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_HOST_NAME,
@@ -546,8 +574,8 @@ public class CassandraDataAccess implements DataAccess {
         BoundStatement boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_HOST_NAME,
-                host.getHostName().toLowerCase(), 
-                host.getServiceId(), 
+                host.getHostName().toLowerCase(),
+                host.getServiceId(),
                 host.getModuleId(),
                 host.getHostId()));
     }
@@ -581,14 +609,14 @@ public class CassandraDataAccess implements DataAccess {
     public List<ModuleFile> getModuleFiles(String serviceId, String moduleId, String environment) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect);
         ResultSet results = session.execute(boundStatement.bind(
-                serviceId, 
-                moduleId, 
+                serviceId,
+                moduleId,
                 environment));
         if (results == null || results.isExhausted()) {
             return null;
         }
         List<ModuleFile> moduleFiles = new LinkedList<>();
-        for (Row row: results) {
+        for (Row row : results) {
             moduleFiles.add(new ModuleFile(
                     serviceId,
                     moduleId,
@@ -604,9 +632,9 @@ public class CassandraDataAccess implements DataAccess {
     public ModuleFile getModuleFile(String serviceId, String moduleId, String environment, String name) {
         BoundStatement boundStatement = new BoundStatement(moduleFileSelect2);
         ResultSet results = session.execute(boundStatement.bind(
-                serviceId, 
-                moduleId, 
-                environment, 
+                serviceId,
+                moduleId,
+                environment,
                 name));
         Row row = results.one();
         if (row == null) {
@@ -934,6 +962,24 @@ public class CassandraDataAccess implements DataAccess {
         return null;
     }
 
+    @Override
+    public void updateSatus(String id, boolean busy, String status) {
+        BoundStatement boundStatement = new BoundStatement(statusInsert);
+        session.execute(boundStatement.bind(
+                id,
+                busy,
+                status));
+    }
+
+    private Row getStatus(String id) {
+        BoundStatement boundStatement = new BoundStatement(statusSelect);
+        ResultSet results = session.execute(boundStatement.bind(id));
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        return results.one();
+    }
+
     private <T extends Object> List<T> getData(String tableName, Class<T> classOfT) {
         ResultSet results = session.execute(CQL_SELECT_PRE + tableName + CQL_SELECT_POST);
         List<T> listOfData = new LinkedList<>();
@@ -993,17 +1039,17 @@ public class CassandraDataAccess implements DataAccess {
     private void saveServiceData(String serviceId, String id, String data, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(serviceId, id, data));
-        }
+    }
 
     private void updateServiceData(String serviceId, String id, String data, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(data, serviceId, id));
-        }
+    }
 
     private void deleteServiceData(String serviceId, String id, PreparedStatement statement) {
         BoundStatement boundStatement = new BoundStatement(statement);
         session.execute(boundStatement.bind(serviceId, id));
-        }
+    }
 
     public void close() {
         session.close();

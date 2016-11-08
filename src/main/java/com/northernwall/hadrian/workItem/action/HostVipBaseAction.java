@@ -60,7 +60,11 @@ public abstract class HostVipBaseAction extends Action {
             return;
         }
         host.setStatus(false, "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
-        dataAccess.saveHost(host);
+        dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
     }
 
     private void recordAudit(WorkItem workItem, Result result, List<Vip> successVips, Vip failedVip) {

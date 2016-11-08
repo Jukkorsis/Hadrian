@@ -17,6 +17,7 @@ package com.northernwall.hadrian.module.maven;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.SematicVersionComparator;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -51,17 +52,17 @@ public class MavenHelper implements ModuleArtifactHelper {
     }
 
     @Override
-    public List<String> readArtifactVersions(Module module) {
+    public List<String> readArtifactVersions(Service service, Module module) {
         List<String> versions = new LinkedList<>();
-        if (module.getMavenGroupId() != null
-                && !module.getMavenGroupId().isEmpty()
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             try {
                 Request.Builder builder = new Request.Builder();
                 String mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
                 String url = mavenRepo
-                        + module.getMavenGroupId().replace(".", "/")
+                        + service.getMavenGroupId().replace(".", "/")
                         + "/"
                         + module.getMavenArtifactId()
                         + "/maven-metadata.xml";
@@ -80,7 +81,7 @@ public class MavenHelper implements ModuleArtifactHelper {
                 }
             } catch (Exception ex) {
                 LOGGER.error("Error reading maven version from {} {}, {}",
-                        module.getMavenGroupId(),
+                        service.getMavenGroupId(),
                         module.getMavenArtifactId(),
                         ex.getMessage());
             }

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostCreateAction extends Action {
-    
+
     private final static Logger LOGGER = LoggerFactory.getLogger(HostCreateAction.class);
 
     @Override
@@ -64,6 +64,10 @@ public class HostCreateAction extends Action {
 
         host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                host.getHostId(),
+                false,
+                Const.NO_STATUS);
     }
 
     protected void error(WorkItem workItem) {

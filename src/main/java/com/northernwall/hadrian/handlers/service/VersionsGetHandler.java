@@ -44,7 +44,7 @@ public class VersionsGetHandler extends BasicHandler {
 
         GetVersionData data = new GetVersionData();
         
-        Future artifactFuture = executorService.submit(new ReadModuleArtifactVersionsRunnable(module, data, moduleArtifactHelper));
+        Future artifactFuture = executorService.submit(new ReadModuleArtifactVersionsRunnable(service, module, data, moduleArtifactHelper));
         Future configFuture = executorService.submit(new ReadModuleConfigVersionsRunnable(module, data, moduleConfigHelper));
         
         while (!artifactFuture.isDone() || !configFuture.isDone()) {

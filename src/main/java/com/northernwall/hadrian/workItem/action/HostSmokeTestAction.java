@@ -90,11 +90,13 @@ public class HostSmokeTestAction extends Action {
         String output = null;
         if (smokeTestData == null) {
             result = Result.error;
+            error(workItem);
         } else if (smokeTestData.result == null
                 || smokeTestData.result.isEmpty()
                 ||!smokeTestData.result.equalsIgnoreCase("PASS")) {
             result = Result.error;
             output = smokeTestData.output;
+            error(workItem);
         } else {
             result = Result.success;
             output = smokeTestData.output;
@@ -120,8 +122,12 @@ public class HostSmokeTestAction extends Action {
             return;
         }
 
-        host.setStatus(false, "Last deployment failed");
+        host.setStatus(false, "Last smoke test failed");
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                "Last smoke test failed");
     }
 
 }

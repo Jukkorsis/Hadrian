@@ -47,12 +47,13 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
         String keyspace = parameters.getString(Const.CASS_KEY_SPACE, Const.CASS_KEY_SPACE_DEFAULT);
         int replicationFactor = parameters.getInt(Const.CASS_REPLICATION_FACTOR, Const.CASS_REPLICATION_FACTOR_DEFAULT);
         int auditTimeToLive = parameters.getInt(Const.CASS_AUDIT_TTL_DAYS, Const.CASS_AUDIT_TTL_DAYS_DEFAULT) * 86_400;
+        int statusTimeToLive = parameters.getInt(Const.CASS_STATUS_TTL_DAYS, Const.CASS_STATUS_TTL_DAYS_DEFAULT) * 86_400;
 
         connect(nodes, dataCenter, username, password);
 
         setup(createKeyspace, keyspace, replicationFactor);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, metricRegistry);
+        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, statusTimeToLive, metricRegistry);
         
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);
@@ -147,6 +148,8 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             }
             session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
             session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
+            //Status table
+            session.execute("CREATE TABLE IF NOT EXISTS entityStatus (id text, time timeuuid, busy boolean, status text, PRIMARY KEY ((id), time));");
             LOGGER.info("Tables created");
         }  
     }

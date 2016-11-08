@@ -71,12 +71,12 @@ public class HostCreateHandler extends BasicHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
 
         Config config = configHelper.getConfig();
-        
+
         checkRange(data.count, 1, config.maxCount, "host count");
         checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
         checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
         checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
-        
+
         if (!config.dataCenters.contains(data.dataCenter)) {
             throw new Http400BadRequestException("Unknown data center");
         }
@@ -86,7 +86,7 @@ public class HostCreateHandler extends BasicHandler {
         if (!config.platforms.contains(data.platform)) {
             throw new Http400BadRequestException("Unknown operating platform");
         }
-        
+
         Module module = getModule(data.moduleId, null, service);
         if (module.getModuleType() == ModuleType.Library) {
             throw new Http400BadRequestException("Module must be a deployable or simulator");
@@ -101,8 +101,9 @@ public class HostCreateHandler extends BasicHandler {
             if (getDataAccess().getHostByHostName(hostName) == null) {
                 createdCount++;
                 LOGGER.info("Building host {} - {}/{}", hostName, createdCount, data.count);
-                
-                Host host = new Host(hostName,
+
+                Host host = new Host(
+                        hostName,
                         data.serviceId,
                         "Creating...",
                         data.moduleId,
@@ -110,6 +111,10 @@ public class HostCreateHandler extends BasicHandler {
                         data.environment,
                         data.platform);
                 getDataAccess().saveHost(host);
+                getDataAccess().updateSatus(
+                        host.getHostId(),
+                        true,
+                        "Creating...");
 
                 List<WorkItem> workItems = new ArrayList<>(3);
 
@@ -136,7 +141,7 @@ public class HostCreateHandler extends BasicHandler {
                 workItemProcessor.processWorkItems(workItems);
             }
         }
-        
+
         if (createdCount == 0) {
             throw new Http400BadRequestException("Could not create any hosts, max host count per data center reached");
         }
@@ -147,10 +152,10 @@ public class HostCreateHandler extends BasicHandler {
 
     private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
         if (value < min) {
-            throw new Http400BadRequestException("Requested "+text+" is less than allowed");
+            throw new Http400BadRequestException("Requested " + text + " is less than allowed");
         }
         if (value > max) {
-            throw new Http400BadRequestException("Requested "+text+" is greater than allowed");
+            throw new Http400BadRequestException("Requested " + text + " is greater than allowed");
         }
     }
 

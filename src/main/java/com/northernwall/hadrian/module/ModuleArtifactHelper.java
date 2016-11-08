@@ -16,9 +16,10 @@
 package com.northernwall.hadrian.module;
 
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import java.util.List;
 
 public interface ModuleArtifactHelper {
-    List<String> readArtifactVersions(Module module);
+    List<String> readArtifactVersions(Service service, Module module);
 
 }

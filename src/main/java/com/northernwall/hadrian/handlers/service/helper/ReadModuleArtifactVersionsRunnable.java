@@ -16,18 +16,20 @@
 package com.northernwall.hadrian.handlers.service.helper;
 
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.handlers.service.dao.GetVersionData;
-import java.util.List;
 
 public class ReadModuleArtifactVersionsRunnable implements Runnable {
 
     private final ModuleArtifactHelper moduleArtifactHelper;
+    private final Service service;
     private final Module module;
     private final GetVersionData getVersionData;
 
-    public ReadModuleArtifactVersionsRunnable(Module module, GetVersionData getVersionData, ModuleArtifactHelper moduleArtifactHelper) {
+    public ReadModuleArtifactVersionsRunnable(Service service, Module module, GetVersionData getVersionData, ModuleArtifactHelper moduleArtifactHelper) {
         this.moduleArtifactHelper = moduleArtifactHelper;
+        this.service = service;
         this.module = module;
         this.getVersionData = getVersionData;
     }
@@ -35,11 +37,11 @@ public class ReadModuleArtifactVersionsRunnable implements Runnable {
     @Override
     public void run() {
         if (moduleArtifactHelper != null
-                && module.getMavenGroupId() != null
-                && !module.getMavenGroupId().isEmpty()
+                && service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
-            getVersionData.artifactVersions.addAll(moduleArtifactHelper.readArtifactVersions(module));
+            getVersionData.artifactVersions.addAll(moduleArtifactHelper.readArtifactVersions(service, module));
         }
         if (getVersionData.artifactVersions.isEmpty()) {
             getVersionData.artifactVersions.add("0.0.0");

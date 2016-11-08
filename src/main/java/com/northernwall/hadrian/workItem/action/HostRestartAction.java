@@ -50,6 +50,10 @@ public class HostRestartAction extends Action {
         }
         host.setStatus(true, "Restarting...");
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Restarting...");
     }
 
     protected void recordAudit(WorkItem workItem, Result result, String output) {
@@ -67,6 +71,10 @@ public class HostRestartAction extends Action {
         }
         host.setStatus(false, Const.NO_STATUS);
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                Const.NO_STATUS);
     }
 
     protected void error(WorkItem workItem) {
@@ -78,6 +86,10 @@ public class HostRestartAction extends Action {
 
         host.setStatus(false, "Last restart failed");
         dataAccess.updateHost(host);
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                false,
+                "Last restart failed");
     }
 
 }

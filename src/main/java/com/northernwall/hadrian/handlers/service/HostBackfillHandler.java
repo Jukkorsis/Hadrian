@@ -115,7 +115,8 @@ public class HostBackfillHandler extends BasicHandler {
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
                 Host tempHost = getDataAccess().getHostByHostName(scrubedHostName);
                 if (tempHost == null) {
-                    Host host = new Host(scrubedHostName,
+                    Host host = new Host(
+                            scrubedHostName,
                             service.getServiceId(),
                             Const.NO_STATUS,
                             module.getModuleId(),
@@ -123,6 +124,10 @@ public class HostBackfillHandler extends BasicHandler {
                             data.environment,
                             data.platform);
                     getDataAccess().saveHost(host);
+                    getDataAccess().updateSatus(
+                            host.getHostId(), 
+                            false, 
+                            Const.NO_STATUS);
 
                     Audit audit = new Audit();
                     audit.serviceId = service.getServiceId();

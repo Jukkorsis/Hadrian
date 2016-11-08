@@ -70,6 +70,10 @@ public class HostDeleteHandler extends BasicHandler {
                     if (!host.isBusy()) {
                         host.setStatus(true, "Deleting...");
                         getDataAccess().updateHost(host);
+                        getDataAccess().updateSatus(
+                                host.getHostId(),
+                                true,
+                                "Deleting...");
 
                         List<WorkItem> workItems = new ArrayList<>(2);
 

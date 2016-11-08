@@ -341,11 +341,16 @@ public class WorkItemProcessor {
         WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
         stopNext(nextWorkItem);
 
-        if (nextWorkItem.getType() == Type.host) {
-            Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (nextWorkItem.getType() == Type.host 
+                && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
+            Host host = dataAccess.getHost(workItem.getService().serviceId, nextWorkItem.getHost().hostId);
             if (host != null) {
-                host.setStatus(false, "Last operation cancelled");
+                host.setStatus(false, "Queued operation cancelled");
                 dataAccess.updateHost(host);
+                dataAccess.updateSatus(
+                        nextWorkItem.getHost().hostId,
+                        false,
+                        "Queued operation cancelled");
             }
         }
         dataAccess.deleteWorkItem(nextId);

@@ -121,6 +121,8 @@ public class Const {
     public static final int CASS_REPLICATION_FACTOR_DEFAULT = 1;
     public static final String CASS_AUDIT_TTL_DAYS = "dataAccess.cassandra.auditTtlDays";
     public static final int CASS_AUDIT_TTL_DAYS_DEFAULT = 732;
+    public static final String CASS_STATUS_TTL_DAYS = "dataAccess.cassandra.auditTtlDays";
+    public static final int CASS_STATUS_TTL_DAYS_DEFAULT = 2;
     
     public static final String IN_MEMORY_DATA_FILE_NAME = "dataAccess.inMemory.dataFileName";
     public static final String IN_MEMORY_DATA_FILE_NAME_DEFAULT = "data.json";

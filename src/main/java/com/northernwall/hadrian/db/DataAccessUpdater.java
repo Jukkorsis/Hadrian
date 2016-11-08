@@ -35,11 +35,6 @@ public class DataAccessUpdater {
         if (version == null || version.isEmpty()) {
             dataAccess.setVersion("1.7");
             LOGGER.info("New DB, initial version set.");
-        } else if (version.equals("1.6")) {
-            LOGGER.info("Current DB version is 1.6, update started.");
-            scanForNetworkAndEnv(dataAccess, config);
-            dataAccess.setVersion("1.7");
-            LOGGER.info("DB update finished.");
         } else {
             LOGGER.info("Current DB version is {}, no upgrade required.", version);
         }
@@ -64,90 +59,6 @@ public class DataAccessUpdater {
             }
         }
         LOGGER.info("Backfilled {} service, {} hosts", serviceCount, hostCount);
-    }
-
-    private static void scanForNetworkAndEnv(DataAccess dataAccess, Config config) {
-        List<Service> services = dataAccess.getActiveServices();
-        if (services != null && !services.isEmpty()) {
-            for (Service service : services) {
-                LOGGER.info("Processing {}", service.getServiceName());
-                List<Module> modules = dataAccess.getModules(service.getServiceId());
-                if (modules != null && !modules.isEmpty()) {
-                    for (Module module : modules) {
-                        if (module.getEnvironmentNames() == null) {
-                            module.setEnvironmentNames(new HashMap<>());
-                        }
-                        if (module.networkNames == null) {
-                            module.networkNames = new HashMap<>();
-                        }
-                        if (module.getEnvironmentNames().size() == 0 && module.networkNames.size() > 0) {
-                            LOGGER.info("Processing {} module {} {}-{}",
-                                    service.getServiceName(),
-                                    module.getModuleName(),
-                                    module.networkNames.size(),
-                                    module.getEnvironmentNames().size());
-                            module.setEnvironmentNames(module.networkNames);
-                            dataAccess.updateModule(module);
-                        } else {
-                            LOGGER.info("Processing {} module {} {}-{} Good",
-                                    service.getServiceName(),
-                                    module.getModuleName(),
-                                    module.networkNames.size(),
-                                    module.getEnvironmentNames().size());
-                        }
-                    }
-                }
-                
-                List<Host> hosts = dataAccess.getHosts(service.getServiceId());
-                if (hosts != null && !hosts.isEmpty()) {
-                    for (Host host : hosts) {
-                        if (host.getEnvironment() == null || host.getPlatform() == null) {
-                            LOGGER.info("Processing {} host {} {}-{} {}-{}",
-                                    service.getServiceName(),
-                                    host.getHostName(),
-                                    host.network,
-                                    host.getEnvironment(),
-                                    host.env,
-                                    host.getPlatform());
-                            host.setEnvironment(host.network);
-                            host.setPlatform(host.env);
-                            dataAccess.updateHost(host);
-                        } else {
-                            LOGGER.info("Processing {} host {} {}-{} {}-{} Good",
-                                    service.getServiceName(),
-                                    host.getHostName(),
-                                    host.network,
-                                    host.getEnvironment(),
-                                    host.env,
-                                    host.getPlatform());
-                        }
-                    }
-                }
-                
-                List<Vip> vips = dataAccess.getVips(service.getServiceId());
-                if (vips != null && !vips.isEmpty()) {
-                    for (Vip vip : vips) {
-                        if (vip.getEnvironment() == null) {
-                            LOGGER.info("Processing {} vip {} {}-{}",
-                                    service.getServiceName(),
-                                    vip.getDns(),
-                                    vip.network,
-                                    vip.getEnvironment());
-                            vip.setEnvironment(vip.network);
-                            dataAccess.updateVip(vip);
-                        } else {
-                            LOGGER.info("Processing {} vip {} {}-{} Good",
-                                    service.getServiceName(),
-                                    vip.getDns(),
-                                    vip.network,
-                                    vip.getEnvironment());
-                        }
-                    }
-                }
-            }
-        } else {
-            LOGGER.info("No active services");
-        }
     }
 
     private DataAccessUpdater() {
