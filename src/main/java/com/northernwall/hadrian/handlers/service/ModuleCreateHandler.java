@@ -109,8 +109,10 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.stopCmdLine = "";
                 data.stopTimeOut = 0;
                 break;
-            case Deployable:
             case Simulator:
+                data.outbound = "No";
+                data.smokeTestUrl = "";
+            case Deployable:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }  
@@ -131,7 +133,11 @@ public class ModuleCreateHandler extends BasicHandler {
                         && !data.dataFolder.isEmpty()) { 
                     folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
                     folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
-                }   
+                }
+                
+                if (data.environmentNames == null || data.environmentNames.isEmpty()) {
+                    throw new Http400BadRequestException("At least one environment must be selected");
+                }
                 break;
         }
 

@@ -140,6 +140,10 @@ public class ModuleModifyHandler extends BasicHandler {
                     folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
                     folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
                 }   
+                
+                if (data.environmentNames == null || data.environmentNames.isEmpty()) {
+                    throw new Http400BadRequestException("At least one environment must be selected");
+                }
                 break;
         }
 
