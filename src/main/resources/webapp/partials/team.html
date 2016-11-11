@@ -7,7 +7,8 @@
             </button>
             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                 <li role="menuitem"><a ng-click="openUpdateTeamModal();">Update {{team.teamName}}</a></li>
-                <li role="menuitem"><a ng-click="openAddServiceModal();">Add a service to {{team.teamName}}</a></li>
+                <li role="menuitem"><a ng-click="openAddServiceModal(true);">Add a service to {{team.teamName}}</a></li>
+                <li role="menuitem"><a ng-click="openAddServiceModal(false);">Add a minimal service to {{team.teamName}}</a></li>
                 <li class="divider"></li>
                 <li role="menuitem"><a ng-click="openAddUserModal();">Add a team member</a></li>
                 <li role="menuitem" ng-repeat="user in team.users">

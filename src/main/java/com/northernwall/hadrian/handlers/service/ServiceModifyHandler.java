@@ -53,6 +53,9 @@ public class ServiceModifyHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutServiceData data = fromJson(request, PutServiceData.class);
+        if (data.serviceId == null) {
+            throw new Http400BadRequestException("Illegal call, missing serviceId");
+        }
         Service service = getService(data.serviceId, null);
 
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
@@ -68,6 +71,30 @@ public class ServiceModifyHandler extends BasicHandler {
         Service tempService = getDataAccess().getServiceByServiceName(data.serviceName);
         if (tempService != null && !tempService.getServiceId().equals(data.serviceId)) {
             throw new Http405NotAllowedException("A service already exists with this name");
+        }
+
+        if (data.doBuilds) {
+            if (data.gitProject == null || data.gitProject.isEmpty()) {
+                throw new Http400BadRequestException("Git Project is mising or empty");
+            }
+            if (data.gitProject.length() > 30) {
+                throw new Http400BadRequestException("Git Project is to long, max is 30");
+            }
+            Service temp = getDataAccess().getServiceByGitProject(data.gitProject);
+            if (temp != null && !temp.getServiceId().equals(data.serviceId)) {
+                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
+            }
+        } else {
+            data.gitProject = null;
+        }
+
+        if (data.doDeploys) {
+            Service temp = getDataAccess().getServiceByMavenGroup(data.mavenGroupId);
+            if (temp != null && !temp.getServiceId().equals(data.serviceId)) {
+                 throw new Http405NotAllowedException("A service already exists with this Maven group");
+            }
+        } else {
+            data.mavenGroupId = null;
         }
 
         try {
@@ -86,6 +113,8 @@ public class ServiceModifyHandler extends BasicHandler {
             data.testCmdLine = null;
         }
 
+        getDataAccess().deleteServiceSearch(service);
+
         service.setServiceName(data.serviceName);
         service.setDescription(data.description);
         service.setScope(data.scope);
@@ -95,6 +124,9 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setDoManageVip(data.doManageVip);
         service.setDoCheckJar(data.doCheckJar);
         service.setDoFindBugsLevel(data.doFindBugsLevel);
+        
+        service.setGitProject(data.gitProject);
+        service.setMavenGroupId(data.mavenGroupId);
 
         service.setTestStyle(data.testStyle);
         service.setTestHostname(data.testHostname);
@@ -105,6 +137,7 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setSmokeTestCron(data.smokeTestCron);
 
         getDataAccess().updateService(service);
+        getDataAccess().insertServiceSearch(service);
 
         WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);

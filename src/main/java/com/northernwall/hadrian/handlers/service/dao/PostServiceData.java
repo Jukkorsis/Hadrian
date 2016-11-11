@@ -27,8 +27,8 @@ public class PostServiceData {
     public String teamId;
     public String description;
     public String serviceType;
-    public String gitProject;
     public String scope;
+    public String gitProject;
     public String mavenGroupId;
     public boolean doBuilds;
     public boolean doDeploys;

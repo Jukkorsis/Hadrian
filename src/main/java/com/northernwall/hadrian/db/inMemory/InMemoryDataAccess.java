@@ -183,7 +183,12 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void backfillService(Service service) {
+    public void deleteServiceSearch(Service service) {
+        services.put(service.getServiceId(), service);
+    }
+
+    @Override
+    public void insertServiceSearch(Service service) {
     }
 
     @Override

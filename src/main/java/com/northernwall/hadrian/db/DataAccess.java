@@ -55,8 +55,9 @@ public interface DataAccess {
     Service getService(String serviceId);
     void saveService(Service service);
     void updateService(Service service);
-
-    void backfillService(Service service);
+    
+    void deleteServiceSearch(Service service);
+    void insertServiceSearch(Service service);
 
     List<Host> getHosts(String serviceId);
     Host getHostByHostName(String hostName);

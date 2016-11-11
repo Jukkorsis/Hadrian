@@ -30,7 +30,7 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
             });
         };
 
-        $scope.openAddServiceModal = function () {
+        $scope.openAddServiceModal = function (check) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addService.html',
@@ -39,6 +39,9 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
                 resolve: {
                     team: function () {
                         return $scope.team;
+                    },
+                    check: function () {
+                        return check;
                     }
                 }
             });
@@ -126,8 +129,8 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         };
     }]);
 
-hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team',
-    function ($scope, $http, $modalInstance, $window, Config, team) {
+hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team', 'check',
+    function ($scope, $http, $modalInstance, $window, Config, team, check) {
         $scope.team = team;
         $scope.errorMsg = null;
         Config.get({}, function (config) {
@@ -142,8 +145,8 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.gitProject = "";
             $scope.formSaveService.scope = $scope.config.scopes[0];
             $scope.formSaveService.mavenGroupId =  $scope.config.mavenGroupId;
-            $scope.formSaveService.doBuilds = true;
-            $scope.formSaveService.doDeploys = true;
+            $scope.formSaveService.doBuilds = check;
+            $scope.formSaveService.doDeploys = check;
             $scope.formSaveService.doManageVip = true;
             $scope.formSaveService.doCheckJar = true;
             $scope.formSaveService.doFindBugsLevel = "report";

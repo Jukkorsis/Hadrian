@@ -44,18 +44,12 @@ public class DocumentDeleteHandler extends BasicHandler {
         Service service = getService(data.serviceId, null);
         accessHelper.checkIfUserCanModify(request, service.getTeamId(), "remove document");
 
-        Document doc = null;
-        for (Document temp : service.getDocuments()) {
-            if (temp.getDocId().equals(data.docId)) {
-                doc = temp;
+        for (Document doc : service.getDocuments()) {
+            if (doc.getDocId().equals(data.docId)) {
+                service.getDocuments().remove(doc);
             }
         }
         
-        if (doc != null) {
-            service.getDocuments().remove(doc);
-            getDataAccess().updateService(service);
-        }
-
         response.setStatus(200);
         request.setHandled(true);
     }

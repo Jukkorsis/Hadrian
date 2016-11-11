@@ -90,12 +90,12 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateService(Service service) {
+    public void deleteServiceSearch(Service service) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void backfillService(Service service) {
+    public void insertServiceSearch(Service service) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

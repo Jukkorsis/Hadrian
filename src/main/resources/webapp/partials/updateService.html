@@ -10,56 +10,85 @@
                 <dd><input ng-model="formUpdateService.serviceName" type="text" class="form-control"></dd>
                 <dt>Description:</dt>
                 <dd><textarea ng-model="formUpdateService.description" type="text" class="form-control"></textarea></dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
                 <dt>Scope:</dt>
                 <dd><select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select></dd>
                 <dt>Do Builds:</dt>
                 <dd><input ng-model="formUpdateService.doBuilds" type="checkbox"></dd>
                 <dt>Do Deploys:</dt>
                 <dd><input ng-model="formUpdateService.doDeploys" type="checkbox"></dd>
-                <dt>Dis/enable VIPs:</dt>
-                <dd><input ng-model="formUpdateService.doManageVip" type="checkbox"></dd>
-                <dt>Check jars are signed:</dt>
-                <dd><input ng-model="formUpdateService.doCheckJar" type="checkbox"></dd>
-                <dt>Find Bugs Level:</dt>
-                <dd>
-                    <select ng-model="formUpdateService.doFindBugsLevel" class="form-control">
-                        <option value="report">Report only</option>
-                        <option value="high">Block on High findings</option>
-                        <option value="medium">Block on High and Medium findings</option>
-                    </select>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <div ng-if="formUpdateService.doBuilds">
+                    <dt>Git Project</dt>
+                    <dd>
+                        <div class="input-group">
+                            <div class="input-group-addon">{{team.gitGroup}} / </div>
+                            <input ng-model="formUpdateService.gitProject" type="text" maxlength="30" class="form-control">
+                            <div class="input-group-addon">.git</div>
+                        </div>
+                    </dd>
+                    <dt>Find Bugs Level:</dt>
+                    <dd>
+                        <select ng-model="formUpdateService.doFindBugsLevel" class="form-control">
+                            <option value="report">Report only</option>
+                            <option value="high">Block on High findings</option>
+                            <option value="medium">Block on High and Medium findings</option>
+                        </select>
+                    </dd>
+                </div>
+                <div ng-if="formUpdateService.doBuilds || formUpdateService.doDeploys">
+                    <dt>Maven Group:</dt>
+                    <dd><input ng-model="formUpdateService.mavenGroupId" type="text" class="form-control"></dd>
+                </div>
+                <div ng-if="formUpdateService.doDeploys">
+                    <dt>Dis/enable VIPs:</dt>
+                    <dd><input ng-model="formUpdateService.doManageVip" type="checkbox"></dd>
+                    <dt>Check jars are signed:</dt>
+                    <dd><input ng-model="formUpdateService.doCheckJar" type="checkbox"></dd>
+                </div>
             </dl>
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">
-                <dt>Test Style:</dt>
-                <dd>
-                    <select ng-model="formUpdateService.testStyle" class="form-control">
-                        <option>Maven</option>
-                        <option>Script</option>
-                    </select>
+                <div ng-if="formUpdateService.doBuilds">
+                    <dt>Test Style:</dt>
+                    <dd>
+                        <select ng-model="formUpdateService.testStyle" class="form-control">
+                            <option>Maven</option>
+                            <option>Script</option>
+                        </select>
+                        <div ng-if="formUpdateService.testStyle === 'Script'">
+                            Note: This test style has been deprecated, please consider use Maven. 
+                        </div>
+                    </dd>
                     <div ng-if="formUpdateService.testStyle === 'Script'">
-                        Note: This test style has been deprecated, please consider use Maven. 
+                        <dt>Test Host Name:</dt>
+                        <dd><input ng-model="formUpdateService.testHostname" type="text" class="form-control"></dd>
+                        <dt>Test Run As User:</dt>
+                        <dd><input ng-model="formUpdateService.testRunAs" type="text" class="form-control"></dd>
+                        <dt>Test Deployment Folder:</dt>
+                        <dd><input ng-model="formUpdateService.testDeploymentFolder" type="text" class="form-control"></dd>
+                        <dt>Test Cmd Line:</dt>
+                        <dd><input ng-model="formUpdateService.testCmdLine" type="text" class="form-control"></dd>
                     </div>
-                </dd>
-                <div ng-if="formUpdateService.testStyle === 'Script'">
-                    <dt>Test Host Name:</dt>
-                    <dd><input ng-model="formUpdateService.testHostname" type="text" class="form-control"></dd>
-                    <dt>Test Run As User:</dt>
-                    <dd><input ng-model="formUpdateService.testRunAs" type="text" class="form-control"></dd>
-                    <dt>Test Deployment Folder:</dt>
-                    <dd><input ng-model="formUpdateService.testDeploymentFolder" type="text" class="form-control"></dd>
-                    <dt>Test Cmd Line:</dt>
-                    <dd><input ng-model="formUpdateService.testCmdLine" type="text" class="form-control"></dd>
+                    <dt>Test Time Out:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <input ng-model="formUpdateService.testTimeOut" type="number" min="30" max="900" step="30" class="form-control">
+                            <div class="input-group-addon">sec</div>
+                        </div>
+                    </dd>
                 </div>
-                <dt>Test Time Out:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formUpdateService.testTimeOut" type="number" min="30" max="900" step="30" class="form-control">
-                        <div class="input-group-addon">sec</div>
-                    </div>
-                </dd>
                 <dt>Smoke Test Cron:</dt>
-                <dd><input ng-model="formUpdateService.smokeTestCron" type="text" class="form-control"></dd>
+                <dd><input ng-model="formUpdateService.smokeTestCron" type="text" class="form-control" uib-popover="Optional" popover-trigger="mouseenter"></dd>
             </dl>
         </div>
     </div>

@@ -8,10 +8,14 @@
                     <dd>{{service.serviceType}}</dd>
                     <dt>Scope:</dt>
                     <dd>{{service.scope}}</dd>
-                    <dt>Git Project:</dt>
-                    <dd><a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a></dd>
-                    <dt>Maven Group:</dt>
-                    <dd>{{service.mavenGroupId}}</dd>
+                    <div ng-if="service.doBuilds">
+                        <dt>Git Project:</dt>
+                        <dd><a href="{{config.gitUiURL}}{{team.gitGroup}}/{{service.gitProject}}" target="_blank">{{team.gitGroup}}/{{service.gitProject}}.git</a></dd>
+                    </div>
+                    <div ng-if="service.doBuilds || service.doDeploys">
+                        <dt>Maven Group:</dt>
+                        <dd>{{service.mavenGroupId}}</dd>
+                    </div>
                     <dt>Creation Date:</dt>
                     <dd>{{service.creationDate}}</dd>
                     <div  ng-if="!service.active">
@@ -32,40 +36,46 @@
                         <span ng-if="service.doDeploys" class="glyphicon glyphicon-check text-success"></span>
                         <span ng-if="!service.doDeploys" class="glyphicon glyphicon-unchecked text-success"></span>
                     </dd>
-                    <dt>Dis/enable VIPs:</dt>
-                    <dd>
-                        <span ng-if="service.doManageVip" class="glyphicon glyphicon-check text-success"></span>
-                        <span ng-if="!service.doManageVip" class="glyphicon glyphicon-unchecked text-success"></span>
-                    </dd>
-                    <dt>Check jars are signed:</dt>
-                    <dd>
-                        <span ng-if="service.doCheckJar" class="glyphicon glyphicon-check text-success"></span>
-                        <span ng-if="!service.doCheckJar" class="glyphicon glyphicon-unchecked text-success"></span>
-                    </dd>
-                    <dt>Find Bugs Level:</dt>
-                    <dd>
-                        <span ng-if="service.doFindBugsLevel == 'report'">Report only</span>
-                        <span ng-if="service.doFindBugsLevel == 'high'">Block on High findings</span>
-                        <span ng-if="service.doFindBugsLevel == 'medium'">Block on High and Medium findings</span>
-                    </dd>
+                    <div ng-if="service.doDeploys">
+                        <dt>Dis/enable VIPs:</dt>
+                        <dd>
+                            <span ng-if="service.doManageVip" class="glyphicon glyphicon-check text-success"></span>
+                            <span ng-if="!service.doManageVip" class="glyphicon glyphicon-unchecked text-success"></span>
+                        </dd>
+                        <dt>Check jars are signed:</dt>
+                        <dd>
+                            <span ng-if="service.doCheckJar" class="glyphicon glyphicon-check text-success"></span>
+                            <span ng-if="!service.doCheckJar" class="glyphicon glyphicon-unchecked text-success"></span>
+                        </dd>
+                    </div>
+                    <div ng-if="service.doBuilds">
+                        <dt>Find Bugs Level:</dt>
+                        <dd>
+                            <span ng-if="service.doFindBugsLevel == 'report'">Report only</span>
+                            <span ng-if="service.doFindBugsLevel == 'high'">Block on High findings</span>
+                            <span ng-if="service.doFindBugsLevel == 'medium'">Block on High and Medium findings</span>
+                        </dd>
+                    </div>
                 </dl>
             </div>
             <div class="col-md-4">
                 <dl class="dl-horizontal">
-                    <dt>Test Style:</dt>
-                    <dd>{{service.testStyle}}</dd>
-                    <div ng-if="service.testStyle == 'Script'">
-                        <dt>Test Host Name:</dt>
-                        <dd>{{service.testHostname}}</dd>
-                        <dt>Test Run As:</dt>
-                        <dd>{{service.testRunAs}}</dd>
-                        <dt>Test Deploy Folder:</dt>
-                        <dd>{{service.testDeploymentFolder}}</dd>
-                        <dt>Test Cmd Line:</dt>
-                        <dd>{{service.testCmdLine}}</dd>
+                    <div ng-if="service.doBuilds">
+                        <dt>Test Style:</dt>
+                        <dd>{{service.testStyle}}</dd>
+                        <div ng-if="service.testStyle == 'Script'">
+                            <dt>Test Host Name:</dt>
+                            <dd>{{service.testHostname}}</dd>
+                            <dt>Test Run As:</dt>
+                            <dd>{{service.testRunAs}}</dd>
+                            <dt>Test Deploy Folder:</dt>
+                            <dd>{{service.testDeploymentFolder}}</dd>
+                            <dt>Test Cmd Line:</dt>
+                            <dd>{{service.testCmdLine}}</dd>
+                        </div>
+                        <dt>Test Time Out:</dt>
+                        <dd>{{service.testTimeOut}} sec</dd>
                     </div>
-                    <dt>Test Time Out:</dt>
-                    <dd>{{service.testTimeOut}} sec</dd>
                     <dt>Smoke Test Cron:</dt>
                     <dd>{{service.smokeTestCron}}</dd>
                 </dl>

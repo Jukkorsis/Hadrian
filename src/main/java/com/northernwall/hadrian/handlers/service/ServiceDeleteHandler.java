@@ -53,6 +53,7 @@ public class ServiceDeleteHandler extends BasicHandler {
         service.setActive(false);
         service.setDeletionDate(GMT.getGmtAsDate());
         getDataAccess().saveService(service);
+        getDataAccess().deleteServiceSearch(service);
 
         WorkItem workItem = new WorkItem(Type.service, Operation.delete, user, team, service, null, null, null, data.reason);
         workItemProcessor.processWorkItem(workItem);

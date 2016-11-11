@@ -32,6 +32,8 @@ public class PutServiceData {
     public boolean doManageVip;
     public boolean doCheckJar;
     public FindBugsLevel doFindBugsLevel;
+    public String gitProject;
+    public String mavenGroupId;
     public String testStyle;
     public String testHostname;
     public String testRunAs;

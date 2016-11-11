@@ -448,12 +448,15 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveService(Service service) {
         saveData(service.getServiceId(), gson.toJson(service), serviceInsert);
-
-        backfillService(service);
     }
 
     @Override
     public void updateService(Service service) {
+        updateData(service.getServiceId(), gson.toJson(service), serviceUpdate);
+    }
+
+    @Override
+    public void deleteServiceSearch(Service service) {
         updateData(service.getServiceId(), gson.toJson(service), serviceUpdate);
 
         BoundStatement boundStatement = new BoundStatement(searchDelete);
@@ -461,32 +464,27 @@ public class CassandraDataAccess implements DataAccess {
                 SEARCH_SPACE_SERVICE_NAME,
                 service.getServiceName().toLowerCase()));
 
-        boundStatement = new BoundStatement(searchDelete);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_GIT_PROJECT,
-                service.getGitProject().toLowerCase()));
+        if (service.getGitProject() != null && !service.getGitProject().isEmpty()) {
+            boundStatement = new BoundStatement(searchDelete);
+            session.execute(boundStatement.bind(
+                    SEARCH_SPACE_GIT_PROJECT,
+                    service.getGitProject().toLowerCase()));
+        }
 
-        boundStatement = new BoundStatement(searchDelete);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_MAVEN_GROUP,
-                service.getMavenGroupId().toLowerCase()));
-
-        if (service.isActive()) {
-            backfillService(service);
+        if (service.getMavenGroupId() != null && !service.getMavenGroupId().isEmpty()) {
+            boundStatement = new BoundStatement(searchDelete);
+            session.execute(boundStatement.bind(
+                    SEARCH_SPACE_MAVEN_GROUP,
+                    service.getMavenGroupId().toLowerCase()));
         }
     }
 
     @Override
-    public void backfillService(Service service) {
+    public void insertServiceSearch(Service service) {
+        if (!service.isActive()) {
+            return;
+        }
         BoundStatement boundStatement = new BoundStatement(searchInsert);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_SERVICE_NAME,
-                service.getGitProject().toLowerCase(),
-                service.getServiceId(),
-                null,
-                null));
-
-        boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
                 SEARCH_SPACE_GIT_PROJECT,
                 service.getServiceName().toLowerCase(),
@@ -494,13 +492,25 @@ public class CassandraDataAccess implements DataAccess {
                 null,
                 null));
 
-        boundStatement = new BoundStatement(searchInsert);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_MAVEN_GROUP,
-                service.getMavenGroupId().toLowerCase(),
-                service.getServiceId(),
-                null,
-                null));
+        if (service.getGitProject() != null && !service.getGitProject().isEmpty()) {
+            boundStatement = new BoundStatement(searchInsert);
+            session.execute(boundStatement.bind(
+                    SEARCH_SPACE_SERVICE_NAME,
+                    service.getGitProject().toLowerCase(),
+                    service.getServiceId(),
+                    null,
+                    null));
+        }
+
+        if (service.getMavenGroupId() != null && !service.getMavenGroupId().isEmpty()) {
+            boundStatement = new BoundStatement(searchInsert);
+            session.execute(boundStatement.bind(
+                    SEARCH_SPACE_MAVEN_GROUP,
+                    service.getMavenGroupId().toLowerCase(),
+                    service.getServiceId(),
+                    null,
+                    null));
+        }
     }
 
     @Override
@@ -537,12 +547,12 @@ public class CassandraDataAccess implements DataAccess {
         if (host == null) {
             return null;
         }
-        
+
         Row row = getStatus(host.getHostId());
         if (row == null) {
             return host;
         }
-        
+
         host.setStatus(row.getBool("busy"), row.getString("status"));
         return host;
     }

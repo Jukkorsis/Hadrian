@@ -47,7 +47,7 @@ public class DataAccessUpdater {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
-                dataAccess.backfillService(service);
+                dataAccess.insertServiceSearch(service);
                 serviceCount++;
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {

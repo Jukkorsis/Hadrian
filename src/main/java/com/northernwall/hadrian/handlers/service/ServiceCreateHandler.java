@@ -58,31 +58,41 @@ public class ServiceCreateHandler extends BasicHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
         Team team = getTeam(data.teamId, null);
+        
         if (data.serviceName == null || data.serviceName.isEmpty()) {
             throw new Http400BadRequestException("Service Name is mising or empty");
         }
         if (data.serviceName.length() > 30) {
             throw new Http400BadRequestException("Service Name is to long, max is 30");
         }
+        if (getDataAccess().getServiceByServiceName(data.serviceName) != null) {
+             throw new Http405NotAllowedException("A service already exists with this name");
+        }
+
         if (data.description.length() > 500) {
             throw new Http400BadRequestException("Description is to long, max is 500");
         }
 
-        if (getDataAccess().getServiceByServiceName(data.serviceName) != null) {
-             throw new Http405NotAllowedException("A service already exists with this name");
-        }
-        if (getDataAccess().getServiceByGitProject(data.gitProject) != null) {
-             throw new Http405NotAllowedException("A service already exists at this Git Project location");
-        }
-        if (getDataAccess().getServiceByMavenGroup(data.mavenGroupId) != null) {
-             throw new Http405NotAllowedException("A service already exists with this Maven group");
+        if (data.doBuilds) {
+            if (data.gitProject == null || data.gitProject.isEmpty()) {
+                throw new Http400BadRequestException("Git Project is mising or empty");
+            }
+            if (data.gitProject.length() > 30) {
+                throw new Http400BadRequestException("Git Project is to long, max is 30");
+            }
+            if (getDataAccess().getServiceByGitProject(data.gitProject) != null) {
+                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
+            }
+        } else {
+            data.gitProject = null;
         }
 
-        if (data.gitProject == null || data.gitProject.isEmpty()) {
-            throw new Http400BadRequestException("Git Project is mising or empty");
-        }
-        if (data.gitProject.length() > 30) {
-            throw new Http400BadRequestException("Git Project is to long, max is 30");
+        if (data.doDeploys) {
+            if (getDataAccess().getServiceByMavenGroup(data.mavenGroupId) != null) {
+                 throw new Http405NotAllowedException("A service already exists with this Maven group");
+            }
+        } else {
+            data.mavenGroupId = null;
         }
         
         try {
@@ -124,6 +134,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 true);
 
         getDataAccess().saveService(service);
+        getDataAccess().insertServiceSearch(service);
 
         WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);

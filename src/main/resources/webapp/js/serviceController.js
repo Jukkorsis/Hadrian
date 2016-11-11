@@ -34,6 +34,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     service: function () {
                         return $scope.service;
                     },
+                    team: function () {
+                        return $scope.team;
+                    },
                     config: function () {
                         return $scope.config;
                     }
@@ -937,8 +940,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         });
     }]);
 
-hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service', 'config',
-    function ($scope, $route, $http, $modalInstance, service, config) {
+hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service', 'team', 'config',
+    function ($scope, $route, $http, $modalInstance, service, team, config) {
+        $scope.team = team;
         $scope.config = config;
         $scope.errorMsg = null;
         $scope.formUpdateService = {};
@@ -951,6 +955,8 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.doManageVip = service.doManageVip;
         $scope.formUpdateService.doCheckJar = service.doCheckJar;
         $scope.formUpdateService.doFindBugsLevel = service.doFindBugsLevel;
+        $scope.formUpdateService.gitProject = service.gitProject;
+        $scope.formUpdateService.mavenGroupId = service.mavenGroupId;
         $scope.formUpdateService.testStyle = service.testStyle;
         $scope.formUpdateService.testHostname = service.testHostname;
         $scope.formUpdateService.testRunAs = service.testRunAs;
@@ -970,6 +976,8 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 doManageVip: $scope.formUpdateService.doManageVip,
                 doCheckJar: $scope.formUpdateService.doCheckJar,
                 doFindBugsLevel: $scope.formUpdateService.doFindBugsLevel,
+                gitProject: $scope.formUpdateService.gitProject,
+                mavenGroupId: $scope.formUpdateService.mavenGroupId,
                 testStyle: $scope.formUpdateService.testStyle,
                 testHostname: $scope.formUpdateService.testHostname,
                 testRunAs: $scope.formUpdateService.testRunAs,
