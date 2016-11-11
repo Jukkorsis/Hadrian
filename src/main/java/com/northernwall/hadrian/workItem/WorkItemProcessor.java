@@ -345,8 +345,6 @@ public class WorkItemProcessor {
                 && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
             Host host = dataAccess.getHost(workItem.getService().serviceId, nextWorkItem.getHost().hostId);
             if (host != null) {
-                host.setStatus(false, "Queued operation cancelled");
-                dataAccess.updateHost(host);
                 dataAccess.updateSatus(
                         nextWorkItem.getHost().hostId,
                         false,

@@ -122,8 +122,6 @@ public class HostSmokeTestAction extends Action {
             return;
         }
 
-        host.setStatus(false, "Last smoke test failed");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 false,

@@ -32,7 +32,7 @@ public class CallbackData {
     /**
      * An optional code, provided by the service to assist in diagnosis.
      */
-    public int errorCode;
+    public int errorCode = 0;
 
     /**
      * An optional description provide by the service to assist in diagnosis.

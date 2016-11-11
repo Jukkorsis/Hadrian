@@ -105,7 +105,6 @@ public class HostCreateHandler extends BasicHandler {
                 Host host = new Host(
                         hostName,
                         data.serviceId,
-                        "Creating...",
                         data.moduleId,
                         data.dataCenter,
                         data.environment,

@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class HostCreateAction extends Action {
         LOGGER.info("Creating host {} for {}", workItem.getHost().hostName, workItem.getService().serviceName);
         Result result = Result.success;
         success(workItem);
-        recordAudit(workItem, result, null);
+        recordAudit(workItem, null, result, null);
         return result;
     }
 
@@ -43,8 +42,8 @@ public class HostCreateAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
+        Map<String, String> notes = createNotesFromCallback(callbackData);
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Environment", workItem.getHost().environment);
         notes.put("Platform", workItem.getHost().platform);
@@ -62,8 +61,6 @@ public class HostCreateAction extends Action {
             return;
         }
 
-        host.setStatus(false, Const.NO_STATUS);
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 host.getHostId(),
                 false,

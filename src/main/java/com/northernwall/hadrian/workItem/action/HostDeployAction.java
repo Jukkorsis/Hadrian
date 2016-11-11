@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class HostDeployAction extends Action {
         LOGGER.info("Deploying to host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
         Result result = Result.success;
         success(workItem);
-        recordAudit(workItem, result, null);
+        recordAudit(workItem, null, result, null);
         return result;
     }
 
@@ -49,16 +48,14 @@ public class HostDeployAction extends Action {
             LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
             return;
         }
-        host.setStatus(true, "Deploying...");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 true,
                 "Deploying...");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
+        Map<String, String> notes = createNotesFromCallback(callbackData);
         if (workItem.getHost().version != null) {
             notes.put("Version", workItem.getHost().version);
         }
@@ -82,8 +79,6 @@ public class HostDeployAction extends Action {
             return;
         }
 
-        host.setStatus(false, Const.NO_STATUS);
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 false,
@@ -97,8 +92,6 @@ public class HostDeployAction extends Action {
             return;
         }
 
-        host.setStatus(false, "Last deployment failed");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 false,

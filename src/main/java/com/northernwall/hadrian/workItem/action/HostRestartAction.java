@@ -20,7 +20,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class HostRestartAction extends Action {
     public Result process(WorkItem workItem) {
         Result result = Result.success;
         success(workItem);
-        recordAudit(workItem, result, null);
+        recordAudit(workItem, null, result, null);
         return result;
     }
 
@@ -48,16 +47,14 @@ public class HostRestartAction extends Action {
             LOGGER.warn("Could not find host {} being restarted too", workItem.getHost().hostId);
             return;
         }
-        host.setStatus(true, "Restarting...");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 true,
                 "Restarting...");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
+        Map<String, String> notes = createNotesFromCallback(callbackData);
         notes.put("Reason", workItem.getReason());
         notes.put("Check for OS Upgrade", Boolean.toString(workItem.getHost().doOsUpgrade));
         recordAudit(workItem, result, notes, output);
@@ -69,8 +66,6 @@ public class HostRestartAction extends Action {
             LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        host.setStatus(false, Const.NO_STATUS);
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 false,
@@ -84,8 +79,6 @@ public class HostRestartAction extends Action {
             return;
         }
 
-        host.setStatus(false, "Last restart failed");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 workItem.getHost().hostId,
                 false,

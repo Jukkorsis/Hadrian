@@ -19,7 +19,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class HostDeleteAction extends Action {
     public Result process(WorkItem workItem) {
         Result result = Result.success;
         success(workItem);
-        recordAudit(workItem, result, null);
+        recordAudit(workItem, null, result, null);
         return result;
     }
 
@@ -41,8 +40,8 @@ public class HostDeleteAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
+        Map<String, String> notes = createNotesFromCallback(callbackData);
         notes.put("Reason", workItem.getReason());
         recordAudit(workItem, result, notes, output);
     }
@@ -62,8 +61,6 @@ public class HostDeleteAction extends Action {
             LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
             return;
         }
-        host.setStatus(false, "Delete host failed");
-        dataAccess.updateHost(host);
         dataAccess.updateSatus(
                 host.getHostId(),
                 false,

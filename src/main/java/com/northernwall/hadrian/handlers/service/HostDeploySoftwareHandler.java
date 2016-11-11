@@ -104,19 +104,16 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {
-                            host.setStatus(true, "Deploying...");
                             getDataAccess().updateSatus(
                                     host.getHostId(),
                                     true,
                                     "Deploying...");
                         } else {
-                            host.setStatus(true, "Deploy Queued");
                             getDataAccess().updateSatus(
                                     host.getHostId(),
                                     true,
                                     "Deploy Queued");
                         }
-                        getDataAccess().updateHost(host);
 
                         WorkItem workItem;
                         if (service.isDoManageVip()) {

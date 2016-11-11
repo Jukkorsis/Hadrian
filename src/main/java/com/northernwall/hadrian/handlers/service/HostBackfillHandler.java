@@ -118,7 +118,6 @@ public class HostBackfillHandler extends BasicHandler {
                     Host host = new Host(
                             scrubedHostName,
                             service.getServiceId(),
-                            Const.NO_STATUS,
                             module.getModuleId(),
                             data.dataCenter,
                             data.environment,

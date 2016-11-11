@@ -18,7 +18,6 @@ package com.northernwall.hadrian.workItem.action;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceDeleteAction extends Action {
@@ -26,7 +25,7 @@ public class ServiceDeleteAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
-        recordAudit(workItem, result, null);
+        recordAudit(workItem, null, result, null);
         return result;
     }
 
@@ -35,8 +34,8 @@ public class ServiceDeleteAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
+        Map<String, String> notes = createNotesFromCallback(callbackData);
         notes.put("Reason", workItem.getReason());
         recordAudit(workItem, result, notes, output);
     }

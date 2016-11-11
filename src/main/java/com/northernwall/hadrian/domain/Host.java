@@ -45,12 +45,12 @@ public class Host implements Comparable<Host> {
         this.platform = null;
     }
 
-    public Host(String hostName, String serviceId, String status, String moduleId, String dataCenter, String environment, String platform) {
+    public Host(String hostName, String serviceId, String moduleId, String dataCenter, String environment, String platform) {
         this.hostId = UUID.randomUUID().toString();
         this.hostName = hostName;
         this.serviceId = serviceId;
         this.busy = false;
-        this.status = status;
+        this.status = Const.NO_STATUS;
         this.moduleId = moduleId;
         this.dataCenter = dataCenter;
         this.environment = environment;

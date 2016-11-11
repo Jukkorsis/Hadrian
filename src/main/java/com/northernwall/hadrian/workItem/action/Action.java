@@ -26,6 +26,7 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -85,6 +86,19 @@ public abstract class Action {
             audit.notes = gson.toJson(notes);
         }
         dataAccess.saveAudit(audit, output);
+    }
+
+    protected Map<String, String> createNotesFromCallback(CallbackData callbackData) {
+        Map<String, String> notes = new HashMap<>();
+        if (callbackData != null) {
+            if (callbackData.errorCode != 0) {
+                notes.put("error_code", Integer.toString(callbackData.errorCode));
+            }
+            if (callbackData.errorDescription != null && !callbackData.errorDescription.isEmpty()) {
+                notes.put("error_desc", callbackData.errorDescription);
+            }
+        }
+        return notes;
     }
 
     protected String getGitUrl(WorkItem workItem) {
