@@ -88,7 +88,10 @@ public class ServiceModifyHandler extends BasicHandler {
             data.gitProject = null;
         }
 
-        if (data.doDeploys) {
+        if (data.doDeploys || data.doBuilds) {
+            if (data.mavenGroupId == null || data.mavenGroupId.isEmpty()) {
+                throw new Http400BadRequestException("Maven Group is mising or empty");
+            }
             Service temp = getDataAccess().getServiceByMavenGroup(data.mavenGroupId);
             if (temp != null && !temp.getServiceId().equals(data.serviceId)) {
                  throw new Http405NotAllowedException("A service already exists with this Maven group");

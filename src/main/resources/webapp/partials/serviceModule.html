@@ -27,7 +27,7 @@
                 <th>Type</th>
                 <th>Git Folder</th>
                 <th>Maven Artifact</th>
-                <th>Artifact Type</th>
+                <th>Host Abbr</th>
             </tr>
             <tr ng-repeat-start="m in service.modules">
                 <td>
@@ -81,37 +81,71 @@
                 <td>{{m.moduleType}}</td>
                 <td>/{{m.gitFolder}}</td>
                 <td>{{m.mavenArtifactId}}</td>
-                <td>{{m.artifactType}}</td>
+                <td>{{m.hostAbbr}}</td>
             </tr>
             <tr ng-if="m.expanded" ng-repeat-end="">
                 <td colspan="9">
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
-                                <div ng-if="m.artifactSuffix">
-                                    <dt>Artifact Suffix:</dt>
-                                    <dd>{{m.artifactSuffix}}</dd>
-                                </div>
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
-                                    <dt>Host Abbr:</dt>
-                                    <dd>{{m.hostAbbr}}</dd>
                                     <dt>Environments:</dt>
                                     <dd><span ng-repeat="(nname, val) in m.environmentNames">{{nname}} </span></dd>
-                                    <dt>Run As:</dt>
-                                    <dd>{{m.runAs}}</dd>
-                                    <div ng-if="m.configName">
-                                        <dt>{{config.moduleConfigName}}:</dt>
-                                        <dd>{{m.configName}}</dd>
-                                    </div>
                                     <dt>Outbound Connectivity:</dt>
                                     <dd>{{m.outbound}}</dd>
+                                    <div ng-if="service.doDeploys">
+                                        <dt>Run As:</dt>
+                                        <dd>{{m.runAs}}</dd>
+                                        <dt>Deployment Folder:</dt>
+                                        <dd>{{m.deploymentFolder}}</dd>
+                                        <dt>Data Folder:</dt>
+                                        <dd>{{m.dataFolder}}</dd>
+                                        <dt>Logs Folder:</dt>
+                                        <dd>{{m.logsFolder}}</dd>
+                                        <dt>Logs Retention:</dt>
+                                        <dd>{{m.logsRetention}} Months</dd>
+                                        <div ng-if="m.configName">
+                                            <dt>{{config.moduleConfigName}}:</dt>
+                                            <dd>{{m.configName}}</dd>
+                                        </div>
+                                        <div ng-if="m.artifactSuffix">
+                                            <dt>Artifact Suffix:</dt>
+                                            <dd>{{m.artifactSuffix}}</dd>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="service.doDeploys">
+                                    <dt>Artifact Type:</dt>
+                                    <dd>{{m.artifactType}}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
                                     <dt>Availability URL:</dt>
                                     <dd>{{m.availabilityUrl}}</dd>
                                     <dt>Smoke Test URL:</dt>
                                     <dd>{{m.smokeTestUrl}}</dd>
+                                    <div ng-if="service.doDeploys">
+                                        <dt>Start Cmd Line:</dt>
+                                        <dd>{{m.startCmdLine}}</dd>
+                                        <dt>Start Timeout:</dt>
+                                        <dd>{{m.startTimeOut}} sec</dd>
+                                        <dt>Stop Cmd Line:</dt>
+                                        <dd>{{m.stopCmdLine}}</dd>
+                                        <dt>Stop Timeout:</dt>
+                                        <dd>{{m.stopTimeOut}} sec</dd>
+                                    </div>
                                 </div>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
                                 <dt>Used By:</dt>
                                 <dd>
                                     <div ng-repeat="sr in m.usedBy">
@@ -123,24 +157,6 @@
                         </div>
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
-                                <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
-                                    <dt>Deployment Folder:</dt>
-                                    <dd>{{m.deploymentFolder}}</dd>
-                                    <dt>Data Folder:</dt>
-                                    <dd>{{m.dataFolder}}</dd>
-                                    <dt>Logs Folder:</dt>
-                                    <dd>{{m.logsFolder}}</dd>
-                                    <dt>Logs Retention:</dt>
-                                    <dd>{{m.logsRetention}} Months</dd>
-                                    <dt>Start Cmd Line:</dt>
-                                    <dd>{{m.startCmdLine}}</dd>
-                                    <dt>Start Timeout:</dt>
-                                    <dd>{{m.startTimeOut}} sec</dd>
-                                    <dt>Stop Cmd Line:</dt>
-                                    <dd>{{m.stopCmdLine}}</dd>
-                                    <dt>Stop Timeout:</dt>
-                                    <dd>{{m.stopTimeOut}} sec</dd>
-                                </div>
                                 <dt>Uses:</dt>
                                 <dd>
                                     <div ng-repeat="sr in m.uses">

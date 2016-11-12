@@ -45,6 +45,7 @@ import org.eclipse.jetty.server.Request;
  * @author Richard Thurston
  */
 public class ModuleCreateHandler extends BasicHandler {
+
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
@@ -115,34 +116,35 @@ public class ModuleCreateHandler extends BasicHandler {
             case Deployable:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
-                }  
-                
-                data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
-                data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", true);
-                data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+                }
 
-                folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
-                
-                if (data.logsFolder != null
-                        && !data.logsFolder.isEmpty()) { 
+                if (service.isDoDeploys()) {
+                    data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
+                    data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
+                    data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+
+                    folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
+
                     folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
                     folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
+
+                    if (data.dataFolder != null
+                            && !data.dataFolder.isEmpty()) {
+                        folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
+                        folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
+                    }
+                } else {
+                    data.deploymentFolder = null;
+                    data.logsFolder = null;
+                    data.dataFolder = null;
                 }
 
-                if (data.dataFolder != null
-                        && !data.dataFolder.isEmpty()) { 
-                    folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
-                    folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
-                }
-                
-                if (data.environmentNames == null || data.environmentNames.isEmpty()) {
-                    throw new Http400BadRequestException("At least one environment must be selected");
-                }
+                ModuleModifyHandler.checkEnvironmentNames(data.environmentNames);
                 break;
         }
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
-        if (modules != null && !modules.isEmpty()){
+        if (modules != null && !modules.isEmpty()) {
             for (Module temp : modules) {
                 if (temp.getGitFolder() == null || temp.getGitFolder().isEmpty()) {
                     throw new Http400BadRequestException("Can not create new module while module " + temp.getModuleName() + " is at the git folder root.");
@@ -213,10 +215,9 @@ public class ModuleCreateHandler extends BasicHandler {
             workItem.addModule(temp);
         }
         workItemProcessor.processWorkItem(workItem);
-        
+
         response.setStatus(200);
         request.setHandled(true);
     }
-
 
 }

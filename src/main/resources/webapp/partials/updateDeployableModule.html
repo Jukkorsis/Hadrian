@@ -13,15 +13,6 @@
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Git Folder:</label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <div class="input-group-addon"> / </div>
-                            <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
                     <label for="email" class="col-sm-4 control-label">Host Abbr:</label>
                     <div class="col-sm-8">
                         <input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control" id="name" placeholder="Name">
@@ -36,12 +27,6 @@
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Run As User:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
                     <label for="email" class="col-sm-4 control-label">Outbound Connectivity:</label>
                     <div class="col-sm-8">
                         <select ng-model="formUpdateModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
@@ -50,12 +35,55 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">{{config.moduleConfigName}}:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.configName" type="text" class="form-control" id="name" placeholder="Name">
+                <div ng-if="service.doBuilds">
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Git Folder:</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <div class="input-group-addon"> / </div>
+                                <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div ng-if="service.doDeploys || service.doBuilds">
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Maven Artifact Id:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control" id="name" placeholder="Name">
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="service.doDeploys">
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Artifact Type:</label>
+                        <div class="col-sm-8">
+                            <select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Artifact Suffix:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control" id="name" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Run As User:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">{{config.moduleConfigName}}:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.configName" type="text" class="form-control" id="name" placeholder="Name">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="form-horizontal">
                 <div class="form-group form-group-sm">
                     <label for="email" class="col-sm-4 control-label">Version Url:</label>
                     <div class="col-sm-8">
@@ -74,82 +102,62 @@
                         <input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control">
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form class="form-horizontal">
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Maven Artifact Id:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Artifact Type:</label>
-                    <div class="col-sm-8">
-                        <select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Artifact Suffix:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Deployment Folder:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Data Folder:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Logs Folder:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Logs Retention:</label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
-                            <div class="input-group-addon">months</div>
+                <div ng-if="service.doDeploys">
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Deployment Folder:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name" placeholder="Name">
                         </div>
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Start Cmd Line:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Start Time Out:</label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control">
-                            <div class="input-group-addon">sec</div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Data Folder:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name" placeholder="Name">
                         </div>
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Stop Cmd Line:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control">
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Logs Folder:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name" placeholder="Name">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Stop Time Out:</label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control">
-                            <div class="input-group-addon">sec</div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Logs Retention:</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
+                                <div class="input-group-addon">months</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Start Cmd Line:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Start Time Out:</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control">
+                                <div class="input-group-addon">sec</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Stop Cmd Line:</label>
+                        <div class="col-sm-8">
+                            <input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="email" class="col-sm-4 control-label">Stop Time Out:</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control">
+                                <div class="input-group-addon">sec</div>
+                            </div>
                         </div>
                     </div>
                 </div>

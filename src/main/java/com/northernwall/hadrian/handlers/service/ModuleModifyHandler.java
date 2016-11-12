@@ -32,7 +32,9 @@ import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,28 +124,29 @@ public class ModuleModifyHandler extends BasicHandler {
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
                 }
-                
-                data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
-                data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", true);
-                data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
 
-                folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
-                
-                if (data.logsFolder != null
-                        && !data.logsFolder.isEmpty()) { 
+                if (service.isDoDeploys()) {
+                    data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
+                    data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
+                    data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+
+                    folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
+
                     folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
                     folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
+
+                    if (data.dataFolder != null
+                            && !data.dataFolder.isEmpty()) {
+                        folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
+                        folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
+                    }
+                } else {
+                    data.deploymentFolder = null;
+                    data.logsFolder = null;
+                    data.dataFolder = null;
                 }
 
-                if (data.dataFolder != null
-                        && !data.dataFolder.isEmpty()) { 
-                    folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
-                    folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
-                }   
-                
-                if (data.environmentNames == null || data.environmentNames.isEmpty()) {
-                    throw new Http400BadRequestException("At least one environment must be selected");
-                }
+                checkEnvironmentNames(data.environmentNames);
                 break;
         }
 
@@ -180,6 +183,32 @@ public class ModuleModifyHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    public static void checkEnvironmentNames(Map<String, Boolean> environmentNames) throws Http400BadRequestException {
+        if (environmentNames == null || environmentNames.isEmpty()) {
+            throw new Http400BadRequestException("At least one environment must be selected");
+        }
+        
+        List<String> falseKeys = null;
+        for (Map.Entry<String, Boolean> entry : environmentNames.entrySet()) {
+            if (!entry.getValue()) {
+                if (falseKeys == null) {
+                    falseKeys = new LinkedList<>();
+                }
+                falseKeys.add(entry.getKey());
+            }
+        }
+        
+        if (falseKeys != null) {
+            for (String key : falseKeys) {
+                environmentNames.remove(key);
+            }
+        }
+        
+        if (environmentNames == null || environmentNames.isEmpty()) {
+            throw new Http400BadRequestException("At least one environment must be selected");
+        }
     }
 
 }

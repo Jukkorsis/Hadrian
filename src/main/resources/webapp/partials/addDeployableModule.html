@@ -8,15 +8,6 @@
             <dl class="dl-horizontal">
                 <dt>Name:</dt>
                 <dd><input ng-model="formSaveModule.moduleName" type="text" class="form-control"></dd>
-                <dt>Git Folder:</dt>
-                <dd>
-                    <div class="input-group">
-                        <div class="input-group-addon"> / </div>
-                        <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
-                    </div>
-                </dd>
-                <dt>Template:</dt>
-                <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
                 <dt>Host Abbr:</dt>
                 <dd><input ng-model="formSaveModule.hostAbbr" type="text" class="form-control"></dd>
                 <dt>Environments:</dt>
@@ -25,64 +16,81 @@
                         <input ng-model="formSaveModule.environmentNames[n]" type="checkbox">{{n}}
                     </span>
                 </dd>
-                <dt>Run As User:</dt>
-                <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
                 <dt>Outbound Connectivity:</dt>
                 <dd>
-                    <select ng-model="formSaveModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external servicea." popover-trigger="mouseenter">
+                    <select ng-model="formSaveModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
                         <option>No</option>
                         <option>Required</option>
                     </select>
                 </dd>
-                <dt>{{config.moduleConfigName}}:</dt>
-                <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
+                <div ng-if="service.doBuilds">
+                    <dt>Git Folder:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <div class="input-group-addon"> / </div>
+                            <input ng-model="formSaveModule.gitFolder" type="text" class="form-control">
+                        </div>
+                    </dd>
+                    <dt>Template:</dt>
+                    <dd><select ng-model="formSaveModule.deployableTemplate" ng-options="c for c in config.deployableTemplates" class="form-control" uib-popover="The selected template instructs the service builder on what initial code should be used to construct the new service. If you don't want any starter/boiler plate code then select 'No template'." popover-trigger="mouseenter"></select></dd>
+                </div>
+                <div ng-if="service.doDeploys || service.doBuilds">
+                    <dt>Maven Artifact:</dt>
+                    <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
+                </div>
+                <div ng-if="service.doDeploys">
+                    <dt>Artifact Type:</dt>
+                    <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
+                    <dt>Artifact Suffix:</dt>
+                    <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
+                    <dt>Run As User:</dt>
+                    <dd><input ng-model="formSaveModule.runAs" type="text" class="form-control"></dd>
+                    <dt>{{config.moduleConfigName}}:</dt>
+                    <dd><input ng-model="formSaveModule.configName" type="text" class="form-control"></dd>
+                </div>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
                 <dt>Version Url:</dt>
                 <dd><input ng-model="formSaveModule.versionUrl" type="text" class="form-control"></dd>
                 <dt>Availability Url:</dt>
                 <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
                 <dt>Smoke Test Url:</dt>
                 <dd><input ng-model="formSaveModule.smokeTestUrl" type="text" class="form-control"></dd>
-            </dl>
-        </div>
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>Maven Artifact:</dt>
-                <dd><input ng-model="formSaveModule.mavenArtifactId" type="text" class="form-control"></dd>
-                <dt>Artifact Type:</dt>
-                <dd><select ng-model="formSaveModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select></dd>
-                <dt>Artifact Suffix:</dt>
-                <dd><input ng-model="formSaveModule.artifactSuffix" type="text" class="form-control" uib-popover="Does the service's artifact have a suffix, such as '-jar-with-dependencies'." popover-trigger="mouseenter"></dd>
-                <dt>Deployment Folder:</dt>
-                <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
-                <dt>Data Folder:</dt>
-                <dd><input ng-model="formSaveModule.dataFolder" type="text" class="form-control"></dd>
-                <dt>Logs Folder:</dt>
-                <dd><input ng-model="formSaveModule.logsFolder" type="text" class="form-control"></dd>
-                <dt>Logs Retention:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
-                        <div class="input-group-addon">months</div>
-                    </div>
-                </dd>
-                <dt>Start Cmd Line:</dt>
-                <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-                <dt>Start Time Out:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formSaveModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
-                        <div class="input-group-addon">sec</div>
-                    </div>
-                </dd>
-                <dt>Stop Cmd Line:</dt>
-                <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
-                <dt>Stop Time Out:</dt>
-                <dd>
-                    <div class="input-group">
-                        <input ng-model="formSaveModule.stopTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
-                        <div class="input-group-addon">sec</div>
-                    </div>
-                </dd>
+                <div ng-if="service.doDeploys">
+                    <dt>Deployment Folder:</dt>
+                    <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>
+                    <dt>Data Folder:</dt>
+                    <dd><input ng-model="formSaveModule.dataFolder" type="text" class="form-control"></dd>
+                    <dt>Logs Folder:</dt>
+                    <dd><input ng-model="formSaveModule.logsFolder" type="text" class="form-control"></dd>
+                    <dt>Logs Retention:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
+                            <div class="input-group-addon">months</div>
+                        </div>
+                    </dd>
+                    <dt>Start Cmd Line:</dt>
+                    <dd><input ng-model="formSaveModule.startCmdLine" type="text" class="form-control" uib-popover="The command to start the service or involve a script that will start the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                    <dt>Start Time Out:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <input ng-model="formSaveModule.startTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                            <div class="input-group-addon">sec</div>
+                        </div>
+                    </dd>
+                    <dt>Stop Cmd Line:</dt>
+                    <dd><input ng-model="formSaveModule.stopCmdLine" type="text" class="form-control" uib-popover="The command to stop the service or involve a script that will stop the service. The command is executed direct on the taret host. The command is executed by the 'Run As User'." popover-trigger="mouseenter"></dd>
+                    <dt>Stop Time Out:</dt>
+                    <dd>
+                        <div class="input-group">
+                            <input ng-model="formSaveModule.stopTimeOut" type="number" class="form-control" uib-popover="Time out in seconds." popover-trigger="mouseenter">
+                            <div class="input-group-addon">sec</div>
+                        </div>
+                    </dd>
+                </div>
             </dl>
         </div>
     </div>
