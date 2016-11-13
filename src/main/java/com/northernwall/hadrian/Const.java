@@ -66,6 +66,10 @@ public class Const {
     public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.idleTimeout";
     public static final int JETTY_ACCEPT_QUEUE_SIZE_DEFAULT = 100;
     
+    public static final String SERVICE_BUILD_URL = "serviceBuild.url";
+    public static final String SERVICE_BUILD_USERNAME = "serviceBuild.username";
+    public static final String SERVICE_BUILD_PASSWORD = "serviceBuild.password";
+    
     public static final String HOST_DETAILS_HELPER_FACTORY_CLASS_NAME = "hostDetailsHelper.factoryClassName";
     public static final String HOST_DETAILS_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.details.simple.SimpleHostDetailsHelperFactory";
     public static final String HOST_DETAILS_URL = "host.detailsUrl";

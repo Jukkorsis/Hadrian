@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h3 class="modal-title">Build {{service.serviceName}}</h3>
+</div>
+<div class="modal-body">
+    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+    <form class="form-horizontal">
+        <div class="form-group form-group-sm">
+            <label for="email" class="col-sm-4 control-label">Branch:</label>
+            <div class="col-sm-8">
+                <input ng-model="formBuildService.branch" type="text" class="form-control">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="save()">Build Service</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+

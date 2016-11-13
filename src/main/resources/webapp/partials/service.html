@@ -7,6 +7,7 @@
             </button>
             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                 <li role="menuitem"><a ng-click="openUpdateServiceModal();">Update {{service.serviceName}}</a></li>
+                <li role="menuitem" ng-if="service.doBuilds"><a ng-click="openBuildServiceModal();">Build {{service.serviceName}}</a></li>
                 <li role="menuitem"><a ng-click="openDeleteServiceModal();">Delete {{service.serviceName}}</a></li>
             </ul>
         </div>

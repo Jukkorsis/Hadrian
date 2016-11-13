@@ -48,6 +48,23 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openBuildServiceModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/buildService.html',
+                controller: 'ModalBuildServiceCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.openDeleteServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -988,6 +1005,34 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+hadrianControllers.controller('ModalBuildServiceCtrl', ['$scope', '$route', '$http', '$modalInstance', 'service',
+    function ($scope, $route, $http, $modalInstance, service) {
+        $scope.service = service;
+        $scope.errorMsg = null;
+        $scope.formBuildService = {};
+        $scope.formBuildService.branch = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                branch: $scope.formBuildService.branch
+            };
+
+            var responsePromise = $http.post("/v1/service/build", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $route.reload();

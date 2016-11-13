@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.handlers.service.dao;
 
 /**
  *
- * @author rthursto
+ * @author Richard
  */
-public enum Operation {
-
-    create,
-    deploy,
-    restart,
-    update,
-    delete, 
-    enableVips, 
-    disableVips, 
-    addVips, 
-    removeVips, 
-    fix, 
-    smokeTest,
-    build;
-
+public class BuildServiceData {
+    public String serviceId;
+    public String branch;
+    
 }
