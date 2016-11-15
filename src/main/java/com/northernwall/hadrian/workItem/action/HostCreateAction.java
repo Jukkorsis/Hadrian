@@ -73,8 +73,12 @@ public class HostCreateAction extends Action {
             LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
+        
         LOGGER.warn("Deleting host record due to failure in creating host {]", host.getHostId());
         dataAccess.deleteHost(host);
+        dataAccess.deleteSearch(
+                Const.SEARCH_SPACE_HOST_NAME, 
+                host.getHostName());
     }
 
 }

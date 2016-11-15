@@ -1,6 +1,7 @@
 package com.northernwall.hadrian.stubs;
 
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -65,21 +66,6 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public Service getServiceByServiceName(String serviceName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Service getServiceByGitProject(String gitProject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Service getServiceByMavenGroup(String mavenGroupId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Service getService(String serviceId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -95,22 +81,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteServiceSearch(Service service) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void insertServiceSearch(Service service) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public List<Host> getHosts(String serviceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Host getHostByHostName(String hostName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -131,11 +102,6 @@ public class StubDataAccess implements DataAccess {
 
     @Override
     public void deleteHost(Host host) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void backfillHostName(Host host) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -361,6 +327,21 @@ public class StubDataAccess implements DataAccess {
 
     @Override
     public boolean getAvailability() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public SearchResult doSearch(String searchSpace, String searchText) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteSearch(String searchSpace, String searchText) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

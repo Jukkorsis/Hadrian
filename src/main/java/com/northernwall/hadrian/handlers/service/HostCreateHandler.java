@@ -20,6 +20,7 @@ import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
@@ -98,46 +99,13 @@ public class HostCreateHandler extends BasicHandler {
         while (createdCount < data.count && num <= config.maxTotalCount) {
             String hostName = buildHostName(prefix, num);
             num++;
-            if (getDataAccess().getHostByHostName(hostName) == null) {
+            SearchResult searchResult = getDataAccess().doSearch(
+                    Const.SEARCH_SPACE_HOST_NAME,
+                    hostName);
+            if (searchResult == null) {
                 createdCount++;
                 LOGGER.info("Building host {} - {}/{}", hostName, createdCount, data.count);
-
-                Host host = new Host(
-                        hostName,
-                        data.serviceId,
-                        data.moduleId,
-                        data.dataCenter,
-                        data.environment,
-                        data.platform);
-                getDataAccess().saveHost(host);
-                getDataAccess().updateSatus(
-                        host.getHostId(),
-                        true,
-                        "Creating...");
-
-                List<WorkItem> workItems = new ArrayList<>(3);
-
-                WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null, data.reason);
-                workItemCreate.getHost().sizeCpu = data.sizeCpu;
-                workItemCreate.getHost().sizeMemory = data.sizeMemory;
-                workItemCreate.getHost().sizeStorage = data.sizeStorage;
-                workItemCreate.getHost().version = data.version;
-                workItemCreate.getHost().configVersion = data.configVersion;
-                workItems.add(workItemCreate);
-
-                if (service.isDoDeploys()) {
-                    WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null, data.reason);
-                    workItemDeploy.getHost().version = data.version;
-                    workItemDeploy.getHost().configVersion = data.configVersion;
-                    workItems.add(workItemDeploy);
-                }
-
-                if (service.isDoManageVip()) {
-                    WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null, null);
-                    workItems.add(workItemEnable);
-                }
-
-                workItemProcessor.processWorkItems(workItems);
+                doCreateHost(hostName, data, user, team, service, module);
             }
         }
 
@@ -147,6 +115,51 @@ public class HostCreateHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void doCreateHost(String hostName, PostHostData data, User user, Team team, Service service, Module module) throws IOException {
+        Host host = new Host(
+                hostName,
+                data.serviceId,
+                data.moduleId,
+                data.dataCenter,
+                data.environment,
+                data.platform);
+        getDataAccess().saveHost(host);
+        getDataAccess().insertSearch(
+                Const.SEARCH_SPACE_HOST_NAME,
+                hostName,
+                data.serviceId,
+                data.moduleId,
+                host.getHostId());
+        getDataAccess().updateSatus(
+                host.getHostId(),
+                true,
+                "Creating...");
+
+        List<WorkItem> workItems = new ArrayList<>(3);
+
+        WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null, data.reason);
+        workItemCreate.getHost().sizeCpu = data.sizeCpu;
+        workItemCreate.getHost().sizeMemory = data.sizeMemory;
+        workItemCreate.getHost().sizeStorage = data.sizeStorage;
+        workItemCreate.getHost().version = data.version;
+        workItemCreate.getHost().configVersion = data.configVersion;
+        workItems.add(workItemCreate);
+
+        if (service.isDoDeploys()) {
+            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null, data.reason);
+            workItemDeploy.getHost().version = data.version;
+            workItemDeploy.getHost().configVersion = data.configVersion;
+            workItems.add(workItemDeploy);
+        }
+
+        if (service.isDoManageVip()) {
+            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null, null);
+            workItems.add(workItemEnable);
+        }
+
+        workItemProcessor.processWorkItems(workItems);
     }
 
     private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {

@@ -25,7 +25,9 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Session.State;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.StringUtils;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -56,11 +58,6 @@ public class CassandraDataAccess implements DataAccess {
 
     private static final String CQL_SELECT_PRE = "SELECT * FROM ";
     private static final String CQL_SELECT_POST = ";";
-
-    private static final String SEARCH_SPACE_SERVICE_NAME = "serviceName";
-    private static final String SEARCH_SPACE_GIT_PROJECT = "gitProject";
-    private static final String SEARCH_SPACE_MAVEN_GROUP = "mavenGroup";
-    private static final String SEARCH_SPACE_HOST_NAME = "hostName";
 
     private final String username;
     private final String dataCenter;
@@ -181,14 +178,6 @@ public class CassandraDataAccess implements DataAccess {
         hostDelete = session.prepare("DELETE FROM host WHERE serviceId = ? AND id = ?;");
         hostDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        LOGGER.info("Praparing search statements...");
-        searchSelect = session.prepare("SELECT * FROM searchName WHERE searchSpace = ? AND searchText = ?;");
-        searchSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        searchInsert = session.prepare("INSERT INTO searchName (searchSpace, searchText, serviceId, moduleId, hostId) VALUES (?, ?, ?, ?, ?);");
-        searchInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        searchDelete = session.prepare("DELETE FROM searchName WHERE searchSpace = ? AND searchText = ?;");
-        searchDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-
         LOGGER.info("Praparing module statements...");
         moduleSelect = session.prepare("SELECT * FROM module WHERE serviceId = ?;");
         moduleSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -287,6 +276,14 @@ public class CassandraDataAccess implements DataAccess {
         auditOutputSelect = session.prepare("SELECT data FROM auditOutput WHERE serviceId = ? AND auditId = ?");
         auditOutputInsert = session.prepare("INSERT INTO auditOutput (serviceId, auditId, data) VALUES (?, ?, ?) USING TTL " + auditTimeToLive + ";");
         auditOutputInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        LOGGER.info("Praparing search statements...");
+        searchSelect = session.prepare("SELECT * FROM searchName WHERE searchSpace = ? AND searchText = ?;");
+        searchSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        searchInsert = session.prepare("INSERT INTO searchName (searchSpace, searchText, serviceId, moduleId, hostId) VALUES (?, ?, ?, ?, ?);");
+        searchInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        searchDelete = session.prepare("DELETE FROM searchName WHERE searchSpace = ? AND searchText = ?;");
+        searchDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         LOGGER.info("Praparing status statements...");
         LOGGER.info("Status TTL {}", statusTimeToLive);
@@ -402,45 +399,6 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public Service getServiceByServiceName(String serviceName) {
-        BoundStatement boundStatement = new BoundStatement(searchSelect);
-        ResultSet results = session.execute(boundStatement.bind(
-                SEARCH_SPACE_SERVICE_NAME,
-                serviceName.toLowerCase()));
-        if (results == null || results.isExhausted()) {
-            return null;
-        }
-        Row row = results.one();
-        return getService(row.getString("serviceId"));
-    }
-
-    @Override
-    public Service getServiceByGitProject(String gitProject) {
-        BoundStatement boundStatement = new BoundStatement(searchSelect);
-        ResultSet results = session.execute(boundStatement.bind(
-                SEARCH_SPACE_GIT_PROJECT,
-                gitProject.toLowerCase()));
-        if (results == null || results.isExhausted()) {
-            return null;
-        }
-        Row row = results.one();
-        return getService(row.getString("serviceId"));
-    }
-
-    @Override
-    public Service getServiceByMavenGroup(String mavenGroupId) {
-        BoundStatement boundStatement = new BoundStatement(searchSelect);
-        ResultSet results = session.execute(boundStatement.bind(
-                SEARCH_SPACE_MAVEN_GROUP,
-                mavenGroupId.toLowerCase()));
-        if (results == null || results.isExhausted()) {
-            return null;
-        }
-        Row row = results.one();
-        return getService(row.getString("serviceId"));
-    }
-
-    @Override
     public Service getService(String serviceId) {
         return getData(serviceId, serviceSelect, Service.class);
     }
@@ -456,64 +414,6 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteServiceSearch(Service service) {
-        updateData(service.getServiceId(), gson.toJson(service), serviceUpdate);
-
-        BoundStatement boundStatement = new BoundStatement(searchDelete);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_SERVICE_NAME,
-                service.getServiceName().toLowerCase()));
-
-        if (service.getGitProject() != null && !service.getGitProject().isEmpty()) {
-            boundStatement = new BoundStatement(searchDelete);
-            session.execute(boundStatement.bind(
-                    SEARCH_SPACE_GIT_PROJECT,
-                    service.getGitProject().toLowerCase()));
-        }
-
-        if (service.getMavenGroupId() != null && !service.getMavenGroupId().isEmpty()) {
-            boundStatement = new BoundStatement(searchDelete);
-            session.execute(boundStatement.bind(
-                    SEARCH_SPACE_MAVEN_GROUP,
-                    service.getMavenGroupId().toLowerCase()));
-        }
-    }
-
-    @Override
-    public void insertServiceSearch(Service service) {
-        if (!service.isActive()) {
-            return;
-        }
-        BoundStatement boundStatement = new BoundStatement(searchInsert);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_GIT_PROJECT,
-                service.getServiceName().toLowerCase(),
-                service.getServiceId(),
-                null,
-                null));
-
-        if (service.getGitProject() != null && !service.getGitProject().isEmpty()) {
-            boundStatement = new BoundStatement(searchInsert);
-            session.execute(boundStatement.bind(
-                    SEARCH_SPACE_SERVICE_NAME,
-                    service.getGitProject().toLowerCase(),
-                    service.getServiceId(),
-                    null,
-                    null));
-        }
-
-        if (service.getMavenGroupId() != null && !service.getMavenGroupId().isEmpty()) {
-            boundStatement = new BoundStatement(searchInsert);
-            session.execute(boundStatement.bind(
-                    SEARCH_SPACE_MAVEN_GROUP,
-                    service.getMavenGroupId().toLowerCase(),
-                    service.getServiceId(),
-                    null,
-                    null));
-        }
-    }
-
-    @Override
     public List<Host> getHosts(String serviceId) {
         List<Host> hosts = getServiceData(serviceId, hostSelect, Host.class);
         if (hosts == null || hosts.isEmpty()) {
@@ -526,19 +426,6 @@ public class CassandraDataAccess implements DataAccess {
             }
         }
         return hosts;
-    }
-
-    @Override
-    public Host getHostByHostName(String hostName) {
-        BoundStatement boundStatement = new BoundStatement(searchSelect);
-        ResultSet results = session.execute(boundStatement.bind(
-                SEARCH_SPACE_HOST_NAME,
-                hostName.toLowerCase()));
-        if (results == null || results.isExhausted()) {
-            return null;
-        }
-        Row row = results.one();
-        return getHost(row.getString("serviceId"), row.getString("hostId"));
     }
 
     @Override
@@ -560,8 +447,6 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void saveHost(Host host) {
         saveServiceData(host.getServiceId(), host.getHostId(), gson.toJson(host), hostInsert);
-
-        backfillHostName(host);
     }
 
     @Override
@@ -572,22 +457,6 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteHost(Host host) {
         deleteServiceData(host.getServiceId(), host.getHostId(), hostDelete);
-
-        BoundStatement boundStatement = new BoundStatement(searchDelete);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_HOST_NAME,
-                host.getHostName().toLowerCase()));
-    }
-
-    @Override
-    public void backfillHostName(Host host) {
-        BoundStatement boundStatement = new BoundStatement(searchInsert);
-        session.execute(boundStatement.bind(
-                SEARCH_SPACE_HOST_NAME,
-                host.getHostName().toLowerCase(),
-                host.getServiceId(),
-                host.getModuleId(),
-                host.getHostId()));
     }
 
     @Override
@@ -970,6 +839,63 @@ public class CassandraDataAccess implements DataAccess {
             return row.getString("data");
         }
         return null;
+    }
+
+    @Override
+    public SearchResult doSearch(String searchSpace, String searchText) {
+        BoundStatement boundStatement = new BoundStatement(searchSelect);
+        ResultSet results = session.execute(boundStatement.bind(
+                searchSpace,
+                searchText.toLowerCase()));
+
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        Row row = results.one();
+
+        SearchResult result = new SearchResult();
+        result.searchSpace = searchSpace;
+        result.searchText = searchText;
+        result.serviceId = row.getString("serviceId");
+        result.moduleId = row.getString("moduleId");
+        result.hostId = row.getString("hostId");
+
+        return result;
+    }
+
+    @Override
+    public void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId) {
+        SearchResult searchResult = doSearch(searchSpace, searchText);
+        if (searchResult != null) {
+            if (StringUtils.same(searchResult.serviceId, serviceId)
+                    && StringUtils.same(searchResult.moduleId, moduleId)
+                    && StringUtils.same(searchResult.hostId, hostId)) {
+                return;
+            }
+            LOGGER.warn("Insert into search is really an update s:{} {} m:{} {} h:{} {}",
+                   searchResult.serviceId,
+                   serviceId,
+                   searchResult.moduleId,
+                   moduleId,
+                   searchResult.hostId,
+                   hostId);
+        }
+
+        BoundStatement boundStatement = new BoundStatement(searchInsert);
+        session.execute(boundStatement.bind(
+                searchSpace,
+                searchText.toLowerCase(),
+                serviceId,
+                moduleId,
+                hostId));
+    }
+
+    @Override
+    public void deleteSearch(String searchSpace, String searchText) {
+        BoundStatement boundStatement = new BoundStatement(searchDelete);
+        session.execute(boundStatement.bind(
+                searchSpace,
+                searchText.toLowerCase()));
     }
 
     @Override

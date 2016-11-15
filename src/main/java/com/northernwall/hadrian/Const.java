@@ -181,6 +181,11 @@ public class Const {
     public static final String CONFIG_SCOPES_DEFAULT = "Not in scope, In scope";
     public static final String CONFIG_FOLDER_WHITE_LIST = "config.folderWhiteList";
     
+    public static final String SEARCH_SPACE_SERVICE_NAME = "serviceName";
+    public static final String SEARCH_SPACE_GIT_PROJECT = "gitProject";
+    public static final String SEARCH_SPACE_MAVEN_GROUP_ARTIFACT = "mavenGroupArtifact";
+    public static final String SEARCH_SPACE_HOST_NAME = "hostName";
+    
     private Const() {
     }
     

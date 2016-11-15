@@ -21,6 +21,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
@@ -113,44 +114,14 @@ public class HostBackfillHandler extends BasicHandler {
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                Host tempHost = getDataAccess().getHostByHostName(scrubedHostName);
-                if (tempHost == null) {
-                    Host host = new Host(
-                            scrubedHostName,
-                            service.getServiceId(),
-                            module.getModuleId(),
-                            data.dataCenter,
-                            data.environment,
-                            data.platform);
-                    getDataAccess().saveHost(host);
-                    getDataAccess().updateSatus(
-                            host.getHostId(), 
-                            false, 
-                            Const.NO_STATUS);
-
-                    Audit audit = new Audit();
-                    audit.serviceId = service.getServiceId();
-                    audit.setTimePerformed(GMT.getGmtAsDate());
-                    audit.timeRequested = GMT.getGmtAsDate();
-                    audit.requestor = user.getUsername();
-                    audit.type = Type.host;
-                    audit.operation = Operation.create;
-                    audit.successfull = true;
-                    audit.moduleName = module.getModuleName();
-                    audit.hostName = scrubedHostName;
-                    
-                    Map<String, String> notes = new HashMap<>();
-                    notes.put("Reason", "Backfilled host.");
-                    notes.put("DC", data.dataCenter);
-                    notes.put("Environment", data.environment);
-                    notes.put("Plaform", data.platform);
-                    audit.notes = getGson().toJson(notes);
-                    
-                    getDataAccess().saveAudit(audit, null);
-                    
+                SearchResult searchResult = getDataAccess().doSearch(
+                        Const.SEARCH_SPACE_HOST_NAME, 
+                        scrubedHostName);
+                if (searchResult == null) {
+                    doBackfill(scrubedHostName, service, module, data, user);
                     creationCount++;
                 } else {
-                    LOGGER.warn("Could not backfill host {} ({}) becuase it already exists", scrubedHostName, hostname);
+                    LOGGER.warn("Could not backfill host {} ({}) becuase it already exists, {}", scrubedHostName, hostname, searchResult.hostId);
                 }
             }
         }
@@ -161,6 +132,48 @@ public class HostBackfillHandler extends BasicHandler {
         
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void doBackfill(String scrubedHostName, Service service, Module module, PostBackfillHostData data, User user) {
+        Host host = new Host(
+                scrubedHostName,
+                service.getServiceId(),
+                module.getModuleId(),
+                data.dataCenter,
+                data.environment,
+                data.platform);
+        
+        getDataAccess().saveHost(host);
+        getDataAccess().insertSearch(
+                Const.SEARCH_SPACE_HOST_NAME,
+                scrubedHostName,
+                service.getServiceId(),
+                module.getModuleId(),
+                host.getHostId());
+        getDataAccess().updateSatus(
+                host.getHostId(),
+                false,
+                Const.NO_STATUS);
+        
+        Audit audit = new Audit();
+        audit.serviceId = service.getServiceId();
+        audit.setTimePerformed(GMT.getGmtAsDate());
+        audit.timeRequested = GMT.getGmtAsDate();
+        audit.requestor = user.getUsername();
+        audit.type = Type.host;
+        audit.operation = Operation.create;
+        audit.successfull = true;
+        audit.moduleName = module.getModuleName();
+        audit.hostName = scrubedHostName;
+        
+        Map<String, String> notes = new HashMap<>();
+        notes.put("Reason", "Backfilled host.");
+        notes.put("DC", data.dataCenter);
+        notes.put("Environment", data.environment);
+        notes.put("Plaform", data.platform);
+        audit.notes = getGson().toJson(notes);
+        
+        getDataAccess().saveAudit(audit, null);
     }
 
 

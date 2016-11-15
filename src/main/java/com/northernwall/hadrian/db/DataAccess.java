@@ -49,24 +49,15 @@ public interface DataAccess {
 
     List<Service> getAllServices();
     List<Service> getActiveServices();
-    Service getServiceByServiceName(String serviceName);
-    Service getServiceByGitProject(String gitProject);
-    Service getServiceByMavenGroup(String mavenGroupId);
     Service getService(String serviceId);
     void saveService(Service service);
     void updateService(Service service);
     
-    void deleteServiceSearch(Service service);
-    void insertServiceSearch(Service service);
-
     List<Host> getHosts(String serviceId);
-    Host getHostByHostName(String hostName);
     Host getHost(String serviceId, String hostId);
     void saveHost(Host host);
     void updateHost(Host host);
     void deleteHost(Host host);
-
-    void backfillHostName(Host host);
 
     List<Vip> getVips(String serviceId);
     Vip getVip(String serviceId, String vipId);
@@ -118,11 +109,15 @@ public interface DataAccess {
     int getWorkItemStatus(String id);
     void saveWorkItemStatus(String id, int i);
 
+    SearchResult doSearch(String searchSpace, String searchText);
+    void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId);
+    void deleteSearch(String searchSpace, String searchText);
+    
+    void updateSatus(String id, boolean busy, String status);
+
     void saveAudit(Audit audit, String output);
     List<Audit> getAudit(String serviceId, int year, int month, int startDay, int endDay);
     String getAuditOutput(String serviceId, String auditId);
-
-    void updateSatus(String id, boolean busy, String status);
 
     boolean getAvailability();
 

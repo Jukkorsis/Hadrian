@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -88,6 +89,14 @@ public class ModuleDeleteHandler extends BasicHandler {
         Collections.sort(modules);
 
         getDataAccess().deleteModule(data.serviceId, data.moduleId);
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
+                && module.getMavenArtifactId() != null
+                && !module.getMavenArtifactId().isEmpty()) {
+            getDataAccess().deleteSearch(
+                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT, 
+                    service.getMavenGroupId() + "." + module.getMavenArtifactId());
+        }
 
         WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null, null);
         for (Module temp : modules) {

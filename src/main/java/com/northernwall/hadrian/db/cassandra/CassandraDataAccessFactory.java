@@ -117,39 +117,15 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             session.execute("CREATE TABLE IF NOT EXISTS moduleFile (serviceId text, moduleId text, network text, name text, data text, PRIMARY KEY (serviceId, moduleId, network, name));");
             session.execute("CREATE TABLE IF NOT EXISTS vip (serviceId text, id text, data text, PRIMARY KEY (serviceId, id));");
             //Ref tables
-            try {
-                session.execute("DROP TABLE serviceRefClient;");
-            } catch (InvalidQueryException e) {
-            }
-            try {
-                session.execute("DROP TABLE serviceRefServer;");
-            } catch (InvalidQueryException e) {
-            }
-            try {
-                session.execute("DROP TABLE vipRefHost;");
-            } catch (InvalidQueryException e) {
-            }
-            try {
-                session.execute("DROP TABLE vipRefVip;");
-            } catch (InvalidQueryException e) {
-            }
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
             //Search table
-            try {
-                session.execute("DROP TABLE hostName;");
-            } catch (InvalidQueryException e) {
-            }
             session.execute("CREATE TABLE IF NOT EXISTS searchName (searchSpace text, searchText text, serviceId text, moduleId text, hostId text, PRIMARY KEY ((searchSpace), searchText));");
-            //Audit table
-            try {
-                session.execute("DROP TABLE audit;");
-            } catch (InvalidQueryException e) {
-            }
-            session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
-            session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
             //Status table
             session.execute("CREATE TABLE IF NOT EXISTS entityStatus (id text, time timeuuid, busy boolean, status text, PRIMARY KEY ((id), time));");
+            //Audit table
+            session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
+            session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");
             LOGGER.info("Tables created");
         }  
     }

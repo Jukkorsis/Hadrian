@@ -15,9 +15,11 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -31,6 +33,7 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +52,32 @@ import org.slf4j.LoggerFactory;
 public class ModuleModifyHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ModuleModifyHandler.class);
+
+    public static void checkEnvironmentNames(Map<String, Boolean> environmentNames) throws Http400BadRequestException {
+        if (environmentNames == null || environmentNames.isEmpty()) {
+            throw new Http400BadRequestException("At least one environment must be selected");
+        }
+
+        List<String> falseKeys = null;
+        for (Map.Entry<String, Boolean> entry : environmentNames.entrySet()) {
+            if (!entry.getValue()) {
+                if (falseKeys == null) {
+                    falseKeys = new LinkedList<>();
+                }
+                falseKeys.add(entry.getKey());
+            }
+        }
+
+        if (falseKeys != null) {
+            for (String key : falseKeys) {
+                environmentNames.remove(key);
+            }
+        }
+
+        if (environmentNames == null || environmentNames.isEmpty()) {
+            throw new Http400BadRequestException("At least one environment must be selected");
+        }
+    }
 
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
@@ -146,8 +175,30 @@ public class ModuleModifyHandler extends BasicHandler {
                     data.dataFolder = null;
                 }
 
+                if (service.getMavenGroupId() != null
+                        && !service.getMavenGroupId().isEmpty()
+                        && data.mavenArtifactId != null
+                        && !data.mavenArtifactId.isEmpty()) {
+                    SearchResult searchResult = getDataAccess().doSearch(
+                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            service.getMavenGroupId() + "." + data.mavenArtifactId);
+                    if (searchResult != null 
+                            && !searchResult.moduleId.equals(data.moduleId)) {
+                        throw new Http405NotAllowedException("A service and module already exists with this maven group and artifact");
+                    }
+                }
+
                 checkEnvironmentNames(data.environmentNames);
                 break;
+        }
+
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
+                && module.getMavenArtifactId() != null
+                && !module.getMavenArtifactId().isEmpty()) {
+            getDataAccess().deleteSearch(
+                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    service.getMavenGroupId() + "." + module.getMavenArtifactId());
         }
 
         module.setModuleName(data.moduleName);
@@ -174,6 +225,17 @@ public class ModuleModifyHandler extends BasicHandler {
         module.cleanEnvironmentNames(null);
 
         getDataAccess().saveModule(module);
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
+                && module.getMavenArtifactId() != null
+                && !module.getMavenArtifactId().isEmpty()) {
+            getDataAccess().insertSearch(
+                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                    service.getServiceId(),
+                    module.getModuleId(),
+                    null);
+        }
 
         WorkItem workItem = new WorkItem(Type.module, Operation.update, user, team, service, module, null, null, null);
         for (Module temp : modules) {
@@ -183,32 +245,6 @@ public class ModuleModifyHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
-    }
-
-    public static void checkEnvironmentNames(Map<String, Boolean> environmentNames) throws Http400BadRequestException {
-        if (environmentNames == null || environmentNames.isEmpty()) {
-            throw new Http400BadRequestException("At least one environment must be selected");
-        }
-        
-        List<String> falseKeys = null;
-        for (Map.Entry<String, Boolean> entry : environmentNames.entrySet()) {
-            if (!entry.getValue()) {
-                if (falseKeys == null) {
-                    falseKeys = new LinkedList<>();
-                }
-                falseKeys.add(entry.getKey());
-            }
-        }
-        
-        if (falseKeys != null) {
-            for (String key : falseKeys) {
-                environmentNames.remove(key);
-            }
-        }
-        
-        if (environmentNames == null || environmentNames.isEmpty()) {
-            throw new Http400BadRequestException("At least one environment must be selected");
-        }
     }
 
 }

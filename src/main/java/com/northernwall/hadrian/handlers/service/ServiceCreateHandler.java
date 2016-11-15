@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -65,7 +66,7 @@ public class ServiceCreateHandler extends BasicHandler {
         if (data.serviceName.length() > 30) {
             throw new Http400BadRequestException("Service Name is to long, max is 30");
         }
-        if (getDataAccess().getServiceByServiceName(data.serviceName) != null) {
+        if (getDataAccess().doSearch(Const.SEARCH_SPACE_SERVICE_NAME, data.serviceName) != null) {
              throw new Http405NotAllowedException("A service already exists with this name");
         }
 
@@ -80,7 +81,7 @@ public class ServiceCreateHandler extends BasicHandler {
             if (data.gitProject.length() > 30) {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
             }
-            if (getDataAccess().getServiceByGitProject(data.gitProject) != null) {
+            if (getDataAccess().doSearch(Const.SEARCH_SPACE_GIT_PROJECT, data.gitProject) != null) {
                  throw new Http405NotAllowedException("A service already exists at this Git Project location");
             }
         } else {
@@ -90,9 +91,6 @@ public class ServiceCreateHandler extends BasicHandler {
         if (data.doDeploys || data.doBuilds) {
             if (data.mavenGroupId == null || data.mavenGroupId.isEmpty()) {
                 throw new Http400BadRequestException("Maven Group is mising or empty");
-            }
-            if (getDataAccess().getServiceByMavenGroup(data.mavenGroupId) != null) {
-                 throw new Http405NotAllowedException("A service already exists with this Maven group");
             }
         } else {
             data.mavenGroupId = null;
@@ -137,7 +135,18 @@ public class ServiceCreateHandler extends BasicHandler {
                 true);
 
         getDataAccess().saveService(service);
-        getDataAccess().insertServiceSearch(service);
+        getDataAccess().insertSearch(
+                Const.SEARCH_SPACE_SERVICE_NAME, 
+                data.serviceName, 
+                service.getServiceId(), 
+                null, 
+                null);
+        getDataAccess().insertSearch(
+                Const.SEARCH_SPACE_GIT_PROJECT, 
+                data.gitProject, 
+                service.getServiceId(), 
+                null, 
+                null);
 
         WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);

@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handlers.service;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -53,7 +54,12 @@ public class ServiceDeleteHandler extends BasicHandler {
         service.setActive(false);
         service.setDeletionDate(GMT.getGmtAsDate());
         getDataAccess().saveService(service);
-        getDataAccess().deleteServiceSearch(service);
+        getDataAccess().deleteSearch(
+                Const.SEARCH_SPACE_SERVICE_NAME,
+                service.getServiceName());
+        getDataAccess().deleteSearch(
+                Const.SEARCH_SPACE_GIT_PROJECT,
+                service.getGitProject());
 
         WorkItem workItem = new WorkItem(Type.service, Operation.delete, user, team, service, null, null, null, data.reason);
         workItemProcessor.processWorkItem(workItem);

@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.db.inMemory;
 
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -138,36 +139,6 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Service getServiceByServiceName(String serviceName) {
-        for (Service service : services.values()) {
-            if (service.isActive() && service.getServiceName().equalsIgnoreCase(serviceName)) {
-                return service;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Service getServiceByGitProject(String gitProject) {
-        for (Service service : services.values()) {
-            if (service.isActive() && service.getGitProject().equalsIgnoreCase(gitProject)) {
-                return service;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Service getServiceByMavenGroup(String mavenGroupId) {
-        for (Service service : services.values()) {
-            if (service.isActive() && service.getMavenGroupId().equalsIgnoreCase(mavenGroupId)) {
-                return service;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public Service getService(String serviceId) {
         return services.get(serviceId);
     }
@@ -183,15 +154,6 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void deleteServiceSearch(Service service) {
-        services.put(service.getServiceId(), service);
-    }
-
-    @Override
-    public void insertServiceSearch(Service service) {
-    }
-
-    @Override
     public List<Host> getHosts(String serviceId) {
         List<Host> temp = new LinkedList<>();
         for (Host host : hosts.values()) {
@@ -201,16 +163,6 @@ public class InMemoryDataAccess implements DataAccess {
         }
         Collections.sort(temp);
         return temp;
-    }
-
-    @Override
-    public Host getHostByHostName(String hostName) {
-        for (Host host : hosts.values()) {
-            if (host.getHostName().equalsIgnoreCase(hostName)) {
-                return host;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -231,10 +183,6 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public void deleteHost(Host host) {
         hosts.remove(host.getHostId());
-    }
-
-    @Override
-    public void backfillHostName(Host host) {
     }
 
     @Override
@@ -538,6 +486,19 @@ public class InMemoryDataAccess implements DataAccess {
     @Override
     public String getAuditOutput(String serviceId, String auditId) {
         return null;
+    }
+
+    @Override
+    public SearchResult doSearch(String searchSpace, String searchText) {
+        return null;
+    }
+
+    @Override
+    public void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId) {
+    }
+
+    @Override
+    public void deleteSearch(String searchSpace, String searchText) {
     }
 
     @Override

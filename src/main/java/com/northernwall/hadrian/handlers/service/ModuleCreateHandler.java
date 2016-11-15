@@ -20,6 +20,7 @@ import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
@@ -33,6 +34,7 @@ import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -150,7 +152,7 @@ public class ModuleCreateHandler extends BasicHandler {
                     throw new Http400BadRequestException("Can not create new module while module " + temp.getModuleName() + " is at the git folder root.");
                 }
                 if (data.moduleName.equalsIgnoreCase(temp.getModuleName())) {
-                    throw new Http400BadRequestException("Error there already exists a module named " + data.moduleName);
+                    throw new Http400BadRequestException("There already exists a module named " + data.moduleName);
                 }
                 String gitFolder = "/" + data.gitFolder.toUpperCase() + "/";
                 String tempGitFolder = "/" + temp.getGitFolder().toUpperCase() + "/";
@@ -182,6 +184,18 @@ public class ModuleCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("This module can not be at the git folder root, if there is another module");
         }
 
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
+                && data.mavenArtifactId != null
+                && !data.mavenArtifactId.isEmpty()) {
+            SearchResult searchResult = getDataAccess().doSearch(
+                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    service.getMavenGroupId() + "." + data.mavenArtifactId);
+            if (searchResult != null) {
+                throw new Http405NotAllowedException("A service and module already exists with this maven group and artifact");
+            }
+        }
+
         Module module = new Module(
                 data.moduleName,
                 data.serviceId,
@@ -207,7 +221,19 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.configName,
                 data.environmentNames);
         module.cleanEnvironmentNames(null);
+
         getDataAccess().saveModule(module);
+        if (service.getMavenGroupId() != null
+                && !service.getMavenGroupId().isEmpty()
+                && module.getMavenArtifactId() != null
+                && !module.getMavenArtifactId().isEmpty()) {
+            getDataAccess().insertSearch(
+                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                    service.getServiceId(),
+                    module.getModuleId(),
+                    null);
+        }
 
         WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null, null);
         workItem.getMainModule().template = template;

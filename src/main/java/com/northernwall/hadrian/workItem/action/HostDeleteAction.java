@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -52,7 +53,11 @@ public class HostDeleteAction extends Action {
             LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
             return;
         }
+        
         dataAccess.deleteHost(host);
+        dataAccess.deleteSearch(
+                Const.SEARCH_SPACE_HOST_NAME, 
+                host.getHostName());
     }
 
     protected void error(WorkItem workItem) {
@@ -61,6 +66,7 @@ public class HostDeleteAction extends Action {
             LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
             return;
         }
+        
         dataAccess.updateSatus(
                 host.getHostId(),
                 false,

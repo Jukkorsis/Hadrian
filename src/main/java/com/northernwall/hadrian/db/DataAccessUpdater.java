@@ -15,12 +15,11 @@
  */
 package com.northernwall.hadrian.db;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.Vip;
-import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +46,48 @@ public class DataAccessUpdater {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
-                dataAccess.insertServiceSearch(service);
+                dataAccess.insertSearch(
+                        Const.SEARCH_SPACE_SERVICE_NAME,
+                        service.getServiceName(),
+                        service.getServiceId(),
+                        null,
+                        null);
+                if (service.getGitProject() != null
+                        && !service.getGitProject().isEmpty()) {
+                    dataAccess.insertSearch(
+                            Const.SEARCH_SPACE_GIT_PROJECT,
+                            service.getGitProject(),
+                            service.getServiceId(),
+                            null,
+                            null);
+                }
                 serviceCount++;
+                if (service.getMavenGroupId() != null
+                        && !service.getMavenGroupId().isEmpty()) {
+                    List<Module> modules = dataAccess.getModules(service.getServiceId());
+                    if (modules != null && !modules.isEmpty()) {
+                        for (Module module : modules) {
+                            if (module.getMavenArtifactId() != null
+                                    && !module.getMavenArtifactId().isEmpty()) {
+                                dataAccess.insertSearch(
+                                        Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                                        service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                                        service.getServiceId(),
+                                        module.getModuleId(),
+                                        null);
+                            }
+                        }
+                    }
+                }
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
-                        dataAccess.backfillHostName(host);
+                        dataAccess.insertSearch(
+                                Const.SEARCH_SPACE_HOST_NAME,
+                                host.getHostName(),
+                                service.getServiceId(),
+                                host.getModuleId(),
+                                host.getHostId());
                         hostCount++;
                     }
                 }
