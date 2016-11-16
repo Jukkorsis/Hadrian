@@ -50,7 +50,6 @@ public class ContentHandler extends AbstractHandler {
                     public CachedContent load(String key) throws IOException {
                         try (InputStream is = this.getClass().getResourceAsStream(key)) {
                             if (is == null) {
-                                LOGGER.warn("Could not find resource {}", key);
                                 return null;
                             }
                             CachedContent content = new CachedContent(key, is);
@@ -91,7 +90,6 @@ public class ContentHandler extends AbstractHandler {
             content.write(response.getOutputStream());
              return true;
         } catch (Exception ex) {
-            LOGGER.warn("Exception getting content {}, {}", resource, ex.getMessage());
             return false;
         }
     }
