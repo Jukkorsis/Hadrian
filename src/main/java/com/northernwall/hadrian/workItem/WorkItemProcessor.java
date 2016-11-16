@@ -31,8 +31,10 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
+import com.northernwall.hadrian.workItem.action.HostVipAddAction;
 import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
 import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
+import com.northernwall.hadrian.workItem.action.HostVipRemoveAction;
 import com.northernwall.hadrian.workItem.action.ServiceCreateAction;
 import com.northernwall.hadrian.workItem.action.ServiceDeleteAction;
 import com.northernwall.hadrian.workItem.action.ServiceUpdateAction;
@@ -111,8 +113,8 @@ public class WorkItemProcessor {
 
         hostVipEnable = constructAction("hostVipEnable", HostVipEnableAction.class);
         hostVipDisable = constructAction("hostVipDisable", HostVipDisableAction.class);
-        hostVipAdd = constructAction("hostVipAdd", HostVipDisableAction.class);
-        hostVipRemove = constructAction("hostVipRemove", HostVipDisableAction.class);
+        hostVipAdd = constructAction("hostVipAdd", HostVipAddAction.class);
+        hostVipRemove = constructAction("hostVipRemove", HostVipRemoveAction.class);
 
         executor = Executors.newFixedThreadPool(10);
     }

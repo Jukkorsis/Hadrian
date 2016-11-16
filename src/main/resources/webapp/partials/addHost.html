@@ -42,13 +42,13 @@
                 </div>
             </div>
         </div>
-        <div class="form-group form-group-sm">
+        <div ng-if="service.doDeploys" class="form-group form-group-sm">
             <label for="email" class="col-sm-4 control-label">Artifact Version:</label>
             <div class="col-sm-8">
                 <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
             </div>
         </div>
-        <div class="form-group form-group-sm">
+        <div ng-if="service.doDeploys" class="form-group form-group-sm">
             <label for="email" class="col-sm-4 control-label">Config Version:</label>
             <div class="col-sm-8">
                 <input type="text" ng-model="formSaveHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">

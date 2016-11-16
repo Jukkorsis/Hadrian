@@ -59,7 +59,7 @@ public class ServiceCreateHandler extends BasicHandler {
         }
         User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
         Team team = getTeam(data.teamId, null);
-        
+
         if (data.serviceName == null || data.serviceName.isEmpty()) {
             throw new Http400BadRequestException("Service Name is mising or empty");
         }
@@ -67,7 +67,7 @@ public class ServiceCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Service Name is to long, max is 30");
         }
         if (getDataAccess().doSearch(Const.SEARCH_SPACE_SERVICE_NAME, data.serviceName) != null) {
-             throw new Http405NotAllowedException("A service already exists with this name");
+            throw new Http405NotAllowedException("A service already exists with this name");
         }
 
         if (data.description.length() > 500) {
@@ -82,7 +82,7 @@ public class ServiceCreateHandler extends BasicHandler {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
             }
             if (getDataAccess().doSearch(Const.SEARCH_SPACE_GIT_PROJECT, data.gitProject) != null) {
-                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
+                throw new Http405NotAllowedException("A service already exists at this Git Project location");
             }
         } else {
             data.gitProject = null;
@@ -95,7 +95,7 @@ public class ServiceCreateHandler extends BasicHandler {
         } else {
             data.mavenGroupId = null;
         }
-        
+
         try {
             if (data.smokeTestCron != null
                     && !data.smokeTestCron.isEmpty()) {
@@ -104,14 +104,14 @@ public class ServiceCreateHandler extends BasicHandler {
         } catch (Exception e) {
             throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
         }
-        
+
         if (data.testStyle.equals("Maven")) {
             data.testHostname = null;
             data.testRunAs = null;
             data.testDeploymentFolder = null;
             data.testCmdLine = null;
         }
-        
+
         Service service = new Service(
                 data.serviceName,
                 data.teamId,
@@ -136,21 +136,24 @@ public class ServiceCreateHandler extends BasicHandler {
 
         getDataAccess().saveService(service);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_SERVICE_NAME, 
-                data.serviceName, 
-                service.getServiceId(), 
-                null, 
+                Const.SEARCH_SPACE_SERVICE_NAME,
+                data.serviceName,
+                service.getServiceId(),
+                null,
                 null);
-        getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_GIT_PROJECT, 
-                data.gitProject, 
-                service.getServiceId(), 
-                null, 
-                null);
+        if (data.gitProject != null
+                && !data.gitProject.isEmpty()) {
+            getDataAccess().insertSearch(
+                    Const.SEARCH_SPACE_GIT_PROJECT,
+                    data.gitProject,
+                    service.getServiceId(),
+                    null,
+                    null);
+        }
 
         WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);
-        
+
         response.setStatus(200);
         request.setHandled(true);
 

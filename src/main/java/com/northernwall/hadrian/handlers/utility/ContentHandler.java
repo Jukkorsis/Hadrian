@@ -17,11 +17,9 @@ package com.northernwall.hadrian.handlers.utility;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,9 +50,10 @@ public class ContentHandler extends AbstractHandler {
                     public CachedContent load(String key) throws IOException {
                         try (InputStream is = this.getClass().getResourceAsStream(key)) {
                             if (is == null) {
+                                LOGGER.warn("Could not find resource {}", key);
                                 return null;
                             }
-                            CachedContent content = new CachedContent(is);
+                            CachedContent content = new CachedContent(key, is);
                             LOGGER.info("Loaded content {} into cache, {} bytes", key, content.getSize());
                             return content;
                         }
@@ -76,9 +75,13 @@ public class ContentHandler extends AbstractHandler {
         }
     }
 
-    private boolean getContent(HttpServletResponse response, String resource) throws ServletException {
+    private boolean getContent(HttpServletResponse response, String resource) {
         try {
             CachedContent content = cache.get(resource);
+            if (content == null) {
+                LOGGER.warn("Could not get content {}", resource);
+                return false;
+            }
 
             if (resource.toLowerCase().endsWith(".html")) {
                 response.addHeader("X-Frame-Options", "DENY");
@@ -86,8 +89,9 @@ public class ContentHandler extends AbstractHandler {
             }
 
             content.write(response.getOutputStream());
-            return true;
-        } catch (InvalidCacheLoadException | ExecutionException | IOException ex) {
+             return true;
+        } catch (Exception ex) {
+            LOGGER.warn("Exception getting content {}, {}", resource, ex.getMessage());
             return false;
         }
     }

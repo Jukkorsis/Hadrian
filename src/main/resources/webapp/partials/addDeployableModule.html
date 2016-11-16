@@ -57,7 +57,7 @@
                 <dt>Availability Url:</dt>
                 <dd><input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control"></dd>
                 <dt>Smoke Test Url:</dt>
-                <dd><input ng-model="formSaveModule.smokeTestUrl" type="text" class="form-control"></dd>
+                <dd><input ng-model="formSaveModule.smokeTestUrl" type="text" class="form-control" uib-popover="Optional" popover-trigger="mouseenter"></dd>
                 <div ng-if="service.doDeploys">
                     <dt>Deployment Folder:</dt>
                     <dd><input ng-model="formSaveModule.deploymentFolder" type="text" class="form-control"></dd>

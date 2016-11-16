@@ -54,10 +54,12 @@ public class ServiceResetAllHandler extends BasicHandler {
 
         List<WorkItem> workItems = new LinkedList<>();
         for (Service service : getDataAccess().getActiveServices()) {
-            Team team = getDataAccess().getTeam(service.getTeamId());
-            WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
-            workItem.setReason("Reseting Service");
-            workItems.add(workItem);
+            if (service.isDoBuilds()) {
+                Team team = getDataAccess().getTeam(service.getTeamId());
+                WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
+                workItem.setReason("Reseting Service");
+                workItems.add(workItem);
+            }
         }
         workItemProcessor.processWorkItems(workItems);
 
