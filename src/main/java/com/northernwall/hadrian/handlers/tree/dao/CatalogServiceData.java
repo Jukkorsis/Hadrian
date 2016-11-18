@@ -19,13 +19,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 
 public class CatalogServiceData {
-    public String teamId;
-    public String teamName;
-    public String serviceId;
-    public String serviceName;
-    public String scope;
-    public String serviceDescription;
-
+    
     public static CatalogServiceData create(Team team, Service service) {
         CatalogServiceData temp = new CatalogServiceData();
         temp.teamId = team.getTeamId();
@@ -36,5 +30,12 @@ public class CatalogServiceData {
         temp.serviceDescription = service.getDescription();
         return temp;
     }
+    
+    public String teamId;
+    public String teamName;
+    public String serviceId;
+    public String serviceName;
+    public String scope;
+    public String serviceDescription;
 
 }
