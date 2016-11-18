@@ -76,6 +76,7 @@ import com.northernwall.hadrian.handlers.team.TeamGetHandler;
 import com.northernwall.hadrian.handlers.team.TeamModifyHandler;
 import com.northernwall.hadrian.handlers.team.TeamRemoveUserHandler;
 import com.northernwall.hadrian.handlers.tree.CatalogHandler;
+import com.northernwall.hadrian.handlers.tree.CatalogReportHandler;
 import com.northernwall.hadrian.handlers.tree.TreeHandler;
 import com.northernwall.hadrian.handlers.user.UserGetHandler;
 import com.northernwall.hadrian.handlers.user.UserModifyHandler;
@@ -192,6 +193,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webapp"), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/tree", new TreeHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/catalog", new CatalogHandler(dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/catalogReport", new CatalogReportHandler(accessHelper, dataAccess, configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/users", new UserGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/user/modify", new UserModifyHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/team", new TeamGetHandler(accessHelper, dataAccess), true);

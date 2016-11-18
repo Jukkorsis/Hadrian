@@ -21,7 +21,6 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.tree.dao.CatalogData;
 import com.northernwall.hadrian.handlers.tree.dao.CatalogServiceData;
 import java.io.IOException;
@@ -50,8 +49,6 @@ public class CatalogHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        User user = (User) request.getAttribute(Const.ATTR_USER);
-
         CatalogData catalogData = new CatalogData();
         List<Team> teams = dataAccess.getTeams();
         List<Service> services = dataAccess.getActiveServices();
