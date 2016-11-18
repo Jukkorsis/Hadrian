@@ -1536,6 +1536,12 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
             }
         }
 
+        for (var i = 0; i < service.modules.length; i++) {
+            if (service.modules[i].moduleId === moduleEnvironment.moduleId) {
+                $scope.module = service.modules[i];
+            }
+        }
+
         $scope.modelOptions = {
             debounce: {
                 default: 500,
