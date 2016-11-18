@@ -56,7 +56,7 @@ public class GraphAllHandler extends AbstractHandler {
                 if (module.getModuleType() == ModuleType.Deployable) {
                     List<Module> libraries = new LinkedList<>();
                     processLibrary(module, module, libraries, graph);
-                    graph.writeModuleStructure(module, libraries, team.getColour());
+                    graph.writeModuleStructure(service, module, libraries, team.getColour());
                 }
             }
         }

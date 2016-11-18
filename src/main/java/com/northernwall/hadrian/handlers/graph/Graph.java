@@ -17,6 +17,7 @@ package com.northernwall.hadrian.handlers.graph;
 
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
+import com.northernwall.hadrian.domain.Service;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -65,9 +66,11 @@ public class Graph {
         writer.newLine();
     }
 
-    public void writeModuleStructure(Module module, List<Module> libraries, String colour) throws IOException {
+    public void writeModuleStructure(Service service, Module module, List<Module> libraries, String colour) throws IOException {
         writer.append(sanitize(module.getModuleName()));
         writer.append(" [label=\"");
+        writer.append(service.getServiceName());
+        writer.append("\\n");
         writer.append(module.getModuleName());
         if (libraries != null && !libraries.isEmpty()) {
             writer.append("|{");
