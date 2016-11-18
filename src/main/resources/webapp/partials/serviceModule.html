@@ -7,7 +7,7 @@
                 </button>
                 <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                     <li role="menuitem"><a ng-click="openAddDeployableModuleModal();">Add Deployable module</a></li>
-                    <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
+                    <li role="menuitem" ng-if="service.doBuilds"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
                     <li role="menuitem"><a ng-click="openAddSimulatorModuleModal();">Add Simulator module</a></li>
                 </ul>
             </div>
@@ -16,7 +16,7 @@
                     <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
+                    <li role="menuitem" ng-if="service.doBuilds"><a ng-click="openAddLibraryModuleModal();">Add Library module</a></li>
                 </ul>
             </div>
             Modules
