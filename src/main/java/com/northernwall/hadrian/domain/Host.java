@@ -17,6 +17,8 @@
 package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.Const;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,6 +26,19 @@ import java.util.UUID;
  * @author Richard Thurston
  */
 public class Host implements Comparable<Host> {
+    public static List<Host> filterModule(String moduleId, List<Host> hosts) {
+        if (hosts == null || hosts.isEmpty() || moduleId == null) {
+            return null;
+        }
+        List<Host> temp = new LinkedList<>();
+        for (Host host : hosts) {
+            if (host.getModuleId().equals(moduleId)) {
+                temp.add(host);
+            }
+        }
+        return temp;
+    }
+
     private String hostId;
     private String hostName;
     private String serviceId;
