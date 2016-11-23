@@ -93,6 +93,8 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
     @Override
     public GetHostDetailsData getDetails(Host host) {
         List<GetPairData> pairs = new LinkedList<>();
+        pairs.add(new GetPairData("host_uuid", host.getHostId()));
+
         if (!urlTemplates.isEmpty()) {
             for (String urlTemplate : urlTemplates) {
                 String url = urlTemplate.replace(Const.HOST, host.getHostName());
@@ -163,7 +165,7 @@ public class SimpleHostDetailsHelper implements HostDetailsHelper, ParameterChan
         if (label == null || label.isEmpty() || value == null || value.isEmpty()) {
             return;
         }
-        if ( prefix != null && !prefix.isEmpty()) {
+        if (prefix != null && !prefix.isEmpty()) {
             label = prefix + "_" + label;
         }
         if (attributes.isEmpty() || attributes.contains(label)) {
