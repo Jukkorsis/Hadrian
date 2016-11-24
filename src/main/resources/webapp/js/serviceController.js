@@ -1223,7 +1223,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
         $scope.formUpdateModule.stopTimeOut = module.stopTimeOut;
         $scope.formUpdateModule.configName = module.configName;
-        $scope.formUpdateModule.environmentNames = module.environmentNames;
+        $scope.formUpdateModule.environmentNames = JSON.parse(JSON.stringify(module.environmentNames))
 
         $scope.save = function () {
             var dataObject = {
@@ -1782,7 +1782,7 @@ hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$modalI
         responsePromise.error(function (data, status, headers, config) {
             $scope.status = "Error";
         });
-                
+
         $scope.cancel = function () {
             $modalInstance.close();
         };
