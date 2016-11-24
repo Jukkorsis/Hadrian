@@ -342,6 +342,7 @@ public class HadrianBuilder {
             leader.init(getHostname(), parameters, client);
             scheduler = new Scheduler(
                     dataAccess,
+                    metricRegistry,
                     leader,
                     parameters, 
                     client,

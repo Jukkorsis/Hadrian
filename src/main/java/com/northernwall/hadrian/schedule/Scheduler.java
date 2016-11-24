@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.dsh.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,28 +37,31 @@ import org.slf4j.LoggerFactory;
  */
 public class Scheduler {
     private final static Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
+    public static final int THREAD_COUNT = 25;
     public static final int GROUP_COUNT = 10;
     
     private final Leader leader;
     private final ScheduledExecutorService scheduledExecutorService;
     private final List<ScheduleRunner> runners;
 
-    public Scheduler(DataAccess dataAccess, Leader leader, Parameters parameters, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
+    public Scheduler(DataAccess dataAccess, MetricRegistry metricRegistry, Leader leader, Parameters parameters, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
         Gson gson = new Gson();
         
         this.leader = leader;
-        scheduledExecutorService = Executors.newScheduledThreadPool(GROUP_COUNT);
+        scheduledExecutorService = Executors.newScheduledThreadPool(THREAD_COUNT);
         runners = new LinkedList<>();
         
         for (int group=0; group<GROUP_COUNT; group++) {
             ScheduleRunner runner = new ScheduleRunner(
                     group, 
                     dataAccess, 
+                    metricRegistry,
                     leader, 
                     parameters, 
                     gson, 
                     client,
-                    messagingCoodinator);
+                    messagingCoodinator,
+                    scheduledExecutorService);
             
             runners.add(runner);
             
