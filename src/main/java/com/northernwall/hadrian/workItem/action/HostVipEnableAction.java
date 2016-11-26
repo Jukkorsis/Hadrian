@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -35,6 +36,18 @@ public class HostVipEnableAction extends HostVipBaseAction {
     @Override
     public Result processCallback(WorkItem workItem, CallbackData callbackData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected void updateStatusBeforeProcessing(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} who's VIP is being enabled", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Enabling VIP...");
     }
 
     protected Result processVip(WorkItem workItem, Vip vip) {
