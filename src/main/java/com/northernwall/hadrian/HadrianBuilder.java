@@ -106,10 +106,12 @@ public class HadrianBuilder {
                 .build();
         JvmMetrics.addMetrics(metricRegistry, 10);
         if (parameters.getBoolean("metrics.console", false)) {
+            LOGGER.info("Configuring Metrics Console Listener");
             metricRegistry.addEventListener(new ConsoleListener(System.out));
         }
         String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
         if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
+            LOGGER.info("Configuring Metrics KairosDB Listener,  {}", kairosDbUrl);
             metricRegistry.addEventListener(new KairosDBListener(
                     kairosDbUrl,
                     parameters.getString("metrics.kairosDb.username", null),
