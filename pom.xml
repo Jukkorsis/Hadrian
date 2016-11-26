@@ -43,7 +43,7 @@
         <developerConnection>scm:git:git@github.com:Jukkorsis/Hadrian.git</developerConnection>
         <url>scm:git:git@github.com/Jukkorsis/Hadrian</url>
         -->
-        <tag>Hadrian-1.6.14</tag>
+        <tag>Hadrian-1.7.4</tag>
     </scm>
 
     <distributionManagement>
