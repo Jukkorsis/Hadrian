@@ -77,7 +77,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Host</th>
-                                                <th ng-repeat="dc in config.dataCenters"><span uib-popover="Priority, higher the better." popover-trigger="mouseenter">Pri</span> <span uib-popover="Host is enabled and avaliablity is 200" popover-trigger="mouseenter" class="glyphicon glyphicon-thumbs-up text-success"></span><span uib-popover="Host is disabled" popover-trigger="mouseenter" class="glyphicon glyphicon-off text-info"></span><span uib-popover="Host is enabled but avaliablity is not 200" popover-trigger="mouseenter" class="glyphicon glyphicon-fire text-danger"></span> <span uib-popover="The current number of connections to the host from clients within this {{dc}}." popover-trigger="mouseenter">Conns</span></th>
+                                                <th ng-repeat="dc in config.dataCenters"><span uib-popover="Priority, higher the better." popover-trigger="mouseenter">Pri</span> <span uib-popover="Host is enabled and avaliablity is 200" popover-trigger="mouseenter" class="glyphicon glyphicon-thumbs-up text-success"></span><span uib-popover="Host is disabled" popover-trigger="mouseenter" class="glyphicon glyphicon-off text-danger"></span><span uib-popover="Host is enabled but avaliablity is not 200" popover-trigger="mouseenter" class="glyphicon glyphicon-fire text-danger"></span> <span uib-popover="The current number of connections to the host from clients within this {{dc}}." popover-trigger="mouseenter">Conns</span></th>
                                             </tr>
                                             <tr ng-repeat="h in ep.details.rows| filter:hostFilter">
                                                 <td>
@@ -86,7 +86,7 @@
                                                 </td>
                                                 <td ng-repeat="dc in config.dataCenters">
                                                     {{getVipDetailsPriority(h.details, dc)}}
-                                                    <span ng-if="getVipDetailsOff(h.details, dc)" class="glyphicon glyphicon-off text-info"></span>
+                                                    <span ng-if="getVipDetailsOff(h.details, dc)" class="glyphicon glyphicon-off text-danger"></span>
                                                     <span ng-if="getVipDetailsOn(h.details, dc)" class="glyphicon glyphicon-thumbs-up text-success"></span>
                                                     <span ng-if="getVipDetailsError(h.details, dc)" class="glyphicon glyphicon-fire text-danger"></span>
                                                     {{getVipDetailsConnections(h.details, dc)}}
