@@ -4,7 +4,7 @@
 <div class="modal-body">
     <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
     <dl class="dl-horizontal">
-        <dt>Document Link:</dt>
+        <dt>Document Type:</dt>
         <dd>
             <select ng-model="formSaveDocument.documentType" class="form-control">
                 <option value="Link">Link</option>
@@ -14,7 +14,7 @@
         </dd>
         <dt>Title:</dt>
         <dd><input ng-model="formSaveDocument.title" type="text" maxlength="50" class="form-control"></dd>
-        <dt>Link:</dt>
+        <dt>URL:</dt>
         <dd><input ng-model="formSaveDocument.link" type="text" maxlength="300" class="form-control"></dd>
     </dl>
 </div>
