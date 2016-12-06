@@ -2,11 +2,15 @@
 
 /* Controllers */
 
-hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'User', 'Team',
-    function ($scope, $route, $routeParams, $uibModal, $http, User, Team) {
+hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'Config', 'User', 'Team',
+    function ($scope, $route, $routeParams, $uibModal, $http, Config, User, Team) {
         $scope.loading = true;
 
         $scope.users = User.get();
+
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
 
         Team.get({teamId: $routeParams.teamId}, function (team) {
             $scope.team = team;
@@ -234,3 +238,20 @@ hadrianControllers.controller('ModalAddUserToTeamCtrl', ['$scope', '$http', '$mo
             $modalInstance.dismiss('cancel');
         };
     }]);
+
+hadrianControllers.controller('TeamDashboardCtrl', ['$scope', '$http', '$routeParams', 'Config', 'Dashboard',
+    function ($scope, $http, $routeParams, Config, Dashboard) {
+        $scope.loading = true;
+        $scope.env = $routeParams.env;
+        
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
+
+        Dashboard.get({teamId: $routeParams.teamId, env: $routeParams.env}, function (dashboard) {
+            $scope.dashboard = dashboard;
+            $scope.loading = false;
+        });
+
+    }]);
+

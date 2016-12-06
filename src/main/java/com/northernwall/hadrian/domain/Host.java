@@ -39,6 +39,20 @@ public class Host implements Comparable<Host> {
         return temp;
     }
 
+    public static List<Host> filterModule(String moduleId, String environment, List<Host> hosts) {
+        if (hosts == null || hosts.isEmpty() || moduleId == null) {
+            return null;
+        }
+        List<Host> temp = new LinkedList<>();
+        for (Host host : hosts) {
+            if (host.getModuleId().equals(moduleId) 
+                    && host.getEnvironment().equals(environment)) {
+                temp.add(host);
+            }
+        }
+        return temp;
+    }
+
     private String hostId;
     private String hostName;
     private String serviceId;

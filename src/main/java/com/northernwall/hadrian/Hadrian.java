@@ -21,6 +21,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.ServiceBuildHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
+import com.northernwall.hadrian.handlers.dashboard.DashboardHandler;
 import com.northernwall.hadrian.handlers.graph.GraphAllHandler;
 import com.northernwall.hadrian.handlers.graph.GraphFanInHandler;
 import com.northernwall.hadrian.handlers.graph.GraphFanOutHandler;
@@ -201,6 +202,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/modify", new TeamModifyHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/addUser", new TeamAddUserHandler(accessHelper, dataAccess), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/removeUser", new TeamRemoveUserHandler(accessHelper, dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/dashboard", new DashboardHandler(dataAccess, infoHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(accessHelper, dataAccess, configHelper, infoHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(accessHelper, dataAccess, configHelper, infoHelper), false);

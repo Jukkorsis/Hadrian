@@ -44,8 +44,10 @@
                     <dt>Calendar:</dt>
                     <dd>{{team.calendarId}}</dd>
                 </div>
-                    <dt>Colour:</dt>
-                    <dd>{{team.colour}}</dd>
+                <dt>Colour:</dt>
+                <dd>{{team.colour}}</dd>
+                <dt>Dashboard:</dt>
+                <dd><a ng-repeat="env in config.environmentNames" href="#/Dashboard/{{team.teamId}}/{{env}}">{{env}} </a></dd>
             </dl>
         </div>
         <div class="col-md-6">

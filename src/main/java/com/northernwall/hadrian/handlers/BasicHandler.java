@@ -182,6 +182,10 @@ public abstract class BasicHandler extends AbstractHandler {
     }
 
     protected void waitForFutures(List<Future> futures, int loopMax, int loopSleep) {
+        if (futures == null || futures.isEmpty()) {
+            return;
+        }
+        
         for (int i = 0; i < loopMax; i++) {
             try {
                 Thread.sleep(loopSleep);
