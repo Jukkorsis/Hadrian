@@ -25,6 +25,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Session.State;
 import com.google.gson.Gson;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.StringUtils;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
@@ -423,6 +424,8 @@ public class CassandraDataAccess implements DataAccess {
             Row row = getStatus(host.getHostId());
             if (row != null) {
                 host.setStatus(row.getBool("busy"), row.getString("status"));
+            } else {
+                host.setStatus(false, Const.NO_STATUS);
             }
         }
         return hosts;
@@ -436,11 +439,11 @@ public class CassandraDataAccess implements DataAccess {
         }
 
         Row row = getStatus(host.getHostId());
-        if (row == null) {
-            return host;
+        if (row != null) {
+            host.setStatus(row.getBool("busy"), row.getString("status"));
+        } else {
+            host.setStatus(false, Const.NO_STATUS);
         }
-
-        host.setStatus(row.getBool("busy"), row.getString("status"));
         return host;
     }
 
@@ -873,12 +876,12 @@ public class CassandraDataAccess implements DataAccess {
                 return;
             }
             LOGGER.warn("Insert into search is really an update s:{} {} m:{} {} h:{} {}",
-                   searchResult.serviceId,
-                   serviceId,
-                   searchResult.moduleId,
-                   moduleId,
-                   searchResult.hostId,
-                   hostId);
+                    searchResult.serviceId,
+                    serviceId,
+                    searchResult.moduleId,
+                    moduleId,
+                    searchResult.hostId,
+                    hostId);
         }
 
         BoundStatement boundStatement = new BoundStatement(searchInsert);
