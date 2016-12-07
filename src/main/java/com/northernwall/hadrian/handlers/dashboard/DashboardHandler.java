@@ -48,7 +48,7 @@ public class DashboardHandler extends BasicHandler {
 
     public DashboardHandler(DataAccess dataAccess, InfoHelper infoHelper) {
         super(dataAccess);
-        
+
         this.infoHelper = infoHelper;
 
         executorService = Executors.newFixedThreadPool(20);
@@ -57,7 +57,7 @@ public class DashboardHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Team team = getTeam(request);
-        
+
         String environment = request.getParameter("env");
 
         GetDashboardData getDashboardData = new GetDashboardData();
@@ -72,15 +72,17 @@ public class DashboardHandler extends BasicHandler {
                 if (modules != null && !modules.isEmpty()) {
                     for (Module module : modules) {
                         if (module.getModuleType() == ModuleType.Deployable) {
-                            GetModuleData moduleData = new GetModuleData();
-                            moduleData.serviceName = service.getServiceName();
-                            moduleData.moduleName = module.getModuleName();
-
                             if (hosts == null) {
                                 hosts = getDataAccess().getHosts(service.getServiceId());
                             }
                             List<Host> moduleHosts = Host.filterModule(module.getModuleId(), environment, hosts);
                             if (moduleHosts != null && !moduleHosts.isEmpty()) {
+                                GetModuleData moduleData = new GetModuleData();
+                                moduleData.serviceId = service.getServiceId();
+                                moduleData.serviceName = service.getServiceName();
+                                moduleData.moduleName = module.getModuleName();
+                                getDashboardData.modules.add(moduleData);
+
                                 for (Host host : moduleHosts) {
                                     GetDataCenterData dataCenterData = moduleData.counts.get(host.getDataCenter());
                                     if (dataCenterData == null) {
@@ -90,8 +92,6 @@ public class DashboardHandler extends BasicHandler {
                                     futures.add(executorService.submit(new ReadAvailabilityRunnable(dataCenterData, host, module, infoHelper)));
                                 }
                             }
-
-                            getDashboardData.modules.add(moduleData);
                         }
                     }
                 }
@@ -99,7 +99,7 @@ public class DashboardHandler extends BasicHandler {
         }
 
         waitForFutures(futures, 151, 100);
-        
+
         response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             getGson().toJson(getDashboardData, GetDashboardData.class, jw);

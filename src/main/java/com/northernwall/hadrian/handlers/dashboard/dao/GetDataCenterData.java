@@ -23,17 +23,21 @@ public class GetDataCenterData {
     public int good = 0;
     public int bad = 0;
     public int off = 0;
+    public int total = 0;
 
     public synchronized void incGood() {
         good++;
+        total++;
     }
 
     public synchronized void incOff() {
         off++;
+        total++;
     }
 
     public synchronized void incBad() {
         bad++;
+        total++;
     }
     
 }
