@@ -20,8 +20,6 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +30,7 @@ public class VipFixAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Fixing Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, result, null);
-        return result;
+        return Result.success;
     }
 
     @Override
@@ -43,12 +38,8 @@ public class VipFixAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
-        recordAudit(workItem, result, notes, output);
-    }
-
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
@@ -58,7 +49,8 @@ public class VipFixAction extends Action {
         dataAccess.updateVip(vip);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);

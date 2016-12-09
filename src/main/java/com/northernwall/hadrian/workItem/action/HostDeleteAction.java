@@ -29,11 +29,22 @@ public class HostDeleteAction extends Action {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostDeleteAction.class);
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being deleted", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Deleting...");
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, null, result, null);
-        return result;
+        LOGGER.info("Deleting host {} for {}", workItem.getHost().hostName, workItem.getService().serviceName);
+        return Result.success;
     }
 
     @Override
@@ -41,13 +52,14 @@ public class HostDeleteAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
-        Map<String, String> notes = createNotesFromCallback(callbackData);
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         notes.put("Reason", workItem.getReason());
-        recordAudit(workItem, result, notes, output);
+        writeAudit(workItem, result, notes, output);
     }
 
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
@@ -60,7 +72,8 @@ public class HostDeleteAction extends Action {
                 host.getHostName());
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being delete.", workItem.getHost().hostId);
@@ -70,7 +83,7 @@ public class HostDeleteAction extends Action {
         dataAccess.updateSatus(
                 host.getHostId(),
                 false,
-                "Delete host failed");
+                "Deletion failed");
     }
 
 }

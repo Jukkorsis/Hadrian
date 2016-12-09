@@ -24,7 +24,7 @@ public class ModuleUpdateAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         Result result = Result.success;
-        recordAudit(workItem, result, null, null);
+        writeAudit(workItem, result, null, null);
         return result;
     }
 

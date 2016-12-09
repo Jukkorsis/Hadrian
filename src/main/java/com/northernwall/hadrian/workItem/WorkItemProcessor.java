@@ -45,7 +45,9 @@ import com.northernwall.hadrian.workItem.action.VipUpdateAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.dsh.metrics.MetricRegistry;
@@ -188,6 +190,7 @@ public class WorkItemProcessor {
                 "action-process",
                 "action", action.getName());
         try {
+            action.updateStatus(workItem);
             result = action.process(workItem);
         } catch (Exception e) {
             LOGGER.warn("Failure while performing action {}, {}", action.getName(), e.getMessage());
@@ -197,12 +200,16 @@ public class WorkItemProcessor {
 
         switch (result) {
             case success:
+                action.success(workItem);
+                action.recordAudit(workItem, new HashMap<>(), result, null);
                 LOGGER.info("Work item {} has been successfully processed, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
+                action.error(workItem);
+                action.recordAudit(workItem, new HashMap<>(), result, null);
                 LOGGER.warn("Work item {} failed to be process, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
@@ -231,12 +238,16 @@ public class WorkItemProcessor {
 
         switch (result) {
             case success:
+                action.success(workItem);
+                action.recordAudit(workItem, createNotesFromCallback(callbackData), result, callbackData.output);
                 LOGGER.info("Work item {} has been successfully processed. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
                 startNext(workItem);
                 break;
             case error:
+                action.error(workItem);
+                action.recordAudit(workItem, createNotesFromCallback(callbackData), result, callbackData.output);
                 LOGGER.warn("Work item {} failed to be process. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
@@ -245,6 +256,19 @@ public class WorkItemProcessor {
             case wip:
                 LOGGER.info("Work item {} is still being processed. {}", action.getName(), workItem.getId());
         }
+    }
+
+    private Map<String, String> createNotesFromCallback(CallbackData callbackData) {
+        Map<String, String> notes = new HashMap<>();
+        if (callbackData != null) {
+            if (callbackData.errorCode != 0) {
+                notes.put("error_code", Integer.toString(callbackData.errorCode));
+            }
+            if (callbackData.errorDescription != null && !callbackData.errorDescription.isEmpty()) {
+                notes.put("error_desc", callbackData.errorDescription);
+            }
+        }
+        return notes;
     }
 
     public int waitForProcess(String lastId, long step, long max, String note) {

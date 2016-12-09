@@ -82,7 +82,7 @@ public abstract class HostVipBaseAction extends Action {
                 output = "Failed to " + getVerb() + " host " + getPreposition() + " VIP " + failedVip.getDns();
             }
         }
-        recordAudit(workItem, result, null, output);
+        writeAudit(workItem, result, null, output);
     }
 
     protected abstract String getVerb();

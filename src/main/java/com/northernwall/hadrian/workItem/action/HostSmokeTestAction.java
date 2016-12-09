@@ -30,6 +30,7 @@ import com.squareup.okhttp.Response;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,19 @@ public class HostSmokeTestAction extends Action {
     }
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being smoke tested", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Smoke Testing...");
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
         String smokeTestUrl = workItem.getMainModule().smokeTestUrl;
         if (smokeTestUrl == null || smokeTestUrl.isEmpty()) {
@@ -90,19 +104,17 @@ public class HostSmokeTestAction extends Action {
         String output = null;
         if (smokeTestData == null) {
             result = Result.error;
-            error(workItem);
         } else if (smokeTestData.result == null
                 || smokeTestData.result.isEmpty()
                 ||!smokeTestData.result.equalsIgnoreCase("PASS")) {
             result = Result.error;
             output = smokeTestData.output;
-            error(workItem);
         } else {
             result = Result.success;
             output = smokeTestData.output;
         }
 
-        recordAudit(workItem, result, output);
+        writeAudit(workItem, result, null, output);
         return result;
     }
 
@@ -111,14 +123,29 @@ public class HostSmokeTestAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        recordAudit(workItem, result, null, output);
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being smoke tested", workItem.getHost().hostId);
+            return;
+        }
+
+        dataAccess.updateSatus(
+                host.getHostId(),
+                false,
+                Const.NO_STATUS);
+    }
+
+    @Override
+    public void error(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being smoke tested", workItem.getHost().hostId);
             return;
         }
 

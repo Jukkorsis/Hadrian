@@ -15,7 +15,6 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -30,10 +29,7 @@ public class VipDeleteAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Deleting Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, result, null);
-        return result;
+        return Result.success;
     }
 
     @Override
@@ -41,15 +37,13 @@ public class VipDeleteAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        recordAudit(workItem, result, null, output);
-    }
-
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         dataAccess.deleteVip(workItem.getService().serviceId, workItem.getVip().vipId);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             LOGGER.warn("Could not find vip {} being deleted", workItem.getVip().vipId);

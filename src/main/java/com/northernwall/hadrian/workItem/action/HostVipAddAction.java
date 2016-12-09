@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -29,6 +30,19 @@ import org.slf4j.LoggerFactory;
 public class HostVipAddAction extends HostVipBaseAction {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostVipAddAction.class);
+
+    @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being added to vip", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Adding to VIP...");
+    }
 
     @Override
     public Result process(WorkItem workItem) {

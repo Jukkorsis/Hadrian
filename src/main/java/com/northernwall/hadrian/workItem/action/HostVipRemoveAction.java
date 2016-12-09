@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -31,6 +32,19 @@ public class HostVipRemoveAction extends HostVipBaseAction {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostVipRemoveAction.class);
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being removed from vip", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Removing from VIP...");
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Removing vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
         return Result.success;
@@ -41,6 +55,7 @@ public class HostVipRemoveAction extends HostVipBaseAction {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     protected Result processVip(WorkItem workItem, Vip vip) {
         LOGGER.info("Removing vip {} for {} {}", vip.getDns(), workItem.getHost().hostName, workItem.getService().serviceName);
         return Result.success;

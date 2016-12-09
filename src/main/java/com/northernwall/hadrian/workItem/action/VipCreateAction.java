@@ -30,12 +30,13 @@ public class VipCreateAction extends Action {
     private final static Logger LOGGER = LoggerFactory.getLogger(VipCreateAction.class);
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Creating vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, result, null);
-        return result;
+        return Result.success;
     }
 
     @Override
@@ -43,17 +44,18 @@ public class VipCreateAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, Result result, String output) {
-        Map<String, String> notes = new HashMap<>();
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         notes.put("Protocol", workItem.getVip().protocol);
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
         notes.put("External", Boolean.toString(workItem.getVip().external));
-        recordAudit(workItem, result, notes, output);
+        writeAudit(workItem, result, notes, output);
     }
 
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             LOGGER.warn("Could not find vip {} being created", workItem.getVip().vipId);
@@ -64,7 +66,8 @@ public class VipCreateAction extends Action {
         dataAccess.updateVip(vip);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
             LOGGER.warn("Could not find vip {} being created", workItem.getVip().vipId);

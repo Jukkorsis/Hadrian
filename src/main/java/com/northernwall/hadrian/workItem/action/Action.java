@@ -58,11 +58,24 @@ public abstract class Action {
         return name;
     }
 
+    public void updateStatus(WorkItem workItem) {
+    }
+
     public abstract Result process(WorkItem workItem);
 
     public abstract Result processCallback(WorkItem workItem, CallbackData callbackData);
 
-    protected void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+        writeAudit(workItem, result, notes, output);
+    }
+
+    public void success(WorkItem workItem) {
+    }
+
+    public void error(WorkItem workItem) {
+    }
+
+    protected void writeAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         Audit audit = new Audit();
         audit.serviceId = workItem.getService().serviceId;
         audit.setTimePerformed(GMT.getGmtAsDate());
@@ -86,19 +99,6 @@ public abstract class Action {
             audit.notes = gson.toJson(notes);
         }
         dataAccess.saveAudit(audit, output);
-    }
-
-    protected Map<String, String> createNotesFromCallback(CallbackData callbackData) {
-        Map<String, String> notes = new HashMap<>();
-        if (callbackData != null) {
-            if (callbackData.errorCode != 0) {
-                notes.put("error_code", Integer.toString(callbackData.errorCode));
-            }
-            if (callbackData.errorDescription != null && !callbackData.errorDescription.isEmpty()) {
-                notes.put("error_desc", callbackData.errorDescription);
-            }
-        }
-        return notes;
     }
 
     protected String getGitUrl(WorkItem workItem) {

@@ -29,20 +29,7 @@ public class HostDeployAction extends Action {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostDeployAction.class);
 
     @Override
-    public Result process(WorkItem workItem) {
-        LOGGER.info("Deploying to host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, null, result, null);
-        return result;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected void updateStatusBeforeProcessing(WorkItem workItem) {
+    public void updateStatus(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
@@ -54,8 +41,19 @@ public class HostDeployAction extends Action {
                 "Deploying...");
     }
 
-    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
-        Map<String, String> notes = createNotesFromCallback(callbackData);
+    @Override
+    public Result process(WorkItem workItem) {
+        LOGGER.info("Deploying to host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
+        return Result.success;
+    }
+
+    @Override
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         if (workItem.getHost().version != null) {
             notes.put("Version", workItem.getHost().version);
         }
@@ -69,10 +67,11 @@ public class HostDeployAction extends Action {
             notes.put("Config_Version", workItem.getHost().configVersion);
         }
         notes.put("Reason", workItem.getReason());
-        recordAudit(workItem, result, notes, output);
+        writeAudit(workItem, result, notes, output);
     }
 
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
@@ -85,7 +84,8 @@ public class HostDeployAction extends Action {
                 Const.NO_STATUS);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);

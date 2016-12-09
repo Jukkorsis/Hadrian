@@ -119,9 +119,8 @@
                                         <input ng-model="formSelectHost[i.hostId]" type="checkbox">
                                     </span>
                                     {{i.hostName}}
-                                    <span ng-if="i.status !== '-'">
-                                        <span class="label label-warning">{{i.status}}</span>
-                                    </span>
+                                    <span ng-if="i.busy && i.status !== '-'" class="label label-warning">{{i.status}}</span>
+                                    <span ng-if="!i.busy && i.status !== '-'" class="label label-danger">{{i.status}}</span>
                                 </td>
                                 <td>{{i.dataCenter}}</td>
                                 <td>{{i.platform}}</td>

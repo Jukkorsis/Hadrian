@@ -29,12 +29,22 @@ public class HostCreateAction extends Action {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostCreateAction.class);
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Creating...");
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Creating host {} for {}", workItem.getHost().hostName, workItem.getService().serviceName);
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, null, result, null);
-        return result;
+        return Result.success;
     }
 
     @Override
@@ -42,8 +52,8 @@ public class HostCreateAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
-        Map<String, String> notes = createNotesFromCallback(callbackData);
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Environment", workItem.getHost().environment);
         notes.put("Platform", workItem.getHost().platform);
@@ -51,10 +61,11 @@ public class HostCreateAction extends Action {
         notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
         notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));
         notes.put("Reason", workItem.getReason());
-        recordAudit(workItem, result, notes, output);
+        writeAudit(workItem, result, notes, output);
     }
 
-    protected void success(WorkItem workItem) {
+    @Override
+    public void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
@@ -67,7 +78,8 @@ public class HostCreateAction extends Action {
                 Const.NO_STATUS);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);

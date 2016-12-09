@@ -24,9 +24,7 @@ public class ModuleCreateAction extends Action {
 
     @Override
     public Result process(WorkItem workItem) {
-        Result result = Result.success;
-        recordAudit(workItem, null, result, null);
-        return result;
+        return Result.success;
     }
 
     @Override
@@ -34,11 +32,11 @@ public class ModuleCreateAction extends Action {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
-        Map<String, String> notes = createNotesFromCallback(callbackData);
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         notes.put("Template", workItem.getMainModule().template);
         notes.put("Type", workItem.getMainModule().moduleType.toString());
-        recordAudit(workItem, result, notes, output);
+        writeAudit(workItem, result, notes, output);
     }
 
 }

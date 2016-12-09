@@ -28,6 +28,19 @@ public class HostVipDisableAction extends HostVipBaseAction {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostVipDisableAction.class);
 
     @Override
+    public void updateStatus(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} who's VIP is being disabled", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateSatus(
+                workItem.getHost().hostId,
+                true,
+                "Disabling in VIP...");
+    }
+
+    @Override
     public Result process(WorkItem workItem) {
         LOGGER.info("Disabling vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
         return Result.success;
@@ -38,18 +51,7 @@ public class HostVipDisableAction extends HostVipBaseAction {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected void updateStatusBeforeProcessing(WorkItem workItem) {
-        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
-        if (host == null) {
-            LOGGER.warn("Could not find host {} who's VIP is being disabled", workItem.getHost().hostId);
-            return;
-        }
-        dataAccess.updateSatus(
-                workItem.getHost().hostId,
-                true,
-                "Disabling VIP...");
-    }
-
+    @Override
     protected Result processVip(WorkItem workItem, Vip vip) {
         LOGGER.info("Disabling vip {} for {} {}", vip.getDns(), workItem.getHost().hostName, workItem.getService().serviceName);
         return Result.success;

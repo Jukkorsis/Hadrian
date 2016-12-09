@@ -29,22 +29,10 @@ public class HostRestartAction extends Action {
     private final static Logger LOGGER = LoggerFactory.getLogger(HostRestartAction.class);
 
     @Override
-    public Result process(WorkItem workItem) {
-        Result result = Result.success;
-        success(workItem);
-        recordAudit(workItem, null, result, null);
-        return result;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected void updateStatusBeforeProcessing(WorkItem workItem) {
+    public void updateStatus(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            LOGGER.warn("Could not find host {} being restarted too", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
         dataAccess.updateSatus(
@@ -53,14 +41,26 @@ public class HostRestartAction extends Action {
                 "Restarting...");
     }
 
-    protected void recordAudit(WorkItem workItem, CallbackData callbackData, Result result, String output) {
-        Map<String, String> notes = createNotesFromCallback(callbackData);
-        notes.put("Reason", workItem.getReason());
-        notes.put("Check for OS Upgrade", Boolean.toString(workItem.getHost().doOsUpgrade));
-        recordAudit(workItem, result, notes, output);
+    @Override
+    public Result process(WorkItem workItem) {
+        LOGGER.info("Restarting host {} of {}", workItem.getHost().hostName, workItem.getService().serviceName);
+        return Result.success;
     }
 
-    protected void success(WorkItem workItem) {
+    @Override
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+        notes.put("Reason", workItem.getReason());
+        notes.put("Check for OS Upgrade", Boolean.toString(workItem.getHost().doOsUpgrade));
+        writeAudit(workItem, result, notes, output);
+    }
+
+    @Override
+    public void success(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
@@ -72,7 +72,8 @@ public class HostRestartAction extends Action {
                 Const.NO_STATUS);
     }
 
-    protected void error(WorkItem workItem) {
+    @Override
+    public void error(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
