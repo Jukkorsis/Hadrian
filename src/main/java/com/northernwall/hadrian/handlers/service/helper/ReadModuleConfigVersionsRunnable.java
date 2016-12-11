@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handlers.service.helper;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.handlers.service.dao.GetVersionData;
@@ -23,9 +24,7 @@ public class ReadModuleConfigVersionsRunnable implements Runnable {
                 && !module.getConfigName().isEmpty()) {
             getVersionData.configVersions.addAll(moduleConfigHelper.readModuleConfigVersions(module));
         }
-        if (getVersionData.configVersions.isEmpty()) {
-            getVersionData.configVersions.add("0.0.0");
-        }
+        getVersionData.configVersions.add(0, Const.NO_CHANGE);
     }
 
 }

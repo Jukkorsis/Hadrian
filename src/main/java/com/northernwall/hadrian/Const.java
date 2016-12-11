@@ -31,6 +31,7 @@ public class Const {
     public static final int COOKIE_EXPRIY = 24*60*60*1000;
     public static final String HOST = "{host}";
     public static final String END_POINT = "{endPoint}";
+    public static final String NO_CHANGE = "[No Change]";
 
     public static final String SERVICE_TYPE_SERVICE = "Service";
     public static final String SERVICE_TYPE_SHARED_LIBRARY = "Shared Library";
