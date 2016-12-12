@@ -23,8 +23,6 @@ import java.util.Map;
  * @author Richard
  */
 public class GetModuleData {
-    public String serviceId;
-    public String serviceName;
     public String moduleName;
     public Map<String, GetDataCenterData> counts = new HashMap<>();
 }

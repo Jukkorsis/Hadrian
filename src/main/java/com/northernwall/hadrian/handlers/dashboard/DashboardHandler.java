@@ -27,6 +27,7 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.handlers.dashboard.dao.GetDashboardData;
 import com.northernwall.hadrian.handlers.dashboard.dao.GetDataCenterData;
 import com.northernwall.hadrian.handlers.dashboard.dao.GetModuleData;
+import com.northernwall.hadrian.handlers.dashboard.dao.GetServiceData;
 import com.northernwall.hadrian.handlers.dashboard.helper.ReadAvailabilityRunnable;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class DashboardHandler extends BasicHandler {
         List<Future> futures = new LinkedList<>();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
+                GetServiceData serviceData = null;
                 List<Module> modules = getDataAccess().getModules(service.getServiceId());
                 List<Host> hosts = null;
                 if (modules != null && !modules.isEmpty()) {
@@ -77,11 +79,15 @@ public class DashboardHandler extends BasicHandler {
                             }
                             List<Host> moduleHosts = Host.filterModule(module.getModuleId(), environment, hosts);
                             if (moduleHosts != null && !moduleHosts.isEmpty()) {
+                                if (serviceData == null) {
+                                    serviceData = new GetServiceData();
+                                    serviceData.serviceId = service.getServiceId();
+                                    serviceData.serviceName = service.getServiceName();
+                                    getDashboardData.addModule(serviceData);
+                                }
                                 GetModuleData moduleData = new GetModuleData();
-                                moduleData.serviceId = service.getServiceId();
-                                moduleData.serviceName = service.getServiceName();
                                 moduleData.moduleName = module.getModuleName();
-                                getDashboardData.modules.add(moduleData);
+                                serviceData.modules.add(moduleData);
 
                                 for (Host host : moduleHosts) {
                                     GetDataCenterData dataCenterData = moduleData.counts.get(host.getDataCenter());

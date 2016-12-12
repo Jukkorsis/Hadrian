@@ -22,17 +22,9 @@ import java.util.List;
  *
  * @author Richard
  */
-public class GetDashboardData {
-    public String teamName;
-    public List<GetServiceData> leftServices = new LinkedList<>();
-    public List<GetServiceData> rightServices = new LinkedList<>();
-
-    public void addModule(GetServiceData serviceData) {
-        if (leftServices.size() == rightServices.size()) {
-            leftServices.add(serviceData);
-        } else {
-            rightServices.add(serviceData);
-        }
-    }
+public class GetServiceData {
+    public String serviceId;
+    public String serviceName;
+    public List<GetModuleData> modules = new LinkedList<>();
     
 }
