@@ -24,14 +24,14 @@ import java.util.List;
  */
 public class GetDashboardData {
     public String teamName;
-    public List<GetServiceData> leftServices = new LinkedList<>();
-    public List<GetServiceData> rightServices = new LinkedList<>();
+    public List<GetModuleData> leftModules = new LinkedList<>();
+    public List<GetModuleData> rightModules = new LinkedList<>();
 
-    public void addModule(GetServiceData serviceData) {
-        if (leftServices.size() == rightServices.size()) {
-            leftServices.add(serviceData);
+    public void addModule(GetModuleData moduleData) {
+        if (leftModules.size() == rightModules.size()) {
+            leftModules.add(moduleData);
         } else {
-            rightServices.add(serviceData);
+            rightModules.add(moduleData);
         }
     }
     

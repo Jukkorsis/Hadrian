@@ -6,20 +6,18 @@
             <table class="table table-hover table-striped table-condensed vertical-align">
                 <tr>
                     <th>Service</th>
-                    <th>Module</th>
                     <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
                 </tr>
-                <tr ng-repeat="service in dashboard.leftServices">
-                    <td><h4><a href="#/Service/{{service.serviceId}}">{{service.serviceName}}</a></h4></td>
-                    <td><div ng-repeat="module in service.modules"><h4>{{module.moduleName}}</h4></div></td>
+                <tr ng-repeat="module in dashboard.leftModules">
+                    <td><h3><a href="#/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
                     <td ng-repeat="dc in config.dataCenters">
-                        <h4 ng-repeat="module in service.modules">
-                            <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total">
+                        <h3 style="line-height:0">
+                            <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total" style="margin-bottom:0">
                                 <uib-bar value="module.counts[dc].good" type="success"><span>{{module.counts[dc].good}}</span></uib-bar>
                                 <uib-bar value="module.counts[dc].off" type="warning"><span>{{module.counts[dc].off}}</span></uib-bar>
                                 <uib-bar value="module.counts[dc].bad" type="danger"><span>{{module.counts[dc].bad}}</span></uib-bar>
-                            </uib-progress>&nbsp;
-                        </h4>
+                            </uib-progress>
+                        </h3>
                     </td>
                 </tr>
             </table>
@@ -28,20 +26,18 @@
             <table class="table table-hover table-striped table-condensed vertical-align">
                 <tr>
                     <th>Service</th>
-                    <th>Module</th>
                     <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
                 </tr>
-                <tr ng-repeat="service in dashboard.rightServices">
-                    <td><h4><a href="#/Service/{{service.serviceId}}">{{service.serviceName}}</a></h4></td>
-                    <td><div ng-repeat="module in service.modules"><h4>{{module.moduleName}}</h4></div></td>
+                <tr ng-repeat="module in dashboard.rightModules">
+                    <td><h3><a href="#/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
                     <td ng-repeat="dc in config.dataCenters">
-                        <h4 ng-repeat="module in service.modules">
-                            <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total">
+                        <h3 style="line-height:0">
+                            <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total" style="margin-bottom:0">
                                 <uib-bar value="module.counts[dc].good" type="success"><span>{{module.counts[dc].good}}</span></uib-bar>
                                 <uib-bar value="module.counts[dc].off" type="warning"><span>{{module.counts[dc].off}}</span></uib-bar>
                                 <uib-bar value="module.counts[dc].bad" type="danger"><span>{{module.counts[dc].bad}}</span></uib-bar>
-                            </uib-progress>&nbsp;
-                        </h4>
+                            </uib-progress>
+                        </h3>
                     </td>
                 </tr>
             </table>
