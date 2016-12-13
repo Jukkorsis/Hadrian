@@ -28,7 +28,6 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PostServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
-import com.northernwall.hadrian.schedule.ScheduleRunner;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -96,15 +95,6 @@ public class ServiceCreateHandler extends BasicHandler {
             data.mavenGroupId = null;
         }
 
-        try {
-            if (data.smokeTestCron != null
-                    && !data.smokeTestCron.isEmpty()) {
-                ScheduleRunner.parseCron(data.smokeTestCron);
-            }
-        } catch (Exception e) {
-            throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
-        }
-
         if (data.testStyle.equals("Maven")) {
             data.testHostname = null;
             data.testRunAs = null;
@@ -131,7 +121,6 @@ public class ServiceCreateHandler extends BasicHandler {
                 data.testDeploymentFolder,
                 data.testCmdLine,
                 data.testTimeOut,
-                data.smokeTestCron,
                 true);
 
         getDataAccess().saveService(service);

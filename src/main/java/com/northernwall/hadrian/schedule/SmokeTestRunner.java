@@ -40,9 +40,11 @@ import org.slf4j.LoggerFactory;
  * @author Richard
  */
 public class SmokeTestRunner implements Runnable {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(SmokeTestRunner.class);
-    
+
     private final Service service;
+    private final Module module;
     private final int group;
     private final DataAccess dataAccess;
     private final Parameters parameters;
@@ -50,8 +52,9 @@ public class SmokeTestRunner implements Runnable {
     private final OkHttpClient client;
     private final MessagingCoodinator messagingCoodinator;
 
-    public SmokeTestRunner(Service service, int group, DataAccess dataAccess, Parameters parameters, Gson gson, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
+    public SmokeTestRunner(Service service, Module module, int group, DataAccess dataAccess, Parameters parameters, Gson gson, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
         this.service = service;
+        this.module = module;
         this.group = group;
         this.dataAccess = dataAccess;
         this.parameters = parameters;
@@ -62,46 +65,31 @@ public class SmokeTestRunner implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("Running scheduled smoke test for {} in group {}", service.getServiceName(), group);
-        List<Module> modules = dataAccess.getModules(service.getServiceId());
-        if (modules == null || modules.isEmpty()) {
-            return;
-        }
-        List<Host> hosts = null;
+        LOGGER.info("Running scheduled smoke test for {} {} in group {}", service.getServiceName(), module.getModuleName(), group);
+        List<Host> hosts = dataAccess.getHosts(service.getServiceId());
         List<Host> failedHosts = new LinkedList<>();
-        for (Module module : modules) {
-            if (module.getModuleType() == ModuleType.Deployable) {
-                String smokeTestUrl = module.getSmokeTestUrl();
-                if (smokeTestUrl != null && !smokeTestUrl.isEmpty()) {
-                    LOGGER.info("Running scheduled smoke test for {} {} in group {}", service.getServiceName(), module.getModuleName(), group);
-                    if (hosts == null) {
-                        hosts = dataAccess.getHosts(service.getServiceId());
+        if (hosts != null && !hosts.isEmpty()) {
+            for (Host host : hosts) {
+                if (host.getModuleId().equals(module.getModuleId())) {
+                    SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
+                            module.getSmokeTestUrl(),
+                            host.getHostName(),
+                            parameters,
+                            gson,
+                            client);
+                    if (smokeTestData == null
+                            || smokeTestData.result == null
+                            || smokeTestData.result.isEmpty()
+                            || !smokeTestData.result.equalsIgnoreCase("pass")) {
+                        LOGGER.info("Scheduled smoke test failed for {} in {} in group {}",
+                                host.getHostName(),
+                                service.getServiceName(),
+                                group);
+                        failedHosts.add(host);
                     }
-                    if (hosts != null && !hosts.isEmpty()) {
-                        for (Host host : hosts) {
-                            if (host.getModuleId().equals(module.getModuleId())) {
-                                SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
-                                        smokeTestUrl, 
-                                        host.getHostName(), 
-                                        parameters, 
-                                        gson, 
-                                        client);
-                                if (smokeTestData == null 
-                                        || smokeTestData.result == null
-                                        || smokeTestData.result.isEmpty()
-                                        || !smokeTestData.result.equalsIgnoreCase("pass")) {
-                                    LOGGER.info("Scheduled smoke test failed for {} in {} in group {}", 
-                                            host.getHostName(), 
-                                            service.getServiceName(), 
-                                            group);
-                                    failedHosts.add(host);
-                                }
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException ex) {
-                                }
-                            }
-                        }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
                     }
                 }
             }
@@ -129,9 +117,10 @@ public class SmokeTestRunner implements Runnable {
                 hostNames = failedHosts.get(0).getHostName() + " and " + failedHosts.get(1).getHostName();
                 break;
             default:
-                for (int i=0;i<(size-1);i++) {
+                for (int i = 0; i < (size - 1); i++) {
                     hostNames = hostNames + failedHosts.get(0).getHostName() + ", ";
-                }   hostNames = hostNames + " and " + failedHosts.get(size-1).getHostName();
+                }
+                hostNames = hostNames + " and " + failedHosts.get(size - 1).getHostName();
                 break;
         }
         return hostNames;

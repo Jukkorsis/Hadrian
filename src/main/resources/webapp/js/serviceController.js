@@ -980,7 +980,6 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.testDeploymentFolder = service.testDeploymentFolder;
         $scope.formUpdateService.testCmdLine = service.testCmdLine;
         $scope.formUpdateService.testTimeOut = service.testTimeOut;
-        $scope.formUpdateService.smokeTestCron = service.smokeTestCron;
 
         $scope.save = function () {
             var dataObject = {
@@ -1000,8 +999,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 testRunAs: $scope.formUpdateService.testRunAs,
                 testDeploymentFolder: $scope.formUpdateService.testDeploymentFolder,
                 testCmdLine: $scope.formUpdateService.testCmdLine,
-                testTimeOut: $scope.formUpdateService.testTimeOut,
-                smokeTestCron: $scope.formUpdateService.smokeTestCron
+                testTimeOut: $scope.formUpdateService.testTimeOut
             };
 
             var responsePromise = $http.put("/v1/service/modify", dataObject, {});
@@ -1140,6 +1138,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.smokeTestUrl = $scope.config.smokeTestUrl;
+        $scope.formSaveModule.smokeTestCron = "";
         $scope.formSaveModule.runAs = "";
         $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
         $scope.formSaveModule.dataFolder = $scope.config.dataFolder;
@@ -1167,6 +1166,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 smokeTestUrl: $scope.formSaveModule.smokeTestUrl,
+                smokeTestCron: $scope.formSaveModule.smokeTestCron,
                 runAs: $scope.formSaveModule.runAs,
                 deploymentFolder: $scope.formSaveModule.deploymentFolder,
                 dataFolder: $scope.formSaveModule.dataFolder,
@@ -1213,6 +1213,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.smokeTestUrl = module.smokeTestUrl;
+        $scope.formUpdateModule.smokeTestCron = module.smokeTestCron;
         $scope.formUpdateModule.runAs = module.runAs;
         $scope.formUpdateModule.deploymentFolder = module.deploymentFolder;
         $scope.formUpdateModule.dataFolder = module.dataFolder;
@@ -1239,6 +1240,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 smokeTestUrl: $scope.formUpdateModule.smokeTestUrl,
+                smokeTestCron: $scope.formUpdateModule.smokeTestCron,
                 runAs: $scope.formUpdateModule.runAs,
                 deploymentFolder: $scope.formUpdateModule.deploymentFolder,
                 dataFolder: $scope.formUpdateModule.dataFolder,

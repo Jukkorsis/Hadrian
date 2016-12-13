@@ -58,13 +58,12 @@ public class Service implements Comparable<Service>{
     private String testDeploymentFolder;
     private String testCmdLine;
     private int testTimeOut;
-    private String smokeTestCron;
     private List<Document> documents;
     private Date creationDate;
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, FindBugsLevel doFindBugsLevel, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, String smokeTestCron, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, FindBugsLevel doFindBugsLevel, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -84,7 +83,6 @@ public class Service implements Comparable<Service>{
         this.testDeploymentFolder = testDeploymentFolder;
         this.testCmdLine = testCmdLine;
         this.testTimeOut = testTimeOut;
-        this.smokeTestCron = smokeTestCron;
         this.documents = new LinkedList<>();
         this.creationDate = GMT.getGmtAsDate();
         this.deletionDate = null;
@@ -247,14 +245,6 @@ public class Service implements Comparable<Service>{
 
     public void setTestTimeOut(int testTimeOut) {
         this.testTimeOut = testTimeOut;
-    }
-
-    public String getSmokeTestCron() {
-        return smokeTestCron;
-    }
-
-    public void setSmokeTestCron(String smokeTestCron) {
-        this.smokeTestCron = smokeTestCron;
     }
 
     public List<Document> getDocuments() {

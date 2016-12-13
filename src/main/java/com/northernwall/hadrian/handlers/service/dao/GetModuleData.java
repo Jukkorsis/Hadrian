@@ -38,6 +38,7 @@ public class GetModuleData {
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.smokeTestUrl = module.getSmokeTestUrl();
+        temp.smokeTestCron = module.getSmokeTestCron();
         temp.runAs = module.getRunAs();
         temp.deploymentFolder = module.getDeploymentFolder();
         temp.dataFolder = module.getDataFolder();
@@ -68,6 +69,7 @@ public class GetModuleData {
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;
+    public String smokeTestCron;
     public String runAs;
     public String deploymentFolder;
     public String dataFolder;

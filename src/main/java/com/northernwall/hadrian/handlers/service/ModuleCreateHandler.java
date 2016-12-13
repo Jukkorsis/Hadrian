@@ -35,6 +35,7 @@ import com.northernwall.hadrian.handlers.service.dao.PostModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.schedule.ScheduleRunner;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -196,6 +197,15 @@ public class ModuleCreateHandler extends BasicHandler {
             }
         }
 
+        try {
+            if (data.smokeTestCron != null
+                    && !data.smokeTestCron.isEmpty()) {
+                ScheduleRunner.parseCron(data.smokeTestCron);
+            }
+        } catch (Exception e) {
+            throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
+        }
+
         Module module = new Module(
                 data.moduleName,
                 data.serviceId,
@@ -209,6 +219,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.versionUrl,
                 data.availabilityUrl,
                 data.smokeTestUrl,
+                data.smokeTestCron,
                 data.runAs,
                 data.deploymentFolder,
                 data.dataFolder,

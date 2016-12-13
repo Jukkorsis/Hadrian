@@ -48,7 +48,6 @@ public class GetServiceData {
         temp.testDeploymentFolder = service.getTestDeploymentFolder();
         temp.testCmdLine = service.getTestCmdLine();
         temp.testTimeOut = service.getTestTimeOut();
-        temp.smokeTestCron = service.getSmokeTestCron();
 
         temp.leftDocuments = new LinkedList<>();
         temp.middleDocuments = new LinkedList<>();
@@ -94,7 +93,6 @@ public class GetServiceData {
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
-    public String smokeTestCron;
     public List<Document> leftDocuments;
     public List<Document> middleDocuments;
     public List<Document> rightDocuments;

@@ -37,6 +37,7 @@ public class PostModuleData {
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;
+    public String smokeTestCron;
     public String runAs;
     public String deploymentFolder;
     public String dataFolder;

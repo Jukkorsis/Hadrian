@@ -40,6 +40,5 @@ public class PutServiceData {
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
-    public String smokeTestCron;
 
 }

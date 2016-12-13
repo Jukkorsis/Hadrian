@@ -22,6 +22,8 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
@@ -87,9 +89,22 @@ public class ScheduleRunner implements Runnable {
                     int serviceGroup = service.getServiceId().hashCode() % Scheduler.GROUP_COUNT;
                     if (serviceGroup == group) {
                         serviceCount++;
-                        if (checkCron(service.getSmokeTestCron(), now)) {
-                            smokeTestCount++;
-                            scheduledExecutorService.submit(new SmokeTestRunner(service, group, dataAccess, parameters, gson, client, messagingCoodinator));
+                        List<Module> modules = dataAccess.getModules(service.getServiceId());
+                        if (modules != null && !modules.isEmpty()) {
+                            for (Module module : modules) {
+                                if (module.getModuleType() == ModuleType.Deployable) {
+                                    String smokeTestCron = module.getSmokeTestCron();
+                                    String smokeTestUrl = module.getSmokeTestUrl();
+                                    if (smokeTestUrl != null 
+                                            && !smokeTestUrl.isEmpty()
+                                            && smokeTestCron != null 
+                                            && !smokeTestCron.isEmpty() 
+                                            && checkCron(module.getSmokeTestCron(), now)) {
+                                        smokeTestCount++;
+                                        scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, parameters, gson, client, messagingCoodinator));
+                                    }
+                                }
+                            }
                         }
                         if (doMetrics) {
                             scheduledExecutorService.submit(new MetricsRunner(service, group, dataAccess, metricRegistry));

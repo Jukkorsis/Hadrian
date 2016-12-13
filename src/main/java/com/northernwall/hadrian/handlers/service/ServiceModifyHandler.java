@@ -124,15 +124,6 @@ public class ServiceModifyHandler extends BasicHandler {
             data.mavenGroupId = null;
         }
 
-        try {
-            if (data.smokeTestCron != null
-                    && !data.smokeTestCron.isEmpty()) {
-                ScheduleRunner.parseCron(data.smokeTestCron);
-            }
-        } catch (Exception e) {
-            throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
-        }
-
         if (data.testStyle.equals("Maven")) {
             data.testHostname = null;
             data.testRunAs = null;
@@ -184,7 +175,6 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setTestDeploymentFolder(data.testDeploymentFolder);
         service.setTestCmdLine(data.testCmdLine);
         service.setTestTimeOut(data.testTimeOut);
-        service.setSmokeTestCron(data.smokeTestCron);
 
         getDataAccess().updateService(service);
         getDataAccess().insertSearch(

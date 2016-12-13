@@ -34,6 +34,7 @@ import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.schedule.ScheduleRunner;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -137,6 +138,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.versionUrl = "";
                 data.availabilityUrl = "";
                 data.smokeTestUrl = "";
+                data.smokeTestCron = "";
                 data.runAs = "";
                 data.deploymentFolder = "";
                 data.dataFolder = "";
@@ -149,6 +151,7 @@ public class ModuleModifyHandler extends BasicHandler {
             case Simulator:
                 data.outbound = "No";
                 data.smokeTestUrl = "";
+                data.smokeTestCron = "";
             case Deployable:
                 if (data.hostAbbr.contains("-")) {
                     throw new Http400BadRequestException("Can not have '-' in host abbr");
@@ -182,10 +185,19 @@ public class ModuleModifyHandler extends BasicHandler {
                     SearchResult searchResult = getDataAccess().doSearch(
                             Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
                             service.getMavenGroupId() + "." + data.mavenArtifactId);
-                    if (searchResult != null 
+                    if (searchResult != null
                             && !searchResult.moduleId.equals(data.moduleId)) {
                         throw new Http405NotAllowedException("A service and module already exists with this maven group and artifact");
                     }
+                }
+
+                try {
+                    if (data.smokeTestCron != null
+                            && !data.smokeTestCron.isEmpty()) {
+                        ScheduleRunner.parseCron(data.smokeTestCron);
+                    }
+                } catch (Exception e) {
+                    throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
                 }
 
                 checkEnvironmentNames(data.environmentNames);
@@ -211,6 +223,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setSmokeTestUrl(data.smokeTestUrl);
+        module.setSmokeTestCron(data.smokeTestCron);
         module.setRunAs(data.runAs);
         module.setDeploymentFolder(data.deploymentFolder);
         module.setDataFolder(data.dataFolder);

@@ -41,6 +41,5 @@ public class PostServiceData {
     public String testDeploymentFolder;
     public String testCmdLine;
     public int testTimeOut;
-    public String smokeTestCron;
 
 }

@@ -127,8 +127,12 @@
                                     <dd>{{m.versionUrl}}</dd>
                                     <dt>Availability URL:</dt>
                                     <dd>{{m.availabilityUrl}}</dd>
-                                    <dt>Smoke Test URL:</dt>
-                                    <dd>{{m.smokeTestUrl}}</dd>
+                                    <div ng-if="m.moduleType === 'Deployable'">
+                                        <dt>Smoke Test URL:</dt>
+                                        <dd>{{m.smokeTestUrl}}</dd>
+                                        <dt>Smoke Test Cron:</dt>
+                                        <dd>{{m.smokeTestCron}}</dd>
+                                    </div>
                                     <div ng-if="service.doDeploys">
                                         <dt>Start Cmd Line:</dt>
                                         <dd>{{m.startCmdLine}}</dd>

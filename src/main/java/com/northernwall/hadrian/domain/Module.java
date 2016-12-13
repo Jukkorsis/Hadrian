@@ -37,6 +37,7 @@ public class Module implements Comparable<Module> {
     private String versionUrl;
     private String availabilityUrl;
     private String smokeTestUrl;
+    private String smokeTestCron;
     private String runAs;
     private String deploymentFolder;
     private String dataFolder;
@@ -49,7 +50,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -63,6 +64,7 @@ public class Module implements Comparable<Module> {
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.smokeTestUrl = smokeTestUrl;
+        this.smokeTestCron = smokeTestCron;
         this.runAs = runAs;
         this.deploymentFolder = deploymentFolder;
         this.dataFolder = dataFolder;
@@ -181,6 +183,14 @@ public class Module implements Comparable<Module> {
 
     public void setSmokeTestUrl(String smokeTestUrl) {
         this.smokeTestUrl = smokeTestUrl;
+    }
+
+    public String getSmokeTestCron() {
+        return smokeTestCron;
+    }
+
+    public void setSmokeTestCron(String smokeTestCron) {
+        this.smokeTestCron = smokeTestCron;
     }
 
     public String getRunAs() {

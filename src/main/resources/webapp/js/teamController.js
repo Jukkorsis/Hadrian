@@ -160,7 +160,6 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService.testDeploymentFolder = "";
             $scope.formSaveService.testCmdLine = "";
             $scope.formSaveService.testTimeOut = 300;
-            $scope.formSaveService.smokeTestCron = "";
 
             $scope.save = function () {
                 var dataObject = {
@@ -181,8 +180,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     testRunAs: $scope.formSaveService.testRunAs,
                     testDeploymentFolder: $scope.formSaveService.testDeploymentFolder,
                     testCmdLine: $scope.formSaveService.testCmdLine,
-                    testTimeOut: $scope.formSaveService.testTimeOut,
-                    smokeTestCron: $scope.formSaveService.smokeTestCron
+                    testTimeOut: $scope.formSaveService.testTimeOut
                 };
 
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});
