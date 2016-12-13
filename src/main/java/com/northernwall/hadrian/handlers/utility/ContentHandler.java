@@ -20,6 +20,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,6 +60,14 @@ public class ContentHandler extends AbstractHandler {
                         }
                     }
                 });
+    }
+    
+    public void preload(String resource) {
+        try {
+            cache.get(rootPath + resource);
+        } catch (ExecutionException ex) {
+            LOGGER.warn("Failed to preload {}, {}", resource, ex.getMessage());
+        }
     }
 
     @Override
