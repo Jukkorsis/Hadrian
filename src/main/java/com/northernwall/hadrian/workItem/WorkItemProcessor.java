@@ -25,6 +25,7 @@ import com.northernwall.hadrian.workItem.action.Action;
 import com.northernwall.hadrian.workItem.action.ModuleCreateAction;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
@@ -350,10 +351,23 @@ public class WorkItemProcessor {
         String nextId = workItem.getNextId();
         if (nextId == null || nextId.isEmpty()) {
             //No more hosts to update in the chain
+            if (workItem.getType() == Type.host) {
+                dataAccess.updateSatus(
+                        workItem.getHost().hostId,
+                        false,
+                        Const.NO_STATUS);
+            }
             return;
         }
 
         WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
+        if (workItem.getType() == Type.host
+                && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
+            dataAccess.updateSatus(
+                    workItem.getHost().hostId,
+                    false,
+                    Const.NO_STATUS);
+        }
         process(nextWorkItem);
     }
 
@@ -367,15 +381,12 @@ public class WorkItemProcessor {
         WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
         stopNext(nextWorkItem);
 
-        if (nextWorkItem.getType() == Type.host 
+        if (workItem.getType() == Type.host
                 && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
-            Host host = dataAccess.getHost(workItem.getService().serviceId, nextWorkItem.getHost().hostId);
-            if (host != null) {
-                dataAccess.updateSatus(
-                        nextWorkItem.getHost().hostId,
-                        false,
-                        "Queued operation cancelled");
-            }
+            dataAccess.updateSatus(
+                    nextWorkItem.getHost().hostId,
+                    false,
+                    "Queued operation cancelled");
         }
         dataAccess.deleteWorkItem(nextId);
         dataAccess.saveWorkItemStatus(nextId, 502);
