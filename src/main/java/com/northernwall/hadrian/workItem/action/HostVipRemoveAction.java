@@ -19,7 +19,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +49,6 @@ public class HostVipRemoveAction extends HostVipBaseAction {
         return Result.success;
     }
     
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     @Override
     protected Result processVip(WorkItem workItem, Vip vip) {
         LOGGER.info("Removing vip {} for {} {}", vip.getDns(), workItem.getHost().hostName, workItem.getService().serviceName);

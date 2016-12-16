@@ -17,7 +17,6 @@ package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 
 public class ModuleUpdateAction extends Action {
 
@@ -26,11 +25,6 @@ public class ModuleUpdateAction extends Action {
         Result result = Result.success;
         writeAudit(workItem, result, null, null);
         return result;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

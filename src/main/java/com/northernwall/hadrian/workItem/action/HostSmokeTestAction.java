@@ -21,7 +21,6 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
@@ -30,7 +29,6 @@ import com.squareup.okhttp.Response;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,15 +114,6 @@ public class HostSmokeTestAction extends Action {
 
         writeAudit(workItem, result, null, output);
         return result;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
     }
 
     @Override

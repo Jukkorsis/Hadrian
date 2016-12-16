@@ -17,7 +17,6 @@ package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.util.Map;
 
 public class ServiceDeleteAction extends Action {
@@ -25,11 +24,6 @@ public class ServiceDeleteAction extends Action {
     @Override
     public Result process(WorkItem workItem) {
         return Result.success;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

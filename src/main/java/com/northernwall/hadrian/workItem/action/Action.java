@@ -26,7 +26,6 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.squareup.okhttp.OkHttpClient;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -63,7 +62,9 @@ public abstract class Action {
 
     public abstract Result process(WorkItem workItem);
 
-    public abstract Result processCallback(WorkItem workItem, CallbackData callbackData);
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        throw new UnsupportedOperationException("Work item " + name + " does not supported callbacks.");
+    }
 
     public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         writeAudit(workItem, result, notes, output);

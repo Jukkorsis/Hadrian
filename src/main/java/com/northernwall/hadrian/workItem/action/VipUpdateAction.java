@@ -19,8 +19,6 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
-import com.northernwall.hadrian.workItem.dao.CallbackData;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +31,6 @@ public class VipUpdateAction extends Action {
     public Result process(WorkItem workItem) {
         LOGGER.info("Updating Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         return Result.success;
-    }
-
-    @Override
-    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
