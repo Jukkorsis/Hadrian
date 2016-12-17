@@ -75,10 +75,6 @@
                                                 <td>Connections</td>
                                                 <td ng-repeat="dc in config.dataCenters">{{getVipDetailsConections(ep.details, dc)}}</td>
                                             </tr>
-                                            <tr>
-                                                <th>Host</th>
-                                                <th ng-repeat="dc in config.dataCenters"><span uib-popover="Priority, higher the better." popover-trigger="mouseenter">Pri</span> <span uib-popover="Host is enabled and avaliablity is 200" popover-trigger="mouseenter" class="glyphicon glyphicon-thumbs-up text-success"></span><span uib-popover="Host is disabled" popover-trigger="mouseenter" class="glyphicon glyphicon-off text-danger"></span><span uib-popover="Host is enabled but avaliablity is not 200" popover-trigger="mouseenter" class="glyphicon glyphicon-fire text-danger"></span> <span uib-popover="The current number of connections to the host from clients within this {{dc}}." popover-trigger="mouseenter">Conns</span></th>
-                                            </tr>
                                             <tr ng-repeat="h in ep.details.rows| filter:hostFilter">
                                                 <td>
                                                     {{h.hostName}}
@@ -93,6 +89,12 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                        Host/Data Center Legend:<br/>
+                                        <b>Priority</b> - Higher the better.<br/>
+                                        <span class="glyphicon glyphicon-thumbs-up text-success"></span> - Host is enabled and availability is 200<br/>
+                                        <span class="glyphicon glyphicon-off text-danger"></span> - Host is disabled<br/>
+                                        <span class="glyphicon glyphicon-fire text-danger"></span> - Host is enabled but availability is not 200<br/>
+                                        <b>Connections</b> - The current number of connections to the host from clients within the Data Center.
                                     </div>
                                     <div ng-if="!ep.loaded">
                                         Loading...
