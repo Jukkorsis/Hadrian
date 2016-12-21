@@ -65,22 +65,22 @@
                                             </tr>
                                             <tr>
                                                 <td>Name</td>
-                                                <td ng-repeat="dc in config.dataCenters">{{getVipDetailsName(ep.details, dc)}}</td>
+                                                <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsName(ep.details, dc)}}</td>
                                             </tr>
                                             <tr>
                                                 <td>IP Address</td>
-                                                <td ng-repeat="dc in config.dataCenters">{{getVipDetailsAddress(ep.details, dc)}}</td>
+                                                <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsAddress(ep.details, dc)}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Connections</td>
-                                                <td ng-repeat="dc in config.dataCenters">{{getVipDetailsConections(ep.details, dc)}}</td>
+                                                <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsConections(ep.details, dc)}}</td>
                                             </tr>
                                             <tr ng-repeat="h in ep.details.rows| filter:hostFilter">
                                                 <td>
                                                     {{h.hostName}}
                                                     <span ng-if="h.warning !== '-'" uib-popover="{{h.warning}}" popover-trigger="mouseenter" class="glyphicon glyphicon-info-sign text-danger"></span>
                                                 </td>
-                                                <td ng-repeat="dc in config.dataCenters">
+                                                <td ng-repeat="dc in config.dataCenters" class="text-center">
                                                     {{getVipDetailsPriority(h.details, dc)}}
                                                     <span ng-if="getVipDetailsOff(h.details, dc)" class="glyphicon glyphicon-off text-danger"></span>
                                                     <span ng-if="getVipDetailsOn(h.details, dc)" class="glyphicon glyphicon-thumbs-up text-success"></span>
@@ -89,12 +89,6 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                        Host/Data Center Legend:<br/>
-                                        <b>Priority</b> - Higher the better.<br/>
-                                        <span class="glyphicon glyphicon-thumbs-up text-success"></span> - Host is enabled and availability is 200<br/>
-                                        <span class="glyphicon glyphicon-off text-danger"></span> - Host is disabled<br/>
-                                        <span class="glyphicon glyphicon-fire text-danger"></span> - Host is enabled but availability is not 200<br/>
-                                        <b>Connections</b> - The current number of connections to the host from clients within the Data Center.
                                     </div>
                                     <div ng-if="!ep.loaded">
                                         Loading...
@@ -104,6 +98,13 @@
                         </table>
                     </div>
                 </div>
+                <b>Host/Data Center Legend:</b><br/>
+                <b>Priority</b> - Higher the better.<br/>
+                <span class="glyphicon glyphicon-thumbs-up text-success"></span> - Host is enabled and availability is 200<br/>
+                <span class="glyphicon glyphicon-off text-danger"></span> - Host is disabled<br/>
+                <span class="glyphicon glyphicon-fire text-danger"></span> - Host is enabled but availability is not 200<br/>
+                <b>Connections</b> - The current number of connections to the host from clients within the Data Center.
+
             </uib-tab>
         </uib-tabset>
     </div>
