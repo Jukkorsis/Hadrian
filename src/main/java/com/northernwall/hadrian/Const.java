@@ -63,8 +63,8 @@ public class Const {
     public static final String JETTY_PORT = "jetty.port";
     public static final int JETTY_PORT_DEFAULT = 9090;
     public static final String JETTY_IDLE_TIMEOUT = "jetty.idleTimeout";
-    public static final int JETTY_IDLE_TIMEOUT_DEFAULT = 1000;
-    public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.idleTimeout";
+    public static final int JETTY_IDLE_TIMEOUT_DEFAULT = 5000;
+    public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.acceptQueueSize";
     public static final int JETTY_ACCEPT_QUEUE_SIZE_DEFAULT = 100;
     
     public static final String SERVICE_BUILD_URL = "serviceBuild.url";
