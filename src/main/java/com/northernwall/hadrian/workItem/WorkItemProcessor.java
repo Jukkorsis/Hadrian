@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -66,25 +65,6 @@ public class WorkItemProcessor {
     private final OkHttpClient client;
     private final Gson gson;
     private final MetricRegistry metricRegistry;
-    private final Action serviceCreate;
-    private final Action serviceUpdate;
-    private final Action serviceDelete;
-    private final Action moduleCreate;
-    private final Action moduleUpdate;
-    private final Action moduleDelete;
-    private final Action hostCreate;
-    private final Action hostDeploy;
-    private final Action hostRestart;
-    private final Action hostSmokeTest;
-    private final Action hostDelete;
-    private final Action vipCreate;
-    private final Action vipUpdate;
-    private final Action vipDelete;
-    private final Action vipFix;
-    private final Action hostVipEnable;
-    private final Action hostVipDisable;
-    private final Action hostVipAdd;
-    private final Action hostVipRemove;
     private final ExecutorService executor;
 
     public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson, MetricRegistry metricRegistry) {
@@ -95,54 +75,32 @@ public class WorkItemProcessor {
         this.gson = gson;
         this.metricRegistry = metricRegistry;
 
-        serviceCreate = constructAction("serviceCreate", ServiceCreateAction.class);
-        serviceUpdate = constructAction("serviceUpdate", ServiceUpdateAction.class);
-        serviceDelete = constructAction("serviceDelete", ServiceDeleteAction.class);
+        //Check if action classes can be constructed
+        constructAction("serviceCreate", ServiceCreateAction.class);
+        constructAction("serviceUpdate", ServiceUpdateAction.class);
+        constructAction("serviceDelete", ServiceDeleteAction.class);
 
-        moduleCreate = constructAction("moduleCreate", ModuleCreateAction.class);
-        moduleUpdate = constructAction("moduleUpdate", ModuleUpdateAction.class);
-        moduleDelete = constructAction("moduleDelete", ModuleDeleteAction.class);
+        constructAction("moduleCreate", ModuleCreateAction.class);
+        constructAction("moduleUpdate", ModuleUpdateAction.class);
+        constructAction("moduleDelete", ModuleDeleteAction.class);
 
-        hostCreate = constructAction("hostCreate", HostCreateAction.class);
-        hostDeploy = constructAction("hostDeploy", HostDeployAction.class);
-        hostRestart = constructAction("hostRestart", HostRestartAction.class);
-        hostSmokeTest = constructAction("hostSmokeTest", HostSmokeTestAction.class);
-        hostDelete = constructAction("hostDelete", HostDeleteAction.class);
+        constructAction("hostCreate", HostCreateAction.class);
+        constructAction("hostDeploy", HostDeployAction.class);
+        constructAction("hostRestart", HostRestartAction.class);
+        constructAction("hostSmokeTest", HostSmokeTestAction.class);
+        constructAction("hostDelete", HostDeleteAction.class);
 
-        vipCreate = constructAction("vipCreate", VipCreateAction.class);
-        vipUpdate = constructAction("vipUpdate", VipUpdateAction.class);
-        vipDelete = constructAction("vipDelete", VipDeleteAction.class);
-        vipFix = constructAction("vipFix", VipFixAction.class);
+        constructAction("vipCreate", VipCreateAction.class);
+        constructAction("vipUpdate", VipUpdateAction.class);
+        constructAction("vipDelete", VipDeleteAction.class);
+        constructAction("vipFix", VipFixAction.class);
 
-        hostVipEnable = constructAction("hostVipEnable", HostVipEnableAction.class);
-        hostVipDisable = constructAction("hostVipDisable", HostVipDisableAction.class);
-        hostVipAdd = constructAction("hostVipAdd", HostVipAddAction.class);
-        hostVipRemove = constructAction("hostVipRemove", HostVipRemoveAction.class);
+        constructAction("hostVipEnable", HostVipEnableAction.class);
+        constructAction("hostVipDisable", HostVipDisableAction.class);
+        constructAction("hostVipAdd", HostVipAddAction.class);
+        constructAction("hostVipRemove", HostVipRemoveAction.class);
 
         executor = Executors.newFixedThreadPool(10);
-    }
-
-    private Action constructAction(String name, Class defaultClass) {
-        String factoryName = parameters.getString("action." + name, null);
-        try {
-            Class c;
-            if (factoryName != null && !factoryName.isEmpty()) {
-                c = Class.forName(factoryName);
-            } else {
-                c = defaultClass;
-                factoryName = defaultClass.getName();
-            }
-            Action action = (Action) c.newInstance();
-            action.init(name, dataAccess, parameters, configHelper, client, gson);
-            LOGGER.info("Constructed action {} with {}", name, factoryName);
-            return action;
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Could not build Action " + name + ", could not find class " + factoryName, ex);
-        } catch (InstantiationException ex) {
-            throw new RuntimeException("Could not build Action " + name + ", could not instantiation class " + factoryName, ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Could not build Action " + name + ", could not access class " + factoryName, ex);
-        }
     }
 
     public void processWorkItem(final WorkItem workItem) throws IOException {
@@ -296,61 +254,85 @@ public class WorkItemProcessor {
             case service:
                 switch (workItem.getOperation()) {
                     case create:
-                        return serviceCreate;
+                        return constructAction("serviceCreate", ServiceCreateAction.class);
                     case update:
-                        return serviceUpdate;
+                        return constructAction("serviceUpdate", ServiceUpdateAction.class);
                     case delete:
-                        return serviceDelete;
+                        return constructAction("serviceDelete", ServiceDeleteAction.class);
                 }
             case module:
                 switch (workItem.getOperation()) {
                     case create:
-                        return moduleCreate;
+                        return constructAction("moduleCreate", ModuleCreateAction.class);
                     case update:
-                        return moduleUpdate;
+                        return constructAction("moduleUpdate", ModuleUpdateAction.class);
                     case delete:
-                        return moduleDelete;
+                        return constructAction("moduleDelete", ModuleDeleteAction.class);
                 }
             case host:
                 switch (workItem.getOperation()) {
                     case create:
-                        return hostCreate;
+                        return constructAction("hostCreate", HostCreateAction.class);
                     case deploy:
-                        return hostDeploy;
+                        return constructAction("hostDeploy", HostDeployAction.class);
                     case restart:
-                        return hostRestart;
+                        return constructAction("hostRestart", HostRestartAction.class);
                     case enableVips:
-                        return hostVipEnable;
+                        return constructAction("hostVipEnable", HostVipEnableAction.class);
                     case disableVips:
-                        return hostVipDisable;
+                        return constructAction("hostVipDisable", HostVipDisableAction.class);
                     case addVips:
-                        return hostVipAdd;
+                        return constructAction("hostVipAdd", HostVipAddAction.class);
                     case removeVips:
-                        return hostVipRemove;
+                        return constructAction("hostVipRemove", HostVipRemoveAction.class);
                     case smokeTest:
-                        return hostSmokeTest;
+                        return constructAction("hostSmokeTest", HostSmokeTestAction.class);
                     case delete:
-                        return hostDelete;
+                        return constructAction("hostDelete", HostDeleteAction.class);
                 }
             case vip:
                 switch (workItem.getOperation()) {
                     case create:
-                        return vipCreate;
+                        return constructAction("vipCreate", VipCreateAction.class);
                     case update:
-                        return vipUpdate;
+                        return constructAction("vipUpdate", VipUpdateAction.class);
                     case delete:
-                        return vipDelete;
+                        return constructAction("vipDelete", VipDeleteAction.class);
                     case fix:
-                        return vipFix;
+                        return constructAction("vipFix", VipFixAction.class);
                 }
         }
         throw new RuntimeException("Unknown work item - " + workItem.getType() + " " + workItem.getOperation());
+    }
+
+    private Action constructAction(String name, Class defaultClass) {
+        String factoryName = parameters.getString("action." + name, null);
+        try {
+            Class c;
+            if (factoryName != null && !factoryName.isEmpty()) {
+                c = Class.forName(factoryName);
+            } else {
+                c = defaultClass;
+                factoryName = defaultClass.getName();
+            }
+            Action action = (Action) c.newInstance();
+            action.init(name, dataAccess, parameters, configHelper, client, gson);
+            LOGGER.info("Constructed action {} with {}", name, factoryName);
+            return action;
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Action " + name + ", could not find class " + factoryName, ex);
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Action " + name + ", could not instantiation class " + factoryName, ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Action " + name + ", could not access class " + factoryName, ex);
+        }
     }
 
     private void startNext(WorkItem workItem) {
         String nextId = workItem.getNextId();
         if (nextId == null || nextId.isEmpty()) {
             //No more hosts to update in the chain
+            LOGGER.info("Start next {} -> Done", workItem.getId());
             if (workItem.getType() == Type.host) {
                 dataAccess.updateSatus(
                         workItem.getHost().hostId,
@@ -360,6 +342,7 @@ public class WorkItemProcessor {
             return;
         }
 
+        LOGGER.info("Start next {} -> {}", workItem.getId(), nextId);
         WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
         if (workItem.getType() == Type.host
                 && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
@@ -375,9 +358,11 @@ public class WorkItemProcessor {
         String nextId = workItem.getNextId();
         if (nextId == null || nextId.isEmpty()) {
             //No more hosts to update in the chain
+            LOGGER.info("Stop next {} -> Done", workItem.getId());
             return;
         }
 
+        LOGGER.info("Stop next {} -> {}", workItem.getId(), nextId);
         WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
         stopNext(nextWorkItem);
 
