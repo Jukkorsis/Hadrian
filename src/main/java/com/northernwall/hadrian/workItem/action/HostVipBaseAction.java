@@ -15,12 +15,12 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -28,45 +28,41 @@ import java.util.List;
  */
 public abstract class HostVipBaseAction extends Action {
 
+    private final List<Vip> successVips;
+    private Vip failedVip;
+
+    public HostVipBaseAction() {
+        successVips = new LinkedList<>();
+    }
+
     protected final Result processVips(WorkItem workItem) {
         List<Vip> vips = dataAccess.getVips(workItem.getService().serviceId);
         if (vips == null || vips.isEmpty()) {
             return Result.success;
         }
         Result result = Result.success;
-        List<Vip> successVips = new LinkedList<>();
         for (Vip vip : vips) {
             if (vip.getModuleId().equals(workItem.getMainModule().moduleId)
                     && vip.getEnvironment().equals(workItem.getHost().environment)) {
                 result = processVip(workItem, vip);
                 if (result == Result.error) {
-                    updateStatusFailure(workItem);
-                    recordAudit(workItem, result, successVips, vip);
+                    failedVip = vip;
+                    dataAccess.updateSatus(
+                            workItem.getHost().hostId,
+                            false,
+                            "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
                     return result;
                 }
                 successVips.add(vip);
             }
         }
-
-        recordAudit(workItem, result, successVips, null);
         return result;
     }
 
     protected abstract Result processVip(WorkItem workItem, Vip vip);
 
-    private void updateStatusFailure(WorkItem workItem) {
-        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
-        if (host == null) {
-            return;
-        }
-        dataAccess.updateSatus(
-                workItem.getHost().hostId,
-                false,
-                "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
-    }
-
-    private void recordAudit(WorkItem workItem, Result result, List<Vip> successVips, Vip failedVip) {
-        String output = null;
+    @Override
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
         if (successVips == null || successVips.isEmpty()) {
             if (failedVip == null) {
                 output = "No VIPs to " + getVerb();
@@ -82,7 +78,7 @@ public abstract class HostVipBaseAction extends Action {
                 output = "Failed to " + getVerb() + " host " + getPreposition() + " VIP " + failedVip.getDns();
             }
         }
-        writeAudit(workItem, result, null, output);
+        writeAudit(workItem, result, notes, output);
     }
 
     protected abstract String getVerb();

@@ -66,14 +66,14 @@ public abstract class Action {
         throw new UnsupportedOperationException("Work item " + name + " does not supported callbacks.");
     }
 
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
-        writeAudit(workItem, result, notes, output);
-    }
-
     public void success(WorkItem workItem) {
     }
 
     public void error(WorkItem workItem) {
+    }
+
+    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+        writeAudit(workItem, result, notes, output);
     }
 
     protected void writeAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
