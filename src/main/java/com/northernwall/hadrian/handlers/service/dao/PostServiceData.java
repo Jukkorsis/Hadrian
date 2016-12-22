@@ -28,6 +28,10 @@ public class PostServiceData {
     public String description;
     public String serviceType;
     public String scope;
+    public boolean haFunctionality;
+    public boolean haPerformance;
+    public boolean haData;
+    public String haNotes;
     public String gitProject;
     public String mavenGroupId;
     public boolean doBuilds;

@@ -46,6 +46,10 @@ public class Service implements Comparable<Service>{
     private String serviceType;
     private String gitProject;
     private String scope;
+    private boolean haFunctionality;
+    private boolean haPerformance;
+    private boolean haData;
+    private String haNotes;
     private String mavenGroupId;
     private boolean doBuilds;
     private boolean doDeploys;
@@ -63,7 +67,7 @@ public class Service implements Comparable<Service>{
     private Date deletionDate;
     private boolean active = true;
 
-    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, FindBugsLevel doFindBugsLevel, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, boolean active) {
+    public Service(String serviceName, String teamId, String description, String serviceType, String gitProject, String scope, boolean haFunctionality, boolean haPerformance, boolean haData, String haNotes, String mavenGroupId, boolean doBuilds, boolean doDeploys, boolean doManageVip, boolean doCheckJar, FindBugsLevel doFindBugsLevel, String testStyle, String testHostname, String testRunAs, String testDeploymentFolder, String testCmdLine, int testTimeOut, boolean active) {
         this.serviceId = UUID.randomUUID().toString();
         this.serviceName = serviceName;
         this.teamId = teamId;
@@ -71,6 +75,10 @@ public class Service implements Comparable<Service>{
         this.serviceType = serviceType;
         this.gitProject = gitProject;
         this.scope = scope;
+        this.haFunctionality = haFunctionality;
+        this.haPerformance = haPerformance;
+        this.haData = haData;
+        this.haNotes = haNotes;
         this.mavenGroupId = mavenGroupId;
         this.doBuilds = doBuilds;
         this.doDeploys = doDeploys;
@@ -135,6 +143,38 @@ public class Service implements Comparable<Service>{
 
     public void setGitProject(String gitProject) {
         this.gitProject = gitProject;
+    }
+
+    public boolean isHaFunctionality() {
+        return haFunctionality;
+    }
+
+    public void setHaFunctionality(boolean haFunctionality) {
+        this.haFunctionality = haFunctionality;
+    }
+
+    public boolean isHaPerformance() {
+        return haPerformance;
+    }
+
+    public void setHaPerformance(boolean haPerformance) {
+        this.haPerformance = haPerformance;
+    }
+
+    public boolean isHaData() {
+        return haData;
+    }
+
+    public void setHaData(boolean haData) {
+        this.haData = haData;
+    }
+
+    public String getHaNotes() {
+        return haNotes;
+    }
+
+    public void setHaNotes(String haNotes) {
+        this.haNotes = haNotes;
     }
 
     public String getScope() {

@@ -967,6 +967,10 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
         $scope.formUpdateService.serviceName = service.serviceName;
         $scope.formUpdateService.description = service.description;
         $scope.formUpdateService.scope = service.scope;
+        $scope.formUpdateService.haFunctionality = service.haFunctionality;
+        $scope.formUpdateService.haPerformance = service.haPerformance;
+        $scope.formUpdateService.haData = service.haData;
+        $scope.formUpdateService.haNotes = service.haNotes;
         $scope.formUpdateService.doBuilds = service.doBuilds;
         $scope.formUpdateService.doDeploys = service.doDeploys;
         $scope.formUpdateService.doManageVip = service.doManageVip;
@@ -987,6 +991,10 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
                 serviceName: $scope.formUpdateService.serviceName,
                 description: $scope.formUpdateService.description,
                 scope: $scope.formUpdateService.scope,
+                haFunctionality: $scope.formUpdateService.haFunctionality,
+                haPerformance: $scope.formUpdateService.haPerformance,
+                haData: $scope.formUpdateService.haData,
+                haNotes: $scope.formUpdateService.haNotes,
                 doBuilds: $scope.formUpdateService.doBuilds,
                 doDeploys: $scope.formUpdateService.doDeploys,
                 doManageVip: $scope.formUpdateService.doManageVip,

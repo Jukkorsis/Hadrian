@@ -30,7 +30,6 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PutServiceData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
-import com.northernwall.hadrian.schedule.ScheduleRunner;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import java.util.List;
@@ -159,6 +158,10 @@ public class ServiceModifyHandler extends BasicHandler {
         service.setServiceName(data.serviceName);
         service.setDescription(data.description);
         service.setScope(data.scope);
+        service.setHaFunctionality(data.haFunctionality);
+        service.setHaPerformance(data.haPerformance);
+        service.setHaData(data.haData);
+        service.setHaNotes(data.haNotes);
 
         service.setDoBuilds(data.doBuilds);
         service.setDoDeploys(data.doDeploys);

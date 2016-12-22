@@ -27,6 +27,9 @@ public class CatalogServiceData {
         temp.serviceId = service.getServiceId();
         temp.serviceName = service.getServiceName();
         temp.scope = service.getScope();
+        temp.haFunctionality = service.isHaFunctionality();
+        temp.haPerformance = service.isHaPerformance();
+        temp.haData = service.isHaData();
         temp.serviceDescription = service.getDescription();
         return temp;
     }
@@ -36,6 +39,9 @@ public class CatalogServiceData {
     public String serviceId;
     public String serviceName;
     public String scope;
+    public boolean haFunctionality;
+    public boolean haPerformance;
+    public boolean haData;
     public String serviceDescription;
 
 }

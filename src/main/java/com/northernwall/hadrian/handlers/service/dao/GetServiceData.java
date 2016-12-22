@@ -34,6 +34,10 @@ public class GetServiceData {
         temp.serviceType = service.getServiceType();
         temp.gitProject = service.getGitProject();
         temp.scope = service.getScope();
+        temp.haFunctionality = service.isHaFunctionality();
+        temp.haPerformance = service.isHaPerformance();
+        temp.haData = service.isHaData();
+        temp.haNotes = service.getHaNotes();
         temp.mavenGroupId = service.getMavenGroupId();
         
         temp.doBuilds = service.isDoBuilds();
@@ -81,6 +85,10 @@ public class GetServiceData {
     public String serviceType;
     public String gitProject;
     public String scope;
+    public boolean haFunctionality;
+    public boolean haPerformance;
+    public boolean haData;
+    public String haNotes;
     public String mavenGroupId;
     public boolean doBuilds;
     public boolean doDeploys;

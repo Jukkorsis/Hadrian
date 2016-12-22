@@ -27,6 +27,10 @@ public class PutServiceData {
     public String serviceName;
     public String description;
     public String scope;
+    public boolean haFunctionality;
+    public boolean haPerformance;
+    public boolean haData;
+    public String haNotes;
     public boolean doBuilds;
     public boolean doDeploys;
     public boolean doManageVip;
