@@ -63,7 +63,7 @@
           <div ng-if="service.doBuilds">
             <dt>Test Style:</dt>
             <dd>{{service.testStyle}}</dd>
-            <div ng-if="service.testStyle == 'Script'">
+            <div ng-if="service.testStyle === 'Script'">
               <dt>Test Host Name:</dt>
               <dd>{{service.testHostname}}</dd>
               <dt>Test Run As:</dt>
@@ -73,8 +73,10 @@
               <dt>Test Cmd Line:</dt>
               <dd>{{service.testCmdLine}}</dd>
             </div>
-            <dt>Test Time Out:</dt>
-            <dd>{{service.testTimeOut}} sec</dd>
+            <div ng-if="service.testStyle !== 'None'">
+              <dt>Test Time Out:</dt>
+              <dd>{{service.testTimeOut}} sec</dd>
+            </div>
           </div>
         </dl>
       </div>
