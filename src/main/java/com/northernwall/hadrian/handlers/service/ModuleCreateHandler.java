@@ -70,27 +70,6 @@ public class ModuleCreateHandler extends BasicHandler {
         User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
 
         Config config = configHelper.getConfig();
-        String template = null;
-        switch (data.moduleType) {
-            case Deployable:
-                if (!config.deployableTemplates.contains(data.deployableTemplate)) {
-                    throw new Http400BadRequestException("Unknown deployable template");
-                }
-                template = data.deployableTemplate;
-                break;
-            case Library:
-                if (!config.libraryTemplates.contains(data.libraryTemplate)) {
-                    throw new Http400BadRequestException("Unknown library template");
-                }
-                template = data.libraryTemplate;
-                break;
-            case Simulator:
-                if (!config.deployableTemplates.contains(data.deployableTemplate)) {
-                    throw new Http400BadRequestException("Unknown Simulator template");
-                }
-                template = data.deployableTemplate;
-                break;
-        }
         if (!config.artifactTypes.contains(data.artifactType)) {
             throw new Http400BadRequestException("Unknown artifact");
         }
@@ -247,7 +226,6 @@ public class ModuleCreateHandler extends BasicHandler {
         }
 
         WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null, null);
-        workItem.getMainModule().template = template;
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

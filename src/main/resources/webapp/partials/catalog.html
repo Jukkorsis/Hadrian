@@ -20,7 +20,7 @@
       <th>
         <a ng-click="catalogSortType = 'scope'; catalogSortReverse = !catalogSortReverse">Scope</a>
       </th>
-      <th>
+      <th class="text-center">
         HA<br/>
         <a ng-click="catalogSortType = 'haFunctionality'; catalogSortReverse = !catalogSortReverse">F</a>/
         <a ng-click="catalogSortType = 'haPerformance'; catalogSortReverse = !catalogSortReverse">P</a>/
@@ -34,7 +34,7 @@
       <td><a href="#/Team/{{s.teamId}}">{{s.teamName}}</a></td>
       <td><a href="#/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
       <td>{{s.scope}}</td>
-      <td>
+      <td class="text-center">
         <span ng-if="s.haFunctionality" class="glyphicon glyphicon-check text-success"></span>
         <span ng-if="!s.haFunctionality" class="glyphicon glyphicon-unchecked text-success"></span>
         <span ng-if="s.haPerformance" class="glyphicon glyphicon-check text-success"></span>

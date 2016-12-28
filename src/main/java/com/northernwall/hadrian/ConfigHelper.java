@@ -81,11 +81,6 @@ public class ConfigHelper implements ParameterChangeListener {
         loadConfig(Const.CONFIG_SCOPES, Const.CONFIG_SCOPES_DEFAULT, newConfig.scopes);
         loadEnvironment(newConfig);
 
-        newConfig.deployableTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        newConfig.libraryTemplates.add(Const.CONFIG_TEMPLATES_NO_TEMPLATE);
-        loadConfig(Const.CONFIG_DEPLOYABLE_TEMPLATES, null, newConfig.deployableTemplates);
-        loadConfig(Const.CONFIG_LIBRARY_TEMPLATES, null, newConfig.libraryTemplates);
-
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
         

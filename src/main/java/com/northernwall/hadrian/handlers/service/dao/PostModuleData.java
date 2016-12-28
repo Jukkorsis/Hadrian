@@ -48,8 +48,6 @@ public class PostModuleData {
     public String stopCmdLine;
     public int stopTimeOut;
     public String configName;
-    public String deployableTemplate;
-    public String libraryTemplate;
     public Map<String,Boolean> environmentNames = new HashMap<>();
 
 }

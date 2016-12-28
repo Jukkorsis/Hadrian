@@ -53,7 +53,6 @@ public class ModuleData {
     public String moduleId;
     public String moduleName;
     public ModuleType moduleType;
-    public String template;
     public String gitFolder;
     public String mavenArtifactId;
     public String artifactType;

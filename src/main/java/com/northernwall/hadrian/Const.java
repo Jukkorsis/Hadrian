@@ -175,9 +175,6 @@ public class Const {
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
     public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = "jar, war, targz";
-    public static final String CONFIG_DEPLOYABLE_TEMPLATES = "config.templates.deployable";
-    public static final String CONFIG_LIBRARY_TEMPLATES = "config.templates.library";
-    public static final String CONFIG_TEMPLATES_NO_TEMPLATE = "No template";
     public static final String CONFIG_SCOPES = "config.scopes";
     public static final String CONFIG_SCOPES_DEFAULT = "Not in scope, In scope";
     public static final String CONFIG_FOLDER_WHITE_LIST = "config.folderWhiteList";

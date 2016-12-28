@@ -28,7 +28,6 @@ public class ModuleCreateAction extends Action {
 
     @Override
     public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
-        notes.put("Template", workItem.getMainModule().template);
         notes.put("Type", workItem.getMainModule().moduleType.toString());
         writeAudit(workItem, result, notes, output);
     }

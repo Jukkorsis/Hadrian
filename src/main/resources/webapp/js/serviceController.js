@@ -1135,8 +1135,6 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule = {};
         $scope.formSaveModule.moduleName = "";
         $scope.formSaveModule.moduleType = moduleType;
-        $scope.formSaveModule.deployableTemplate = $scope.config.deployableTemplates[0];
-        $scope.formSaveModule.libraryTemplate = $scope.config.libraryTemplates[0];
         $scope.formSaveModule.gitFolder = "";
         $scope.formSaveModule.mavenArtifactId = "";
         $scope.formSaveModule.artifactType = $scope.config.artifactTypes[0];
@@ -1145,7 +1143,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.hostAbbr = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
-        $scope.formSaveModule.smokeTestUrl = $scope.config.smokeTestUrl;
+        $scope.formSaveModule.smokeTestUrl = "";
         $scope.formSaveModule.smokeTestCron = "";
         $scope.formSaveModule.runAs = "";
         $scope.formSaveModule.deploymentFolder = $scope.config.deploymentFolder;
@@ -1163,8 +1161,6 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 moduleName: $scope.formSaveModule.moduleName,
                 serviceId: $scope.service.serviceId,
                 moduleType: $scope.formSaveModule.moduleType,
-                deployableTemplate: $scope.formSaveModule.deployableTemplate,
-                libraryTemplate: $scope.formSaveModule.libraryTemplate,
                 gitFolder: $scope.formSaveModule.gitFolder,
                 mavenArtifactId: $scope.formSaveModule.mavenArtifactId,
                 artifactType: $scope.formSaveModule.artifactType,

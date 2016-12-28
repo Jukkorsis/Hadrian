@@ -45,8 +45,6 @@ public class Config {
     public List<String> serviceTypes = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> scopes = new LinkedList<>();
-    public List<String> deployableTemplates = new LinkedList<>();
-    public List<String> libraryTemplates = new LinkedList<>();
     public List<String> folderWhiteList = new LinkedList<>();
     
 }

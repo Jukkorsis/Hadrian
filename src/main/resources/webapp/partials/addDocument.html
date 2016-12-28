@@ -1,24 +1,34 @@
 <div class="modal-header">
-    <h3 class="modal-title">Add Document</h3>
+  <h3 class="modal-title">Add Document</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Document Type:</dt>
-        <dd>
-            <select ng-model="formSaveDocument.documentType" class="form-control">
-                <option value="Link">Link</option>
-                <option value="Markdown">Markdown</option>
-                <option value="Text">Text</option>
-            </select>
-        </dd>
-        <dt>Title:</dt>
-        <dd><input ng-model="formSaveDocument.title" type="text" maxlength="50" class="form-control"></dd>
-        <dt>URL:</dt>
-        <dd><input ng-model="formSaveDocument.link" type="text" maxlength="300" class="form-control"></dd>
-    </dl>
+  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+  <form class="form-horizontal">
+    <div class="form-group form-group-sm">
+      <label for="name" class="col-sm-4 control-label">Document Type:</label>
+      <div class="col-sm-8">
+        <select ng-model="formSaveDocument.documentType" class="form-control">
+          <option value="Link">Link</option>
+          <option value="Markdown">Markdown</option>
+          <option value="Text">Text</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Title:</label>
+      <div class="col-sm-8">
+        <input ng-model="formSaveDocument.title" type="text" maxlength="50" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">URL:</label>
+      <div class="col-sm-8">
+        <input ng-model="formSaveDocument.link" type="text" maxlength="300" class="form-control">
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Add Document</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Add Document</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>

@@ -1,177 +1,182 @@
 <div class="modal-header">
-    <h3 class="modal-title">Update Deployable Module</h3>
+  <h3 class="modal-title">Update Deployable Module</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-horizontal">
-                <div class="form-group form-group-sm">
-                    <label for="name" class="col-sm-4 control-label">Name:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.moduleName" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Host Abbr:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Environments:</label>
-                    <div class="col-sm-8">
-                        <span ng-repeat="n in config.environmentNames">
-                            <input ng-model="formUpdateModule.environmentNames[n]" type="checkbox">{{n}} &nbsp;
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Outbound Connectivity:</label>
-                    <div class="col-sm-8">
-                        <select ng-model="formUpdateModule.outbound" class="form-control" uib-popover="Does the service open a connection to any external services." popover-trigger="mouseenter">
-                            <option>No</option>
-                            <option>Required</option>
-                        </select>
-                    </div>
-                </div>
-                <div ng-if="service.doBuilds">
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Git Folder:</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <div class="input-group-addon"> / </div>
-                                <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div ng-if="service.doDeploys || service.doBuilds">
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Maven Artifact Id:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                </div>
-                <div ng-if="service.doDeploys">
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Artifact Type:</label>
-                        <div class="col-sm-8">
-                            <select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Artifact Suffix:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Run As User:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">{{config.moduleConfigName}}:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.configName" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form class="form-horizontal">
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Version Url:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.versionUrl" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Availability Url:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control" id="name" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Smoke Test Url:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control" uib-popover="Optional" popover-trigger="mouseenter">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label for="email" class="col-sm-4 control-label">Smoke Test Cron:</label>
-                    <div class="col-sm-8">
-                        <input ng-model="formUpdateModule.smokeTestCron" type="text" class="form-control" uib-popover="Optional" popover-trigger="mouseenter">
-                    </div>
-                </div>
-                <div ng-if="service.doDeploys">
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Deployment Folder:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Data Folder:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Logs Folder:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Logs Retention:</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
-                                <div class="input-group-addon">months</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Start Cmd Line:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Start Time Out:</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control">
-                                <div class="input-group-addon">sec</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Stop Cmd Line:</label>
-                        <div class="col-sm-8">
-                            <input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label for="email" class="col-sm-4 control-label">Stop Time Out:</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control">
-                                <div class="input-group-addon">sec</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+  <form class="form-horizontal">
+    <div class="form-group form-group-sm">
+      <label for="name" class="col-sm-4 control-label">Name:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.moduleName" type="text" class="form-control" id="name">
+      </div>
     </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Host Abbr:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control" id="name">
+        <p class="help-block">Used to identify the Service and Module in generated host names. Only letters and numbers allowed.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Environments:</label>
+      <div class="col-sm-8">
+        <span ng-repeat="n in config.environmentNames">
+          <input ng-model="formUpdateModule.environmentNames[n]" type="checkbox">{{n}} &nbsp;
+        </span>
+        <p class="help-block">Select the environments this module will be deployed to.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Outbound Connectivity:</label>
+      <div class="col-sm-8">
+        <select ng-model="formUpdateModule.outbound" class="form-control">
+          <option>No</option>
+          <option>Required</option>
+        </select>
+        <p class="help-block">Does the service open a connection to any external services.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Availability Url:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control" id="name">
+        <p class="help-block">The URL used to get a hosts availability. For example: {{config.availabilityUrl}}</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Version Url:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.versionUrl" type="text" class="form-control" id="name">
+        <p class="help-block">The URL used to get a hosts version. For example: {{config.versionUrl}}</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Smoke Test Url:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control">
+        <p class="help-block">Optional. The URL used to invoke a Smoke Test (aka Post Deployment Test). For example: {{config.smokeTestUrl}}.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label for="email" class="col-sm-4 control-label">Smoke Test Cron:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.smokeTestCron" type="text" class="form-control">
+        <p class="help-block">Optional. The schedule use to preform automated smoke tests on all hosts.</p>
+      </div>
+    </div>
+    <div ng-if="service.doBuilds">
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Git Folder:</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <div class="input-group-addon"> / </div>
+            <input ng-model="formUpdateModule.gitFolder" type="text" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="service.doDeploys || service.doBuilds">
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Maven Artifact Id:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.mavenArtifactId" type="text" class="form-control" id="name">
+        </div>
+      </div>
+    </div>
+    <div ng-if="service.doDeploys">
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">{{config.moduleConfigName}}:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.configName" type="text" class="form-control" id="name">
+        <p class="help-block">Optional.</p>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Artifact Type:</label>
+        <div class="col-sm-8">
+          <select ng-model="formUpdateModule.artifactType" ng-options="c for c in config.artifactTypes" class="form-control"></select>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Artifact Suffix:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control" id="name">
+          <p class="help-block">Does the service's artifact have a suffix, such as '-jar-with-dependencies'.</p>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Run As User:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name">
+          <p class="help-block">The Start and Stop command will be invoked as this user</p>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Deployment Folder:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name">
+         <p class="help-block">The Start and Stop command will be invoked from this folder. Artifacts and Module files will be copied to this folder. This folder (and sub-folders) are removed during a deployment, and maybe removed during a restart.</p>
+         </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Data Folder:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name">
+        <p class="help-block">Only files in this folder are guaranteed to remain across deployments and restarts.</p>
+          </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Logs Folder:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name">
+           <p class="help-block">Log files should be written to this folder so that they can be automatically collected.</p>
+       </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Logs Retention:</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
+            <div class="input-group-addon">months</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Start Cmd Line:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control">
+           <p class="help-block">The command to start the service or involve a script that will start the service. The command is executed direct on the target host. The command is executed by the 'Run As User'.</p>
+       </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Start Time Out:</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <input ng-model="formUpdateModule.startTimeOut" type="number" class="form-control">
+            <div class="input-group-addon">sec</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Stop Cmd Line:</label>
+        <div class="col-sm-8">
+          <input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control">
+          <p class="help-block">The command to stop the service or involve a script that will stop the service. The command is executed direct on the target host. The command is executed by the 'Run As User'.</p>
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
+        <label for="email" class="col-sm-4 control-label">Stop Time Out:</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <input ng-model="formUpdateModule.stopTimeOut" type="number" class="form-control">
+            <div class="input-group-addon">sec</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Update Deployable Module</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Update Deployable Module</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
