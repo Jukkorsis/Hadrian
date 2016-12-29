@@ -18,6 +18,7 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         $scope.openUpdateTeamModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/updateTeam.html',
                 controller: 'ModalUpdateTeamCtrl',
                 resolve: {
@@ -35,6 +36,7 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         $scope.openAddServiceModal = function (check) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addService.html',
                 controller: 'ModalAddServiceCtrl',
                 size: 'lg',

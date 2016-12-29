@@ -158,6 +158,7 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$
             $scope.adminResult = "";
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addTeam.html',
                 controller: 'ModalAddTeamCtrl'
             });

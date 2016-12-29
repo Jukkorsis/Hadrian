@@ -120,7 +120,7 @@
         <label class="col-sm-3 control-label">Start Cmd Line:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateModule.startCmdLine" type="text" class="form-control">
-            <p class="help-block">The command to start the service or involve a script that will start the service. The command is executed direct on the target host. The command is executed by the 'Run As User'.</p>
+            <p class="help-block">The command to start the service or involve a script that will start the service. The command is executed direct on the target host, as the 'Run As User', from the 'Deployment Folder'. If the command contains the pattern {version} then if will be replaced with the selected version.</p>
       </div>
       </div>
       <div class="form-group form-group-sm">   
@@ -136,7 +136,7 @@
         <label class="col-sm-3 control-label">Stop Cmd Line:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateModule.stopCmdLine" type="text" class="form-control">
-           <p class="help-block">The command to stop the service or involve a script that will stop the service. The command is executed direct on the target host. The command is executed by the 'Run As User'.</p>
+           <p class="help-block">The command to stop the service or involve a script that will stop the service. The command is executed direct on the target host, as the 'Run As User', from the 'Deployment Folder'.</p>
        </div>
       </div>
       <div class="form-group form-group-sm"> 

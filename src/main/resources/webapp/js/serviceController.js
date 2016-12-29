@@ -27,6 +27,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openUpdateServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/updateService.html',
                 controller: 'ModalUpdateServiceCtrl',
                 size: 'lg',
@@ -51,6 +52,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openBuildServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/buildService.html',
                 controller: 'ModalBuildServiceCtrl',
                 resolve: {
@@ -68,6 +70,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openDeleteServiceModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/deleteService.html',
                 controller: 'ModalDeleteServiceCtrl',
                 resolve: {
@@ -85,6 +88,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddUsesModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addUses.html',
                 controller: 'ModalAddUsesCtrl',
                 resolve: {
@@ -123,6 +127,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddDeployableModuleModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addDeployableModule.html',
                 controller: 'ModalAddModuleCtrl',
                 size: 'lg',
@@ -150,6 +155,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddLibraryModuleModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addLibraryModule.html',
                 controller: 'ModalAddModuleCtrl',
                 resolve: {
@@ -176,6 +182,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddSimulatorModuleModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addSimulatorModule.html',
                 controller: 'ModalAddModuleCtrl',
                 size: 'lg',
@@ -204,6 +211,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             if (module.moduleType === 'Deployable') {
                 var modalInstance = $uibModal.open({
                     animation: true,
+                    backdrop: 'static',
                     templateUrl: 'partials/updateDeployableModule.html',
                     controller: 'ModalUpdateModuleCtrl',
                     size: 'lg',
@@ -227,6 +235,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             if (module.moduleType === 'Library') {
                 var modalInstance = $uibModal.open({
                     animation: true,
+                    backdrop: 'static',
                     templateUrl: 'partials/updateLibraryModule.html',
                     controller: 'ModalUpdateModuleCtrl',
                     resolve: {
@@ -249,6 +258,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             if (module.moduleType === 'Simulator') {
                 var modalInstance = $uibModal.open({
                     animation: true,
+                    backdrop: 'static',
                     templateUrl: 'partials/updateSimulatorModule.html',
                     controller: 'ModalUpdateModuleCtrl',
                     size: 'lg',
@@ -274,6 +284,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openModuleFileModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/editModuleFile.html',
                 controller: 'ModalModuleFileCtrl',
                 size: 'lg',
@@ -298,6 +309,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openBackfillModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/backfillHost.html',
                 controller: 'ModalBackfillHostCtrl',
                 resolve: {
@@ -321,6 +333,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openDeleteModuleModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/deleteModule.html',
                 controller: 'ModalDeleteModuleCtrl',
                 resolve: {
@@ -344,6 +357,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddVipModal = function (environmentModule) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addVip.html',
                 controller: 'ModalAddVipCtrl',
                 resolve: {
@@ -367,6 +381,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openUpdateVipModal = function (vip) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/updateVip.html',
                 controller: 'ModalUpdateVipCtrl',
                 resolve: {
@@ -422,6 +437,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddHostModal = function (moduleEnvironment) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addHost.html',
                 controller: 'ModalAddHostCtrl',
                 resolve: {
@@ -455,6 +471,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/deploySoftware.html',
                 controller: 'ModalDeploySoftwareCtrl',
                 size: 'lg',
@@ -484,6 +501,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/deploySoftware.html',
                 controller: 'ModalDeploySoftwareCtrl',
                 size: 'lg',
@@ -520,6 +538,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/restartHost.html',
                 controller: 'ModalRestartHostCtrl',
                 resolve: {
@@ -548,6 +567,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/restartHost.html',
                 controller: 'ModalRestartHostCtrl',
                 resolve: {
@@ -576,6 +596,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             hostNames.push(host.hostName);
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/deleteHost.html',
                 controller: 'ModalDeleteHostCtrl',
                 resolve: {
@@ -611,6 +632,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openDoSmokeTestHostModal = function (host, mn) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/smokeTest.html',
                 controller: 'ModalSmokeTestCtrl',
                 resolve: {
@@ -710,6 +732,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddCustomFunctionModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addCustomFunction.html',
                 controller: 'ModalAddCustomFunctionCtrl',
                 resolve: {
@@ -746,6 +769,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openUpdateCustomFunctionModal = function (cf) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/updateCustomFunction.html',
                 controller: 'ModalUpdateCustomFunctionCtrl',
                 resolve: {
@@ -782,6 +806,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         $scope.openAddDocumentModal = function () {
             var modalInstance = $uibModal.open({
                 animation: true,
+                backdrop: 'static',
                 templateUrl: 'partials/addDocument.html',
                 controller: 'ModalAddDocumentCtrl',
                 resolve: {
