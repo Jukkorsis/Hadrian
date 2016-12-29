@@ -17,43 +17,25 @@ package com.northernwall.hadrian.access.simple;
 
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http401UnauthorizedException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
-
-import java.util.List;
+import com.northernwall.hadrian.parameters.Parameters;
 
 import org.eclipse.jetty.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SimpleAccessHelper implements AccessHelper {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleAccessHelper.class);
+    private final Parameters parameters;
 
-    private final DataAccess dataAccess;
-
-    public SimpleAccessHelper(DataAccess dataAccess) {
-        this.dataAccess = dataAccess;
+    public SimpleAccessHelper(Parameters parameters) {
+        this.parameters = parameters;
     }
 
     @Override
     public User getUser(String username) {
-        User user = dataAccess.getUser(username);
-        if (user == null) {
-            List<User> users = dataAccess.getUsers();
-            if (users == null || users.isEmpty()) {
-                LOGGER.info("No users found. So creating {} as the first user", username);
-                user = new User(username, username, true, false, false);
-            } else {
-                LOGGER.info("User {} not found, creating", username);
-                user = new User(username, username, false, false, false);
-            }
-            dataAccess.saveUser(user);
-        }
-        return user;
+        return new User(username);
     }
 
     @Override
@@ -62,7 +44,7 @@ public class SimpleAccessHelper implements AccessHelper {
         if (user == null) {
             throw new Http404NotFoundException("unknown user");
         }
-        return team.getUsernames().contains(user.getUsername());
+        return isInGroup(user, "group.team."+team.getSecurityGroupName());
     }
 
     @Override
@@ -72,7 +54,7 @@ public class SimpleAccessHelper implements AccessHelper {
             throw new Http404NotFoundException("unknown user attempted to " + action);
         }
         String username = user.getUsername();
-        if (!team.getUsernames().contains(username)) {
+        if (!isInGroup(user, "group.team."+team.getSecurityGroupName())) {
             throw new Http401UnauthorizedException(username + " attempted to " + action + " on team " + team.getTeamName());
         }
         return user;
@@ -84,11 +66,11 @@ public class SimpleAccessHelper implements AccessHelper {
         if (user == null) {
             throw new Http404NotFoundException("unknown user attempted to deploy software to host");
         }
-        if (user.isDeploy()) {
+        if (isInGroup(user, "group.deploy")) {
             return user;
         }
         String username = user.getUsername();
-        if (!team.getUsernames().contains(username)) {
+        if (!isInGroup(user, "group.team."+team.getSecurityGroupName())) {
             throw new Http401UnauthorizedException(username + " attempted to deploy software to host on team " + team.getTeamName());
         }
         return user;
@@ -100,11 +82,11 @@ public class SimpleAccessHelper implements AccessHelper {
         if (user == null) {
             throw new Http404NotFoundException("unknown user attempted to restart host");
         }
-        if (user.isDeploy() || user.isAdmin()) {
+        if (isInGroup(user, "group.deploy") || isInGroup(user, "group.admin")) {
             return user;
         }
         String username = user.getUsername();
-        if (!team.getUsernames().contains(username)) {
+        if (!isInGroup(user, "group.team."+team.getSecurityGroupName())) {
             throw new Http401UnauthorizedException(username + " attempted to restart host on team " + team.getTeamName());
         }
         return user;
@@ -116,14 +98,23 @@ public class SimpleAccessHelper implements AccessHelper {
         if (user == null) {
             throw new Http404NotFoundException("unknown user attempted to add audit record");
         }
-        if (user.isAudit()) {
+        if (isInGroup(user, "group.audit")) {
             return user;
         }
         String username = user.getUsername();
-        if (!team.getUsernames().contains(username)) {
+        if (!isInGroup(user, "group.team."+team.getSecurityGroupName())) {
             throw new Http401UnauthorizedException(username + " attempted to add audit record on team " + team.getTeamName());
         }
         return user;
+    }
+    
+    @Override
+    public boolean isAdmin(Request request, String action) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            throw new Http404NotFoundException("unknown users attempted to " + action + " but is not an admin");
+        }
+        return isInGroup(user, "group.admin");
     }
 
     @Override
@@ -132,10 +123,24 @@ public class SimpleAccessHelper implements AccessHelper {
         if (user == null) {
             throw new Http404NotFoundException("unknown users attempted to " + action + " but is not an admin");
         }
-        if (!user.isAdmin()) {
+        if (!isInGroup(user, "group.admin")) {
             throw new Http401UnauthorizedException(user.getUsername() + " attempted to " + action + " but is not an admin");
         }
         return user;
+    }
+    
+    private boolean isInGroup(User user, String groupName) {
+        String parameter = parameters.getString(groupName, null);
+        if (parameter == null || parameter.isEmpty()) {
+            return false;
+        }
+        String[] userNames = parameter.split(",");
+        for (String userName : userNames) {
+            if (userName.equalsIgnoreCase(user.getUsername())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

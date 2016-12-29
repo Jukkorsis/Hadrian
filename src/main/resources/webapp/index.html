@@ -15,92 +15,91 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <html lang="en" ng-app="HadrianApp">
-    <head>
-        <meta charset="utf-8">
-        <title>Build and Deploy</title>
+  <head>
+    <meta charset="utf-8">
+    <title>Build and Deploy</title>
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/hadrian.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/hadrian.css">
 
-        <script src="js/angular.js"></script>
-        <script src="js/angular-animate.js"></script>
-        <script src="js/angular-route.js"></script>
-        <script src="js/angular-resource.js"></script>
-        <script src="js/ui-bootstrap-tpls-0.14.2.min.js"></script>
-        <script src="js/showdown.min.js"></script>
-        <script src="js/viz.js"></script>
-        <script src="js/app.js"></script>
-        <script src="js/interceptor.js"></script>
-        <script src="js/directives.js"></script>
-        <script src="js/controllers.js"></script>
-        <script src="js/serviceController.js"></script>
-        <script src="js/teamController.js"></script>
-        <script src="js/filters.js"></script>
-        <script src="js/services.js"></script>
-        <script src="js/ace.js"></script>
-        <script src="js/ui-ace.js"></script>
-    </head>
-    <body>
-        <div ng-app ng-controller="MenuCtrl">
-            <div class="row">
-                <div class="col-sm-2 col-xs-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h2 class="panel-title"><b>B</b>uild and <b>D</b>eploy</h2>
-                        </div>
-                        <div class="panel-body">
-                            <div ng-if="menuMode == 'home'">
-                                <b>Dev Teams</b>
-                                <div style="padding-left: 20px;">
-                                    <div ng-repeat="team in treeData.teams">
-                                        <a ng-click="selectDevTeam(team, true);"><span class="glyphicon glyphicon-chevron-right"></span> {{team.teamName}}</a>
-                                    </div>
-                                </div>
-                                <b>Tools</b>
-                                <div style="padding-left: 20px;">
-                                    <div><a ng-click="selectCatalog();"><span class="glyphicon glyphicon-chevron-right"></span> Service Catalog</a></div>
-                                    <div><a ng-click="selectGraphs();"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
-                                    <div><a ng-click="selectFindHost();"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
-                                    <div ng-if="treeData.isAdmin">
-                                        <a ng-click="selectWorkItems();"><span class="glyphicon glyphicon-chevron-right"></span> Work Items</a><br/>
-                                        <a ng-click="selectUsers();"><span class="glyphicon glyphicon-chevron-right"></span> Users</a><br/>
-                                        <a ng-click="selectParameters();"><span class="glyphicon glyphicon-chevron-right"></span> Parameters</a>
-                                    </div>
-                                    <a ng-click="selectHelp();"><span class="glyphicon glyphicon-chevron-right"></span> Help</a>
-                                </div>
-                            </div>
-                            <div ng-if="menuMode == 'devTeam'">
-                                <p class="text-right"><a ng-click="selectCatalog();">Back to Teams and Tools</a></p>
-                                <b><a ng-click="selectDevTeam(team, false);">{{team.teamName}}</a></b>
-                                <div style="padding-left: 20px;">
-                                    <div ng-repeat="service in team.services">
-                                        <div ng-if="service.isActive || showInactive">
-                                            <a ng-click="selectService(service);">
-                                                <span ng-if="service.isActive" class="glyphicon glyphicon-chevron-right"></span>
-                                                <span ng-if="!service.isActive" class="glyphicon glyphicon-chevron-right text-danger"></span>
-                                                {{service.serviceName}}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br/>
-                                <p ng-if="showInactive" class="text-right">
-                                    <a ng-click="selectShowActive(false);" class="btn btn-info btn-xs">Hide Deleted</a>
-                                </p>
-                                <p ng-if="!showInactive" class="text-right">
-                                    <a ng-click="selectShowActive(true);" class="btn btn-info btn-xs">Show Deleted</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-10 col-xs-12 page-content">
-                    <div class="view-container">
-                        <div ng-view class="view-frame"></div>
-                    </div>
-                </div>
+    <script src="js/angular.js"></script>
+    <script src="js/angular-animate.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/angular-resource.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.14.2.min.js"></script>
+    <script src="js/showdown.min.js"></script>
+    <script src="js/viz.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/interceptor.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/serviceController.js"></script>
+    <script src="js/teamController.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/ace.js"></script>
+    <script src="js/ui-ace.js"></script>
+  </head>
+  <body>
+    <div ng-app ng-controller="MenuCtrl">
+      <div class="row">
+        <div class="col-sm-2 col-xs-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title"><b>B</b>uild and <b>D</b>eploy</h2>
             </div>
+            <div class="panel-body">
+              <div ng-if="menuMode == 'home'">
+                <b>Dev Teams</b>
+                <div style="padding-left: 20px;">
+                  <div ng-repeat="team in treeData.teams">
+                    <a ng-click="selectDevTeam(team, true);"><span class="glyphicon glyphicon-chevron-right"></span> {{team.teamName}}</a>
+                  </div>
+                </div>
+                <b>Tools</b>
+                <div style="padding-left: 20px;">
+                  <div><a ng-click="selectCatalog();"><span class="glyphicon glyphicon-chevron-right"></span> Service Catalog</a></div>
+                  <div><a ng-click="selectGraphs();"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
+                  <div><a ng-click="selectFindHost();"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
+                  <div ng-if="treeData.isAdmin">
+                    <a ng-click="selectWorkItems();"><span class="glyphicon glyphicon-chevron-right"></span> Work Items</a><br/>
+                    <a ng-click="selectParameters();"><span class="glyphicon glyphicon-chevron-right"></span> Parameters</a>
+                  </div>
+                  <a ng-click="selectHelp();"><span class="glyphicon glyphicon-chevron-right"></span> Help</a>
+                </div>
+              </div>
+              <div ng-if="menuMode == 'devTeam'">
+                <p class="text-right"><a ng-click="selectCatalog();">Back to Teams and Tools</a></p>
+                <b><a ng-click="selectDevTeam(team, false);">{{team.teamName}}</a></b>
+                <div style="padding-left: 20px;">
+                  <div ng-repeat="service in team.services">
+                    <div ng-if="service.isActive || showInactive">
+                      <a ng-click="selectService(service);">
+                        <span ng-if="service.isActive" class="glyphicon glyphicon-chevron-right"></span>
+                        <span ng-if="!service.isActive" class="glyphicon glyphicon-chevron-right text-danger"></span>
+                        {{service.serviceName}}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+                <p ng-if="showInactive" class="text-right">
+                  <a ng-click="selectShowActive(false);" class="btn btn-info btn-xs">Hide Deleted</a>
+                </p>
+                <p ng-if="!showInactive" class="text-right">
+                  <a ng-click="selectShowActive(true);" class="btn btn-info btn-xs">Show Deleted</a>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-    </body>
+        <div class="col-sm-10 col-xs-12 page-content">
+          <div class="view-container">
+            <div ng-view class="view-frame"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

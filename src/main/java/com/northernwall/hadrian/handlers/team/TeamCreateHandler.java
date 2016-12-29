@@ -23,7 +23,6 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.handlers.team.dao.PostTeamData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,9 +47,6 @@ public class TeamCreateHandler extends BasicHandler {
 
         PostTeamData data = fromJson(request, PostTeamData.class);
 
-        if (data.user == null) {
-            throw new Http400BadRequestException("Failed to create new team, as user is null");
-        }
         if (data.teamName == null) {
             throw new Http400BadRequestException("Team Name is mising or empty");
         }
@@ -68,6 +64,9 @@ public class TeamCreateHandler extends BasicHandler {
         if (data.gitGroup.length() > 30) {
             throw new Http400BadRequestException("Git Group is to long, max is 30");
         }
+        if (data.securityGroupName == null || data.securityGroupName.isEmpty()) {
+            throw new Http400BadRequestException("Team Name is mising or empty");
+        }
 
         for (Team temp : getDataAccess().getTeams()) {
             if (temp.getTeamName().equalsIgnoreCase(data.teamName)) {
@@ -83,15 +82,7 @@ public class TeamCreateHandler extends BasicHandler {
             data.teamPage = Const.HTTP + data.teamPage;
         }
 
-        if (data.user == null) {
-            throw new Http400BadRequestException("Initial user is mising or empty");
-        }
-        if (getDataAccess().getUser(data.user.getUsername()) == null) {
-            throw new Http404NotFoundException("Failed to create new team, could not find initial user " + data.user.getUsername());
-        }
-
-        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.teamSlack, data.gitGroup, data.teamPage, data.calendarId, "black");
-        team.getUsernames().add(data.user.getUsername());
+        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.teamSlack, data.gitGroup, data.teamPage, data.calendarId, "black", data.securityGroupName);
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

@@ -95,12 +95,6 @@ public interface DataAccess {
     void updateDataStore(DataStore dataStore);
     void deleteDataStore(String serviceId, String dataStoreId);
     
-    List<User> getUsers();
-    User getUser(String userName);
-    void saveUser(User user);
-    void updateUser(User user);
-    void deleteUser(String userName);
-
     List<WorkItem> getWorkItems();
     WorkItem getWorkItem(String id);
     void saveWorkItem(WorkItem workItem);

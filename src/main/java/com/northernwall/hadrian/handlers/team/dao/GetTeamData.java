@@ -17,10 +17,6 @@ package com.northernwall.hadrian.handlers.team.dao;
 
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public class GetTeamData {
     public String teamId;
@@ -32,7 +28,7 @@ public class GetTeamData {
     public String teamPage;
     public String calendarId;
     public String colour;
-    public List<User> users;
+    public String securityGroupName;
     public boolean canModify;
 
     public static GetTeamData create(Team team, DataAccess dataAccess) {
@@ -46,11 +42,7 @@ public class GetTeamData {
         temp.teamPage = team.getTeamPage();
         temp.calendarId = team.getCalendarId();
         temp.colour = team.getColour();
-        temp.users = new LinkedList<>();
-        for (String username : team.getUsernames()) {
-            temp.users.add(dataAccess.getUser(username));
-        }
-        Collections.sort(temp.users);
+        temp.securityGroupName = team.getSecurityGroupName();
         return temp;
     }
 

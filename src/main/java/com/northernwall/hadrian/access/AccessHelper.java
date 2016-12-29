@@ -27,6 +27,7 @@ public interface AccessHelper {
     User checkIfUserCanDeploy(Request request, Team team);
     User checkIfUserCanRestart(Request request, Team team);
     User checkIfUserCanAudit(Request request, Team team);
+    boolean isAdmin(Request request, String action);
     User checkIfUserIsAdmin(Request request, String action);
 
 }

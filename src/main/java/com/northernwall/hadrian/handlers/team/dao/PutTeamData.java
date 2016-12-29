@@ -25,5 +25,6 @@ public class PutTeamData {
     public String teamPage;
     public String calendarId;
     public String colour;
+    public String securityGroupName;
 
 }

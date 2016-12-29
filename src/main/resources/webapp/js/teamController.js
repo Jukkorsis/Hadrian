@@ -2,11 +2,9 @@
 
 /* Controllers */
 
-hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'Config', 'User', 'Team',
-    function ($scope, $route, $routeParams, $uibModal, $http, Config, User, Team) {
+hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '$uibModal', '$http', 'Config', 'Team',
+    function ($scope, $route, $routeParams, $uibModal, $http, Config, Team) {
         $scope.loading = true;
-
-        $scope.users = User.get();
 
         Config.get({}, function (config) {
             $scope.config = config;
@@ -54,42 +52,6 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
             }, function () {
             });
         };
-
-        $scope.openAddUserModal = function () {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/addUserToTeam.html',
-                controller: 'ModalAddUserToTeamCtrl',
-                resolve: {
-                    users: function () {
-                        return $scope.users;
-                    },
-                    team: function () {
-                        return $scope.team;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-
-        $scope.removeUserFromTeam = function (username) {
-            var dataObject = {
-                teamId: $scope.team.teamId,
-                username: username
-            };
-
-            var responsePromise = $http.post("/v1/team/removeUser", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to create new team has failed!");
-                $route.reload();
-            });
-        };
     }]);
 
 hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'team',
@@ -103,6 +65,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateTeam.gitGroup = team.gitGroup;
         $scope.formUpdateTeam.teamPage = team.teamPage;
         $scope.formUpdateTeam.calendarId = team.calendarId;
+        $scope.formUpdateTeam.securityGroupName = team.securityGroupName;
         $scope.formUpdateTeam.colour = team.colour;
 
         $scope.save = function () {
@@ -115,6 +78,7 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
                 gitGroup: $scope.formUpdateTeam.gitGroup,
                 teamPage: $scope.formUpdateTeam.teamPage,
                 calendarId: $scope.formUpdateTeam.calendarId,
+                securityGroupName: $scope.formUpdateTeam.securityGroupName,
                 colour: $scope.formUpdateTeam.colour
             };
 
@@ -207,46 +171,8 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
         });
     }]);
 
-hadrianControllers.controller('ModalAddUserToTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'users', 'team',
-    function ($scope, $http, $modalInstance, $route, users, team) {
-        $scope.errorMsg = null;
-        $scope.users = users;
-        $scope.team = team;
-
-        $scope.modelOptions = {
-            debounce: {
-                default: 500,
-                blur: 250
-            },
-            getterSetter: true
-        };
-
-        $scope.formAddUserToTeam = {};
-        $scope.formAddUserToTeam.user = users.users[0];
-
-        $scope.save = function () {
-            var dataObject = {
-                teamId: $scope.team.teamId,
-                username: $scope.formAddUserToTeam.user.username
-            };
-
-            var responsePromise = $http.put("/v1/team/addUser", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
-                $route.reload();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
-            });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    }]);
-
-hadrianControllers.controller('TeamDashboardCtrl', ['$scope', '$http', '$routeParams', 'Config', 'Dashboard',
-    function ($scope, $http, $routeParams, Config, Dashboard) {
+hadrianControllers.controller('TeamDashboardCtrl', ['$scope', '$routeParams', 'Config', 'Dashboard',
+    function ($scope, $routeParams, Config, Dashboard) {
         $scope.loading = true;
         $scope.env = $routeParams.env;
         

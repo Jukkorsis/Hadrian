@@ -15,11 +15,13 @@
  */
 package com.northernwall.hadrian.access;
 
+import com.northernwall.hadrian.parameters.Parameters;
+
 /**
  *
  * @author Richard
  */
 public interface AccessHelperFactory {
-    AccessHelper create();
+    AccessHelper create(Parameters parameters);
     
 }

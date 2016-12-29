@@ -82,12 +82,6 @@ hadrianServices.factory('Calendar', ['$resource', function($resource) {
         });
     }]);
 
-hadrianServices.factory('User', ['$resource', function($resource) {
-        return $resource('/v1/users', {}, {
-            query: {method: 'GET', isArray: false}
-        });
-    }]);
-
 hadrianServices.factory('WorkItem', ['$resource', function($resource) {
         return $resource('/v1/workitems', {}, {
             query: {method: 'GET', isArray: false}

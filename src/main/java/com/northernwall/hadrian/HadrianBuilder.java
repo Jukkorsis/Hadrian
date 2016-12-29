@@ -291,7 +291,7 @@ public class HadrianBuilder {
         } catch (IllegalAccessException ex) {
             throw new RuntimeException("Could not build Hadrian, could not access Access Helper class " + factoryName);
         }
-        accessHelper = accessHelperFactory.create();
+        accessHelper = accessHelperFactory.create(parameters);
     }
 
     private void buildHostDetailsHelper() {

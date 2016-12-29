@@ -63,6 +63,7 @@ public class CatalogHandler extends AbstractHandler {
             }
         }
         
+        response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(catalogData, CatalogData.class, jw);
         }

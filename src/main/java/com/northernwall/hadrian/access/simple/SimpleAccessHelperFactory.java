@@ -17,6 +17,7 @@ package com.northernwall.hadrian.access.simple;
 
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.access.AccessHelperFactory;
+import com.northernwall.hadrian.parameters.Parameters;
 
 /**
  *
@@ -25,8 +26,8 @@ import com.northernwall.hadrian.access.AccessHelperFactory;
 public class SimpleAccessHelperFactory implements AccessHelperFactory {
     
     @Override
-    public AccessHelper create() {
-        return new SimpleAccessHelper(null);
+    public AccessHelper create(Parameters parameters) {
+        return new SimpleAccessHelper(parameters);
     }
     
 }

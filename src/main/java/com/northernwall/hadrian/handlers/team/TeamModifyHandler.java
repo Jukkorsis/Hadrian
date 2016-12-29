@@ -87,6 +87,7 @@ public class TeamModifyHandler extends BasicHandler {
         team.setTeamPage(data.teamPage);
         team.setCalendarId(data.calendarId);
         team.setColour(data.colour);
+        team.setSecurityGroupName(data.securityGroupName);
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

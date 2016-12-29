@@ -48,10 +48,6 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/workItems.html',
                     controller: 'WorkItemsCtrl'
                 }).
-                when('/Users', {
-                    templateUrl: 'partials/users.html',
-                    controller: 'UsersCtrl'
-                }).
                 when('/Help', {
                     templateUrl: 'partials/help.html',
                     controller: 'HelpCtrl'

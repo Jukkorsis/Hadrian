@@ -18,10 +18,10 @@ package com.northernwall.hadrian.handlers.tree;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.tree.dao.TreeData;
 import com.northernwall.hadrian.handlers.tree.dao.TreeServiceData;
 import com.northernwall.hadrian.handlers.tree.dao.TreeTeamData;
@@ -42,10 +42,12 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class TreeHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
+    private final AccessHelper accessHelper;
     private final Gson gson;
 
-    public TreeHandler(DataAccess dataAccess) {
+    public TreeHandler(DataAccess dataAccess, AccessHelper accessHelper) {
         this.dataAccess = dataAccess;
+        this.accessHelper = accessHelper;
         gson = new Gson();
     }
 
@@ -53,8 +55,7 @@ public class TreeHandler extends AbstractHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         TreeData treeData = new TreeData();
         
-        User user = (User) request.getAttribute(Const.ATTR_USER);
-        treeData.isAdmin = user.isAdmin();
+        treeData.isAdmin = accessHelper.isAdmin(request, "Loading tree");
 
         List<Team> teams = dataAccess.getTeams();
         List<Service> services = dataAccess.getAllServices();
@@ -76,6 +77,7 @@ public class TreeHandler extends AbstractHandler {
             treeData.teams.add(teamData);
         }
         
+        response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
             gson.toJson(treeData, TreeData.class, jw);
         }

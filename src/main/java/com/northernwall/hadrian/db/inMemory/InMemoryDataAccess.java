@@ -27,7 +27,6 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ public class InMemoryDataAccess implements DataAccess {
     private final Map<String, Module> modules;
     private final Map<String, DataStore> dataStores;
     private final Map<String, WorkItem> workItems;
-    private final Map<String, User> users;
     private final List<Audit> audits;
     private final Map<String, ModuleFile> moduleFiles;
 
@@ -70,7 +68,6 @@ public class InMemoryDataAccess implements DataAccess {
         modules = new ConcurrentHashMap<>();
         dataStores = new ConcurrentHashMap<>();
         workItems = new ConcurrentHashMap<>();
-        users = new ConcurrentHashMap<>();
         audits = new LinkedList<>();
         moduleFiles = new ConcurrentHashMap<>();
     }
@@ -429,33 +426,6 @@ public class InMemoryDataAccess implements DataAccess {
 
     @Override
     public void saveWorkItemStatus(String id, int status) {
-    }
-
-    @Override
-    public List<User> getUsers() {
-        List<User> temp = new LinkedList<>(users.values());
-        Collections.sort(temp);
-        return temp;
-    }
-
-    @Override
-    public User getUser(String userName) {
-        return users.get(userName);
-    }
-
-    @Override
-    public void saveUser(User user) {
-        users.put(user.getUsername(), user);
-    }
-
-    @Override
-    public void updateUser(User user) {
-        users.put(user.getUsername(), user);
-    }
-
-    @Override
-    public void deleteUser(String userName) {
-        users.remove(userName);
     }
 
     @Override

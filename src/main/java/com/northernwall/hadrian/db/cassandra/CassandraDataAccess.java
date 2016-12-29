@@ -38,7 +38,6 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
@@ -111,10 +110,6 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement teamSelect;
     private final PreparedStatement teamInsert;
     private final PreparedStatement teamUpdate;
-    private final PreparedStatement userSelect;
-    private final PreparedStatement userInsert;
-    private final PreparedStatement userUpdate;
-    private final PreparedStatement userDelete;
     private final PreparedStatement vipSelect;
     private final PreparedStatement vipSelect2;
     private final PreparedStatement vipInsert;
@@ -232,16 +227,6 @@ public class CassandraDataAccess implements DataAccess {
         teamInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         teamUpdate = session.prepare("UPDATE team SET data = ? WHERE id = ?;");
         teamUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-
-        LOGGER.info("Praparing user statements...");
-        userSelect = session.prepare("SELECT * FROM user WHERE id = ?;");
-        userSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userInsert = session.prepare("INSERT INTO user (id, data) VALUES (?, ?);");
-        userInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userUpdate = session.prepare("UPDATE user SET data = ? WHERE id = ?;");
-        userUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        userDelete = session.prepare("DELETE FROM user WHERE id = ?;");
-        userDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         LOGGER.info("Praparing vip statements...");
         vipSelect = session.prepare("SELECT * FROM vip WHERE serviceId = ?;");
@@ -713,31 +698,6 @@ public class CassandraDataAccess implements DataAccess {
     @Override
     public void deleteDataStore(String serviceId, String dataStoreId) {
         deleteServiceData(serviceId, dataStoreId, dataStoreDelete);
-    }
-
-    @Override
-    public List<User> getUsers() {
-        return getData("user", User.class);
-    }
-
-    @Override
-    public User getUser(String userName) {
-        return getData(userName, userSelect, User.class);
-    }
-
-    @Override
-    public void saveUser(User user) {
-        saveData(user.getUsername(), gson.toJson(user), userInsert);
-    }
-
-    @Override
-    public void updateUser(User user) {
-        updateData(user.getUsername(), gson.toJson(user), userUpdate);
-    }
-
-    @Override
-    public void deleteUser(String userName) {
-        deleteData(userName, userDelete);
     }
 
     @Override

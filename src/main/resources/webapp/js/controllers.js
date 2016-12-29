@@ -116,12 +116,10 @@ hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
         }
     }]);
 
-hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$uibModal', 'Config', 'User',
-    function ($scope, $http, $route, $uibModal, Config, User) {
+hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$uibModal', 'Config',
+    function ($scope, $http, $route, $uibModal, Config) {
         $scope.config = Config.get();
         
-        $scope.users = User.get();
-
         $scope.formEnvironmentConvert = {};
         $scope.formEnvironmentConvert.oldValue = "";
         $scope.formEnvironmentConvert.newValue = "";
@@ -161,12 +159,7 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/addTeam.html',
-                controller: 'ModalAddTeamCtrl',
-                resolve: {
-                    users: function () {
-                        return $scope.users;
-                    }
-                }
+                controller: 'ModalAddTeamCtrl'
             });
             modalInstance.result.then(function () {
                 $route.reload();
@@ -237,34 +230,8 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
 
     }]);
 
-hadrianControllers.controller('UsersCtrl', ['$scope', '$route', '$uibModal', 'User',
-    function ($scope, $route, $uibModal, User) {
-        $scope.userSortType = 'username';
-        $scope.userSortReverse = false;
-
-        $scope.users = User.get();
-
-        $scope.openUpdateUserModal = function (user) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/updateUser.html',
-                controller: 'ModalUpdateUserCtrl',
-                resolve: {
-                    user: function () {
-                        return user;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-    }]);
-
-hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window', 'users',
-    function ($scope, $http, $modalInstance, $window, users) {
-        $scope.users = users;
+hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window',
+    function ($scope, $http, $modalInstance, $window) {
         $scope.errorMsg = null;
 
         $scope.formSaveTeam = {};
@@ -275,7 +242,7 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveTeam.gitGroup = "";
         $scope.formSaveTeam.teamPage = "";
         $scope.formSaveTeam.calendarId = "";
-        $scope.formSaveTeam.user = users.users[0];
+        $scope.formSaveTeam.securityGroupName = "";
 
         $scope.save = function () {
             var dataObject = {
@@ -286,49 +253,13 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
                 gitGroup: $scope.formSaveTeam.gitGroup,
                 teamPage: $scope.formSaveTeam.teamPage,
                 calendarId: $scope.formSaveTeam.calendarId,
-                user: $scope.formSaveTeam.user
+                securityGroupName: $scope.formSaveTeam.securityGroupName
             };
 
             var responsePromise = $http.post("/v1/team/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $modalInstance.close();
                 $window.location.reload();
-            });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
-            });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    }]);
-
-hadrianControllers.controller('ModalUpdateUserCtrl', ['$scope', '$http', '$modalInstance', '$route', 'user',
-    function ($scope, $http, $modalInstance, $route, user) {
-        $scope.user = user;
-        $scope.errorMsg = null;
-
-        $scope.formUpdateUser = {};
-        $scope.formUpdateUser.username = user.username;
-        $scope.formUpdateUser.fullName = user.fullName;
-        $scope.formUpdateUser.admin = user.admin;
-        $scope.formUpdateUser.deploy = user.deploy;
-        $scope.formUpdateUser.audit = user.audit;
-
-        $scope.save = function () {
-            var dataObject = {
-                username: $scope.user.username,
-                fullName: $scope.formUpdateUser.fullName,
-                admin: $scope.formUpdateUser.admin,
-                deploy: $scope.formUpdateUser.deploy,
-                audit: $scope.formUpdateUser.audit
-            };
-
-            var responsePromise = $http.put("/v1/user/modify", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
-                $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
                 $scope.errorMsg = data;

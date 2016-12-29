@@ -38,7 +38,6 @@ public class WorkItem {
     private Operation operation;
     private String nextId;
     private String username;
-    private String fullname;
     private Date requestDate;
     private TeamData team;
     private ServiceData service;
@@ -54,7 +53,6 @@ public class WorkItem {
         this.operation = operation;
         this.nextId = null;
         this.username = user.getUsername();
-        this.fullname = user.getFullName();
         this.requestDate = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
@@ -103,14 +101,6 @@ public class WorkItem {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
     }
 
     public Date getRequestDate() {
@@ -190,8 +180,6 @@ public class WorkItem {
         str.append(nextId);
         str.append(", username=");
         str.append(username);
-        str.append(", fullname=");
-        str.append(fullname);
         str.append(", requestDate=");
         str.append(requestDate);
         str.append(", team=");
