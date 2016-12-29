@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.GetCustomFunctionData;
 import com.northernwall.hadrian.handlers.service.dao.GetDataStoreData;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleData;
@@ -60,7 +61,8 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
         Service service = getService(request);
 
         GetServiceData getServiceData = GetServiceData.create(service);
-        getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
+        Team team = getTeam(service.getTeamId(), null);
+        getServiceData.canModify = accessHelper.canUserModify(request, team);
 
         if (service.isActive()) {
             getModuleInfo(service, getServiceData, true);

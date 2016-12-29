@@ -8,6 +8,7 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
@@ -36,8 +37,9 @@ public class ModuleFileDeleteHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Service service = getService(request);
+        Team team = getTeam(service.getTeamId(), null);
         Module module = getModule(request, service);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
+        User user = accessHelper.checkIfUserCanModify(request, team, "manage file for module");
         String environment = request.getParameter("environment");
         if (environment == null || environment.isEmpty()) {
             throw new Http400BadRequestException("parameter environment is missing");

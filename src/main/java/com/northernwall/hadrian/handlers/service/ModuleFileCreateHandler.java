@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleFileData;
@@ -56,8 +57,9 @@ public class ModuleFileCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostModuleFileData data = fromJson(request, PostModuleFileData.class);
         Service service = getService(data.serviceId, null);
+        Team team = getTeam(service.getTeamId(), null);
         Module module = getModule(data.moduleId, null, service);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
+        User user = accessHelper.checkIfUserCanModify(request, team, "manage file for module");
         if (data.environment == null || data.environment.isEmpty()) {
             throw new Http400BadRequestException("attribute environment is missing");
         }

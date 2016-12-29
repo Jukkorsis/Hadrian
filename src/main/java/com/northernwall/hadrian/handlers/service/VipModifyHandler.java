@@ -55,7 +55,7 @@ public class VipModifyHandler extends BasicHandler {
         Service service = getService(data.serviceId, null);
         Vip vip = getVip(data.vipId, service);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a vip");
+        User user = accessHelper.checkIfUserCanModify(request, team, "modify a vip");
 
         vip.setStatus(true, "Updating...");
         getDataAccess().saveVip(vip);

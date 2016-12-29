@@ -45,7 +45,7 @@ public class TeamModifyHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PutTeamData data = fromJson(request, PutTeamData.class);
         Team team = getTeam(data.teamId, null);
-        accessHelper.checkIfUserCanModify(request, data.teamId, "update team");
+        accessHelper.checkIfUserCanModify(request, team, "update team");
         data.teamName = data.teamName.trim();
         if (data.teamName.isEmpty()) {
             throw new Http400BadRequestException("Team Name is mising or empty");

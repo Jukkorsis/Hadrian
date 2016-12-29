@@ -134,6 +134,8 @@ public class Const {
     
     public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME = "accessHandler.factoryClassName";
     public static final String ACCESS_HANDLER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.simple.SimpleAccessHandlerFactory";
+    public static final String ACCESS_HELPER_FACTORY_CLASS_NAME = "accessHelper.factoryClassName";
+    public static final String ACCESS_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.access.simple.SimpleAccessHelperFactory";
 
     public static final String LEADER_CLASS_NAME = "leader.className";
     public static final String LEADER_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.schedule.SimpleLeader";

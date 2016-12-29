@@ -43,7 +43,7 @@ public class TeamGetHandler extends BasicHandler {
         Team team = getTeam(request);
 
         GetTeamData getTeamData = GetTeamData.create(team, getDataAccess());
-        getTeamData.canModify = accessHelper.canUserModify(request, team.getTeamId());
+        getTeamData.canModify = accessHelper.canUserModify(request, team);
 
         response.setContentType(Const.JSON);
         try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {

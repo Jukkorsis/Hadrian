@@ -20,9 +20,8 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.DeleteDocumentData;
-import com.northernwall.hadrian.handlers.service.dao.PostDocumentData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +41,8 @@ public class DocumentDeleteHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteDocumentData data = fromJson(request, DeleteDocumentData.class);
         Service service = getService(data.serviceId, null);
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "remove document");
+        Team team = getTeam(service.getTeamId(), null);
+        accessHelper.checkIfUserCanModify(request, team, "remove document");
 
         for (Document doc : service.getDocuments()) {
             if (doc.getDocId().equals(data.docId)) {

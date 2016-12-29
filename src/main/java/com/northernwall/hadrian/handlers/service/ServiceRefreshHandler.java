@@ -10,6 +10,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.GetHostData;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleData;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleRefData;
@@ -54,7 +55,8 @@ public class ServiceRefreshHandler extends BasicHandler {
         Service service = getService(request);
 
         GetServiceData getServiceData = GetServiceData.create(service);
-        getServiceData.canModify = accessHelper.canUserModify(request, service.getTeamId());
+        Team team = getTeam(service.getTeamId(), null);
+        getServiceData.canModify = accessHelper.canUserModify(request, team);
 
         if (service.isActive()) {
             getModuleInfo(service, getServiceData, false);

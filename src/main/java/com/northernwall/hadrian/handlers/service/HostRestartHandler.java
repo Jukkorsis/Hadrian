@@ -57,7 +57,7 @@ public class HostRestartHandler extends BasicHandler {
         PutRestartHostData data = fromJson(request, PutRestartHostData.class);
         Service service = getService(data.serviceId, data.serviceName);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanRestart(request, service.getTeamId());
+        User user = accessHelper.checkIfUserCanRestart(request, team);
 
         if (!service.isDoDeploys()) {
             throw new Http400BadRequestException("Service is configurationed to not allow deployments");

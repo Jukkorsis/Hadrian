@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Richard Thurston.
+ * Copyright 2016 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,11 @@
  */
 package com.northernwall.hadrian.access;
 
-import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
-import org.eclipse.jetty.server.Request;
-
-public interface AccessHelper {
-
-    User getUser(String username);
-    boolean canUserModify(Request request, Team team);
-    User checkIfUserCanModify(Request request, Team team, String action);
-    User checkIfUserCanDeploy(Request request, Team team);
-    User checkIfUserCanRestart(Request request, Team team);
-    User checkIfUserCanAudit(Request request, Team team);
-    User checkIfUserIsAdmin(Request request, String action);
-
+/**
+ *
+ * @author Richard
+ */
+public interface AccessHelperFactory {
+    AccessHelper create();
+    
 }

@@ -56,8 +56,8 @@ public class ServiceCreateHandler extends BasicHandler {
         if (data.teamId == null || data.teamId.isEmpty()) {
             throw new Http400BadRequestException("teamId attribute is mising");
         }
-        User user = accessHelper.checkIfUserCanModify(request, data.teamId, "create a service");
         Team team = getTeam(data.teamId, null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "create a service");
 
         if (data.serviceName == null || data.serviceName.isEmpty()) {
             throw new Http400BadRequestException("Service Name is mising or empty");

@@ -23,6 +23,7 @@ import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.DeleteServiceRefData;
@@ -52,7 +53,8 @@ public class ServiceRefDeleteHandler extends BasicHandler {
         DeleteServiceRefData data = fromJson(request, DeleteServiceRefData.class);
         
         Service clientService = getService(data.clientServiceId, null);
-        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "delete a module ref");
+        Team team = getTeam(clientService.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "delete a module ref");
 
         Module clientModule = getModule(data.clientModuleId, null, clientService);
         Service serverService = getService(data.serverServiceId, null);

@@ -22,6 +22,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
 import com.squareup.okhttp.OkHttpClient;
@@ -62,7 +63,8 @@ public class CustomFuntionExecHandler extends BasicHandler {
             throw new Http404NotFoundException("Could not find custom function");
         }
         if (customFunction.isTeamOnly()) {
-            accessHelper.checkIfUserCanModify(request, service.getTeamId(), "execute a private custom function");
+            Team team = getTeam(service.getTeamId(), null);
+            accessHelper.checkIfUserCanModify(request, team, "execute a private custom function");
         }
 
         Host host = getHost(request, service);

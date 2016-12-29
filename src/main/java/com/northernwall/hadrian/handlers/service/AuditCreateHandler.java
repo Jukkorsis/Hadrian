@@ -21,6 +21,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostAuditData;
 import java.io.IOException;
@@ -43,7 +44,8 @@ public class AuditCreateHandler extends BasicHandler {
         PostAuditData data = fromJson(request, PostAuditData.class);
 
         Service service = getService(data.serviceId, data.serviceName);
-        User user = accessHelper.checkIfUserCanAudit(request, service.getTeamId());
+        Team team = getTeam(service.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanAudit(request, team);
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();

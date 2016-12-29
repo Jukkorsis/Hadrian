@@ -40,7 +40,7 @@ public class TeamAddUserHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostTeamAddUserData data = fromJson(request, PostTeamAddUserData.class);
         Team team = getTeam(data.teamId, null);
-        accessHelper.checkIfUserCanModify(request, data.teamId, "add user to team");
+        accessHelper.checkIfUserCanModify(request, team, "add user to team");
         
         if (getDataAccess().getUser(data.username) == null) {
             throw new Http404NotFoundException("Failed to add user " + data.username + " to team " + data.teamId + ", could not find user");

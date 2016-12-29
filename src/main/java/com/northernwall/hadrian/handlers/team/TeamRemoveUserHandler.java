@@ -21,7 +21,6 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.handlers.team.dao.DeleteTeamRemoveUserData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +40,7 @@ public class TeamRemoveUserHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteTeamRemoveUserData data = fromJson(request, DeleteTeamRemoveUserData.class);
         Team team = getTeam(data.teamId, null);
-        accessHelper.checkIfUserCanModify(request, data.teamId, "remove user from team");
+        accessHelper.checkIfUserCanModify(request, team, "remove user from team");
 
         if (team.getUsernames().size() < 2) {
             throw new Http405NotAllowedException("Can not remove the last user from team " + team.getTeamName());

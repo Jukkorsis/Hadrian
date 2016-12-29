@@ -24,6 +24,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.ModuleRef;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleRefData;
@@ -53,7 +54,8 @@ public class ServiceRefCreateHandler extends BasicHandler {
         PostModuleRefData data = fromJson(request, PostModuleRefData.class);
 
         Service clientService = getService(data.clientServiceId, null);
-        User user = accessHelper.checkIfUserCanModify(request, clientService.getTeamId(), "add a service ref");
+        Team team = getTeam(clientService.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "add a service ref");
 
         Module clientModule = getModule(data.clientModuleId, null, clientService);
         Service serverService = getService(data.serverServiceId, null);

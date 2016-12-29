@@ -21,6 +21,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.PostDocumentData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
@@ -42,7 +43,8 @@ public class DocumentCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostDocumentData data = fromJson(request, PostDocumentData.class);
         Service service = getService(data.serviceId, null);
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a document");
+        Team team = getTeam(service.getTeamId(), null);
+        accessHelper.checkIfUserCanModify(request, team, "add a document");
 
         if (data.title == null) {
             throw new Http400BadRequestException("Failed to add new document, as title is null");

@@ -21,6 +21,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
@@ -53,8 +54,9 @@ public class SmokeTestExecHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Service service = getService(request);
+        Team team = getTeam(service.getTeamId(), null);
 
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "execute smoke test");
+        accessHelper.checkIfUserCanModify(request, team, "execute smoke test");
 
         Module module = getModule(request, service);
         

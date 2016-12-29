@@ -75,7 +75,7 @@ public class ModuleModifyHandler extends BasicHandler {
             }
         }
 
-        if (environmentNames == null || environmentNames.isEmpty()) {
+        if (environmentNames.isEmpty()) {
             throw new Http400BadRequestException("At least one environment must be selected");
         }
     }
@@ -97,7 +97,7 @@ public class ModuleModifyHandler extends BasicHandler {
         Service service = getService(data.serviceId, null);
 
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "update module");
+        User user = accessHelper.checkIfUserCanModify(request, team, "update module");
 
         List<Host> hosts = getDataAccess().getHosts(data.serviceId);
         for (Host host : hosts) {

@@ -67,7 +67,7 @@ public class ModuleCreateHandler extends BasicHandler {
         PostModuleData data = fromJson(request, PostModuleData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a module");
+        User user = accessHelper.checkIfUserCanModify(request, team, "add a module");
 
         Config config = configHelper.getConfig();
         if (!config.artifactTypes.contains(data.artifactType)) {

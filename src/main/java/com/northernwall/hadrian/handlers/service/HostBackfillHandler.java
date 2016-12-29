@@ -29,6 +29,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostBackfillHostData;
@@ -86,7 +87,8 @@ public class HostBackfillHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostBackfillHostData data = fromJson(request, PostBackfillHostData.class);
         Service service = getService(data.serviceId, null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "backfill host");
+        Team team = getTeam(service.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "backfill host");
 
         Config config = configHelper.getConfig();
         if (!config.dataCenters.contains(data.dataCenter)) {

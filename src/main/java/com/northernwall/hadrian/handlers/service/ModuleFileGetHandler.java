@@ -23,16 +23,13 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleFileData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Pack200;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,8 +51,9 @@ public class ModuleFileGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Service service = getService(request);
+        Team team = getTeam(service.getTeamId(), null);
         Module module = getModule(request, service);
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "manage file for module");
+        accessHelper.checkIfUserCanModify(request, team, "manage file for module");
         String environment = request.getParameter("environment");
         if (environment == null || environment.isEmpty()) {
             throw new Http400BadRequestException("parameter environment is missing");

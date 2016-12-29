@@ -20,6 +20,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.PostCustomFunctionData;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -44,7 +45,8 @@ public class CustomFuntionCreateHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         PostCustomFunctionData postCFData = fromJson(request, PostCustomFunctionData.class);
         Service service = getService(postCFData.serviceId, null);
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "create custom function");
+        Team team = getTeam(service.getTeamId(), null);
+        accessHelper.checkIfUserCanModify(request, team, "create custom function");
 
         CustomFunction customFunction = new CustomFunction(
                 service.getServiceId(),

@@ -61,7 +61,7 @@ public class ModuleDeleteHandler extends BasicHandler {
         Service service = getService(data.serviceId, null);
         Module module = getModule(data.moduleId, null, service);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "deleting a module");
+        User user = accessHelper.checkIfUserCanModify(request, team, "deleting a module");
 
         for (Host host : getDataAccess().getHosts(data.serviceId)) {
             if (host.getModuleId().equals(data.moduleId)) {

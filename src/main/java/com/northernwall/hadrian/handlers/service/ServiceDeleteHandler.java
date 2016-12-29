@@ -38,8 +38,8 @@ public class ServiceDeleteHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteServiceData data = fromJson(request, DeleteServiceData.class);
         Service service = getService(data.serviceId, null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete service");
         Team team = getTeam(service.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "delete service");
 
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         if (modules != null && !modules.isEmpty()) {

@@ -53,7 +53,7 @@ public class VipDeleteHandler extends BasicHandler {
         DeleteVipData data = fromJson(request, DeleteVipData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete a vip");
+        User user = accessHelper.checkIfUserCanModify(request, team, "delete a vip");
 
         Vip vip = getVip(data.vipId, service);
 

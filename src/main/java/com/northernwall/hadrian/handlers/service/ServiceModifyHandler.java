@@ -61,8 +61,8 @@ public class ServiceModifyHandler extends BasicHandler {
         }
         Service service = getService(data.serviceId, null);
 
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "modify a service");
         Team team = getTeam(service.getTeamId(), null);
+        User user = accessHelper.checkIfUserCanModify(request, team, "modify a service");
 
         for (Service temp : getDataAccess().getActiveServices()) {
             if (temp.getServiceName().equalsIgnoreCase(data.serviceName)

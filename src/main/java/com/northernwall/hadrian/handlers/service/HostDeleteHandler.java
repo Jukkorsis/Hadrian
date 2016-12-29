@@ -56,7 +56,7 @@ public class HostDeleteHandler extends BasicHandler {
         DeleteHostData data = fromJson(request, DeleteHostData.class);
         Service service = getService(data.serviceId, data.serviceName);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete host");
+        User user = accessHelper.checkIfUserCanModify(request, team, "delete host");
 
         Module module = getModule(data.moduleId, data.moduleName, service);
 

@@ -64,7 +64,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
         PutDeploySoftwareData data = fromJson(request, PutDeploySoftwareData.class);
         Service service = getService(data.serviceId, data.serviceName);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanDeploy(request, service.getTeamId());
+        User user = accessHelper.checkIfUserCanDeploy(request, team);
 
         if (!service.isDoDeploys()) {
             throw new Http400BadRequestException("Service is configurationed to not allow deployments");

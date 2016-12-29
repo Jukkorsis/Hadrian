@@ -56,7 +56,7 @@ public class VipCreateHandler extends BasicHandler {
 
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a vip");
+        User user = accessHelper.checkIfUserCanModify(request, team, "add a vip");
 
         //Check for duplicate VIP
         List<Vip> vips = getDataAccess().getVips(data.serviceId);

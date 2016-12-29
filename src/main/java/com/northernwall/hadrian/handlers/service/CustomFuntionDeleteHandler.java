@@ -20,6 +20,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.DeleteCFData;
 import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class CustomFuntionDeleteHandler extends BasicHandler {
             throw new Http404NotFoundException("Could not find custom function");
         }
         Service service = getService(customFunction.getServiceId(), null);
-        accessHelper.checkIfUserCanModify(request, service.getTeamId(), "delete custom function");
+        Team team = getTeam(service.getTeamId(), null);
+        accessHelper.checkIfUserCanModify(request, team, "delete custom function");
 
         getDataAccess().deleteCustomFunction(deleteCFData.serviceId, deleteCFData.cfId);
 

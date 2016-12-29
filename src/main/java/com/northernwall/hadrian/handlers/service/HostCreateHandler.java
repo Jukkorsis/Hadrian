@@ -69,7 +69,7 @@ public class HostCreateHandler extends BasicHandler {
         PostHostData data = fromJson(request, PostHostData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "add a host");
+        User user = accessHelper.checkIfUserCanModify(request, team, "add a host");
 
         Config config = configHelper.getConfig();
 

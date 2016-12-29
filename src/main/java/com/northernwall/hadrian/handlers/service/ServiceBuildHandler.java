@@ -50,7 +50,7 @@ public class ServiceBuildHandler extends BasicHandler {
         BuildServiceData data = fromJson(request, BuildServiceData.class);
         Service service = getService(data.serviceId, null);
         Team team = getDataAccess().getTeam(service.getTeamId());
-        User user = accessHelper.checkIfUserCanModify(request, service.getTeamId(), "trigger service build");
+        User user = accessHelper.checkIfUserCanModify(request, team, "trigger service build");
         
         if (!service.isDoBuilds()) {
             throw new Http400BadRequestException("Service not configured to do builds");
