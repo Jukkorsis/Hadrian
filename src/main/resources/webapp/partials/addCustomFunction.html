@@ -13,22 +13,25 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Method:</label>
       <div class="col-sm-9">
-        <select ng-model="formSaveCF.method" class="form-control"><option value="GET" selected="selected">GET</option><option value="POST">POST</option></select>
+        <select ng-model="formSaveCF.method" class="form-control">
+          <option value="GET" selected="selected">GET</option>
+          <option value="POST">POST</option>
+        </select>
+        <p class="help-block">The HTTP method to be used to involve the service's custom function.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">URL:</label>
       <div class="col-sm-9">
-        <div class="input-group">
-          <div class="input-group-addon">http:// </div>
-          <input ng-model="formSaveCF.url" type="text" class="form-control">
-        </div>
+        <input ng-model="formSaveCF.url" type="text" class="form-control">
+        <p class="help-block">The URL used to involve the custom function. The pattern '{host}' will be replace with the name of the target host.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Team Only:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveCF.teamOnly" type="checkbox">
+        <p class="help-block">If checked, only members of the service's team will be able to access this custom function.</p>
       </div>
     </div>
   </form>

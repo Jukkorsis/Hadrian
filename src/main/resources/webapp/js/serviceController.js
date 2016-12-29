@@ -1801,6 +1801,10 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
         $scope.module = module;
 
         $scope.formSaveCF = {};
+        $scope.formSaveCF.name = "";
+        $scope.formSaveCF.method = "GET";
+        $scope.formSaveCF.url = "";
+        $scope.formSaveCF.teamOnly = true;
 
         $scope.save = function () {
             var dataObject = {

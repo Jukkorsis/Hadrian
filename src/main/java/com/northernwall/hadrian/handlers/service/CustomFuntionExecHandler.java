@@ -77,7 +77,7 @@ public class CustomFuntionExecHandler extends BasicHandler {
         }
         
         Builder builder = new Builder();
-        builder.url(Const.HTTP + customFunction.getUrl().replace(Const.HOST, host.getHostName()));
+        builder.url(customFunction.getUrl().replace(Const.HOST, host.getHostName()));
         if (customFunction.getMethod().equalsIgnoreCase("POST")) {
             RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, "{}");
             builder.post(body);

@@ -1,8 +1,10 @@
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.Const;
 import java.util.UUID;
 
 public class CustomFunction implements Comparable<CustomFunction> {
+
     private String customFunctionId;
     private String serviceId;
     private String moduleId;
@@ -72,7 +74,14 @@ public class CustomFunction implements Comparable<CustomFunction> {
     }
 
     public String getUrl() {
-        return url;
+        if (url == null || url.isEmpty()) {
+            return url;
+        }
+        String temp = url.toLowerCase();
+        if (temp.startsWith(Const.HTTP) || temp.startsWith(Const.HTTPS)) {
+            return url;
+        }
+        return Const.HTTP + url;
     }
 
     public void setUrl(String url) {
@@ -91,5 +100,5 @@ public class CustomFunction implements Comparable<CustomFunction> {
     public int compareTo(CustomFunction o) {
         return name.compareTo(o.name);
     }
-    
+
 }
