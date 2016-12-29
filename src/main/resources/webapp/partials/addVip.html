@@ -1,26 +1,53 @@
 <div class="modal-header">
-    <h3 class="modal-title">Add VIP to {{environmentModule.environment}}</h3>
+  <h3 class="modal-title">Add VIP to {{environmentModule.environment}}</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Domain:</dt>
-        <dd><input ng-model="formSaveVip.dns" type="text" class="form-control"></dd>
-        <dt>Root Domain:</dt>
-        <dd><select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select></dd>
-        <dt>External:</dt>
-        <dd><select ng-model="formSaveVip.external" class="form-control"><option value="false" selected="selected">False</option><option value="true">True</option></select></dd>
-        <dt>Protocol:</dt>
-        <dd><select ng-model="formSaveVip.protocol" ng-options="c for c in config.protocols" class="form-control"></select></dd>
-        <dt>VIP Port:</dt>
-        <dd><input ng-model="formSaveVip.vipPort" type="number" class="form-control"></dd>
-        <dt>Service Port:</dt>
-        <dd><input ng-model="formSaveVip.servicePort" type="number" class="form-control"></dd>
-    </dl>
+  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+  <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
+  <form class="form-horizontal">
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Domain:</label>
+      <div class="col-sm-8">
+        <input ng-model="formSaveVip.dns" type="text" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Root Domain:</label>
+      <div class="col-sm-8">
+        <select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">External:</label>
+      <div class="col-sm-8">
+        <select ng-model="formSaveVip.external" class="form-control">
+          <option value="false" selected="selected">False</option>
+          <option value="true">True</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Protocol:</label>
+      <div class="col-sm-8">
+        <select ng-model="formSaveVip.protocol" ng-options="c for c in config.protocols" class="form-control"></select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">VIP Port:</label>
+      <div class="col-sm-8">
+        <input ng-model="formSaveVip.vipPort" type="number" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Service Port:</label>
+      <div class="col-sm-8">
+        <input ng-model="formSaveVip.servicePort" type="number" class="form-control">
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Add VIP</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Add VIP</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
 
