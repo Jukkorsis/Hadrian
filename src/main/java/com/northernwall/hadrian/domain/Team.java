@@ -16,8 +16,6 @@
 
 package com.northernwall.hadrian.domain;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,7 +27,6 @@ public class Team implements Comparable<Team> {
     private String teamId;
     private String teamName;
     private String teamEmail;
-    private String teamIrc;
     private String teamSlack;
     private String gitGroup;
     private String teamPage;
@@ -37,11 +34,10 @@ public class Team implements Comparable<Team> {
     private String colour;
     private String securityGroupName;
 
-    public Team(String teamName, String teamEmail, String teamIrc, String teamSlack, String gitGroup, String teamPage, String calendarId, String colour, String securityGroupName) {
+    public Team(String teamName, String teamEmail, String teamSlack, String gitGroup, String teamPage, String calendarId, String colour, String securityGroupName) {
         this.teamId = UUID.randomUUID().toString();
         this.teamName = teamName;
         this.teamEmail = teamEmail;
-        this.teamIrc = teamIrc;
         this.teamSlack = teamSlack;
         this.gitGroup = gitGroup;
         this.teamPage = teamPage;
@@ -71,14 +67,6 @@ public class Team implements Comparable<Team> {
 
     public void setTeamEmail(String teamEmail) {
         this.teamEmail = teamEmail;
-    }
-
-    public String getTeamIrc() {
-        return teamIrc;
-    }
-
-    public void setTeamIrc(String teamIrc) {
-        this.teamIrc = teamIrc;
     }
 
     public String getTeamSlack() {

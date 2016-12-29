@@ -15,12 +15,9 @@
  */
 package com.northernwall.hadrian.handlers.team.dao;
 
-import com.northernwall.hadrian.domain.User;
-
 public class PostTeamData {
     public String teamName;
     public String teamEmail;
-    public String teamIrc;
     public String teamSlack;
     public String gitGroup;
     public String teamPage;

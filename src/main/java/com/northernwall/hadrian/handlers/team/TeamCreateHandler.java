@@ -82,7 +82,7 @@ public class TeamCreateHandler extends BasicHandler {
             data.teamPage = Const.HTTP + data.teamPage;
         }
 
-        Team team = new Team(data.teamName, data.teamEmail, data.teamIrc, data.teamSlack, data.gitGroup, data.teamPage, data.calendarId, "black", data.securityGroupName);
+        Team team = new Team(data.teamName, data.teamEmail, data.teamSlack, data.gitGroup, data.teamPage, data.calendarId, "black", data.securityGroupName);
 
         getDataAccess().saveTeam(team);
         response.setStatus(200);

@@ -24,7 +24,6 @@ public class MessageType {
     public boolean includeUsedBy = false;
     public String emailSubject;
     public String emailBody;
-    public String ircBody;
     public String slackBody;
     public String slackIcon;
 

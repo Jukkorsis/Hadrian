@@ -19,7 +19,6 @@ public class PutTeamData {
     public String teamId;
     public String teamName;
     public String teamEmail;
-    public String teamIrc;
     public String teamSlack;
     public String gitGroup;
     public String teamPage;

@@ -60,7 +60,6 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateTeam = {};
         $scope.formUpdateTeam.name = team.teamName;
         $scope.formUpdateTeam.email = team.teamEmail;
-        $scope.formUpdateTeam.irc = team.teamIrc;
         $scope.formUpdateTeam.slack = team.teamSlack;
         $scope.formUpdateTeam.gitGroup = team.gitGroup;
         $scope.formUpdateTeam.teamPage = team.teamPage;
@@ -73,7 +72,6 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
                 teamId: team.teamId,
                 teamName: $scope.formUpdateTeam.name,
                 teamEmail: $scope.formUpdateTeam.email,
-                teamIrc: $scope.formUpdateTeam.irc,
                 teamSlack: $scope.formUpdateTeam.slack,
                 gitGroup: $scope.formUpdateTeam.gitGroup,
                 teamPage: $scope.formUpdateTeam.teamPage,

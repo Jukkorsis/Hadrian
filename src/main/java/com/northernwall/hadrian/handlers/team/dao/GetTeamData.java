@@ -19,24 +19,11 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 
 public class GetTeamData {
-    public String teamId;
-    public String teamName;
-    public String teamEmail;
-    public String teamIrc;
-    public String teamSlack;
-    public String gitGroup;
-    public String teamPage;
-    public String calendarId;
-    public String colour;
-    public String securityGroupName;
-    public boolean canModify;
-
     public static GetTeamData create(Team team, DataAccess dataAccess) {
         GetTeamData temp = new GetTeamData();
         temp.teamId = team.getTeamId();
         temp.teamName = team.getTeamName();
         temp.teamEmail = team.getTeamEmail();
-        temp.teamIrc = team.getTeamIrc();
         temp.teamSlack = team.getTeamSlack();
         temp.gitGroup = team.getGitGroup();
         temp.teamPage = team.getTeamPage();
@@ -45,5 +32,17 @@ public class GetTeamData {
         temp.securityGroupName = team.getSecurityGroupName();
         return temp;
     }
+    
+    public String teamId;
+    public String teamName;
+    public String teamEmail;
+    public String teamSlack;
+    public String gitGroup;
+    public String teamPage;
+    public String calendarId;
+    public String colour;
+    public String securityGroupName;
+    public boolean canModify;
+
 
 }

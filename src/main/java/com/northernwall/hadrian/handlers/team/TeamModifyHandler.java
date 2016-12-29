@@ -81,7 +81,6 @@ public class TeamModifyHandler extends BasicHandler {
 
         team.setTeamName(data.teamName);
         team.setTeamEmail(data.teamEmail);
-        team.setTeamIrc(data.teamIrc);
         team.setTeamSlack(data.teamSlack);
         team.setGitGroup(data.gitGroup);
         team.setTeamPage(data.teamPage);
