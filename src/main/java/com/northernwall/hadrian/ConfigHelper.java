@@ -72,6 +72,7 @@ public class ConfigHelper implements ParameterChangeListener {
         } else {
             newConfig.moduleConfigName = moduleConfigHelper.getDisplayName();
         }
+        newConfig.enableProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_PROVISIONING, Const.CONFIG_ENABLE_PROVISIONING_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_PLATFORMS, Const.CONFIG_PLATFORMS_DEFAULT, newConfig.platforms);

@@ -28,6 +28,7 @@ public class Config {
     public String logsFolder = "";
     public String gitUiURL = "";
     public String moduleConfigName = "";
+    public boolean enableProvisioning = false;
     public int minCpu = 2;
     public int maxCpu = 4;
     public int minMemory = 2;

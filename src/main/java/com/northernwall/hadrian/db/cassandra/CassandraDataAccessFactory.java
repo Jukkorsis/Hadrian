@@ -131,6 +131,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
 
     @Override
     public void run() {
+        LOGGER.info("Shutting down Cassandra");
         if (dataAccess != null) {
             dataAccess.close();
         }
