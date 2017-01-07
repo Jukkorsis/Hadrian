@@ -1,69 +1,41 @@
 <h3>Work Items
-    <div class="btn-group" uib-dropdown is-open="status.isopen">
-        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-        </button>
-        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-            <li role="menuitem"><a ng-click="completeWorkItem();">Complete selected work items</a></li>
-            <li role="menuitem"><a ng-click="cancelWorkItem();">Cancel selected work items</a></li>
-        </ul>
-    </div>
+  <div class="btn-group" uib-dropdown is-open="status.isopen">
+    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+      <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+    </button>
+    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+      <li role="menuitem"><a ng-click="completeWorkItem();">Complete selected work items</a></li>
+      <li role="menuitem"><a ng-click="cancelWorkItem();">Cancel selected work items</a></li>
+    </ul>
+  </div>
 </h3>
 <form>
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-            <input type="text" class="form-control" placeholder="Search Work Items" ng-model="workItemSearch">
-        </div>      
-    </div>
+  <div class="form-group">
+    <div class="input-group">
+      <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+      <input type="text" class="form-control" placeholder="Search Work Items" ng-model="workItemSearch">
+    </div>      
+  </div>
 </form>       
 <table class="table table-hover table-condensed">
-    <tr>
-        <th></th>
-        <th><a ng-click="workItemSortType = 'requestDate';
-                    workItemSortReverse = !workItemSortReverse">
-                Request Date
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'username';
-                    workItemSortReverse = !workItemSortReverse">
-                Requestor
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'type';
-                    workItemSortReverse = !workItemSortReverse">
-                Type
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'operation';
-                    workItemSortReverse = !workItemSortReverse">
-                Operation
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'service.serviceAbbr';
-                    workItemSortReverse = !workItemSortReverse">
-                Service
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'host.hostName';
-                    workItemSortReverse = !workItemSortReverse">
-                Host
-            </a>
-        </th>
-        <th><a ng-click="workItemSortType = 'vip.vipName';
-                    workItemSortReverse = !workItemSortReverse">
-                VIP
-            </a>
-        </th>
-    </tr>
-    <tr ng-repeat="wi in workItems.workItems| orderBy:workItemSortType:workItemSortReverse | filter:workItemSearch">
-        <td><input ng-model="formSelectWorkItem[wi.id]" type="checkbox"></td>
-        <td>{{wi.requestDate}}</td>
-        <td>{{wi.username}}</td>
-        <td>{{wi.type}}</td>
-        <td>{{wi.operation}}</td>
-        <td><a href="#/Service/{{wi.service.serviceId}}">{{wi.service.serviceAbbr}}</a></td>
-        <td>{{wi.host.hostName}}</td>
-        <td>{{wi.vip.vipName}}</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th><a ng-click="workItemSortType = 'requestDate'; workItemSortReverse = !workItemSortReverse">Request Date</a></th>
+    <th><a ng-click="workItemSortType = 'username'; workItemSortReverse = !workItemSortReverse">Requestor</a></th>
+    <th><a ng-click="workItemSortType = 'type'; workItemSortReverse = !workItemSortReverse">Type</a></th>
+    <th><a ng-click="workItemSortType = 'operation'; workItemSortReverse = !workItemSortReverse">Operation</a></th>
+    <th><a ng-click="workItemSortType = 'service.serviceAbbr'; workItemSortReverse = !workItemSortReverse">Service</a></th>
+    <th><a ng-click="workItemSortType = 'host.hostName'; workItemSortReverse = !workItemSortReverse">Host</a></th>
+    <th><a ng-click="workItemSortType = 'vip.vipName'; workItemSortReverse = !workItemSortReverse">VIP</a></th>
+  </tr>
+  <tr ng-repeat="wi in workItems.workItems| orderBy:workItemSortType:workItemSortReverse | filter:workItemSearch">
+    <td><input ng-model="formSelectWorkItem[wi.id]" type="checkbox"></td>
+    <td>{{wi.requestDate}}</td>
+    <td>{{wi.username}}</td>
+    <td>{{wi.type}}</td>
+    <td>{{wi.operation}}</td>
+    <td><a href="#/Service/{{wi.service.serviceId}}">{{wi.service.serviceAbbr}}</a></td>
+    <td>{{wi.host.hostName}}</td>
+    <td>{{wi.vip.vipName}}</td>
+  </tr>
 </table>

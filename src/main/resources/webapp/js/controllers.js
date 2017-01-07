@@ -231,9 +231,13 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
 
     }]);
 
-hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window',
-    function ($scope, $http, $modalInstance, $window) {
+hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config',
+    function ($scope, $http, $modalInstance, $window, Config) {
         $scope.errorMsg = null;
+
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
 
         $scope.formSaveTeam = {};
         $scope.formSaveTeam.name = "";

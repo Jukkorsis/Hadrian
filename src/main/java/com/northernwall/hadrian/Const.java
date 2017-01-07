@@ -162,6 +162,8 @@ public class Const {
     public static final String CONFIG_DATA_FOLDER_DEFAULT = "/var/app/data";
     public static final String CONFIG_LOGS_FOLDER = "config.logsFolder";
     public static final String CONFIG_LOGS_FOLDER_DEFAULT = "/var/app/logs";
+    public static final String CONFIG_SECURITY_GROUP_NAME = "config.securityGroupName";
+    public static final String CONFIG_SECURITY_GROUP_NAME_DEFAULT = "Security Group";
     public static final String CONFIG_ENABLE_PROVISIONING = "config.enableProvisioning";
     public static final boolean CONFIG_ENABLE_PROVISIONING_DEFAULT = false;
 

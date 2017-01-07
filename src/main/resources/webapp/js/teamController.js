@@ -24,6 +24,9 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
                 resolve: {
                     team: function () {
                         return $scope.team;
+                    },
+                    config: function () {
+                        return $scope.config;
                     }
                 }
             });
@@ -56,9 +59,10 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'team',
-    function ($scope, $http, $modalInstance, $route, team) {
+hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'team', 'config',
+    function ($scope, $http, $modalInstance, $route, team, config) {
         $scope.errorMsg = null;
+        $scope.config = config;
         $scope.formUpdateTeam = {};
         $scope.formUpdateTeam.name = team.teamName;
         $scope.formUpdateTeam.email = team.teamEmail;

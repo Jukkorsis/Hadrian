@@ -27,6 +27,7 @@ public class Config {
     public String dataFolder = "";
     public String logsFolder = "";
     public String gitUiURL = "";
+    public String securityGroupName = "";
     public String moduleConfigName = "";
     public boolean enableProvisioning = false;
     public int minCpu = 2;

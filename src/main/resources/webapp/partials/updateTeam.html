@@ -1,75 +1,75 @@
 <div class="modal-header">
-    <h3 class="modal-title">Update Team</h3>
+  <h3 class="modal-title">Update Team</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <form class="form-horizontal">
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Name:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.name" type="text" maxlength="30" class="form-control" id="name">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Email:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.email" type="text" class="form-control" id="email">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Slack:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.slack" type="text" class="form-control" id="slack">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Git Group:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.gitGroup" type="text" maxlength="30" class="form-control" id="gitGroup">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Team Page:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.teamPage" type="text" class="form-control" id="teamPage">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Calendar ID:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.calendarId" type="text" class="form-control" id="calendarId">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Security Group:</label>
-            <div class="col-sm-8">
-                <input ng-model="formUpdateTeam.securityGroupName" type="text" class="form-control">
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <label class="col-sm-4 control-label">Colour:</label>
-            <div class="col-sm-8">
-                <select ng-model="formUpdateTeam.colour" class="form-control" id="colour">
-                    <option value="aqua">aqua</option>
-                    <option value="black">black</option>
-                    <option value="blue">blue</option>
-                    <option value="brown">brown</option>
-                    <option value="gold">gold</option>
-                    <option value="grey">grey</option>
-                    <option value="green">green</option>
-                    <option value="indigo">indigo</option>
-                    <option value="lime">lime</option>
-                    <option value="olive">olive</option>
-                    <option value="purple">purple</option>
-                    <option value="red">red</option>
-                    <option value="tan">tan</option>
-                    <option value="yellow">yellow</option>
-                </select>
-            </div>
-        </div>
-    </form>
+  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+  <form class="form-horizontal">
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Name:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.name" type="text" maxlength="30" class="form-control" id="name" autofocus="true">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Email:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.email" type="text" class="form-control" id="email">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Slack:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.slack" type="text" class="form-control" id="slack">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Git Group:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.gitGroup" type="text" maxlength="30" class="form-control" id="gitGroup">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Team Page:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.teamPage" type="text" class="form-control" id="teamPage">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Calendar ID:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.calendarId" type="text" class="form-control" id="calendarId">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">{{config.securityGroupName}}:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateTeam.securityGroupName" type="text" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Colour:</label>
+      <div class="col-sm-8">
+        <select ng-model="formUpdateTeam.colour" class="form-control" id="colour">
+          <option value="aqua">aqua</option>
+          <option value="black">black</option>
+          <option value="blue">blue</option>
+          <option value="brown">brown</option>
+          <option value="gold">gold</option>
+          <option value="grey">grey</option>
+          <option value="green">green</option>
+          <option value="indigo">indigo</option>
+          <option value="lime">lime</option>
+          <option value="olive">olive</option>
+          <option value="purple">purple</option>
+          <option value="red">red</option>
+          <option value="tan">tan</option>
+          <option value="yellow">yellow</option>
+        </select>
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Update Team</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Update Team</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
