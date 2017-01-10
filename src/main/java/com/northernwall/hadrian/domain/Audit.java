@@ -20,9 +20,9 @@ import java.util.Date;
 public class Audit implements Comparable<Audit> {
     public String auditId;
     public String serviceId;
+    public Date timeRequested;
     private Date timePerformed;
     private long timePerformedLong = 0;
-    public Date timeRequested;
     public String requestor;
     public Type type;
     public Operation operation;
