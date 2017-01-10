@@ -26,7 +26,6 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import java.io.IOException;
