@@ -18,6 +18,7 @@ package com.northernwall.hadrian.handlers.caching;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
@@ -39,11 +40,13 @@ public class ContentHandler extends AbstractHandler {
 
     private final String rootPath;
     private final String indexPath;
+    private final HtmlCompressor compressor;
     private final LoadingCache<String, CachedContent> cache;
 
     public ContentHandler(String rootPath) {
         this.rootPath = rootPath;
         indexPath = rootPath + "/index.html";
+        compressor = new HtmlCompressor();
         cache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
                 .build(new CacheLoader<String, CachedContent>() {
@@ -53,9 +56,7 @@ public class ContentHandler extends AbstractHandler {
                             if (is == null) {
                                 return null;
                             }
-                            CachedContent content = new CachedContent(key, is);
-                            LOGGER.info("Loaded content {} into cache, {} bytes", key, content.getSize());
-                            return content;
+                            return new CachedContent(key, is, compressor);
                         }
                     }
                 });
