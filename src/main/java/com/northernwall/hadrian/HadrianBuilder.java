@@ -59,6 +59,7 @@ public class HadrianBuilder {
     }
 
     private final Parameters parameters;
+    private final Gson gson;
     private OkHttpClient client;
     private FolderHelper folderHelper;
     private ConfigHelper configHelper;
@@ -76,6 +77,7 @@ public class HadrianBuilder {
 
     private HadrianBuilder(Parameters parameters) {
         this.parameters = parameters;
+        this.gson = new Gson();
     }
 
     public HadrianBuilder setDataAccess(DataAccess dataAccess) {
@@ -131,12 +133,9 @@ public class HadrianBuilder {
             buildModuleConfigHelper();
         }
 
-        folderHelper = new FolderHelper();
-        configHelper = new ConfigHelper(
-                parameters, 
-                moduleConfigHelper, 
-                folderHelper);
-        folderHelper.init(configHelper);
+        configHelper = new ConfigHelper(parameters, gson, moduleConfigHelper);
+        
+        folderHelper = new FolderHelper(configHelper);
 
         if (accessHelper == null) {
             buildAccessHelper();
@@ -169,7 +168,7 @@ public class HadrianBuilder {
                 configHelper, 
                 dataAccess, 
                 client, 
-                new Gson(), 
+                gson, 
                 metricRegistry);
 
         DataAccessUpdater.update(
@@ -192,7 +191,8 @@ public class HadrianBuilder {
                 scheduler, 
                 folderHelper, 
                 metricRegistry, 
-                messagingCoodinator);
+                messagingCoodinator,
+                gson);
     }
 
     private void buildDataAccess() {
@@ -211,7 +211,7 @@ public class HadrianBuilder {
         } catch (IllegalAccessException ex) {
             throw new RuntimeException("Could not build Hadrian, could not access DataAccess class " + factoryName);
         }
-        dataAccess = factory.createDataAccess(parameters, metricRegistry);
+        dataAccess = factory.createDataAccess(parameters, gson, metricRegistry);
     }
 
     private void buildModuleArtifactHelper() {
@@ -330,7 +330,7 @@ public class HadrianBuilder {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Could not build Hadrian, could not access VIP Details Helper class " + factoryName);
             }
-            vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters, configHelper);
+            vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters, configHelper, gson);
         }
     }
 

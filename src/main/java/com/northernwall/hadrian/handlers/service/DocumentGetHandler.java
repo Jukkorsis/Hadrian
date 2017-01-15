@@ -24,7 +24,7 @@ import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +48,8 @@ public class DocumentGetHandler extends BasicHandler implements ParameterChangeL
     private final Type type;
     private final Gson gson;
 
-    public DocumentGetHandler(DataAccess dataAccess, OkHttpClient client, Parameters parameters) {
-        super(dataAccess);
+    public DocumentGetHandler(DataAccess dataAccess, Gson gson, OkHttpClient client, Parameters parameters) {
+        super(dataAccess, gson);
         this.client = client;
         this.parameters = parameters;
         this.tokens = new HashMap<>();

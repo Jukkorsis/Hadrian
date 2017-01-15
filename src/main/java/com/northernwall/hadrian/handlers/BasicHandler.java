@@ -16,20 +16,25 @@
 package com.northernwall.hadrian.handlers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.stream.JsonWriter;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.function.Predicate;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -38,19 +43,20 @@ import org.slf4j.LoggerFactory;
 public abstract class BasicHandler extends AbstractHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BasicHandler.class);
-    private final static Gson gson = new Gson();
-
+    
     private final DataAccess dataAccess;
+    private final Gson gson;
 
-    public BasicHandler(DataAccess dataAccess) {
+    public BasicHandler(DataAccess dataAccess, Gson gson) {
         this.dataAccess = dataAccess;
+        this.gson = gson;
     }
 
     public DataAccess getDataAccess() {
         return dataAccess;
     }
 
-    public static Gson getGson() {
+    public Gson getGson() {
         return gson;
     }
 
@@ -63,6 +69,13 @@ public abstract class BasicHandler extends AbstractHandler {
         }
         LOGGER.info("Stream->Json {}", gson.toJson(temp));
         return temp;
+    }
+
+    protected final void toJson(HttpServletResponse response, Object data) throws IOException, JsonIOException {
+        response.setContentType(Const.JSON);
+        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
+            getGson().toJson(data, data.getClass(), jw);
+        }
     }
 
     protected Team getTeam(Request request) {

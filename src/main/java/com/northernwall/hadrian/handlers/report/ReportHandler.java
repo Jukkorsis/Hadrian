@@ -18,7 +18,7 @@ package com.northernwall.hadrian.handlers.report;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

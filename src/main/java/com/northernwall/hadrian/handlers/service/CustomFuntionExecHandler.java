@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -23,8 +24,8 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.RequestBody;
@@ -47,8 +48,8 @@ public class CustomFuntionExecHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final OkHttpClient client;
 
-    public CustomFuntionExecHandler(AccessHelper accessHelper, DataAccess dataAccess, OkHttpClient client) {
-        super(dataAccess);
+    public CustomFuntionExecHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, OkHttpClient client) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.client = client;
     }

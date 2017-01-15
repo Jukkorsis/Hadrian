@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -43,8 +44,8 @@ public class ServiceRefDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public ServiceRefDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public ServiceRefDeleteHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

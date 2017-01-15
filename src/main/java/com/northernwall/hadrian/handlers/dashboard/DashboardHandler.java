@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.handlers.dashboard;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
@@ -46,8 +48,8 @@ public class DashboardHandler extends BasicHandler {
     private final InfoHelper infoHelper;
     private final ExecutorService executorService;
 
-    public DashboardHandler(DataAccess dataAccess, InfoHelper infoHelper) {
-        super(dataAccess);
+    public DashboardHandler(DataAccess dataAccess, Gson gson, InfoHelper infoHelper) {
+        super(dataAccess, gson);
 
         this.infoHelper = infoHelper;
 
@@ -100,10 +102,7 @@ public class DashboardHandler extends BasicHandler {
 
         waitForFutures(futures, 151, 100);
 
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getDashboardData, GetDashboardData.class, jw);
-        }
+        toJson(response, getDashboardData);
         response.setStatus(200);
         request.setHandled(true);
     }

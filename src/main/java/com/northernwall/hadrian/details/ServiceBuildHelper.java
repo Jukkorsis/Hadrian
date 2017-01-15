@@ -49,11 +49,11 @@ public class ServiceBuildHelper {
     private final Parameters parameters;
     private final Gson gson;
 
-    public ServiceBuildHelper(DataAccess dataAccess, OkHttpClient client, Parameters parameters) {
+    public ServiceBuildHelper(DataAccess dataAccess, OkHttpClient client, Parameters parameters, Gson gson) {
         this.dataAccess = dataAccess;
         this.client = client;
         this.parameters = parameters;
-        this.gson = new Gson();
+        this.gson = gson;
     }
 
     public void triggerBuild(Team team, Service service, String branch, User user) {

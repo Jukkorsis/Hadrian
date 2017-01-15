@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
@@ -43,8 +44,8 @@ public class VipGetDetailsHandler extends BasicHandler {
 
     private final VipDetailsHelper vipDetailsHelper;
 
-    public VipGetDetailsHandler(DataAccess dataAccess, VipDetailsHelper vipDetailsHelper) {
-        super(dataAccess);
+    public VipGetDetailsHandler(DataAccess dataAccess, Gson gson, VipDetailsHelper vipDetailsHelper) {
+        super(dataAccess, gson);
         this.vipDetailsHelper = vipDetailsHelper;
     }
 
@@ -92,10 +93,7 @@ public class VipGetDetailsHandler extends BasicHandler {
             }
         });
 
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(details, GetVipDetailsData.class, jw);
-        }
+        toJson(response, details);
         response.setStatus(200);
         request.setHandled(true);
     }

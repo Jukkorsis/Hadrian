@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -31,7 +32,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutDeploySoftwareData;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,8 +52,8 @@ public class HostDeploySoftwareHandler extends BasicHandler {
     private final InfoHelper infoHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public HostDeploySoftwareHandler(AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
-        super(dataAccess);
+    public HostDeploySoftwareHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper, WorkItemProcessor workItemProcessor) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.infoHelper = infoHelper;

@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.utility;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -24,7 +25,7 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -41,8 +42,8 @@ public class ConvertHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
 
-    public ConvertHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper) {
-        super(dataAccess);
+    public ConvertHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
     }

@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
@@ -34,7 +35,7 @@ import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PostHostData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,8 @@ public class HostCreateHandler extends BasicHandler {
     private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public HostCreateHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
-        super(dataAccess);
+    public HostCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.workItemProcessor = workItemProcessor;

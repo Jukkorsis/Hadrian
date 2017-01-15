@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.handlers.utility.routingHandler;
+package com.northernwall.hadrian.handlers.routing;
 
 import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,20 +96,35 @@ public class RoutingHandler extends AbstractHandler {
             if (entry.targetRule.test(entry.targetPattern, target)) {
                 try {
                     if (entry.logAccess) {
-                        LOGGER.info("{} handling {} request for {}", entry.name, request.getMethod(), target);
+                        LOGGER.info("{} handling {} request for {}{}", 
+                                entry.name, 
+                                request.getMethod(), 
+                                target, 
+                                getUser(request));
                     }
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {
                         return;
                     }
                 } catch (HttpAbstractException e) {
-                    LOGGER.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target);
+                    LOGGER.error("Exception '{}' while {} was handling {} request for {}{}", 
+                            e.getMessage(), 
+                            entry.name, 
+                            request.getMethod(), 
+                            target, 
+                            getUser(request));
                     response.getWriter().print(e.getMessage());
                     response.setStatus(e.getStatus());
                     request.setHandled(true);
                     return;
                 } catch (Exception e) {
-                    LOGGER.error("Exception '{}' while {} was handling {} request for {}", e.getMessage(), entry.name, request.getMethod(), target, e);
+                    LOGGER.error("Exception '{}' while {} was handling {} request for {}{}", 
+                            e.getMessage(), 
+                            entry.name, 
+                            request.getMethod(), 
+                            target, 
+                            getUser(request), 
+                            e);
                     response.getWriter().print("Internal Server Error.");
                     response.setStatus(500);
                     request.setHandled(true);
@@ -117,6 +133,14 @@ public class RoutingHandler extends AbstractHandler {
             }
         }
         LOGGER.info("Could not find a handler for {} {}", request.getMethod(), target);
+    }
+    
+    private String getUser(Request request) {
+        User user = (User) request.getAttribute(Const.ATTR_USER);
+        if (user == null) {
+            return "";
+        }
+        return " by " + user.getUsername();
     }
 
 }

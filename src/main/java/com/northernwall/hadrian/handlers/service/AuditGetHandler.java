@@ -15,12 +15,13 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.handlers.service.dao.GetAuditData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
@@ -39,8 +40,8 @@ public class AuditGetHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AuditGetHandler.class);
 
-    public AuditGetHandler(DataAccess dataAccess) {
-        super(dataAccess);
+    public AuditGetHandler(DataAccess dataAccess, Gson gson) {
+        super(dataAccess, gson);
     }
 
     @Override
@@ -81,9 +82,7 @@ public class AuditGetHandler extends BasicHandler {
                 end);
         Collections.sort(auditData.audits);
 
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(auditData, GetAuditData.class, jw);
-        }
+        toJson(response, auditData);
         response.setStatus(200);
         request.setHandled(true);
     }

@@ -21,6 +21,7 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
@@ -37,7 +38,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
     private CassandraDataAccess dataAccess;
 
     @Override
-    public DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry) {
+    public DataAccess createDataAccess(Parameters parameters, Gson gson, MetricRegistry metricRegistry) {
         String nodes = parameters.getString(Const.CASS_NODES, Const.CASS_NODES_DEFAULT);
         String dataCenter = parameters.getString(Const.CASS_DATA_CENTER, null);
         String username = parameters.getString(Const.CASS_USERNAME, null);
@@ -52,7 +53,7 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
 
         setup(createKeyspace, keyspace, replicationFactor);
 
-        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, statusTimeToLive, metricRegistry);
+        dataAccess = new CassandraDataAccess(cluster, keyspace, username, dataCenter, auditTimeToLive, statusTimeToLive, gson, metricRegistry);
         
         Thread thread = new Thread(this);
         Runtime.getRuntime().addShutdownHook(thread);

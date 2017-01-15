@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.details.simple;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.details.VipDetailsHelperFactory;
@@ -24,8 +25,8 @@ import com.squareup.okhttp.OkHttpClient;
 public class SimpleVipDetailsHelperFactory implements VipDetailsHelperFactory {
 
     @Override
-    public VipDetailsHelper create(OkHttpClient client, Parameters parameters, ConfigHelper configHelper) {
-        return new SimpleVipDetailsHelper(client, parameters, configHelper);
+    public VipDetailsHelper create(OkHttpClient client, Parameters parameters, ConfigHelper configHelper, Gson gson) {
+        return new SimpleVipDetailsHelper(client, parameters, configHelper, gson);
     }
 
 }

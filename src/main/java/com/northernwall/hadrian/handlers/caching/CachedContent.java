@@ -1,4 +1,4 @@
-package com.northernwall.hadrian.handlers.utility;
+package com.northernwall.hadrian.handlers.caching;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

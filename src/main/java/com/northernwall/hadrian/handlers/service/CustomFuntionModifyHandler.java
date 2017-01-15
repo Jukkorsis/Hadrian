@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -22,7 +23,7 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.PostCustomFunctionData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +38,8 @@ public class CustomFuntionModifyHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public CustomFuntionModifyHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public CustomFuntionModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

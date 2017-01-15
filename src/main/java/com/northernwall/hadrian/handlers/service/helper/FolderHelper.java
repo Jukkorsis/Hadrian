@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.handlers.service.helper;
 
 import com.northernwall.hadrian.ConfigHelper;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.util.List;
 
 /**
@@ -24,12 +24,9 @@ import java.util.List;
  * @author Richard
  */
 public class FolderHelper {
-    private ConfigHelper configHelper;
+    private final ConfigHelper configHelper;
     
-    public FolderHelper() {
-    }
-
-    public void init(ConfigHelper configHelper) {
+    public FolderHelper(ConfigHelper configHelper) {
         this.configHelper = configHelper;
     }
     
@@ -108,23 +105,4 @@ public class FolderHelper {
         throw new Http400BadRequestException(folderName + " folder is not on the whitelist");
     }
     
-    public void loadFolderWhiteList(String temp, List<String> folderWhiteList) {
-        if (temp == null || temp.isEmpty()) {
-            return;
-        }
-        String[] folders = temp.split(",");
-        for (String folder : folders) {
-            String tempFolder = folder.trim();
-            if (!tempFolder.isEmpty() && !tempFolder.equals("/")) {
-                if (!tempFolder.startsWith("/")) {
-                    tempFolder = "/" + tempFolder;
-                }
-                if (!tempFolder.endsWith("/") && tempFolder.length() > 1) {
-                    tempFolder = tempFolder + "/";
-                }
-                folderWhiteList.add(tempFolder);
-            }
-        }        
-    }
-
 }

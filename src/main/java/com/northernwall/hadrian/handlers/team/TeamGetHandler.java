@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.team;
 
+import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -33,8 +34,8 @@ public class TeamGetHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public TeamGetHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public TeamGetHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 
@@ -45,10 +46,7 @@ public class TeamGetHandler extends BasicHandler {
         GetTeamData getTeamData = GetTeamData.create(team, getDataAccess());
         getTeamData.canModify = accessHelper.canUserModify(request, team);
 
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getTeamData, GetTeamData.class, jw);
-        }
+        toJson(response, getTeamData);
         response.setStatus(200);
         request.setHandled(true);
     }

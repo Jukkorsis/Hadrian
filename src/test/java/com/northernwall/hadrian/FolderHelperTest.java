@@ -30,7 +30,7 @@ public class FolderHelperTest {
 
     @Test
     public void scrubFolderTest() {
-        FolderHelper folderHelper = new FolderHelper();
+        FolderHelper folderHelper = new FolderHelper(null);
         
         Assert.assertNull(folderHelper.scrubFolder(null, "deploy", true));
         try {
@@ -63,7 +63,7 @@ public class FolderHelperTest {
 
     @Test
     public void isSubFolderTest() {
-        FolderHelper folderHelper = new FolderHelper();
+        FolderHelper folderHelper = new FolderHelper(null);
         
         try {
             folderHelper.isSubFolder("/foo/bar", "AAA", "/", "BBB");

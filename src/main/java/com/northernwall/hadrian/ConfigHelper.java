@@ -35,14 +35,14 @@ public class ConfigHelper implements ParameterChangeListener {
     private final static Logger LOGGER = LoggerFactory.getLogger(ConfigHelper.class);
 
     private final Parameters parameters;
+    private final Gson gson;
     private final ModuleConfigHelper moduleConfigHelper;
-    private final FolderHelper folderHelper;
     private final AtomicReference<Config> config;
 
-    public ConfigHelper(Parameters parameters, ModuleConfigHelper moduleConfigHelper, FolderHelper folderHelper) {
+    public ConfigHelper(Parameters parameters, Gson gson, ModuleConfigHelper moduleConfigHelper) {
         this.parameters = parameters;
+        this.gson = gson;
         this.moduleConfigHelper = moduleConfigHelper;
-        this.folderHelper = folderHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
     }
@@ -86,34 +86,52 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
         newConfig.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
         
-        folderHelper.loadFolderWhiteList(parameters.getString(Const.CONFIG_FOLDER_WHITE_LIST, null), newConfig.folderWhiteList);
+        loadFolderWhiteList(parameters.getString(Const.CONFIG_FOLDER_WHITE_LIST, null), newConfig.folderWhiteList);
 
-        LOGGER.info("Config loaded");
+        LOGGER.info("Config loaded, {}", gson.toJson(newConfig));
         return newConfig;
     }
-
+    
     private void loadConfig(String key, String defaultValue, List<String> target) {
-        String temp = parameters.getString(key, defaultValue);
-        if (temp == null) {
+        String param = parameters.getString(key, defaultValue);
+        if (param == null) {
             return;
         }
-        String[] parts = temp.split(",");
+        String[] parts = param.split(",");
         for (String part : parts) {
-            part = part.trim();
-            if (!part.isEmpty()) {
-                target.add(part);
+            String temp = part.trim();
+            if (!temp.isEmpty()) {
+                target.add(temp);
             }
         }
     }
 
     private void loadEnvironment(Config newConfig) {
         String temp = parameters.getString(Const.CONFIG_ENVIRONMENTS, Const.CONFIG_ENVIRONMENTS_DEFAULT);
-        Gson gson = new Gson();
         Type listType = new TypeToken<ArrayList<Environment>>(){}.getType();
         newConfig.environments = gson.fromJson(temp, listType);
         for (Environment environment : newConfig.environments) {
             newConfig.environmentNames.add(environment.name);
         }
+    }
+
+    private void loadFolderWhiteList(String temp, List<String> folderWhiteList) {
+        if (temp == null || temp.isEmpty()) {
+            return;
+        }
+        String[] folders = temp.split(",");
+        for (String folder : folders) {
+            String tempFolder = folder.trim();
+            if (!tempFolder.isEmpty() && !tempFolder.equals("/")) {
+                if (!tempFolder.startsWith("/")) {
+                    tempFolder = "/" + tempFolder;
+                }
+                if (!tempFolder.endsWith("/") && tempFolder.length() > 1) {
+                    tempFolder = tempFolder + "/";
+                }
+                folderWhiteList.add(tempFolder);
+            }
+        }        
     }
 
 }

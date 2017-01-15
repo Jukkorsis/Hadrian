@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.GMT;
@@ -14,7 +15,7 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.DeleteServiceData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import java.util.List;
@@ -28,8 +29,8 @@ public class ServiceDeleteHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public ServiceDeleteHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
-        super(dataAccess);
+    public ServiceDeleteHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
     }

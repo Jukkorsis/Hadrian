@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import java.io.IOException;
@@ -35,8 +36,8 @@ public class WorkItemCallbackHandler extends BasicHandler {
 
     private final WorkItemProcessor workItemProcessor;
 
-    public WorkItemCallbackHandler(WorkItemProcessor workItemProcessor) {
-        super(null);
+    public WorkItemCallbackHandler(Gson gson, WorkItemProcessor workItemProcessor) {
+        super(null, gson);
         this.workItemProcessor = workItemProcessor;
     }
 

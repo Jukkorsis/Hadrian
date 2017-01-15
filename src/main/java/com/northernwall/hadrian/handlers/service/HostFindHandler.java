@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.google.gson.stream.JsonWriter;
@@ -27,8 +28,8 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.FindHostData;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
@@ -45,8 +46,8 @@ public class HostFindHandler extends BasicHandler {
     private final InfoHelper infoHelper;
     private final HostDetailsHelper hostDetailsHelper;
 
-    public HostFindHandler(DataAccess dataAccess, InfoHelper infoHelper, HostDetailsHelper hostDetailsHelper) {
-        super(dataAccess);
+    public HostFindHandler(DataAccess dataAccess, Gson gson, InfoHelper infoHelper, HostDetailsHelper hostDetailsHelper) {
+        super(dataAccess, gson);
         this.infoHelper = infoHelper;
         this.hostDetailsHelper = hostDetailsHelper;
     }
@@ -104,10 +105,7 @@ public class HostFindHandler extends BasicHandler {
         findHostData.availability = infoHelper.readAvailability(hostName, module.getAvailabilityUrl());
         findHostData.details = hostDetailsHelper.getDetails(host);
 
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(findHostData, FindHostData.class, jw);
-        }
+        toJson(response, findHostData);
         response.setStatus(200);
         request.setHandled(true);
     }

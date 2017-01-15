@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.google.gson.stream.JsonWriter;
@@ -38,8 +39,8 @@ public class HostGetDetailsHandler extends BasicHandler {
 
     private final HostDetailsHelper hostDetailsHelper;
 
-    public HostGetDetailsHandler(DataAccess dataAccess, HostDetailsHelper hostDetailsHelper) {
-        super(dataAccess);
+    public HostGetDetailsHandler(DataAccess dataAccess, Gson gson, HostDetailsHelper hostDetailsHelper) {
+        super(dataAccess, gson);
         this.hostDetailsHelper = hostDetailsHelper;
     }
 
@@ -50,10 +51,7 @@ public class HostGetDetailsHandler extends BasicHandler {
 
         GetHostDetailsData details = hostDetailsHelper.getDetails(host);
 
-        response.setContentType(Const.JSON);
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(details, GetHostDetailsData.class, jw);
-        }
+        toJson(response, details);
         response.setStatus(200);
         request.setHandled(true);
     }

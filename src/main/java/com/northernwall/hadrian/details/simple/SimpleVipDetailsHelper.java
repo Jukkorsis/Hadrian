@@ -38,12 +38,12 @@ public class SimpleVipDetailsHelper implements VipDetailsHelper {
     private final Gson gson;
     private final ExecutorService executorService;
 
-    public SimpleVipDetailsHelper(OkHttpClient client, Parameters parameters, ConfigHelper configHelper) {
+    public SimpleVipDetailsHelper(OkHttpClient client, Parameters parameters, ConfigHelper configHelper, Gson gson) {
         this.client = client;
         this.parameters = parameters;
         this.configHelper = configHelper;
-        
-        gson = new Gson();
+        this.gson = gson;
+
         executorService = Executors.newFixedThreadPool(20);
     }
 

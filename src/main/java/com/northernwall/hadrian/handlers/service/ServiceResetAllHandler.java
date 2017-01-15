@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -42,8 +43,8 @@ public class ServiceResetAllHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public ServiceResetAllHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor) {
-        super(dataAccess);
+    public ServiceResetAllHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
     }

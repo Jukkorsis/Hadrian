@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
@@ -25,7 +26,7 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleFileData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class ModuleFileGetHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public ModuleFileGetHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public ModuleFileGetHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

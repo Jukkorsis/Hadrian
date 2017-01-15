@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.handlers.utility.routingHandler;
+package com.northernwall.hadrian.handlers.routing;
 
-import com.northernwall.hadrian.Const;
+public class HttpAbstractException extends RuntimeException {
+    private final int status;
 
-/**
- *
- * @author rthursto
- */
-public enum MethodRule {
-    GET,
-    PUT,
-    POST, 
-    PUTPOST,
-    DELETE,
-    ANY;
-    
-    public boolean test(String method) {
-        if (this == ANY) {
-            return true;
-        }
-        if (this == PUTPOST) {
-            return (method.equals(Const.HTTP_POST) || method.equals(Const.HTTP_PUT));
-        }
-        return this.toString().equals(method);
+    public HttpAbstractException(int status, String message) {
+        super(message);
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
 }

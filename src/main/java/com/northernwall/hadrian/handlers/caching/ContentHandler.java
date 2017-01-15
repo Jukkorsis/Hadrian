@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.handlers.utility;
+package com.northernwall.hadrian.handlers.caching;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

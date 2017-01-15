@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
@@ -36,8 +37,8 @@ public class AuditOutputGetHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AuditOutputGetHandler.class);
 
-    public AuditOutputGetHandler(DataAccess dataAccess) {
-        super(dataAccess);
+    public AuditOutputGetHandler(DataAccess dataAccess, Gson gson) {
+        super(dataAccess, gson);
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
@@ -23,7 +24,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.BuildServiceData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +40,8 @@ public class ServiceBuildHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final ServiceBuildHelper serviceBuildHelper;
 
-    public ServiceBuildHandler(AccessHelper accessHelper, DataAccess dataAccess, ServiceBuildHelper serviceBuildHelper) {
-        super(dataAccess);
+    public ServiceBuildHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ServiceBuildHelper serviceBuildHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.serviceBuildHelper = serviceBuildHelper;
     }

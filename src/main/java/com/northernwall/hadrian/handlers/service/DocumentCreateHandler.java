@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -23,7 +24,7 @@ import com.northernwall.hadrian.domain.Document;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.PostDocumentData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,8 @@ public class DocumentCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public DocumentCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public DocumentCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

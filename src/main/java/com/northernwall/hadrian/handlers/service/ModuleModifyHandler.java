@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -32,8 +33,8 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.service.dao.PutModuleData;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http405NotAllowedException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http405NotAllowedException;
 import com.northernwall.hadrian.schedule.ScheduleRunner;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -84,8 +85,8 @@ public class ModuleModifyHandler extends BasicHandler {
     private final WorkItemProcessor workItemProcessor;
     private final FolderHelper folderHelper;
 
-    public ModuleModifyHandler(AccessHelper accessHelper, DataAccess dataAccess, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
-        super(dataAccess);
+    public ModuleModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
         this.folderHelper = folderHelper;

@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -36,8 +37,8 @@ public class CustomFuntionCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public CustomFuntionCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public CustomFuntionCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

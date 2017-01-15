@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
@@ -21,15 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
-import static com.northernwall.hadrian.handlers.BasicHandler.getGson;
-
 public class VersionsGetHandler extends BasicHandler {
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final ExecutorService executorService;
 
-    public VersionsGetHandler(DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper) {
-        super(dataAccess);
+    public VersionsGetHandler(DataAccess dataAccess, Gson gson, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper) {
+        super(dataAccess, gson);
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
 
@@ -54,9 +53,7 @@ public class VersionsGetHandler extends BasicHandler {
             }
         }
         
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(data, GetVersionData.class, jw);
-        }
+        toJson(response, data);
         response.setStatus(200);
         request.setHandled(true);
     }

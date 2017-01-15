@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.messaging;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.messaging.dao.PostMessageData;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -22,7 +23,7 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -39,8 +40,8 @@ public class MessageSendHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final MessagingCoodinator messagingCoodinator;
 
-    public MessageSendHandler(DataAccess dataAccess, AccessHelper accessHelper, MessagingCoodinator messagingCoodinator) {
-        super(dataAccess);
+    public MessageSendHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, MessagingCoodinator messagingCoodinator) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.messagingCoodinator = messagingCoodinator;
     }

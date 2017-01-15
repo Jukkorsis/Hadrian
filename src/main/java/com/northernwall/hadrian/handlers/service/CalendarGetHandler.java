@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.calendar.CalendarHelper;
@@ -23,7 +24,7 @@ import com.northernwall.hadrian.domain.CalendarEntry;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.service.dao.GetCalendarData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
@@ -36,8 +37,8 @@ public class CalendarGetHandler extends BasicHandler {
 
     private final CalendarHelper calendarHelper;
 
-    public CalendarGetHandler(DataAccess dataAccess, CalendarHelper calendarHelper) {
-        super(dataAccess);
+    public CalendarGetHandler(DataAccess dataAccess, Gson gson, CalendarHelper calendarHelper) {
+        super(dataAccess, gson);
         this.calendarHelper = calendarHelper;
     }
 
@@ -61,9 +62,7 @@ public class CalendarGetHandler extends BasicHandler {
             data.entries.add(entry);
         }
 
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(data, GetCalendarData.class, jw);
-        }
+        toJson(response, data);
 
         response.setStatus(200);
         request.setHandled(true);

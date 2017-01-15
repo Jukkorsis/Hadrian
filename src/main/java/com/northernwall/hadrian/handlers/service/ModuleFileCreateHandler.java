@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -28,8 +29,8 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostModuleFileData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
-
-import static com.northernwall.hadrian.handlers.BasicHandler.getGson;
 
 /**
  *
@@ -48,8 +47,8 @@ public class ModuleFileCreateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public ModuleFileCreateHandler(AccessHelper accessHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public ModuleFileCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 

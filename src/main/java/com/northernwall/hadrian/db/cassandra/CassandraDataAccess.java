@@ -125,7 +125,7 @@ public class CassandraDataAccess implements DataAccess {
 
     private final Gson gson;
 
-    public CassandraDataAccess(Cluster cluster, String keyspace, String username, String dataCenter, int auditTimeToLive, int statusTimeToLive, MetricRegistry metricRegistry) {
+    public CassandraDataAccess(Cluster cluster, String keyspace, String username, String dataCenter, int auditTimeToLive, int statusTimeToLive, Gson gson, MetricRegistry metricRegistry) {
         this.username = username;
         this.dataCenter = dataCenter;
         session = cluster.connect(keyspace);
@@ -278,7 +278,7 @@ public class CassandraDataAccess implements DataAccess {
 
         LOGGER.info("Prapared statements created");
 
-        gson = new Gson();
+        this.gson = gson;
     }
 
     @Override

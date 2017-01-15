@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
@@ -33,7 +34,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostBackfillHostData;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,8 +78,8 @@ public class HostBackfillHandler extends BasicHandler {
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
 
-    public HostBackfillHandler(AccessHelper accessHelper, ConfigHelper configHelper, DataAccess dataAccess) {
-        super(dataAccess);
+    public HostBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
     }

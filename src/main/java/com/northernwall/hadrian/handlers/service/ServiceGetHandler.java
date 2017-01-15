@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.ConfigHelper;
@@ -50,8 +51,8 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
 
     private final AccessHelper accessHelper;
 
-    public ServiceGetHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, InfoHelper infoHelper) {
-        super(accessHelper, dataAccess, configHelper, infoHelper);
+    public ServiceGetHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper) {
+        super(dataAccess, gson, accessHelper, configHelper, infoHelper);
         this.accessHelper = accessHelper;
     }
 
@@ -75,9 +76,7 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
             waitForFutures(futures, 151, 100);
         }
 
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getServiceData, GetServiceData.class, jw);
-        }
+        toJson(response, getServiceData);
         response.setStatus(200);
         request.setHandled(true);
     }

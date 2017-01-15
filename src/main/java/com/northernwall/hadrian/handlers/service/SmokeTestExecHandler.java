@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
@@ -22,7 +23,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http400BadRequestException;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
@@ -44,8 +45,8 @@ public class SmokeTestExecHandler extends BasicHandler {
     private final OkHttpClient client;
     private final Parameters parameters;
 
-    public SmokeTestExecHandler(AccessHelper accessHelper, DataAccess dataAccess, OkHttpClient client, Parameters parameters) {
-        super(dataAccess);
+    public SmokeTestExecHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, OkHttpClient client, Parameters parameters) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.client = client;
         this.parameters = parameters;
@@ -81,9 +82,7 @@ public class SmokeTestExecHandler extends BasicHandler {
             throw new Http400BadRequestException("Error executing smoke test");
         }
         
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(smokeTestData, SmokeTestData.class, jw);
-        }
+        toJson(response, smokeTestData);
         response.setStatus(200);
         request.setHandled(true);
     }

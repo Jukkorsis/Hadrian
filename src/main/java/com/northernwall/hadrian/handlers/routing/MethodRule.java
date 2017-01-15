@@ -13,30 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.handlers.utility.routingHandler;
+package com.northernwall.hadrian.handlers.routing;
+
+import com.northernwall.hadrian.Const;
 
 /**
  *
  * @author rthursto
  */
-public enum TargetRule {
-    EQUALS,
-    STARTS_WITH,
-    MATCHES,
+public enum MethodRule {
+    GET,
+    PUT,
+    POST, 
+    PUTPOST,
+    DELETE,
     ANY;
     
-    public boolean test(String pattern, String target) {
-        switch (this) {
-            case EQUALS:
-                return pattern.equalsIgnoreCase(target);
-            case STARTS_WITH:
-                return target.startsWith(pattern);
-            case MATCHES:
-                return target.matches(pattern);
-            case ANY:
-                return true;
+    public boolean test(String method) {
+        if (this == ANY) {
+            return true;
         }
-        return false;
+        if (this == PUTPOST) {
+            return (method.equals(Const.HTTP_POST) || method.equals(Const.HTTP_PUT));
+        }
+        return this.toString().equals(method);
     }
 
 }

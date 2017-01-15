@@ -1,5 +1,6 @@
 package com.northernwall.hadrian.handlers.service;
 
+import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.ConfigHelper;
@@ -31,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
-import static com.northernwall.hadrian.handlers.BasicHandler.getGson;
-
 public class ServiceRefreshHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
@@ -40,8 +39,8 @@ public class ServiceRefreshHandler extends BasicHandler {
     private final InfoHelper infoHelper;
     private final ExecutorService executorService;
 
-    public ServiceRefreshHandler(AccessHelper accessHelper, DataAccess dataAccess, ConfigHelper configHelper, InfoHelper infoHelper) {
-        super(dataAccess);
+    public ServiceRefreshHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, InfoHelper infoHelper) {
+        super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.infoHelper = infoHelper;
@@ -65,9 +64,7 @@ public class ServiceRefreshHandler extends BasicHandler {
             waitForFutures(futures, 151, 100);
         }
 
-        try (JsonWriter jw = new JsonWriter(new OutputStreamWriter(response.getOutputStream()))) {
-            getGson().toJson(getServiceData, GetServiceData.class, jw);
-        }
+        toJson(response, getServiceData);
         response.setStatus(200);
         request.setHandled(true);
     }

@@ -19,8 +19,8 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http401UnauthorizedException;
-import com.northernwall.hadrian.handlers.utility.routingHandler.Http404NotFoundException;
+import com.northernwall.hadrian.handlers.routing.Http401UnauthorizedException;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.parameters.Parameters;
 
 import org.eclipse.jetty.server.Request;

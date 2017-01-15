@@ -36,9 +36,14 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     
     private InMemoryDataAccess dataAccess;
     private String dataFileName;
+    private final Gson gson;
+
+    public InMemoryDataAccessFactory() {
+        gson = new GsonBuilder().setPrettyPrinting().create();
+    }
 
     @Override
-    public DataAccess createDataAccess(Parameters parameters, MetricRegistry metricRegistry) {
+    public DataAccess createDataAccess(Parameters parameters, Gson gson, MetricRegistry metricRegistry) {
         dataFileName = parameters.getString(Const.IN_MEMORY_DATA_FILE_NAME, Const.IN_MEMORY_DATA_FILE_NAME_DEFAULT);
         dataAccess = load();
         
@@ -59,7 +64,6 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
             return null;
         }
         
-        Gson gson = new Gson();
         try {  
             return gson.fromJson(new FileReader(file), InMemoryDataAccess.class);
         } catch (FileNotFoundException ex) {
@@ -71,7 +75,6 @@ public class InMemoryDataAccessFactory implements DataAccessFactory, Runnable {
     @Override
     public void run() {
         File file = new File(dataFileName);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (JsonWriter jw = new JsonWriter(new FileWriter(file))) {
             gson.toJson(dataAccess, InMemoryDataAccess.class, jw);
             LOGGER.info("In Memory store saved to disk, {}", file.getName());
