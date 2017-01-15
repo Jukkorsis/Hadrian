@@ -13,7 +13,7 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Description:</label>
       <div class="col-sm-9">
-        <textarea ng-model="formUpdateService.description" type="text" class="form-control"></textarea>
+        <textarea ng-model="formUpdateService.description" type="text" maxlength="500" rows="2" class="form-control"></textarea>
       </div>
     </div>
     <div class="form-group form-group-sm">
@@ -47,7 +47,7 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">HA Notes:</label>
       <div class="col-sm-9">
-        <textarea ng-model="formUpdateService.haNotes" type="text" class="form-control"></textarea>
+        <textarea ng-model="formUpdateService.haNotes" type="text" maxlength="500" rows="2" class="form-control"></textarea>
       </div>
     </div>
     <div class="form-group form-group-sm">
@@ -79,7 +79,9 @@
     <div ng-if="formUpdateService.doBuilds || formUpdateService.doDeploys">
       <div class="form-group form-group-sm">
         <label class="col-sm-3 control-label">Maven Group:</label>
-        <div class="col-sm-9"><input ng-model="formUpdateService.mavenGroupId" type="text" class="form-control"></div>
+        <div class="col-sm-9">
+          <input ng-model="formUpdateService.mavenGroupId" type="text" class="form-control">
+        </div>
       </div>
     </div>
 
@@ -154,7 +156,9 @@
       </div>
       <div class="form-group form-group-sm">
         <label class="col-sm-3 control-label">Check jars are signed:</label>
-        <div class="col-sm-9"><input ng-model="formUpdateService.doCheckJar" type="checkbox"></div>
+        <div class="col-sm-9">
+          <input ng-model="formUpdateService.doCheckJar" type="checkbox">
+        </div>
       </div>
     </div>
   </form>
