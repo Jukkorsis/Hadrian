@@ -42,10 +42,10 @@ import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
-import org.dsh.metrics.JvmMetrics;
-import org.dsh.metrics.MetricRegistry;
-import org.dsh.metrics.listeners.ConsoleListener;
-import org.dsh.metrics.listeners.KairosDBListener;
+import org.dshops.metrics.JvmMetrics;
+import org.dshops.metrics.MetricRegistry;
+import org.dshops.metrics.listeners.ConsoleListener;
+import org.dshops.metrics.listeners.KairosDBListener;
 import org.eclipse.jetty.server.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,22 +104,7 @@ public class HadrianBuilder {
         client.setFollowRedirects(false);
         client.setConnectionPool(new ConnectionPool(5, 60 * 1000));
 
-        metricRegistry = new MetricRegistry.Builder("PST", "SDT")
-                .addTag("hostName", getHostname())
-                .build();
-        JvmMetrics.addMetrics(metricRegistry, 10);
-        if (parameters.getBoolean("metrics.console", false)) {
-            LOGGER.info("Configuring Metrics Console Listener");
-            metricRegistry.addEventListener(new ConsoleListener(System.out));
-        }
-        String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
-        if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
-            LOGGER.info("Configuring Metrics KairosDB Listener,  {}", kairosDbUrl);
-            metricRegistry.addEventListener(new KairosDBListener(
-                    kairosDbUrl,
-                    parameters.getString("metrics.kairosDb.username", null),
-                    parameters.getString("metrics.kairosDb.password", null)));
-        }
+        buildMetrics();
 
         if (dataAccess == null) {
             buildDataAccess();
@@ -193,6 +178,31 @@ public class HadrianBuilder {
                 metricRegistry, 
                 messagingCoodinator,
                 gson);
+    }
+
+    private void buildMetrics() {
+        String serviceTeam = parameters.getString("metrics.serviceTeam", "SDT");
+        String application = parameters.getString("metrics.application", "SDT");
+        
+        metricRegistry = new MetricRegistry.Builder(serviceTeam, application)
+                .addTag("hostName", getHostname())
+                .build();
+        
+        JvmMetrics.addMetrics(metricRegistry, 10);
+        
+        if (parameters.getBoolean("metrics.console", false)) {
+            LOGGER.info("Configuring Metrics Console Listener");
+            metricRegistry.addEventListener(new ConsoleListener(System.out));
+        }
+        
+        String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
+        if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
+            LOGGER.info("Configuring Metrics KairosDB Listener,  {}", kairosDbUrl);
+            metricRegistry.addEventListener(new KairosDBListener(
+                    kairosDbUrl,
+                    parameters.getString("metrics.kairosDb.username", null),
+                    parameters.getString("metrics.kairosDb.password", null)));
+        }
     }
 
     private void buildDataAccess() {

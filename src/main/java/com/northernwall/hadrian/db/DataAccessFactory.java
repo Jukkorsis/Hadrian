@@ -17,7 +17,7 @@ package com.northernwall.hadrian.db;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.parameters.Parameters;
-import org.dsh.metrics.MetricRegistry;
+import org.dshops.metrics.MetricRegistry;
 
 /**
  *

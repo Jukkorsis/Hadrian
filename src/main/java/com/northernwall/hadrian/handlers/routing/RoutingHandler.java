@@ -96,11 +96,11 @@ public class RoutingHandler extends AbstractHandler {
             if (entry.targetRule.test(entry.targetPattern, target)) {
                 try {
                     if (entry.logAccess) {
-                        LOGGER.info("{} handling {} request for {}{}", 
+                        LOGGER.info("{} handling {} request for{} {}", 
                                 entry.name, 
                                 request.getMethod(), 
-                                target, 
-                                getUser(request));
+                                getUser(request), 
+                                target);
                     }
                     entry.handler.handle(target, request, httpRequest, response);
                     if (request.isHandled()) {

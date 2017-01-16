@@ -50,8 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.dsh.metrics.MetricRegistry;
-import org.dsh.metrics.Timer;
+import org.dshops.metrics.MetricRegistry;
+import org.dshops.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,7 +26,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.parameters.Parameters;
-import org.dsh.metrics.MetricRegistry;
+import org.dshops.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
