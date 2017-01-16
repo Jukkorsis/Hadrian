@@ -143,6 +143,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     },
                     moduleType: function () {
                         return 'Deployable';
+                    },
+                    initialMsg: function () {
+                        return null;
                     }
                 }
             });
@@ -170,6 +173,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     },
                     moduleType: function () {
                         return 'Library';
+                    },
+                    initialMsg: function () {
+                        return null;
                     }
                 }
             });
@@ -198,6 +204,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     },
                     moduleType: function () {
                         return 'Simulator';
+                    },
+                    initialMsg: function () {
+                        return null;
                     }
                 }
             });
@@ -1150,11 +1159,12 @@ hadrianControllers.controller('ModalAddUsesCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'moduleType', 'team', 'service',
-    function ($scope, $http, $modalInstance, $route, config, moduleType, team, service) {
+hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'moduleType', 'team', 'service', 'initialMsg',
+    function ($scope, $http, $modalInstance, $route, config, moduleType, team, service, initialMsg) {
         $scope.errorMsg = null;
         $scope.team = team;
         $scope.service = service;
+        $scope.initialMsg = initialMsg;
         $scope.config = config;
 
         $scope.formSaveModule = {};
@@ -1182,6 +1192,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.configName = "";
 
         $scope.save = function () {
+            $scope.initialMsg = null;
             var dataObject = {
                 moduleName: $scope.formSaveModule.moduleName,
                 serviceId: $scope.service.serviceId,

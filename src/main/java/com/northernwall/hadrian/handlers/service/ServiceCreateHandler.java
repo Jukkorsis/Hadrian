@@ -29,6 +29,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.service.dao.PostServiceData;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.routing.Http405NotAllowedException;
+import com.northernwall.hadrian.handlers.service.dao.GetServiceData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -148,9 +149,10 @@ public class ServiceCreateHandler extends BasicHandler {
         WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
         workItemProcessor.processWorkItem(workItem);
 
+        GetServiceData getServiceData = GetServiceData.create(service);
+        toJson(response, getServiceData);
         response.setStatus(200);
         request.setHandled(true);
-
     }
 
 }

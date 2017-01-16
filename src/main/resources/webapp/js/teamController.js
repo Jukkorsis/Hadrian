@@ -101,8 +101,8 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         };
     }]);
 
-hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config', 'team', 'check',
-    function ($scope, $http, $modalInstance, $window, Config, team, check) {
+hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', '$uibModal', 'Config', 'team', 'check',
+    function ($scope, $http, $modalInstance, $window, $uibModal, Config, team, check) {
         $scope.team = team;
         $scope.errorMsg = null;
         Config.get({}, function (config) {
@@ -113,14 +113,14 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
             $scope.formSaveService = {};
             $scope.formSaveService.serviceName = "";
             $scope.formSaveService.description = "";
-            $scope.formSaveService.serviceType = $scope.config.serviceTypes[0];
+            $scope.formSaveService.serviceType = "Service";
             $scope.formSaveService.gitProject = "";
             $scope.formSaveService.scope = $scope.config.scopes[0];
             $scope.formSaveService.haFunctionality = false;
             $scope.formSaveService.haPerformance = false;
             $scope.formSaveService.haData = false;
             $scope.formSaveService.haNotes = "";
-            $scope.formSaveService.mavenGroupId =  $scope.config.mavenGroupId;
+            $scope.formSaveService.mavenGroupId = $scope.config.mavenGroupId;
             $scope.formSaveService.doBuilds = check;
             $scope.formSaveService.doDeploys = check;
             $scope.formSaveService.doManageVip = true;
@@ -162,7 +162,42 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});
                 responsePromise.success(function (dataFromServer, status, headers, config) {
                     $modalInstance.close();
-                    $window.location.reload();
+                    
+                    let templateUrl = "partials/addDeployableModule.html";
+                    let moduleType = "Deployable";
+                    if (dataFromServer.serviceType === "Shared Library") {
+                        templateUrl = "partials/addLibraryModule.html";
+                        moduleType = "Library";
+                    }
+                    
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        backdrop: 'static',
+                        templateUrl: templateUrl,
+                        controller: 'ModalAddModuleCtrl',
+                        size: 'lg',
+                        resolve: {
+                            team: function () {
+                                return $scope.team;
+                            },
+                            service: function () {
+                                return dataFromServer;
+                            },
+                            config: function () {
+                                return $scope.config;
+                            },
+                            moduleType: function () {
+                                return moduleType;
+                            },
+                            initialMsg: function () {
+                                return 'Service ' + dataFromServer.serviceName + ' has been saved.';
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function () {
+                        $window.location.reload();
+                    }, function () {
+                    });
                 });
                 responsePromise.error(function (data, status, headers, config) {
                     $scope.errorMsg = data;
@@ -179,7 +214,7 @@ hadrianControllers.controller('TeamDashboardCtrl', ['$scope', '$routeParams', 'C
     function ($scope, $routeParams, Config, Dashboard) {
         $scope.loading = true;
         $scope.env = $routeParams.env;
-        
+
         Config.get({}, function (config) {
             $scope.config = config;
         });

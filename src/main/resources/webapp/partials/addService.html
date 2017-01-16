@@ -19,41 +19,46 @@
     <div class="form-group form-group-sm">  
       <label class="col-sm-3 control-label">Type:</label>
       <div class="col-sm-9">
-        <select ng-model="formSaveService.serviceType" ng-options="c for c in config.serviceTypes" class="form-control"></select>
+        <select ng-model="formSaveService.serviceType" class="form-control"> 
+          <option value="Service">Service</option> 
+          <option value="Shared Library">Shared Library</option>
+        </select>
       </div>
     </div>
-    <div class="form-group form-group-sm">    
-      <label class="col-sm-3 control-label">Scope:</label>
-      <div class="col-sm-9">
-        <select ng-model="formSaveService.scope" ng-options="c for c in config.scopes" class="form-control"></select>
-        <p class="help-block">The service's security scope</p>
+    <div ng-if="formSaveService.serviceType === 'Service'">
+      <div class="form-group form-group-sm">    
+        <label class="col-sm-3 control-label">Scope:</label>
+        <div class="col-sm-9">
+          <select ng-model="formSaveService.scope" ng-options="c for c in config.scopes" class="form-control"></select>
+          <p class="help-block">The service's security scope</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">   
-      <label class="col-sm-3 control-label">HA Functionality:</label>
-      <div class="col-sm-9">
-        <input ng-model="formSaveService.haFunctionality" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer all functionality?</p>
+      <div class="form-group form-group-sm">   
+        <label class="col-sm-3 control-label">HA Functionality:</label>
+        <div class="col-sm-9">
+          <input ng-model="formSaveService.haFunctionality" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer all functionality?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">   
-      <label class="col-sm-3 control-label">HA Performance:</label>
-      <div class="col-sm-9">
-        <input ng-model="formSaveService.haPerformance" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to meet it's SLA?</p>
+      <div class="form-group form-group-sm">   
+        <label class="col-sm-3 control-label">HA Performance:</label>
+        <div class="col-sm-9">
+          <input ng-model="formSaveService.haPerformance" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to meet it's SLA?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">    
-      <label class="col-sm-3 control-label">HA Data:</label>
-      <div class="col-sm-9">
-        <input ng-model="formSaveService.haData" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer access to all data?</p>
+      <div class="form-group form-group-sm">    
+        <label class="col-sm-3 control-label">HA Data:</label>
+        <div class="col-sm-9">
+          <input ng-model="formSaveService.haData" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer access to all data?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm"> 
-      <label class="col-sm-3 control-label">HA Notes:</label>
-      <div class="col-sm-9">
-        <textarea ng-model="formSaveService.haNotes" type="text" maxlength="500" rows="2" class="form-control"></textarea>
+      <div class="form-group form-group-sm"> 
+        <label class="col-sm-3 control-label">HA Notes:</label>
+        <div class="col-sm-9">
+          <textarea ng-model="formSaveService.haNotes" type="text" maxlength="500" rows="2" class="form-control"></textarea>
+        </div>
       </div>
     </div>
     <div class="form-group form-group-sm">   

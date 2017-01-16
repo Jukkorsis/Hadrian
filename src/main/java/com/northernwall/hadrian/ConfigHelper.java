@@ -83,9 +83,6 @@ public class ConfigHelper implements ParameterChangeListener {
         loadConfig(Const.CONFIG_SCOPES, Const.CONFIG_SCOPES_DEFAULT, newConfig.scopes);
         loadEnvironment(newConfig);
 
-        newConfig.serviceTypes.add(Const.SERVICE_TYPE_SERVICE);
-        newConfig.serviceTypes.add(Const.SERVICE_TYPE_SHARED_LIBRARY);
-        
         loadFolderWhiteList(parameters.getString(Const.CONFIG_FOLDER_WHITE_LIST, null), newConfig.folderWhiteList);
 
         LOGGER.info("Config loaded, {}", gson.toJson(newConfig));

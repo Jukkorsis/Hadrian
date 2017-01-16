@@ -44,7 +44,6 @@ public class Config {
     public List<String> platforms = new LinkedList<>();
     public List<String> protocols = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
-    public List<String> serviceTypes = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> scopes = new LinkedList<>();
     public List<String> folderWhiteList = new LinkedList<>();
