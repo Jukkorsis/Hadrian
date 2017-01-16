@@ -81,29 +81,31 @@
         </dl>
       </div>
     </div>
-    <h4>High Availability Characteristics</h4>
-    <div class="row">
-      <div class="col-md-4">
-        <dl class="dl-horizontal">
-          <dt>Functionality:</dt>
-          <dd>
-            <span ng-if="service.haFunctionality" class="glyphicon glyphicon-check text-success"></span>
-            <span ng-if="!service.haFunctionality" class="glyphicon glyphicon-unchecked text-success"></span>
-          </dd>
-          <dt>Performance:</dt>
-          <dd>
-            <span ng-if="service.haPerformance" class="glyphicon glyphicon-check text-success"></span>
-            <span ng-if="!service.haPerformance" class="glyphicon glyphicon-unchecked text-success"></span>
-          </dd>
-          <dt>Data:</dt>
-          <dd>
-            <span ng-if="service.haData" class="glyphicon glyphicon-check text-success"></span>
-            <span ng-if="!service.haData" class="glyphicon glyphicon-unchecked text-success"></span>
-          </dd>
-        </dl>
-      </div>
-      <div class="col-md-8">
-        <span style="white-space:pre-wrap;">{{service.haNotes}}</span>
+    <div ng-if="service.serviceType === 'Service'">
+      <h4>High Availability Characteristics</h4>
+      <div class="row">
+        <div class="col-md-4">
+          <dl class="dl-horizontal">
+            <dt>Functionality:</dt>
+            <dd>
+              <span ng-if="service.haFunctionality" class="glyphicon glyphicon-check text-success"></span>
+              <span ng-if="!service.haFunctionality" class="glyphicon glyphicon-unchecked text-success"></span>
+            </dd>
+            <dt>Performance:</dt>
+            <dd>
+              <span ng-if="service.haPerformance" class="glyphicon glyphicon-check text-success"></span>
+              <span ng-if="!service.haPerformance" class="glyphicon glyphicon-unchecked text-success"></span>
+            </dd>
+            <dt>Data:</dt>
+            <dd>
+              <span ng-if="service.haData" class="glyphicon glyphicon-check text-success"></span>
+              <span ng-if="!service.haData" class="glyphicon glyphicon-unchecked text-success"></span>
+            </dd>
+          </dl>
+        </div>
+        <div class="col-md-8">
+          <span style="white-space:pre-wrap;">{{service.haNotes}}</span>
+        </div>
       </div>
     </div>
   </div>

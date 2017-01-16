@@ -16,38 +16,40 @@
         <textarea ng-model="formUpdateService.description" type="text" maxlength="500" rows="2" class="form-control"></textarea>
       </div>
     </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Scope:</label>
-      <div class="col-sm-9">
-        <select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select>
-        <p class="help-block">The service's security scope</p>
+    <div ng-if="service.serviceType === 'Service'">
+      <div class="form-group form-group-sm">
+        <label class="col-sm-3 control-label">Scope:</label>
+        <div class="col-sm-9">
+          <select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select>
+          <p class="help-block">The service's security scope</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">HA Functionality:</label>
-      <div class="col-sm-9">
-        <input ng-model="formUpdateService.haFunctionality" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer all functionality?</p>
+      <div class="form-group form-group-sm">
+        <label class="col-sm-3 control-label">HA Functionality:</label>
+        <div class="col-sm-9">
+          <input ng-model="formUpdateService.haFunctionality" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer all functionality?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">HA Performance:</label>
-      <div class="col-sm-9">
-        <input ng-model="formUpdateService.haPerformance" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to meet it's SLA?</p>
+      <div class="form-group form-group-sm">
+        <label class="col-sm-3 control-label">HA Performance:</label>
+        <div class="col-sm-9">
+          <input ng-model="formUpdateService.haPerformance" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to meet it's SLA?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">HA Data:</label>
-      <div class="col-sm-9">
-        <input ng-model="formUpdateService.haData" type="checkbox">
-        <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer access to all data?</p>
+      <div class="form-group form-group-sm">
+        <label class="col-sm-3 control-label">HA Data:</label>
+        <div class="col-sm-9">
+          <input ng-model="formUpdateService.haData" type="checkbox">
+          <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer access to all data?</p>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">HA Notes:</label>
-      <div class="col-sm-9">
-        <textarea ng-model="formUpdateService.haNotes" type="text" maxlength="500" rows="2" class="form-control"></textarea>
+      <div class="form-group form-group-sm">
+        <label class="col-sm-3 control-label">HA Notes:</label>
+        <div class="col-sm-9">
+          <textarea ng-model="formUpdateService.haNotes" type="text" maxlength="500" rows="2" class="form-control"></textarea>
+        </div>
       </div>
     </div>
     <div class="form-group form-group-sm">

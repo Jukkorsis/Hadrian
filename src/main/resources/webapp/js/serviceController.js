@@ -995,6 +995,7 @@ hadrianControllers.controller('ModalUpdateServiceCtrl', ['$scope', '$route', '$h
     function ($scope, $route, $http, $modalInstance, service, team, config) {
         $scope.team = team;
         $scope.config = config;
+        $scope.service = service;
         $scope.errorMsg = null;
         $scope.formUpdateService = {};
         $scope.formUpdateService.serviceId = service.serviceId;
