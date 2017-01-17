@@ -96,11 +96,11 @@ public class ServiceModifyHandler extends BasicHandler {
             data.gitProject = null;
         }
 
+        List<Module> modules = getDataAccess().getModules(data.serviceId);
         if (data.doDeploys || data.doBuilds) {
             if (data.mavenGroupId == null || data.mavenGroupId.isEmpty()) {
                 throw new Http400BadRequestException("Maven Group is mising or empty");
             }
-            List<Module> modules = getDataAccess().getModules(data.serviceId);
             if (modules != null && !modules.isEmpty()) {
                 for (Module module : modules) {
                     if (module.getMavenArtifactId() != null
@@ -140,18 +140,18 @@ public class ServiceModifyHandler extends BasicHandler {
                     Const.SEARCH_SPACE_GIT_PROJECT,
                     service.getGitProject());
         }
+
         //TODO: improve by not doing delete and insert if maven group is not changing
         if (service.getMavenGroupId() != null
-                && !service.getMavenGroupId().isEmpty()) {
-            List<Module> modules = getDataAccess().getModules(data.serviceId);
-            if (modules != null && !modules.isEmpty()) {
-                for (Module module : modules) {
-                    if (module.getMavenArtifactId() != null
-                            && !module.getMavenArtifactId().isEmpty()) {
-                        getDataAccess().deleteSearch(
-                                Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
-                                service.getMavenGroupId() + "." + module.getMavenArtifactId());
-                    }
+                && !service.getMavenGroupId().isEmpty()
+                && modules != null
+                && !modules.isEmpty()) {
+            for (Module module : modules) {
+                if (module.getMavenArtifactId() != null
+                        && !module.getMavenArtifactId().isEmpty()) {
+                    getDataAccess().deleteSearch(
+                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            service.getMavenGroupId() + "." + module.getMavenArtifactId());
                 }
             }
         }
@@ -197,24 +197,26 @@ public class ServiceModifyHandler extends BasicHandler {
                     null);
         }
         if (service.getMavenGroupId() != null
-                && !service.getMavenGroupId().isEmpty()) {
-            List<Module> modules = getDataAccess().getModules(data.serviceId);
-            if (modules != null && !modules.isEmpty()) {
-                for (Module module : modules) {
-                    if (module.getMavenArtifactId() != null
-                            && !module.getMavenArtifactId().isEmpty()) {
-                        getDataAccess().insertSearch(
-                                Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
-                                service.getMavenGroupId() + "." + module.getMavenArtifactId(),
-                                service.getServiceId(),
-                                module.getModuleId(),
-                                null);
-                    }
+                && !service.getMavenGroupId().isEmpty()
+                && modules != null
+                && !modules.isEmpty()) {
+            for (Module module : modules) {
+                if (module.getMavenArtifactId() != null
+                        && !module.getMavenArtifactId().isEmpty()) {
+                    getDataAccess().insertSearch(
+                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                            service.getServiceId(),
+                            module.getModuleId(),
+                            null);
                 }
             }
         }
 
         WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
+        for (Module temp : modules) {
+            workItem.addModule(temp);
+        }
         workItemProcessor.processWorkItem(workItem);
 
         response.setStatus(200);
