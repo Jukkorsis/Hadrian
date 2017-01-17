@@ -45,6 +45,8 @@ public class ConfigHelper implements ParameterChangeListener {
         this.moduleConfigHelper = moduleConfigHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
+        
+        parameters.registerChangeListener(this);
     }
 
     public Config getConfig() {
