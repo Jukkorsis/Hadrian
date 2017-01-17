@@ -181,8 +181,8 @@ public class HadrianBuilder {
     }
 
     private void buildMetrics() {
-        String serviceTeam = parameters.getString("metrics.serviceTeam", "SDT");
-        String application = parameters.getString("metrics.application", "SDT");
+        String serviceTeam = parameters.getString("metrics.serviceTeam", "Hadrian");
+        String application = parameters.getString("metrics.application", "Hadrian");
         
         metricRegistry = new MetricRegistry.Builder(serviceTeam, application)
                 .addTag("hostName", getHostname())
