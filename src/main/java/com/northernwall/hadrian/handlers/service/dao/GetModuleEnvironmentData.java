@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.handlers.service.dao;
 
+import com.northernwall.hadrian.handlers.vip.dao.GetVipData;
+import com.northernwall.hadrian.handlers.host.dao.GetHostData;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -15,8 +15,8 @@
  */
 package com.northernwall.hadrian.handlers.service.helper;
 
-import com.northernwall.hadrian.handlers.service.dao.GetHostData;
-import com.northernwall.hadrian.handlers.service.dao.GetModuleData;
+import com.northernwall.hadrian.handlers.host.dao.GetHostData;
+import com.northernwall.hadrian.handlers.module.dao.GetModuleData;
 
 public class ReadAvailabilityRunnable implements Runnable {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.details;
+package com.northernwall.hadrian.handlers.host.dao;
 
-import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
+import com.northernwall.hadrian.handlers.service.dao.GetPairData;
+import java.util.LinkedList;
+import java.util.List;
 
-public interface HostDetailsHelper {
+public class GetHostDetailsData {
 
-    GetHostDetailsData getDetails(Host host);
+    public List<GetPairData> left = new LinkedList<>();
+    public List<GetPairData> right = new LinkedList<>();
+
+    public void addPair(GetPairData pair) {
+        if (left.size() == right.size()) {
+            left.add(pair);
+        } else {
+            right.add(pair);
+        }
+
+    }
 
 }

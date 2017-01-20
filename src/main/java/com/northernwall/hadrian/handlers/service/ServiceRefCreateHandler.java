@@ -28,7 +28,7 @@ import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
-import com.northernwall.hadrian.handlers.service.dao.PostModuleRefData;
+import com.northernwall.hadrian.handlers.module.dao.PostModuleRefData;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.details;
 
-import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
+package com.northernwall.hadrian.handlers.module.dao;
 
-public interface HostDetailsHelper {
-
-    GetHostDetailsData getDetails(Host host);
+/**
+ *
+ * @author Richard Thurston
+ */
+public class DeleteModuleData {
+    public String serviceId;
+    public String moduleId;
 
 }

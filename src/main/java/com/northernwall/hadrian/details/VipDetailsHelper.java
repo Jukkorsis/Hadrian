@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.details;
 
 import com.northernwall.hadrian.domain.Vip;
-import com.northernwall.hadrian.handlers.service.dao.GetVipDetailsData;
+import com.northernwall.hadrian.handlers.vip.dao.GetVipDetailsData;
 
 public interface VipDetailsHelper {
 

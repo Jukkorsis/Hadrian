@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.details;
 
-import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
+package com.northernwall.hadrian.handlers.module.dao;
 
-public interface HostDetailsHelper {
-
-    GetHostDetailsData getDetails(Host host);
+public class PostModuleFileData {
+    public String serviceId;
+    public String moduleId;
+    public String environment;
+    public String name;
+    public String originalName;
+    public String contents;
 
 }

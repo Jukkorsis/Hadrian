@@ -21,7 +21,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.handlers.service.dao.GetVipDetailsData;
+import com.northernwall.hadrian.handlers.vip.dao.GetVipDetailsData;
 import com.squareup.okhttp.OkHttpClient;
 import java.util.LinkedList;
 import java.util.List;

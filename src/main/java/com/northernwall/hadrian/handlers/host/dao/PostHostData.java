@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2014 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.details;
+package com.northernwall.hadrian.handlers.host.dao;
 
-import com.northernwall.hadrian.domain.Host;
-import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
-
-public interface HostDetailsHelper {
-
-    GetHostDetailsData getDetails(Host host);
+public class PostHostData {
+    public String serviceId;
+    public String moduleId;
+    public String dataCenter;
+    public String environment;
+    public String platform;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
+    public String version;
+    public String configVersion;
+    public int count;
+    public String reason;
 
 }

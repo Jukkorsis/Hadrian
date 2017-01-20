@@ -24,7 +24,7 @@ import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.handlers.service.dao.GetHostDetailsData;
+import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
 import com.northernwall.hadrian.handlers.service.dao.GetPairData;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
