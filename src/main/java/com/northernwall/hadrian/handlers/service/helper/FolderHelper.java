@@ -61,9 +61,9 @@ public class FolderHelper {
     /**
      * This method assumes that both folder parameters have already been scrubbed.
      * @param subFolder The sub folder.
-     * @param subFolderName
+     * @param subFolderName The contextual name of the sub folder
      * @param mainFolder The main folder.
-     * @param mainFolderName
+     * @param mainFolderName The contextual name of the main folder
      */
     public void isSubFolder(String subFolder, String subFolderName, String mainFolder, String mainFolderName) {
         String tempSubFolder = subFolder;
