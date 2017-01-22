@@ -77,9 +77,11 @@ import com.northernwall.hadrian.handlers.report.ReportHandler;
 import com.northernwall.hadrian.handlers.routing.MethodRule;
 import com.northernwall.hadrian.handlers.routing.TargetRule;
 import com.northernwall.hadrian.handlers.routing.RoutingHandler;
+import com.northernwall.hadrian.handlers.service.ServiceTransferHandler;
 import com.northernwall.hadrian.handlers.team.TeamCreateHandler;
 import com.northernwall.hadrian.handlers.team.TeamGetHandler;
 import com.northernwall.hadrian.handlers.team.TeamModifyHandler;
+import com.northernwall.hadrian.handlers.team.TeamsGetHandler;
 import com.northernwall.hadrian.handlers.tree.CatalogHandler;
 import com.northernwall.hadrian.handlers.tree.TreeHandler;
 import com.northernwall.hadrian.handlers.utility.AvailabilityHandler;
@@ -202,6 +204,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/catalog", new CatalogHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/report", new ReportHandler(accessHelper, dataAccess, configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/team", new TeamGetHandler(dataAccess, gson, accessHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/teams", new TeamsGetHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/create", new TeamCreateHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/team/modify", new TeamModifyHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/dashboard", new DashboardHandler(dataAccess, gson, infoHelper), true);
@@ -219,6 +222,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/createRef", new ServiceRefCreateHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/deleteRef", new ServiceRefDeleteHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/build", new ServiceBuildHandler(dataAccess, gson, accessHelper, new ServiceBuildHelper(dataAccess, client, parameters, gson)), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/transfer", new ServiceTransferHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/vip/details", new VipGetDetailsHandler(dataAccess, gson, vipDetailsHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(dataAccess, gson, accessHelper, workItemProcessor), true);

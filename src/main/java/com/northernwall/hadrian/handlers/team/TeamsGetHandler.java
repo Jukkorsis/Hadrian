@@ -21,29 +21,34 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.handlers.team.dao.GetTeamData;
+import com.northernwall.hadrian.handlers.team.dao.GetTeamsData;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
-public class TeamGetHandler extends BasicHandler {
+public class TeamsGetHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
 
-    public TeamGetHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+    public TeamsGetHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        Team team = getTeam(request);
+        List<Team> teams = getDataAccess().getTeams();
+        GetTeamsData getTeamsData = new GetTeamsData();
+        for (Team team : teams) {
+            GetTeamData getTeamData = GetTeamData.create(team);
+            getTeamData.canModify = accessHelper.canUserModify(request, team);
+            getTeamsData.teams.add(getTeamData);
+        }
 
-        GetTeamData getTeamData = GetTeamData.create(team);
-        getTeamData.canModify = accessHelper.canUserModify(request, team);
-
-        toJson(response, getTeamData);
+        toJson(response, getTeamsData);
         response.setStatus(200);
         request.setHandled(true);
     }

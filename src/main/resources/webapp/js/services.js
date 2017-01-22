@@ -16,6 +16,12 @@ hadrianServices.factory('Team', ['$resource', function($resource) {
         });
     }]);
 
+hadrianServices.factory('Teams', ['$resource', function($resource) {
+        return $resource('/v1/teams', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);
+
 hadrianServices.factory('Dashboard', ['$resource', function($resource) {
         return $resource('/v1/dashboard', {}, {
             query: {method: 'GET', isArray: false}

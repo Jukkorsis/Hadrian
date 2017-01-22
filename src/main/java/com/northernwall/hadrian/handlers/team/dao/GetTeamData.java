@@ -15,11 +15,10 @@
  */
 package com.northernwall.hadrian.handlers.team.dao;
 
-import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 
 public class GetTeamData {
-    public static GetTeamData create(Team team, DataAccess dataAccess) {
+    public static GetTeamData create(Team team) {
         GetTeamData temp = new GetTeamData();
         temp.teamId = team.getTeamId();
         temp.teamName = team.getTeamName();

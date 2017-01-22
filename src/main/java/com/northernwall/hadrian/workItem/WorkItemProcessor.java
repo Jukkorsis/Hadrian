@@ -15,14 +15,6 @@
  */
 package com.northernwall.hadrian.workItem;
 
-import com.northernwall.hadrian.workItem.action.HostDeleteAction;
-import com.northernwall.hadrian.workItem.action.HostDeployAction;
-import com.northernwall.hadrian.workItem.action.HostRestartAction;
-import com.northernwall.hadrian.workItem.action.HostCreateAction;
-import com.northernwall.hadrian.workItem.action.ModuleDeleteAction;
-import com.northernwall.hadrian.workItem.action.ModuleUpdateAction;
-import com.northernwall.hadrian.workItem.action.Action;
-import com.northernwall.hadrian.workItem.action.ModuleCreateAction;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
@@ -30,13 +22,22 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.northernwall.hadrian.workItem.action.Action;
+import com.northernwall.hadrian.workItem.action.HostCreateAction;
+import com.northernwall.hadrian.workItem.action.HostDeleteAction;
+import com.northernwall.hadrian.workItem.action.HostDeployAction;
+import com.northernwall.hadrian.workItem.action.HostRestartAction;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.action.HostVipAddAction;
 import com.northernwall.hadrian.workItem.action.HostVipDisableAction;
 import com.northernwall.hadrian.workItem.action.HostVipEnableAction;
 import com.northernwall.hadrian.workItem.action.HostVipRemoveAction;
+import com.northernwall.hadrian.workItem.action.ModuleCreateAction;
+import com.northernwall.hadrian.workItem.action.ModuleDeleteAction;
+import com.northernwall.hadrian.workItem.action.ModuleUpdateAction;
 import com.northernwall.hadrian.workItem.action.ServiceCreateAction;
 import com.northernwall.hadrian.workItem.action.ServiceDeleteAction;
+import com.northernwall.hadrian.workItem.action.ServiceTransferAction;
 import com.northernwall.hadrian.workItem.action.ServiceUpdateAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
@@ -54,6 +55,7 @@ import org.dshops.metrics.MetricRegistry;
 import org.dshops.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class WorkItemProcessor {
 
@@ -78,6 +80,7 @@ public class WorkItemProcessor {
         //Check if action classes can be constructed
         constructAction("serviceCreate", ServiceCreateAction.class);
         constructAction("serviceUpdate", ServiceUpdateAction.class);
+        constructAction("serviceTransfer", ServiceTransferAction.class);
         constructAction("serviceDelete", ServiceDeleteAction.class);
 
         constructAction("moduleCreate", ModuleCreateAction.class);
@@ -257,6 +260,8 @@ public class WorkItemProcessor {
                         return constructAction("serviceCreate", ServiceCreateAction.class);
                     case update:
                         return constructAction("serviceUpdate", ServiceUpdateAction.class);
+                    case transfer:
+                        return constructAction("serviceTransfer", ServiceUpdateAction.class);
                     case delete:
                         return constructAction("serviceDelete", ServiceDeleteAction.class);
                 }

@@ -1,16 +1,18 @@
 <div class="modal-header">
-    <h3 class="modal-title">Add Uses</h3>
+  <h3 class="modal-title">Add Uses</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <dl class="dl-horizontal">
-        <dt>Module:</dt>
-        <dd>
-            <input type="text" ng-model="formSelectUses.ref" ng-model-options="modelOptions" uib-typeahead="r as r.moduleName for r in notUses.refs | filter:$viewValue" class="form-control" autofocus="true">
-        </dd>
-    </dl>
+  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label for="name" class="col-sm-4 control-label">Module:</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="formSelectUses.ref" ng-model-options="modelOptions" uib-typeahead="r as r.moduleName for r in notUses.refs | filter:$viewValue" class="form-control" autofocus="true">
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Add Uses</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>

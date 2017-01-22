@@ -4,61 +4,61 @@
 <div class="modal-body">
   <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
   <form class="form-horizontal">
-    <div class="form-group form-group-sm">
+    <div class="form-group">
       <label class="col-sm-3 control-label">Name:</label>
       <div class="col-sm-9">
         <input ng-model="formUpdateService.serviceName" type="text" class="form-control" autofocus="true">
       </div>
     </div>
-    <div class="form-group form-group-sm">
+    <div class="form-group">
       <label class="col-sm-3 control-label">Description:</label>
       <div class="col-sm-9">
         <textarea ng-model="formUpdateService.description" maxlength="500" rows="2" class="form-control"></textarea>
       </div>
     </div>
     <div ng-if="service.serviceType === 'Service'">
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Scope:</label>
         <div class="col-sm-9">
           <select ng-model="formUpdateService.scope" ng-options="c for c in config.scopes" class="form-control"></select>
           <p class="help-block">The service's security scope</p>
         </div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">HA Functionality:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateService.haFunctionality" type="checkbox">
           <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer all functionality?</p>
         </div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">HA Performance:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateService.haPerformance" type="checkbox">
           <p class="help-block">With a DC failure or 2 node failures, does the service continue to meet it's SLA?</p>
         </div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">HA Data:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateService.haData" type="checkbox">
           <p class="help-block">With a DC failure or 2 node failures, does the service continue to offer access to all data?</p>
         </div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">HA Notes:</label>
         <div class="col-sm-9">
           <textarea ng-model="formUpdateService.haNotes" maxlength="500" rows="2" class="form-control"></textarea>
         </div>
       </div>
     </div>
-    <div class="form-group form-group-sm">
+    <div class="form-group">
       <label class="col-sm-3 control-label">Do Builds:</label>
       <div class="col-sm-9">
         <input ng-model="formUpdateService.doBuilds" type="checkbox">
       </div>
     </div>
-    <div class="form-group form-group-sm">
+    <div class="form-group">
       <label class="col-sm-3 control-label">Do Deploys:</label>
       <div class="col-sm-9">
         <input ng-model="formUpdateService.doDeploys" type="checkbox">
@@ -66,7 +66,7 @@
     </div>
 
     <div ng-if="formUpdateService.doBuilds">
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Git Project</label>
         <div class="col-sm-9">
           <div class="input-group">
@@ -79,7 +79,7 @@
     </div>
 
     <div ng-if="formUpdateService.doBuilds || formUpdateService.doDeploys">
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Maven Group:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateService.mavenGroupId" type="text" class="form-control">
@@ -88,7 +88,7 @@
     </div>
 
     <div ng-if="formUpdateService.doBuilds">
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Find Bugs Level:</label>
         <div class="col-sm-9">
           <select ng-model="formUpdateService.doFindBugsLevel" class="form-control">
@@ -98,7 +98,7 @@
           </select>
         </div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Test Style:</label>
         <div class="col-sm-9">
           <select ng-model="formUpdateService.testStyle" class="form-control">
@@ -110,28 +110,28 @@
         </div>
       </div>
       <div ng-if="formUpdateService.testStyle === 'Script'">
-        <div class="form-group form-group-sm">
+        <div class="form-group">
           <label class="col-sm-3 control-label">Test Host Name:</label>
           <div class="col-sm-9">
             <input ng-model="formUpdateService.testHostname" type="text" class="form-control">
             <p class="help-block">The Test command will be invoked on this host</p>
           </div>
         </div>
-        <div class="form-group form-group-sm">
+        <div class="form-group">
           <label class="col-sm-3 control-label">Test Run As User:</label>
           <div class="col-sm-9">
             <input ng-model="formUpdateService.testRunAs" type="text" class="form-control">
             <p class="help-block">The Test command will be invoked as this user</p>
           </div>
         </div>
-        <div class="form-group form-group-sm">
+        <div class="form-group">
           <label class="col-sm-3 control-label">Test Deployment Folder:</label>
           <div class="col-sm-9">
             <input ng-model="formUpdateService.testDeploymentFolder" type="text" class="form-control">
             <p class="help-block">The Test command will be invoked from this folder</p>
           </div>
         </div>
-        <div class="form-group form-group-sm">
+        <div class="form-group">
           <label class="col-sm-3 control-label">Test Cmd Line:</label>
           <div class="col-sm-9">
             <input ng-model="formUpdateService.testCmdLine" type="text" class="form-control">
@@ -139,7 +139,7 @@
         </div>
       </div>
       <div ng-if="formUpdateService.testStyle !== 'None'">
-        <div class="form-group form-group-sm">
+        <div class="form-group">
           <label class="col-sm-3 control-label">Test Time Out:</label>
           <div class="col-sm-9">
             <div class="input-group">
@@ -152,11 +152,11 @@
     </div>
 
     <div ng-if="formUpdateService.doDeploys">
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Dis/enable VIPs:</label>
         <div class="col-sm-9"><input ng-model="formUpdateService.doManageVip" type="checkbox"></div>
       </div>
-      <div class="form-group form-group-sm">
+      <div class="form-group">
         <label class="col-sm-3 control-label">Check jars are signed:</label>
         <div class="col-sm-9">
           <input ng-model="formUpdateService.doCheckJar" type="checkbox">

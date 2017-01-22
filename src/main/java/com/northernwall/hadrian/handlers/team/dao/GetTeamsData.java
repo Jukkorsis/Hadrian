@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Richard Thurston.
+ * Copyright 2017 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.handlers.team.dao;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
- * @author rthursto
+ * @author Richard
  */
-public enum Operation {
-
-    create,
-    deploy,
-    restart,
-    update,
-    delete, 
-    enableVips, 
-    disableVips, 
-    addVips, 
-    removeVips, 
-    fix, 
-    smokeTest,
-    build, 
-    transfer;
-
+public class GetTeamsData {
+    public List<GetTeamData> teams = new LinkedList<>();
+    
 }
