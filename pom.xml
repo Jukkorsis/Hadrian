@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.3.10.v20160621</version>
+            <version>9.3.16.v20170120</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>org.dshops</groupId>
             <artifactId>metrics-raw</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
         </dependency>
         <!--For Logging support-->
         <dependency>
