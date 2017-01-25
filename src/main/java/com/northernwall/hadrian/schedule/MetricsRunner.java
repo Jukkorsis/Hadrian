@@ -63,7 +63,7 @@ public class MetricsRunner implements Runnable {
         if (!hostCounters.isEmpty()) {
             for (HostCounter hostCounter : hostCounters) {
                 metricRegistry.event(
-                        "hostCount", 
+                        "host-count", 
                         hostCounter.count, 
                         "metricTeam",
                         team.getTeamName(),
