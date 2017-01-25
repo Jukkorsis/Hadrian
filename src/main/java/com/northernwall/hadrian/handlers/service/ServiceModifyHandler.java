@@ -87,7 +87,7 @@ public class ServiceModifyHandler extends BasicHandler {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
             }
             searchResult = getDataAccess().doSearch(
-                    Const.SEARCH_SPACE_SERVICE_NAME,
+                    Const.SEARCH_SPACE_GIT_PROJECT,
                     data.gitProject);
             if (searchResult != null && !searchResult.serviceId.equals(data.serviceId)) {
                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
