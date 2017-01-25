@@ -44,6 +44,7 @@ import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipFixAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.HashMap;
@@ -66,15 +67,17 @@ public class WorkItemProcessor {
     private final DataAccess dataAccess;
     private final OkHttpClient client;
     private final Gson gson;
+    private final SmokeTestHelper smokeTestHelper;
     private final MetricRegistry metricRegistry;
     private final ExecutorService executor;
 
-    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson, MetricRegistry metricRegistry) {
+    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.dataAccess = dataAccess;
         this.client = client;
         this.gson = gson;
+        this.smokeTestHelper = smokeTestHelper;
         this.metricRegistry = metricRegistry;
 
         //Check if action classes can be constructed
@@ -321,7 +324,7 @@ public class WorkItemProcessor {
                 factoryName = defaultClass.getName();
             }
             Action action = (Action) c.newInstance();
-            action.init(name, dataAccess, parameters, configHelper, client, gson);
+            action.init(name, dataAccess, parameters, configHelper, client, gson, smokeTestHelper);
             LOGGER.info("Constructed action {} with {}", name, factoryName);
             return action;
         } catch (ClassNotFoundException ex) {

@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
-import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageType;
@@ -27,6 +26,7 @@ import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.OkHttpClient;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,19 +47,15 @@ public class SmokeTestRunner implements Runnable {
     private final Module module;
     private final int group;
     private final DataAccess dataAccess;
-    private final Parameters parameters;
-    private final Gson gson;
-    private final OkHttpClient client;
+    private final SmokeTestHelper smokeTestHelper;
     private final MessagingCoodinator messagingCoodinator;
 
-    public SmokeTestRunner(Service service, Module module, int group, DataAccess dataAccess, Parameters parameters, Gson gson, OkHttpClient client, MessagingCoodinator messagingCoodinator) {
+    public SmokeTestRunner(Service service, Module module, int group, DataAccess dataAccess, SmokeTestHelper smokeTestHelper, MessagingCoodinator messagingCoodinator) {
         this.service = service;
         this.module = module;
         this.group = group;
         this.dataAccess = dataAccess;
-        this.parameters = parameters;
-        this.gson = gson;
-        this.client = client;
+        this.smokeTestHelper = smokeTestHelper;
         this.messagingCoodinator = messagingCoodinator;
     }
 
@@ -71,12 +67,9 @@ public class SmokeTestRunner implements Runnable {
         if (hosts != null && !hosts.isEmpty()) {
             for (Host host : hosts) {
                 if (host.getModuleId().equals(module.getModuleId())) {
-                    SmokeTestData smokeTestData = HostSmokeTestAction.ExecuteSmokeTest(
+                    SmokeTestData smokeTestData = smokeTestHelper.ExecuteSmokeTest(
                             module.getSmokeTestUrl(),
-                            host.getHostName(),
-                            parameters,
-                            gson,
-                            client);
+                            host.getHostName());
                     if (smokeTestData == null
                             || smokeTestData.result == null
                             || smokeTestData.result.isEmpty()

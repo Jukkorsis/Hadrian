@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.OkHttpClient;
 import java.util.Map;
 
@@ -40,17 +41,19 @@ public abstract class Action {
     protected ConfigHelper configHelper;
     protected OkHttpClient client;
     protected Gson gson;
+    protected SmokeTestHelper smokeTestHelper;
 
     public Action() {
     }
 
-    public final void init(String name, DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson) {
+    public final void init(String name, DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper) {
         this.name = name;
         this.dataAccess = dataAccess;
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.client = client;
         this.gson = gson;
+        this.smokeTestHelper = smokeTestHelper;
     }
 
     public String getName() {

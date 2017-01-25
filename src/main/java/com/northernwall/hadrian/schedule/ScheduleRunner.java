@@ -20,15 +20,13 @@ import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
-import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.squareup.okhttp.OkHttpClient;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -54,21 +52,17 @@ public class ScheduleRunner implements Runnable {
     private final DataAccess dataAccess;
     private final MetricRegistry metricRegistry;
     private final Leader leader;
-    private final Parameters parameters;
-    private final Gson gson;
-    private final OkHttpClient client;
+    private final SmokeTestHelper smokeTestHelper;
     private final MessagingCoodinator messagingCoodinator;
     private final ScheduledExecutorService scheduledExecutorService;
     private ZonedDateTime lastChecked;
 
-    public ScheduleRunner(int group, DataAccess dataAccess, MetricRegistry metricRegistry, Leader leader, Parameters parameters, Gson gson, OkHttpClient client, MessagingCoodinator messagingCoodinator, ScheduledExecutorService scheduledExecutorService) {
+    public ScheduleRunner(int group, DataAccess dataAccess, MetricRegistry metricRegistry, Leader leader, SmokeTestHelper smokeTestHelper, MessagingCoodinator messagingCoodinator, ScheduledExecutorService scheduledExecutorService) {
         this.group = group;
         this.dataAccess = dataAccess;
         this.metricRegistry = metricRegistry;
         this.leader = leader;
-        this.parameters = parameters;
-        this.gson = gson;
-        this.client = client;
+        this.smokeTestHelper = smokeTestHelper;
         this.messagingCoodinator = messagingCoodinator;
         this.scheduledExecutorService = scheduledExecutorService;
         this.lastChecked = ZonedDateTime.now();
@@ -101,7 +95,7 @@ public class ScheduleRunner implements Runnable {
                                             && !smokeTestCron.isEmpty() 
                                             && checkCron(module.getSmokeTestCron(), now)) {
                                         smokeTestCount++;
-                                        scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, parameters, gson, client, messagingCoodinator));
+                                        scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, smokeTestHelper, messagingCoodinator));
                                     }
                                 }
                             }

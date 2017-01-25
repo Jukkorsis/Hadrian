@@ -100,6 +100,7 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.schedule.Scheduler;
 import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.BindException;
 import org.dshops.metrics.MetricRegistry;
@@ -132,6 +133,7 @@ public class Hadrian {
     private final WorkItemProcessor workItemProcessor;
     private final Scheduler scheduler;
     private final FolderHelper folderHelper;
+    private final SmokeTestHelper smokeTestHelper;
     private final MetricRegistry metricRegistry;
     private final MessagingCoodinator messagingCoodinator;
     private final Gson gson;
@@ -139,7 +141,7 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -154,6 +156,7 @@ public class Hadrian {
         this.workItemProcessor = workItemProcessor;
         this.scheduler = scheduler;
         this.folderHelper = folderHelper;
+        this.smokeTestHelper = smokeTestHelper;
         this.metricRegistry = metricRegistry;
         this.messagingCoodinator = messagingCoodinator;
         this.gson = gson;
@@ -241,7 +244,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(dataAccess, gson, accessHelper, configHelper), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/st/exec", new SmokeTestExecHandler(dataAccess, gson, accessHelper, client, parameters), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/st/exec", new SmokeTestExecHandler(dataAccess, gson, accessHelper, smokeTestHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(dataAccess, gson, accessHelper, client), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/modify", new CustomFuntionModifyHandler(dataAccess, gson, accessHelper), true);

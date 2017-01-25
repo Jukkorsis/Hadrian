@@ -15,61 +15,17 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.google.gson.Gson;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSmokeTestAction extends Action {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostSmokeTestAction.class);
-
-    public static SmokeTestData ExecuteSmokeTest(String smokeTestUrl, String endPoint, Parameters parameters, Gson gson, OkHttpClient client) {
-        if (smokeTestUrl == null || smokeTestUrl.isEmpty() || endPoint == null || endPoint.isEmpty()) {
-            return null;
-        }
-
-        LOGGER.info("Smoke testing EP {} with {}", endPoint, smokeTestUrl);
-
-        String url = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, endPoint);
-        try {
-            Request.Builder builder = new Request.Builder().url(url);
-            if (parameters.getUsername() != null
-                    && parameters.getUsername().isEmpty()
-                    && parameters.getPassword() != null
-                    && parameters.getPassword().isEmpty()) {
-                builder.addHeader(
-                        "Authorization",
-                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
-            }
-            Request request = builder.build();
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                try (InputStream stream = response.body().byteStream()) {
-                    Reader reader = new InputStreamReader(stream);
-                    return gson.fromJson(reader, SmokeTestData.class);
-                }
-            } else {
-                LOGGER.warn("Call to {} failed with code {}", url, response.code());
-                return null;
-            }
-        } catch (Exception ex) {
-            LOGGER.warn("Call to {} failed with exception {}", url, ex.getMessage());
-            return null;
-        }
-    }
 
     @Override
     public void updateStatus(WorkItem workItem) {
@@ -91,12 +47,9 @@ public class HostSmokeTestAction extends Action {
             return Result.success;
         }
 
-        SmokeTestData smokeTestData = ExecuteSmokeTest(
+        SmokeTestData smokeTestData = smokeTestHelper.ExecuteSmokeTest(
                 smokeTestUrl,
-                workItem.getHost().hostName,
-                parameters,
-                gson,
-                client);
+                workItem.getHost().hostName);
 
         Result result;
         String output = null;

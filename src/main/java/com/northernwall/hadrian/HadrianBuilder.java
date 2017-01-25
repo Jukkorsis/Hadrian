@@ -38,6 +38,7 @@ import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.schedule.Leader;
 import com.northernwall.hadrian.schedule.Scheduler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
+import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.InetAddress;
@@ -72,6 +73,7 @@ public class HadrianBuilder {
     private Handler accessHandler;
     private CalendarHelper calendarHelper;
     private MessagingCoodinator messagingCoodinator;
+    private SmokeTestHelper smokeTestHelper;
     private Scheduler scheduler;
     private MetricRegistry metricRegistry;
 
@@ -146,14 +148,20 @@ public class HadrianBuilder {
                 dataAccess, 
                 parameters, 
                 client);
-        buildScheduler();
+        
+        smokeTestHelper = new SmokeTestHelper(
+                parameters, 
+                gson);
 
+        buildScheduler();
+        
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(
                 parameters, 
                 configHelper, 
                 dataAccess, 
                 client, 
                 gson, 
+                smokeTestHelper,
                 metricRegistry);
 
         DataAccessUpdater.update(
@@ -175,6 +183,7 @@ public class HadrianBuilder {
                 workItemProcessor, 
                 scheduler, 
                 folderHelper, 
+                smokeTestHelper,
                 metricRegistry, 
                 messagingCoodinator,
                 gson);
@@ -378,8 +387,7 @@ public class HadrianBuilder {
                     dataAccess,
                     metricRegistry,
                     leader,
-                    parameters, 
-                    client,
+                    smokeTestHelper,
                     messagingCoodinator);
         } catch (InstantiationException ex) {
             throw new RuntimeException("Could not build Hadrian, could not instantiation Leader class " + factoryName);
