@@ -31,7 +31,7 @@ public class ServiceTransferAction extends Action {
     }
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         if (workItem.getReason() != null && !workItem.getReason().isEmpty()) {
             notes.put("Reason", workItem.getReason());
         }

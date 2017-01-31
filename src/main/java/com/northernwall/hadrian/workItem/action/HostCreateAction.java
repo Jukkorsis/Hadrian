@@ -47,7 +47,7 @@ public class HostCreateAction extends Action {
     }
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Environment", workItem.getHost().environment);
         notes.put("Platform", workItem.getHost().platform);

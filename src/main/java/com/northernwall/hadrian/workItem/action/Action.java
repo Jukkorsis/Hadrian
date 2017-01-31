@@ -75,7 +75,7 @@ public abstract class Action {
     public void error(WorkItem workItem) {
     }
 
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         writeAudit(workItem, result, notes, output);
     }
 

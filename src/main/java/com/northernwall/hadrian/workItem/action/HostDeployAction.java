@@ -47,7 +47,7 @@ public class HostDeployAction extends Action {
     }
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         if (workItem.getHost().version != null) {
             notes.put("Version", workItem.getHost().version);
         }

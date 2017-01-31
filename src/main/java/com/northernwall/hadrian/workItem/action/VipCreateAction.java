@@ -38,7 +38,7 @@ public class VipCreateAction extends Action {
     }
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         notes.put("Protocol", workItem.getVip().protocol);
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));

@@ -204,7 +204,7 @@ public class WorkItemProcessor {
         switch (result) {
             case success:
                 action.success(workItem);
-                action.recordAudit(workItem, createNotesFromCallback(callbackData), result, callbackData.output);
+                action.recordAudit(workItem, result, createNotesFromCallback(callbackData), callbackData.output);
                 LOGGER.info("Work item {} has been successfully processed. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
@@ -212,7 +212,7 @@ public class WorkItemProcessor {
                 break;
             case error:
                 action.error(workItem);
-                action.recordAudit(workItem, createNotesFromCallback(callbackData), result, callbackData.output);
+                action.recordAudit(workItem, result, createNotesFromCallback(callbackData), callbackData.output);
                 LOGGER.warn("Work item {} failed to be process. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);

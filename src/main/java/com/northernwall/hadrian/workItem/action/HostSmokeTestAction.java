@@ -20,12 +20,15 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSmokeTestAction extends Action {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostSmokeTestAction.class);
+    
+    private String smokeTestOutput = null;
 
     @Override
     public void updateStatus(WorkItem workItem) {
@@ -52,20 +55,18 @@ public class HostSmokeTestAction extends Action {
                 workItem.getHost().hostName);
 
         Result result;
-        String output = null;
         if (smokeTestData == null) {
             result = Result.error;
         } else if (smokeTestData.result == null
                 || smokeTestData.result.isEmpty()
                 ||!smokeTestData.result.equalsIgnoreCase("PASS")) {
             result = Result.error;
-            output = smokeTestData.output;
+            smokeTestOutput = smokeTestData.output;
         } else {
             result = Result.success;
-            output = smokeTestData.output;
+            smokeTestOutput = smokeTestData.output;
         }
 
-        writeAudit(workItem, result, null, output);
         return result;
     }
 
@@ -95,6 +96,11 @@ public class HostSmokeTestAction extends Action {
                 workItem.getHost().hostId,
                 false,
                 "Last smoke test failed");
+    }
+
+    @Override
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
+        writeAudit(workItem, result, notes, smokeTestOutput);
     }
 
 }

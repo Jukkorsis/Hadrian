@@ -47,7 +47,7 @@ public class HostRestartAction extends Action {
     }
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         notes.put("Reason", workItem.getReason());
         notes.put("Check for OS Upgrade", Boolean.toString(workItem.getHost().doOsUpgrade));
         writeAudit(workItem, result, notes, output);

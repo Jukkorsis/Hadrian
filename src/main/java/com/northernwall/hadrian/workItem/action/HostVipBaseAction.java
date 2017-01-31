@@ -62,7 +62,7 @@ public abstract class HostVipBaseAction extends Action {
     protected abstract Result processVip(WorkItem workItem, Vip vip);
 
     @Override
-    public void recordAudit(WorkItem workItem, Map<String, String> notes, Result result, String output) {
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         if (successVips == null || successVips.isEmpty()) {
             if (failedVip == null) {
                 output = "No VIPs to " + getVerb();
