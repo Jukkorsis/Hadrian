@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -24,13 +23,9 @@ import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
-import com.northernwall.hadrian.parameters.Parameters;
-import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
-import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
