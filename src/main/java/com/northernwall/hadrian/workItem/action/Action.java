@@ -106,6 +106,12 @@ public abstract class Action {
     }
 
     protected String getGitUrl(WorkItem workItem) {
+        if (workItem.getTeam().gitGroup == null
+                || workItem.getTeam().gitGroup.trim().isEmpty()
+                || workItem.getService().gitProject == null
+                || workItem.getService().gitProject.trim().isEmpty()) {
+            return null;
+        }
         String gitUrl = parameters.getString(Const.GIT_PATH_URL, Const.GIT_PATH_URL_DETAULT);
         gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_GROUP, workItem.getTeam().gitGroup);
         gitUrl = gitUrl.replace(Const.GIT_PATH_PATTERN_PROJECT, workItem.getService().gitProject);
