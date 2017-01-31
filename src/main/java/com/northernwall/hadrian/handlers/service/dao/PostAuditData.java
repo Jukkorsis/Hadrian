@@ -23,6 +23,8 @@ public class PostAuditData {
     public String serviceName;
     public Type type;
     public Operation operation;
+    public boolean successfull = true;
+    public String moduleName;
     public String hostName;
     public String vipName;
     public String notes;

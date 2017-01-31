@@ -55,13 +55,17 @@ public class AuditCreateHandler extends BasicHandler {
         audit.requestor = user.getUsername();
         audit.type = data.type;
         audit.operation = data.operation;
-        audit.successfull = true;
+        audit.successfull = data.successfull;
+        if (data.moduleName != null) {
+            audit.moduleName = data.moduleName;
+        }
         if (data.hostName != null) {
             audit.hostName = data.hostName;
         }
         if (data.vipName != null) {
             audit.vipName = data.vipName;
         }
+        //TODO check to make sure that data.notes is a JSON encoded map of name value pairs
         audit.notes = data.notes;
         getDataAccess().saveAudit(audit, data.output);
 
