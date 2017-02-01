@@ -65,7 +65,9 @@ public class SmokeTestRunner implements Runnable {
                 if (host.getModuleId().equals(module.getModuleId())) {
                     SmokeTestData smokeTestData = smokeTestHelper.ExecuteSmokeTest(
                             module.getSmokeTestUrl(),
-                            host.getHostName());
+                            host.getHostName(),
+                            service.getServiceName(),
+                            "cron");
                     if (smokeTestData == null
                             || smokeTestData.result == null
                             || smokeTestData.result.isEmpty()

@@ -44,7 +44,7 @@ public class MetricHandler extends AbstractHandler {
                 && !target.equals("/version")
                 && !target.startsWith("/ui/")) {
             timer = metricRegistry.timer(
-                    "http-duration",
+                    "http.duration",
                     "url", target,
                     "method", request.getMethod());
         }

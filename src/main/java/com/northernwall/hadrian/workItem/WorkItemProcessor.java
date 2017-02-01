@@ -152,7 +152,7 @@ public class WorkItemProcessor {
         Result result = Result.error;
 
         Timer timer = metricRegistry.timer(
-                "action-process-duration",
+                "action.duration",
                 "action", action.getName());
         try {
             action.updateStatus(workItem);
@@ -191,7 +191,7 @@ public class WorkItemProcessor {
         Result result = Result.error;
 
         Timer timer = metricRegistry.timer(
-                "action-processCallback-duration",
+                "action.callbackDuration",
                 "action", action.getName());
         try {
             result = action.processCallback(workItem, callbackData);

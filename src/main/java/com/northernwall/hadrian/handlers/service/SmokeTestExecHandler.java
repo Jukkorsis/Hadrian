@@ -67,7 +67,9 @@ public class SmokeTestExecHandler extends BasicHandler {
         
         SmokeTestData smokeTestData = smokeTestHelper.ExecuteSmokeTest(
                 module.getSmokeTestUrl(),
-                endPoint);
+                endPoint,
+                service.getServiceName(),
+                "manual");
 
         if (smokeTestData == null) {
             throw new Http400BadRequestException("Error executing smoke test");

@@ -121,7 +121,7 @@ public class HadrianBuilder {
         }
 
         configHelper = new ConfigHelper(parameters, gson, moduleConfigHelper);
-        
+
         folderHelper = new FolderHelper(configHelper);
 
         if (accessHelper == null) {
@@ -145,46 +145,47 @@ public class HadrianBuilder {
         }
 
         messagingCoodinator = new MessagingCoodinator(
-                dataAccess, 
-                parameters, 
+                dataAccess,
+                parameters,
                 client);
-        
+
         smokeTestHelper = new SmokeTestHelper(
-                parameters, 
-                gson);
+                parameters,
+                gson,
+                metricRegistry);
 
         buildScheduler();
-        
+
         WorkItemProcessor workItemProcessor = new WorkItemProcessor(
-                parameters, 
-                configHelper, 
-                dataAccess, 
-                client, 
-                gson, 
+                parameters,
+                configHelper,
+                dataAccess,
+                client,
+                gson,
                 smokeTestHelper,
                 metricRegistry);
 
         DataAccessUpdater.update(
-                dataAccess, 
+                dataAccess,
                 configHelper.getConfig());
 
         return new Hadrian(
-                parameters, 
-                client, 
-                configHelper, 
-                dataAccess, 
-                moduleArtifactHelper, 
-                moduleConfigHelper, 
-                accessHelper, 
-                accessHandler, 
-                hostDetailsHelper, 
-                vipDetailsHelper, 
-                calendarHelper, 
-                workItemProcessor, 
-                scheduler, 
-                folderHelper, 
+                parameters,
+                client,
+                configHelper,
+                dataAccess,
+                moduleArtifactHelper,
+                moduleConfigHelper,
+                accessHelper,
+                accessHandler,
+                hostDetailsHelper,
+                vipDetailsHelper,
+                calendarHelper,
+                workItemProcessor,
+                scheduler,
+                folderHelper,
                 smokeTestHelper,
-                metricRegistry, 
+                metricRegistry,
                 messagingCoodinator,
                 gson);
     }
@@ -192,25 +193,26 @@ public class HadrianBuilder {
     private void buildMetrics() {
         String serviceTeam = parameters.getString("metrics.serviceTeam", "Hadrian");
         String application = parameters.getString("metrics.application", "Hadrian");
-        
-        metricRegistry = new MetricRegistry.Builder(serviceTeam, application)
+
+        metricRegistry = new MetricRegistry.Builder(serviceTeam, application, "server")
                 .addTag("hostName", getHostname())
                 .build();
-        
+
         JvmMetrics.addMetrics(metricRegistry, 10);
-        
+
         if (parameters.getBoolean("metrics.console", false)) {
             LOGGER.info("Configuring Metrics Console Listener");
             metricRegistry.addEventListener(new ConsoleListener(System.out));
         }
-        
+
         String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
         if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
             LOGGER.info("Configuring Metrics KairosDB Listener,  {}", kairosDbUrl);
             metricRegistry.addEventListener(new KairosDBListener(
                     kairosDbUrl,
                     parameters.getString("metrics.kairosDb.username", null),
-                    parameters.getString("metrics.kairosDb.password", null)));
+                    parameters.getString("metrics.kairosDb.password", null),
+                    metricRegistry));
         }
     }
 

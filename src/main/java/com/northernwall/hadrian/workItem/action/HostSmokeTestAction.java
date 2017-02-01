@@ -52,7 +52,9 @@ public class HostSmokeTestAction extends Action {
 
         SmokeTestData smokeTestData = smokeTestHelper.ExecuteSmokeTest(
                 smokeTestUrl,
-                workItem.getHost().hostName);
+                workItem.getHost().hostName,
+                workItem.getService().serviceName,
+                "action");
 
         Result result;
         if (smokeTestData == null) {

@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.concurrent.TimeUnit;
+import org.dshops.metrics.MetricRegistry;
+import org.dshops.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +38,19 @@ import org.slf4j.LoggerFactory;
  * @author Richard
  */
 public class SmokeTestHelper {
-    
+
     private final static Logger LOGGER = LoggerFactory.getLogger(SmokeTestHelper.class);
-    
+
     private final Parameters parameters;
     private final Gson gson;
+    private final MetricRegistry metricRegistry;
     private final OkHttpClient client;
 
-    public SmokeTestHelper(Parameters parameters, Gson gson) {
+    public SmokeTestHelper(Parameters parameters, Gson gson, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.gson = gson;
-        
+        this.metricRegistry = metricRegistry;
+
         client = new OkHttpClient();
         client.setConnectTimeout(2, TimeUnit.SECONDS);
         client.setReadTimeout(10, TimeUnit.MINUTES);
@@ -55,8 +59,8 @@ public class SmokeTestHelper {
         client.setFollowRedirects(false);
         client.setConnectionPool(new ConnectionPool(15, 60 * 1000));
     }
-    
-    public SmokeTestData ExecuteSmokeTest(String smokeTestUrl, String endPoint) {
+
+    public SmokeTestData ExecuteSmokeTest(String smokeTestUrl, String endPoint, String serviceName, String reason) {
         if (smokeTestUrl == null || smokeTestUrl.isEmpty() || endPoint == null || endPoint.isEmpty()) {
             return null;
         }
@@ -64,6 +68,7 @@ public class SmokeTestHelper {
         LOGGER.info("Smoke testing EP {} with {}", endPoint, smokeTestUrl);
 
         String url = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, endPoint);
+        Timer timer = null;
         try {
             Request.Builder builder = new Request.Builder().url(url);
             if (parameters.getUsername() != null
@@ -75,19 +80,28 @@ public class SmokeTestHelper {
                         Credentials.basic(parameters.getUsername(), parameters.getPassword()));
             }
             Request request = builder.build();
+            timer = metricRegistry.timer(
+                    "smokeTest.duration",
+                    "serviceName", serviceName,
+                    "reason", reason);
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
+                timer.addTag("result", "success");
                 try (InputStream stream = response.body().byteStream()) {
                     Reader reader = new InputStreamReader(stream);
                     return gson.fromJson(reader, SmokeTestData.class);
                 }
             } else {
+                timer.addTag("result", "fail");
                 LOGGER.warn("Call to {} failed with code {}", url, response.code());
                 return null;
             }
         } catch (Exception ex) {
+            timer.addTag("result", "fail");
             LOGGER.warn("Call to {} failed with exception {}", url, ex.getMessage());
             return null;
+        } finally {
+            timer.stop();
         }
     }
 
