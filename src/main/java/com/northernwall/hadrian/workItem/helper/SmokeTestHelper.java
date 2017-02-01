@@ -68,7 +68,10 @@ public class SmokeTestHelper {
         LOGGER.info("Smoke testing EP {} with {}", endPoint, smokeTestUrl);
 
         String url = Const.HTTP + smokeTestUrl.replace(Const.END_POINT, endPoint);
-        Timer timer = null;
+        Timer timer = metricRegistry.timer(
+                    "smokeTest.duration",
+                    "serviceName", serviceName,
+                    "reason", reason);
         try {
             Request.Builder builder = new Request.Builder().url(url);
             if (parameters.getUsername() != null
@@ -80,10 +83,6 @@ public class SmokeTestHelper {
                         Credentials.basic(parameters.getUsername(), parameters.getPassword()));
             }
             Request request = builder.build();
-            timer = metricRegistry.timer(
-                    "smokeTest.duration",
-                    "serviceName", serviceName,
-                    "reason", reason);
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 timer.addTag("result", "success");
