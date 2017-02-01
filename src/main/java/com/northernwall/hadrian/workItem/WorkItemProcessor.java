@@ -166,7 +166,7 @@ public class WorkItemProcessor {
         switch (result) {
             case success:
                 action.success(workItem);
-                action.recordAudit(workItem, new HashMap<>(), result, null);
+                action.recordAudit(workItem, result, new HashMap<>(), null);
                 LOGGER.info("Work item {} has been successfully processed, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 200);
@@ -174,7 +174,7 @@ public class WorkItemProcessor {
                 break;
             case error:
                 action.error(workItem);
-                action.recordAudit(workItem, new HashMap<>(), result, null);
+                action.recordAudit(workItem, result, new HashMap<>(), null);
                 LOGGER.warn("Work item {} failed to be process, no callback expected. {}", action.getName(), workItem.getId());
                 dataAccess.deleteWorkItem(workItem.getId());
                 dataAccess.saveWorkItemStatus(workItem.getId(), 502);
