@@ -128,7 +128,7 @@ public class ScheduleRunner implements Runnable {
             ZonedDateTime last = executionTime.lastExecution(now);
             boolean b1 = last.isAfter(prevChecked);
             boolean b2 = last.isBefore(now);
-            LOGGER.info("now={} last={} prevCheck={} b1={} b2={}", now.toString(), last.toString(), prevChecked.toString(), b1, b2);
+            LOGGER.info("cron={} now={} last={} prevCheck={} b1={} b2={}", cronExpression, now.toString(), last.toString(), prevChecked.toString(), b1, b2);
             return (b1 && b2);
             //return (last.isAfter(lastChecked) && last.isBefore(now));
         } catch (Exception e) {
