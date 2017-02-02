@@ -55,7 +55,7 @@ public class ScheduleRunner implements Runnable {
     private final SmokeTestHelper smokeTestHelper;
     private final MessagingCoodinator messagingCoodinator;
     private final ScheduledExecutorService scheduledExecutorService;
-    private ZonedDateTime lastChecked;
+    private ZonedDateTime prevChecked;
 
     public ScheduleRunner(int group, DataAccess dataAccess, MetricRegistry metricRegistry, Leader leader, SmokeTestHelper smokeTestHelper, MessagingCoodinator messagingCoodinator, ScheduledExecutorService scheduledExecutorService) {
         this.group = group;
@@ -65,7 +65,7 @@ public class ScheduleRunner implements Runnable {
         this.smokeTestHelper = smokeTestHelper;
         this.messagingCoodinator = messagingCoodinator;
         this.scheduledExecutorService = scheduledExecutorService;
-        this.lastChecked = ZonedDateTime.now();
+        this.prevChecked = ZonedDateTime.now();
     }
 
     @Override
@@ -85,20 +85,25 @@ public class ScheduleRunner implements Runnable {
                         serviceCount++;
                         List<Module> modules = dataAccess.getModules(service.getServiceId());
                         if (modules != null && !modules.isEmpty()) {
+                            LOGGER.info("Processing {} with {} modules", service.getServiceName(), modules.size());
                             for (Module module : modules) {
+                                LOGGER.info("Processing {} {} with type {}", module.getModuleName(), service.getServiceName(), module.getModuleType());
                                 if (module.getModuleType() == ModuleType.Deployable) {
                                     String smokeTestCron = module.getSmokeTestCron();
                                     String smokeTestUrl = module.getSmokeTestUrl();
+                                    LOGGER.info("Processing {} {} with '{}' {}", module.getModuleName(), service.getServiceName(), smokeTestCron, smokeTestUrl);
                                     if (smokeTestUrl != null 
                                             && !smokeTestUrl.isEmpty()
                                             && smokeTestCron != null 
                                             && !smokeTestCron.isEmpty() 
-                                            && checkCron(module.getSmokeTestCron(), now)) {
+                                            && checkCron(smokeTestCron, now)) {
                                         smokeTestCount++;
                                         scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, smokeTestHelper, messagingCoodinator));
                                     }
                                 }
                             }
+                        } else {
+                            LOGGER.info("Processing {} with no modules", service.getServiceName());
                         }
                         if (doMetrics) {
                             scheduledExecutorService.submit(new MetricsRunner(service, group, dataAccess, metricRegistry));
@@ -110,9 +115,8 @@ public class ScheduleRunner implements Runnable {
         } catch (Exception e) {
             LOGGER.error("Exception during running group {}, {}", group, e.getMessage());
         }
-        lastChecked = now;
+        prevChecked = now;
     }
-    
 
     private boolean checkCron(String cronExpression, ZonedDateTime now) {
         try {
@@ -122,7 +126,11 @@ public class ScheduleRunner implements Runnable {
             Cron cron = parseCron(cronExpression);
             ExecutionTime executionTime = ExecutionTime.forCron(cron);
             ZonedDateTime last = executionTime.lastExecution(now);
-            return (last.isAfter(lastChecked) && last.isBefore(now));
+            boolean b1 = last.isAfter(prevChecked);
+            boolean b2 = last.isBefore(now);
+            LOGGER.info("now={} last={} prevCheck={} b1={} b2={}", now.toString(), last.toString(), prevChecked.toString(), b1, b2);
+            return (b1 && b2);
+            //return (last.isAfter(lastChecked) && last.isBefore(now));
         } catch (Exception e) {
             LOGGER.error("Check cron '{}' failed, {}", cronExpression, e.getMessage());
             return false;
