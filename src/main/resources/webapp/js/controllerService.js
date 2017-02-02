@@ -339,30 +339,6 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.openBackfillModal = function (moduleEnvironment) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                backdrop: 'static',
-                templateUrl: 'partials/backfillHost.html',
-                controller: 'ModalBackfillHostCtrl',
-                resolve: {
-                    service: function () {
-                        return $scope.service;
-                    },
-                    moduleEnvironment: function () {
-                        return moduleEnvironment;
-                    },
-                    config: function () {
-                        return $scope.config;
-                    }
-                }
-            });
-            modalInstance.result.then(function () {
-                $route.reload();
-            }, function () {
-            });
-        };
-
         $scope.openDeleteModuleModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -393,6 +369,30 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 backdrop: 'static',
                 templateUrl: 'partials/addVip.html',
                 controller: 'ModalAddVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    environmentModule: function () {
+                        return environmentModule;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openBackfillVipModal = function (environmentModule) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/backfillVip.html',
+                controller: 'ModalBackfillVipCtrl',
                 resolve: {
                     service: function () {
                         return $scope.service;
@@ -473,6 +473,30 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 backdrop: 'static',
                 templateUrl: 'partials/addHost.html',
                 controller: 'ModalAddHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
+        $scope.openBackfillHostModal = function (moduleEnvironment) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/backfillHost.html',
+                controller: 'ModalBackfillHostCtrl',
                 resolve: {
                     service: function () {
                         return $scope.service;

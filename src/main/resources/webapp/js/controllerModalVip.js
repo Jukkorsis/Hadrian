@@ -52,6 +52,56 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         };
     }]);
 
+hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'environmentModule',
+    function ($scope, $http, $modalInstance, $route, config, service, environmentModule) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.environmentModule = environmentModule;
+        $scope.config = config;
+
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === environmentModule.environment) {
+                $scope.configEnvironment = config.environments[i];
+            }
+        }
+
+        $scope.formSaveVip = {};
+        $scope.formSaveVip.dns = "";
+        $scope.formSaveVip.domain = $scope.config.domains[0];
+        $scope.formSaveVip.external = false;
+        $scope.formSaveVip.protocol = $scope.config.protocols[0];
+        $scope.formSaveVip.vipPort = 80;
+        $scope.formSaveVip.servicePort = 8080;
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.environmentModule.moduleId,
+                dns: $scope.formSaveVip.dns,
+                domain: $scope.formSaveVip.domain,
+                external: $scope.formSaveVip.external,
+                environment: $scope.environmentModule.environment,
+                protocol: $scope.formSaveVip.protocol,
+                vipPort: $scope.formSaveVip.vipPort,
+                servicePort: $scope.formSaveVip.servicePort
+            };
+
+            var responsePromise = $http.post("/v1/vip/backfill", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
 hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'vip',
     function ($scope, $http, $modalInstance, $route, config, service, vip) {
         $scope.errorMsg = null;

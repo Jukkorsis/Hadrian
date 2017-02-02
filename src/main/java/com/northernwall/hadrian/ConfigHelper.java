@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Environment;
-import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -75,7 +74,8 @@ public class ConfigHelper implements ParameterChangeListener {
         } else {
             newConfig.moduleConfigName = moduleConfigHelper.getDisplayName();
         }
-        newConfig.enableProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_PROVISIONING, Const.CONFIG_ENABLE_PROVISIONING_DEFAULT);
+        newConfig.enableHostProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_HOST_PROVISIONING, Const.CONFIG_ENABLE_HOST_PROVISIONING_DEFAULT);
+        newConfig.enableVipProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_VIP_PROVISIONING, Const.CONFIG_ENABLE_VIP_PROVISIONING_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_PLATFORMS, Const.CONFIG_PLATFORMS_DEFAULT, newConfig.platforms);

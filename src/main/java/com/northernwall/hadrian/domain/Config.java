@@ -29,7 +29,8 @@ public class Config {
     public String gitUiURL = "";
     public String securityGroupName = "";
     public String moduleConfigName = "";
-    public boolean enableProvisioning = false;
+    public boolean enableHostProvisioning = false;
+    public boolean enableVipProvisioning = false;
     public int minCpu = 2;
     public int maxCpu = 4;
     public int minMemory = 2;
