@@ -80,7 +80,7 @@ public class ScheduleRunner implements Runnable {
                 int smokeTestCount = 0;
                 List<Service> services = dataAccess.getActiveServices();
                 for (Service service : services) {
-                    int serviceGroup = service.getServiceId().hashCode() % Scheduler.GROUP_COUNT;
+                    int serviceGroup = Math.abs(service.getServiceId().hashCode() % Scheduler.GROUP_COUNT);
                     if (serviceGroup == group) {
                         serviceCount++;
                         List<Module> modules = dataAccess.getModules(service.getServiceId());
