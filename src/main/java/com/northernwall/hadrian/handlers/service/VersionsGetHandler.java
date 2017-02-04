@@ -2,7 +2,6 @@ package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
@@ -13,7 +12,6 @@ import com.northernwall.hadrian.handlers.service.dao.GetVersionData;
 import com.northernwall.hadrian.handlers.service.helper.ReadModuleArtifactVersionsRunnable;
 import com.northernwall.hadrian.handlers.service.helper.ReadModuleConfigVersionsRunnable;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
