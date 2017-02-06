@@ -1,11 +1,14 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Environment;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.handlers.service.dao.GetVersionData;
@@ -24,11 +27,13 @@ public class VersionsGetHandler extends BasicHandler {
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final ExecutorService executorService;
+    private final ConfigHelper configHelper;
 
-    public VersionsGetHandler(DataAccess dataAccess, Gson gson, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper) {
+    public VersionsGetHandler(DataAccess dataAccess, Gson gson, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, ConfigHelper configHelper) {
         super(dataAccess, gson);
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
+        this.configHelper = configHelper;
 
         executorService = Executors.newFixedThreadPool(20);
     }
@@ -38,10 +43,21 @@ public class VersionsGetHandler extends BasicHandler {
         response.setContentType(Const.JSON);
         Service service = getService(request);
         Module module = getModule(request, service);
+        String envName = request.getParameter("envName");
+        
+        Environment environment = null;
+        for (Environment tempEnv : configHelper.getConfig().environments) {
+            if (tempEnv.name.equals(envName)) {
+                environment = tempEnv;
+            }
+        }
+        if (environment == null) {
+            throw new Http400BadRequestException("Can not find environment");
+        }
 
         GetVersionData data = new GetVersionData();
         
-        Future artifactFuture = executorService.submit(new ReadModuleArtifactVersionsRunnable(service, module, data, moduleArtifactHelper));
+        Future artifactFuture = executorService.submit(new ReadModuleArtifactVersionsRunnable(service, module, environment.allowSnapshots, data, moduleArtifactHelper));
         Future configFuture = executorService.submit(new ReadModuleConfigVersionsRunnable(module, data, moduleConfigHelper));
         
         while (!artifactFuture.isDone() || !configFuture.isDone()) {

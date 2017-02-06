@@ -20,6 +20,6 @@ import com.northernwall.hadrian.domain.Service;
 import java.util.List;
 
 public interface ModuleArtifactHelper {
-    List<String> readArtifactVersions(Service service, Module module);
+    List<String> readArtifactVersions(Service service, Module module, boolean includeSnapshots);
 
 }

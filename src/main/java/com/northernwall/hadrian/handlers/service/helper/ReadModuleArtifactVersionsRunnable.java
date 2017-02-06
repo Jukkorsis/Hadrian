@@ -25,12 +25,14 @@ public class ReadModuleArtifactVersionsRunnable implements Runnable {
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final Service service;
     private final Module module;
+    private final boolean includeSnapshots;
     private final GetVersionData getVersionData;
 
-    public ReadModuleArtifactVersionsRunnable(Service service, Module module, GetVersionData getVersionData, ModuleArtifactHelper moduleArtifactHelper) {
+    public ReadModuleArtifactVersionsRunnable(Service service, Module module, boolean includeSnapshots, GetVersionData getVersionData, ModuleArtifactHelper moduleArtifactHelper) {
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.service = service;
         this.module = module;
+        this.includeSnapshots = includeSnapshots;
         this.getVersionData = getVersionData;
     }
 
@@ -41,7 +43,7 @@ public class ReadModuleArtifactVersionsRunnable implements Runnable {
                 && !service.getMavenGroupId().isEmpty()
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
-            getVersionData.artifactVersions.addAll(moduleArtifactHelper.readArtifactVersions(service, module));
+            getVersionData.artifactVersions.addAll(moduleArtifactHelper.readArtifactVersions(service, module, includeSnapshots));
         }
         if (getVersionData.artifactVersions.isEmpty()) {
             getVersionData.artifactVersions.add("0.0.0");

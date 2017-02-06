@@ -78,7 +78,13 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost.count = 1;
         $scope.formSaveHost.reason = "";
 
-        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleEnvironment.moduleId, {});
+        var responsePromise = $http.get(
+                "/v1/service/version?serviceId=" +
+                $scope.service.serviceId +
+                "&moduleId=" +
+                $scope.moduleEnvironment.moduleId +
+                "&envName=" +
+                $scope.configEnvironment.name, {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.versions = data;
             if ($scope.formSaveHost.version === "") {
@@ -155,7 +161,13 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
         $scope.formUpdateHost.configVersion = "";
         $scope.formUpdateHost.reason = "";
 
-        var responsePromise = $http.get("/v1/service/version?serviceId=" + $scope.service.serviceId + "&moduleId=" + $scope.moduleEnvironment.moduleId, {});
+        var responsePromise = $http.get(
+                "/v1/service/version?serviceId=" +
+                $scope.service.serviceId +
+                "&moduleId=" +
+                $scope.moduleEnvironment.moduleId +
+                "&envName=" +
+                $scope.configEnvironment.name, {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.versions = data;
             if ($scope.formUpdateHost.version === "") {

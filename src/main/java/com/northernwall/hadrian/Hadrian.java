@@ -215,7 +215,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/services", new ServicesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service", new ServiceGetHandler(dataAccess, gson, accessHelper, configHelper, infoHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/refresh", new ServiceRefreshHandler(dataAccess, gson, accessHelper, configHelper, infoHelper), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/version", new VersionsGetHandler(dataAccess, gson, moduleArtifactHelper, moduleConfigHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/version", new VersionsGetHandler(dataAccess, gson, moduleArtifactHelper, moduleConfigHelper, configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/notuses", new ServiceNotUsesGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/audit", new AuditGetHandler(dataAccess, gson), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/service/auditOutput", new AuditOutputGetHandler(dataAccess, gson), true);

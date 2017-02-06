@@ -52,7 +52,7 @@ public class MavenHelper implements ModuleArtifactHelper {
     }
 
     @Override
-    public List<String> readArtifactVersions(Service service, Module module) {
+    public List<String> readArtifactVersions(Service service, Module module, boolean includeSnapshots) {
         List<String> versions = new LinkedList<>();
         if (service.getMavenGroupId() != null
                 && !service.getMavenGroupId().isEmpty()
@@ -77,7 +77,7 @@ public class MavenHelper implements ModuleArtifactHelper {
                 Response response = client.newCall(request).execute();
 
                 try (InputStream inputStream = response.body().byteStream()) {
-                    versions = processMavenStream(inputStream);
+                    versions = processMavenStream(inputStream, includeSnapshots);
                 }
             } catch (Exception ex) {
                 LOGGER.error("Error reading maven version from {} {}, {}",
@@ -90,7 +90,7 @@ public class MavenHelper implements ModuleArtifactHelper {
         return versions;
     }
 
-    private List<String> processMavenStream(InputStream inputStream) throws Exception {
+    private List<String> processMavenStream(InputStream inputStream, boolean includeSnapshots) throws Exception {
         List<String> versions = new LinkedList<>();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -99,8 +99,10 @@ public class MavenHelper implements ModuleArtifactHelper {
         Node versionsNode = root.getElementsByTagName("versions").item(0);
         for (int i = 0; i < versionsNode.getChildNodes().getLength(); i++) {
             Node child = versionsNode.getChildNodes().item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE && !child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
-                versions.add(child.getTextContent());
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                if (includeSnapshots || !child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
+                    versions.add(child.getTextContent());
+                }
             }
         }
         Collections.sort(versions, mavenVersionComparator);
