@@ -76,46 +76,51 @@ public class ScheduleRunner implements Runnable {
         
         try {
             if (leader.isLeader(group)) {
-                int serviceCount = 0;
-                int smokeTestCount = 0;
-                List<Service> services = dataAccess.getActiveServices();
-                for (Service service : services) {
-                    int serviceGroup = Math.abs(service.getServiceId().hashCode() % Scheduler.GROUP_COUNT);
-                    if (serviceGroup == group) {
-                        serviceCount++;
-                        List<Module> modules = dataAccess.getModules(service.getServiceId());
-                        if (modules != null && !modules.isEmpty()) {
-                            LOGGER.info("Processing {} with {} modules", service.getServiceName(), modules.size());
-                            for (Module module : modules) {
-                                LOGGER.info("Processing {} {} with type {}", module.getModuleName(), service.getServiceName(), module.getModuleType());
-                                if (module.getModuleType() == ModuleType.Deployable) {
-                                    String smokeTestCron = module.getSmokeTestCron();
-                                    String smokeTestUrl = module.getSmokeTestUrl();
-                                    LOGGER.info("Processing {} {} with '{}' {}", module.getModuleName(), service.getServiceName(), smokeTestCron, smokeTestUrl);
-                                    if (smokeTestUrl != null 
-                                            && !smokeTestUrl.isEmpty()
-                                            && smokeTestCron != null 
-                                            && !smokeTestCron.isEmpty() 
-                                            && checkCron(smokeTestCron, now)) {
-                                        smokeTestCount++;
-                                        scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, smokeTestHelper, messagingCoodinator));
-                                    }
-                                }
-                            }
-                        } else {
-                            LOGGER.info("Processing {} with no modules", service.getServiceName());
-                        }
-                        if (doMetrics) {
-                            scheduledExecutorService.submit(new MetricsRunner(service, group, dataAccess, metricRegistry));
-                        }
-                    }
-                }
-                LOGGER.info("Run schedule for group {}, service count {}, smoke test count {}", group, serviceCount, smokeTestCount);
+                processGroup(now, doMetrics);
             }
         } catch (Exception e) {
             LOGGER.error("Exception during running group {}, {}", group, e.getMessage());
+        } finally {
+            prevChecked = now;
         }
-        prevChecked = now;
+    }
+
+    private void processGroup(ZonedDateTime now, boolean doMetrics) {
+        int serviceCount = 0;
+        int smokeTestCount = 0;
+        List<Service> services = dataAccess.getActiveServices();
+        for (Service service : services) {
+            int serviceGroup = Math.abs(service.getServiceId().hashCode() % Scheduler.GROUP_COUNT);
+            if (serviceGroup == group) {
+                serviceCount++;
+                List<Module> modules = dataAccess.getModules(service.getServiceId());
+                if (modules != null && !modules.isEmpty()) {
+                    LOGGER.info("Processing {} with {} modules", service.getServiceName(), modules.size());
+                    for (Module module : modules) {
+                        LOGGER.info("Processing {} {} with type {}", module.getModuleName(), service.getServiceName(), module.getModuleType());
+                        if (module.getModuleType() == ModuleType.Deployable) {
+                            String smokeTestCron = module.getSmokeTestCron();
+                            String smokeTestUrl = module.getSmokeTestUrl();
+                            LOGGER.info("Processing {} {} with '{}' {}", module.getModuleName(), service.getServiceName(), smokeTestCron, smokeTestUrl);
+                            if (smokeTestUrl != null
+                                    && !smokeTestUrl.isEmpty()
+                                    && smokeTestCron != null
+                                    && !smokeTestCron.isEmpty()
+                                    && checkCron(smokeTestCron, now)) {
+                                smokeTestCount++;
+                                scheduledExecutorService.submit(new SmokeTestRunner(service, module, group, dataAccess, smokeTestHelper, messagingCoodinator));
+                            }
+                        }
+                    }
+                } else {
+                    LOGGER.info("Processing {} with no modules", service.getServiceName());
+                }
+                if (doMetrics) {
+                    scheduledExecutorService.submit(new MetricsRunner(service, group, dataAccess, metricRegistry));
+                }
+            }
+        }
+        LOGGER.info("Run schedule for group {}, service count {}, smoke test count {}", group, serviceCount, smokeTestCount);
     }
 
     private boolean checkCron(String cronExpression, ZonedDateTime now) {
