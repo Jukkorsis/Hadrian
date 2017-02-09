@@ -413,6 +413,7 @@ public class CassandraDataAccess implements DataAccess {
                 host.setStatus(false, Const.NO_STATUS);
             }
         }
+        Collections.sort(hosts);
         return hosts;
     }
 
