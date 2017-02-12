@@ -31,6 +31,7 @@ public class Config {
     public String moduleConfigName = "";
     public boolean enableHostProvisioning = false;
     public boolean enableVipProvisioning = false;
+    public boolean enableVipMigration = true;
     public int minCpu = 2;
     public int maxCpu = 4;
     public int minMemory = 2;

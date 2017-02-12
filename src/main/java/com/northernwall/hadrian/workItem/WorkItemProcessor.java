@@ -41,7 +41,7 @@ import com.northernwall.hadrian.workItem.action.ServiceTransferAction;
 import com.northernwall.hadrian.workItem.action.ServiceUpdateAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
-import com.northernwall.hadrian.workItem.action.VipFixAction;
+import com.northernwall.hadrian.workItem.action.VipMigrateAction;
 import com.northernwall.hadrian.workItem.action.VipUpdateAction;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
 import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
@@ -99,7 +99,7 @@ public class WorkItemProcessor {
         constructAction("vipCreate", VipCreateAction.class);
         constructAction("vipUpdate", VipUpdateAction.class);
         constructAction("vipDelete", VipDeleteAction.class);
-        constructAction("vipFix", VipFixAction.class);
+        constructAction("vipMigrate", VipMigrateAction.class);
 
         constructAction("hostVipEnable", HostVipEnableAction.class);
         constructAction("hostVipDisable", HostVipDisableAction.class);
@@ -306,8 +306,8 @@ public class WorkItemProcessor {
                         return constructAction("vipUpdate", VipUpdateAction.class);
                     case delete:
                         return constructAction("vipDelete", VipDeleteAction.class);
-                    case fix:
-                        return constructAction("vipFix", VipFixAction.class);
+                    case migrate:
+                        return constructAction("vipMigrate", VipMigrateAction.class);
                 }
         }
         throw new RuntimeException("Unknown work item - " + workItem.getType() + " " + workItem.getOperation());

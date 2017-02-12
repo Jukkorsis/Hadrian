@@ -37,6 +37,13 @@ public class Vip implements Comparable<Vip>{
     private String protocol;
     private int vipPort;
     private int servicePort;
+    
+    /**
+     * 0 - not migrated
+     * 1 - created new LB but DNS points to old LB
+     * 2 - DNS points to new LB, migration complete
+     */
+    private int migration;
 
     public Vip() {
         this.vipId = UUID.randomUUID().toString();
@@ -51,6 +58,7 @@ public class Vip implements Comparable<Vip>{
         this.protocol = "HTTP";
         this.vipPort = 80;
         this.servicePort = 8080;
+        this.migration = 0;
     }
 
     public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String protocol, int vipPort, int servicePort) {
@@ -159,6 +167,14 @@ public class Vip implements Comparable<Vip>{
 
     public void setServicePort(int servicePort) {
         this.servicePort = servicePort;
+    }
+
+    public int getMigration() {
+        return migration;
+    }
+
+    public void setMigration(int migration) {
+        this.migration = migration;
     }
 
     @Override

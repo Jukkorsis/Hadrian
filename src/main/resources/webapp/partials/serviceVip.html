@@ -43,9 +43,10 @@
                                         <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                             <li role="menuitem"><a ng-click="openUpdateVipModal(ep);">Update VIP</a></li>
                                             <li role="menuitem"><a ng-click="deleteVip(ep.vipId);">Delete VIP</a></li>
+                                            <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 0"><a ng-click="migrateVip(ep.vipId);">Migrate VIP Step 1</a></li>
+                                            <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 1"><a ng-click="migrateVip(ep.vipId);">Migrate VIP Step 2</a></li>
                                         </ul>
                                     </div>
-                                    <a ng-if="!ep.busy && treeData.isAdmin" ng-click="fixVip(ep.vipId);" class="btn btn-info btn-xs">Fix!</a>
                                     <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
                                     <span ng-if="ep.status !== '-'">
                                         <span class="label label-warning">{{ep.status}}</span>

@@ -82,6 +82,7 @@ public class VipCreateHandler extends BasicHandler {
                 data.protocol,
                 data.vipPort,
                 data.servicePort);
+        vip.setMigration(2);
         getDataAccess().saveVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip, null);

@@ -38,12 +38,12 @@ import org.eclipse.jetty.server.Request;
  *
  * @author Richard Thurston
  */
-public class VipFixHandler extends BasicHandler {
+public class VipMigrateHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public VipFixHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+    public VipMigrateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
@@ -54,14 +54,14 @@ public class VipFixHandler extends BasicHandler {
         DeleteVipData data = fromJson(request, DeleteVipData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserIsAdmin(request, "fix a vip");
+        User user = accessHelper.checkIfUserIsAdmin(request, "Migrate vip");
 
         Vip vip = getVip(data.vipId, service);
 
-        vip.setStatus(true, "Fixing...");
+        vip.setStatus(true, "Migrating...");
         getDataAccess().updateVip(vip);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.fix, user, team, service, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.migrate, user, team, service, null, null, vip, null);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

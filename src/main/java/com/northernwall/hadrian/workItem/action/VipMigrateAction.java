@@ -22,21 +22,39 @@ import com.northernwall.hadrian.workItem.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VipFixAction extends Action {
+public class VipMigrateAction extends Action {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(VipFixAction.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(VipMigrateAction.class);
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Fixing Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        return Result.success;
+        Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
+        if (vip == null) {
+            LOGGER.info("Failed the find vip");
+            return Result.error;
+        }
+        switch (vip.getMigration()) {
+            case 0:
+                LOGGER.info("Migrating Vip {} step 1 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+                vip.setMigration(1);
+                dataAccess.saveVip(vip);
+                return Result.success;
+            case 1:
+                LOGGER.info("Migrating Vip {} step 2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+                vip.setMigration(2);
+                dataAccess.saveVip(vip);
+                return Result.success;
+            default:
+                LOGGER.info("Failed to migrating Vip {} for {}, current state {}", workItem.getVip().dns, workItem.getService().serviceName, vip.getMigration());
+                return Result.error;
+        }
     }
 
     @Override
     public void success(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being migrated", workItem.getVip().vipId);
             return;
         }
         vip.setStatus(false, Const.NO_STATUS);
@@ -47,11 +65,11 @@ public class VipFixAction extends Action {
     public void error(WorkItem workItem) {
         Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
         if (vip == null) {
-            LOGGER.warn("Could not find vip {} being fixed", workItem.getVip().vipId);
+            LOGGER.warn("Could not find vip {} being migrated", workItem.getVip().vipId);
             return;
         }
 
-        vip.setStatus(false, "Fix failed");
+        vip.setStatus(false, "Migration step " + vip.getMigration() + " failed");
         dataAccess.updateVip(vip);
     }
 

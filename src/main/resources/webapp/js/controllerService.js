@@ -451,18 +451,18 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.fixVip = function (vipId) {
+        $scope.migrateVip = function (vipId) {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
                 vipId: vipId
             };
 
-            var responsePromise = $http.post("/v1/vip/fix", dataObject, {});
+            var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
                 $route.reload();
             });
             responsePromise.error(function (data, status, headers, config) {
-                alert("Request to fix vip has failed!");
+                alert("Request to migrate vip has failed!");
                 $route.reload();
             });
         };

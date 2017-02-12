@@ -68,7 +68,7 @@ import com.northernwall.hadrian.handlers.service.SmokeTestExecHandler;
 import com.northernwall.hadrian.handlers.service.VersionsGetHandler;
 import com.northernwall.hadrian.handlers.vip.VipCreateHandler;
 import com.northernwall.hadrian.handlers.vip.VipDeleteHandler;
-import com.northernwall.hadrian.handlers.vip.VipFixHandler;
+import com.northernwall.hadrian.handlers.vip.VipMigrateHandler;
 import com.northernwall.hadrian.handlers.vip.VipModifyHandler;
 import com.northernwall.hadrian.handlers.vip.VipGetDetailsHandler;
 import com.northernwall.hadrian.handlers.service.helper.FolderHelper;
@@ -232,7 +232,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/backfill", new VipBackfillHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/fix", new VipFixHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/migrate", new VipMigrateHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/module/file", new ModuleFileGetHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(dataAccess, gson, accessHelper, workItemProcessor, folderHelper), true);

@@ -30,7 +30,7 @@ public enum Operation {
     disableVips, 
     addVips, 
     removeVips, 
-    fix, 
+    migrate, 
     smokeTest,
     build, 
     transfer;
