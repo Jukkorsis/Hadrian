@@ -193,9 +193,14 @@ public class HadrianBuilder {
     private void buildMetrics() {
         String serviceTeam = parameters.getString("metrics.serviceTeam", "Hadrian");
         String application = parameters.getString("metrics.application", "Hadrian");
+        String dataCenter = parameters.getString("metrics.dataCenter", "DC");
 
-        metricRegistry = new MetricRegistry.Builder(serviceTeam, application, "server")
-                .addTag("hostName", getHostname())
+        metricRegistry = new MetricRegistry.Builder(
+                serviceTeam, 
+                application, 
+                "server", 
+                getHostname(),
+                dataCenter)
                 .build();
 
         JvmMetrics.addMetrics(metricRegistry, 10);
