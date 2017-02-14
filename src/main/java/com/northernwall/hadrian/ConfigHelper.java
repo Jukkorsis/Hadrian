@@ -76,6 +76,7 @@ public class ConfigHelper implements ParameterChangeListener {
         }
         newConfig.enableHostProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_HOST_PROVISIONING, Const.CONFIG_ENABLE_HOST_PROVISIONING_DEFAULT);
         newConfig.enableVipProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_VIP_PROVISIONING, Const.CONFIG_ENABLE_VIP_PROVISIONING_DEFAULT);
+        newConfig.enableVipMigration = parameters.getBoolean(Const.CONFIG_ENABLE_VIP_MIGRATION, Const.CONFIG_ENABLE_VIP_MIGRATION_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_PLATFORMS, Const.CONFIG_PLATFORMS_DEFAULT, newConfig.platforms);
