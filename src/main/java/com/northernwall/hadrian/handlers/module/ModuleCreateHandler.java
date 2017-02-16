@@ -226,7 +226,7 @@ public class ModuleCreateHandler extends BasicHandler {
                     null);
         }
 
-        WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.create, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

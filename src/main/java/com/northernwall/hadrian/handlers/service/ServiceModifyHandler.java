@@ -213,7 +213,7 @@ public class ServiceModifyHandler extends BasicHandler {
             }
         }
 
-        WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null, null);
+        WorkItem workItem = new WorkItem(Type.service, Operation.update, user, team, service, null, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }

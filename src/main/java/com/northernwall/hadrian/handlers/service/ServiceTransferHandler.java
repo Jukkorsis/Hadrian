@@ -80,7 +80,7 @@ public class ServiceTransferHandler extends BasicHandler {
 
         getDataAccess().updateService(service);
 
-        WorkItem workItem = new WorkItem(Type.service, Operation.transfer, user, team, service, null, null, null, null);
+        WorkItem workItem = new WorkItem(Type.service, Operation.transfer, user, team, service, null, null, null);
         workItem.setReason(data.reason);
         List<Module> modules = getDataAccess().getModules(data.serviceId);
         for (Module temp : modules) {

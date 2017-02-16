@@ -45,9 +45,10 @@ public class WorkItem {
     private List<ModuleData> modules;
     private HostData host;
     private VipData vip;
+    private String specialInstructions;
     private String reason;
 
-    public WorkItem(Type type, Operation operation, User user, Team team, Service service, Module module, Host host, Vip vip, String reason) {
+    public WorkItem(Type type, Operation operation, User user, Team team, Service service, Module module, Host host, Vip vip) {
         this.id = UUID.randomUUID().toString();
         this.type = type;
         this.operation = operation;
@@ -60,7 +61,8 @@ public class WorkItem {
         this.modules = new LinkedList<>();
         this.host = HostData.create(host);
         this.vip = VipData.create(vip);
-        this.reason = reason;
+        this.specialInstructions = null;
+        this.reason = null;
     }
 
     public String getId() {
@@ -157,6 +159,14 @@ public class WorkItem {
 
     public void setVip(VipData vip) {
         this.vip = vip;
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
+    }
+
+    public void setSpecialInstructions(String specialInstructions) {
+        this.specialInstructions = specialInstructions;
     }
 
     public String getReason() {

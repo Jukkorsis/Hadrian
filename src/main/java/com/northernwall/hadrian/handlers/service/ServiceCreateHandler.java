@@ -146,7 +146,7 @@ public class ServiceCreateHandler extends BasicHandler {
                     null);
         }
 
-        WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null, null);
+        WorkItem workItem = new WorkItem(Type.service, Operation.create, user, team, service, null, null, null);
         workItemProcessor.processWorkItem(workItem);
 
         GetServiceData getServiceData = GetServiceData.create(service);

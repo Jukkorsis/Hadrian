@@ -61,7 +61,7 @@ public class VipMigrateHandler extends BasicHandler {
         vip.setStatus(true, "Migrating...");
         getDataAccess().updateVip(vip);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.migrate, user, team, service, null, null, vip, null);
+        WorkItem workItem = new WorkItem(Type.vip, Operation.migrate, user, team, service, null, null, vip);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

@@ -164,6 +164,8 @@ public class Const {
     public static final String CONFIG_LOGS_FOLDER_DEFAULT = "/var/app/logs";
     public static final String CONFIG_SECURITY_GROUP_NAME = "config.securityGroupName";
     public static final String CONFIG_SECURITY_GROUP_NAME_DEFAULT = "Security Group";
+    public static final String CONFIG_HOST_SPECIAL_INSTRUCTIONS = "config.hostSpecialInstructions";
+    public static final String CONFIG_HOST_SPECIAL_INSTRUCTIONS_DEFAULT = "If special instructions are provided then this host provisioning request will be reviewed and processed manually.";
     public static final String CONFIG_ENABLE_HOST_PROVISIONING = "config.enableHostProvisioning";
     public static final boolean CONFIG_ENABLE_HOST_PROVISIONING_DEFAULT = false;
     public static final String CONFIG_ENABLE_VIP_PROVISIONING = "config.enableVipProvisioning";

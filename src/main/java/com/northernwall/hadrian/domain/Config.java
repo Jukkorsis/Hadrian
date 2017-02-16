@@ -29,6 +29,7 @@ public class Config {
     public String gitUiURL = "";
     public String securityGroupName = "";
     public String moduleConfigName = "";
+    public String hostSpecialInstructions = "";
     public boolean enableHostProvisioning = false;
     public boolean enableVipProvisioning = false;
     public boolean enableVipMigration = false;

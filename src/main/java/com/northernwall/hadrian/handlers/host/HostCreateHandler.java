@@ -137,10 +137,17 @@ public class HostCreateHandler extends BasicHandler {
                 host.getHostId(),
                 true,
                 "Creating...");
+        
+        if (data.specialInstructions != null 
+                && !data.specialInstructions.isEmpty()) {
+            LOGGER.info("Host creation with special instructions. {}", data.specialInstructions);
+        }
 
         List<WorkItem> workItems = new ArrayList<>(3);
 
-        WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null, data.reason);
+        WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
+        workItemCreate.setSpecialInstructions(data.specialInstructions);
+        workItemCreate.setReason(data.reason);
         workItemCreate.getHost().sizeCpu = data.sizeCpu;
         workItemCreate.getHost().sizeMemory = data.sizeMemory;
         workItemCreate.getHost().sizeStorage = data.sizeStorage;
@@ -149,14 +156,15 @@ public class HostCreateHandler extends BasicHandler {
         workItems.add(workItemCreate);
 
         if (service.isDoDeploys()) {
-            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null, data.reason);
+            WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
+            workItemDeploy.setReason(data.reason);
             workItemDeploy.getHost().version = data.version;
             workItemDeploy.getHost().configVersion = data.configVersion;
             workItems.add(workItemDeploy);
         }
 
         if (service.isDoManageVip()) {
-            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null, null);
+            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
             workItems.add(workItemEnable);
         }
 

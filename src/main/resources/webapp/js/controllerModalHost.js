@@ -76,6 +76,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveHost.version = "";
         $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.count = 1;
+        $scope.formSaveHost.specialInstructions = "";
         $scope.formSaveHost.reason = "";
 
         var responsePromise = $http.get(
@@ -108,6 +109,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 version: $scope.formSaveHost.version,
                 configVersion: $scope.formSaveHost.configVersion,
                 count: $scope.formSaveHost.count,
+                specialInstructions: $scope.formSaveHost.specialInstructions,
                 reason: $scope.formSaveHost.reason
             };
 

@@ -27,6 +27,7 @@ public class PostHostData {
     public String version;
     public String configVersion;
     public int count;
+    public String specialInstructions;
     public String reason;
 
 }

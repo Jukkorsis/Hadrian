@@ -62,7 +62,8 @@ public class ServiceDeleteHandler extends BasicHandler {
                 Const.SEARCH_SPACE_GIT_PROJECT,
                 service.getGitProject());
 
-        WorkItem workItem = new WorkItem(Type.service, Operation.delete, user, team, service, null, null, null, data.reason);
+        WorkItem workItem = new WorkItem(Type.service, Operation.delete, user, team, service, null, null, null);
+        workItem.setReason(data.reason);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

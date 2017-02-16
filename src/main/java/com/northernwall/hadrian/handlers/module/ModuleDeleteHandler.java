@@ -99,7 +99,7 @@ public class ModuleDeleteHandler extends BasicHandler {
                     service.getMavenGroupId() + "." + module.getMavenArtifactId());
         }
 
-        WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null, null);
+        WorkItem workItem = new WorkItem(Type.module, Operation.delete, user, team, service, module, null, null);
         for (Module temp : modules) {
             workItem.addModule(temp);
         }
