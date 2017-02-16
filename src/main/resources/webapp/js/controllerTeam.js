@@ -226,3 +226,19 @@ hadrianControllers.controller('TeamDashboardCtrl', ['$scope', '$routeParams', 'C
 
     }]);
 
+hadrianControllers.controller('AllDashboardCtrl', ['$scope', '$routeParams', 'Config', 'DashboardAll',
+    function ($scope, $routeParams, Config, DashboardAll) {
+        $scope.loading = true;
+        $scope.env = $routeParams.env;
+
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
+
+        DashboardAll.get({env: $routeParams.env}, function (dashboard) {
+            $scope.dashboard = dashboard;
+            $scope.loading = false;
+        });
+
+    }]);
+

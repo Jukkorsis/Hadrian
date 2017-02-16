@@ -28,6 +28,12 @@ hadrianServices.factory('Dashboard', ['$resource', function($resource) {
         });
     }]);
 
+hadrianServices.factory('DashboardAll', ['$resource', function($resource) {
+        return $resource('/v1/dashboardAll', {}, {
+            query: {method: 'GET', isArray: false}
+        });
+    }]);
+
 hadrianServices.factory('Services', ['$resource', function($resource) {
         return $resource('/v1/services', {}, {
             query: {method: 'GET', isArray: false}

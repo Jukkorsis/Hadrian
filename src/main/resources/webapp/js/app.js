@@ -24,6 +24,10 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/teamDashboard.html',
                     controller: 'TeamDashboardCtrl'
                 }).
+                when('/DashboardAll/:env', {
+                    templateUrl: 'partials/allDashboard.html',
+                    controller: 'AllDashboardCtrl'
+                }).
                 when('/Service/:serviceId', {
                     templateUrl: 'partials/service.html',
                     controller: 'ServiceCtrl'
