@@ -15,6 +15,9 @@
  */
 package com.northernwall.hadrian.handlers.service.helper;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.Credentials;
@@ -26,15 +29,72 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class InfoHelper {
 
-    private final Parameters parameters;
-    private final OkHttpClient client;
+    private final LoadingCache<String, Integer> availabilityCache;
+    private final LoadingCache<String, String> versionCache;
 
     public InfoHelper(Parameters parameters, OkHttpClient client) {
-        this.parameters = parameters;
-        this.client = client;
+        availabilityCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(10, TimeUnit.SECONDS)
+                .maximumSize(10_000)
+                .build(new CacheLoader<String, Integer>() {
+                    @Override
+                    public Integer load(String key) throws Exception {
+                        try {
+                            Builder builder = new Request.Builder().url(key);
+                            if (parameters.getUsername() != null
+                                    && parameters.getUsername().isEmpty()
+                                    && parameters.getPassword() != null
+                                    && parameters.getPassword().isEmpty()) {
+                                builder.addHeader(
+                                        "Authorization",
+                                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
+                            }
+                            Request request = builder.build();
+                            Response response = client.newCall(request).execute();
+                            return response.code();
+                        } catch (IOException ex) {
+                            return -1;
+                        }
+                    }
+                });
+
+        versionCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(10, TimeUnit.SECONDS)
+                .maximumSize(10_000)
+                .build(new CacheLoader<String, String>() {
+                    @Override
+                    public String load(String key) throws Exception {
+                        try {
+                            Builder builder = new Request.Builder().url(key);
+                            if (parameters.getUsername() != null
+                                    && parameters.getUsername().isEmpty()
+                                    && parameters.getPassword() != null
+                                    && parameters.getPassword().isEmpty()) {
+                                builder.addHeader(
+                                        "Authorization",
+                                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
+                            }
+                            Request request = builder.build();
+                            Response response = client.newCall(request).execute();
+                            if (response.isSuccessful()) {
+                                return response.body().string();
+                            } else {
+                                return "Error: " + response.code();
+                            }
+                        } catch (UnknownHostException ex) {
+                            return "Unknown Host";
+                        } catch (ConnectException | SocketTimeoutException ex) {
+                            return "Time Out";
+                        } catch (IOException ex) {
+                            return "IO Exception";
+                        }
+                    }
+                });
     }
 
     public int readAvailability(String host, String url) {
@@ -42,20 +102,8 @@ public class InfoHelper {
             return -1;
         }
         try {
-            Builder builder = new Request.Builder()
-                    .url(Const.HTTP + url.replace(Const.HOST, host));
-            if (parameters.getUsername() != null
-                    && parameters.getUsername().isEmpty()
-                    && parameters.getPassword() != null
-                    && parameters.getPassword().isEmpty()) {
-                builder.addHeader(
-                        "Authorization",
-                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
-            }
-            Request request = builder.build();
-            Response response = client.newCall(request).execute();
-            return response.code();
-        } catch (IOException ex) {
+            return availabilityCache.get(Const.HTTP + url.replace(Const.HOST, host));
+        } catch (ExecutionException ex) {
             return -1;
         }
     }
@@ -65,29 +113,9 @@ public class InfoHelper {
             return "No Version URL";
         }
         try {
-            Builder builder = new Request.Builder()
-                    .url(Const.HTTP + url.replace(Const.HOST, host));
-            if (parameters.getUsername() != null
-                    && parameters.getUsername().isEmpty()
-                    && parameters.getPassword() != null
-                    && parameters.getPassword().isEmpty()) {
-                builder.addHeader(
-                        "Authorization",
-                        Credentials.basic(parameters.getUsername(), parameters.getPassword()));
-            }
-            Request request = builder.build();
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                return response.body().string();
-            } else {
-                return "Error: " + response.code();
-            }
-        } catch (UnknownHostException ex) {
-            return "Unknown Host";
-        } catch (ConnectException | SocketTimeoutException ex) {
-            return "Time Out";
-        } catch (IOException ex) {
-            return "IO Exception";
+            return versionCache.get(Const.HTTP + url.replace(Const.HOST, host));
+        } catch (ExecutionException ex) {
+            return "Internal Error";
         }
     }
 
