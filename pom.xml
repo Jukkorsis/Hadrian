@@ -88,8 +88,8 @@
         </dependency>
         <dependency>
             <groupId>org.dshops</groupId>
-            <artifactId>metrics-raw</artifactId>
-            <version>0.0.10</version>
+            <artifactId>metrics-raw-kairosdb</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.cronutils</groupId>
