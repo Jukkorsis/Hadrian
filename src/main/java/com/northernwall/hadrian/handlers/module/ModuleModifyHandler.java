@@ -81,6 +81,22 @@ public class ModuleModifyHandler extends BasicHandler {
         }
     }
 
+    public static void checkHostAbbr(String hostAbbr) throws Http400BadRequestException {
+        if (hostAbbr == null
+                || hostAbbr.isEmpty()) {
+            throw new Http400BadRequestException("Host abbr is missing");
+        }
+        if (!hostAbbr.matches("^[a-zA-Z0-9]+$")) {
+            throw new Http400BadRequestException("Host abbr contains an illegal character");
+        }
+        if (hostAbbr.length() < 3) {
+            throw new Http400BadRequestException("Host abbr is to short, minimum is 3");
+        }
+        if (hostAbbr.length() > 8) {
+            throw new Http400BadRequestException("Host abbr is to long, maximum is 8");
+        }
+    }
+
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
     private final FolderHelper folderHelper;
@@ -154,9 +170,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.smokeTestUrl = "";
                 data.smokeTestCron = "";
             case Deployable:
-                if (data.hostAbbr.contains("-")) {
-                    throw new Http400BadRequestException("Can not have '-' in host abbr");
-                }
+                ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
 
                 if (service.isDoDeploys()) {
                     data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);

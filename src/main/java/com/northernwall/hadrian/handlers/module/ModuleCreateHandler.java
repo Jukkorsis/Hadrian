@@ -97,9 +97,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.outbound = "No";
                 data.smokeTestUrl = "";
             case Deployable:
-                if (data.hostAbbr.contains("-")) {
-                    throw new Http400BadRequestException("Can not have '-' in host abbr");
-                }
+                ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
 
                 if (service.isDoDeploys()) {
                     data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
