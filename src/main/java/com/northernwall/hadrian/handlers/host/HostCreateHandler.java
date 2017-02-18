@@ -39,6 +39,7 @@ import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,14 +75,10 @@ public class HostCreateHandler extends BasicHandler {
 
         Config config = configHelper.getConfig();
 
-        checkRange(data.count, 1, config.maxCount, "host count");
         checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
         checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
         checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
 
-        if (!config.dataCenters.contains(data.dataCenter)) {
-            throw new Http400BadRequestException("Unknown data center");
-        }
         if (!config.environmentNames.contains(data.environment)) {
             throw new Http400BadRequestException("Unknown environment");
         }
@@ -94,36 +91,42 @@ public class HostCreateHandler extends BasicHandler {
             throw new Http400BadRequestException("Module must be a deployable or simulator");
         }
 
-        String prefix = buildPrefix(data.environment, config, data.dataCenter, module.getHostAbbr());
-        int num = 1;
-        int createdCount = 0;
-        while (createdCount < data.count && num <= config.maxTotalCount) {
-            String hostName = buildHostName(prefix, num);
-            num++;
-            SearchResult searchResult = getDataAccess().doSearch(
-                    Const.SEARCH_SPACE_HOST_NAME,
-                    hostName);
-            if (searchResult == null) {
-                createdCount++;
-                LOGGER.info("Building host {} - {}/{}", hostName, createdCount, data.count);
-                doCreateHost(hostName, data, user, team, service, module);
-            }
-        }
+        for (Map.Entry<String, Integer> entry : data.counts.entrySet()) {
+            int count = entry.getValue();
+            String dataCenter = entry.getKey();
+            
+            if (config.dataCenters.contains(dataCenter) && count > 0) {
+                checkRange(count, 1, config.maxCount, "host count");
+                
+                String prefix = buildPrefix(data.environment, config, dataCenter, module.getHostAbbr());
+                int num = 1;
+                int createdCount = 0;
 
-        if (createdCount == 0) {
-            throw new Http400BadRequestException("Could not create any hosts, max host count per data center reached");
+                while (createdCount < count && num <= config.maxTotalCount) {
+                    String hostName = buildHostName(prefix, num);
+                    num++;
+                    SearchResult searchResult = getDataAccess().doSearch(
+                            Const.SEARCH_SPACE_HOST_NAME,
+                            hostName);
+                    if (searchResult == null) {
+                        createdCount++;
+                        LOGGER.info("Building host {} - {}/{}", hostName, createdCount, count);
+                        doCreateHost(hostName, data, dataCenter, user, team, service, module);
+                    }
+                }
+            }
         }
 
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private void doCreateHost(String hostName, PostHostData data, User user, Team team, Service service, Module module) throws IOException {
+    private void doCreateHost(String hostName, PostHostData data, String dataCenter, User user, Team team, Service service, Module module) throws IOException {
         Host host = new Host(
                 hostName,
                 data.serviceId,
                 data.moduleId,
-                data.dataCenter,
+                dataCenter,
                 data.environment,
                 data.platform);
         getDataAccess().saveHost(host);
@@ -137,11 +140,6 @@ public class HostCreateHandler extends BasicHandler {
                 host.getHostId(),
                 true,
                 "Creating...");
-        
-        if (data.specialInstructions != null 
-                && !data.specialInstructions.isEmpty()) {
-            LOGGER.info("Host creation with special instructions. {}", data.specialInstructions);
-        }
 
         List<WorkItem> workItems = new ArrayList<>(3);
 

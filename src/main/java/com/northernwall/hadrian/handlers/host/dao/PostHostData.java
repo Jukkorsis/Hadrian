@@ -15,10 +15,11 @@
  */
 package com.northernwall.hadrian.handlers.host.dao;
 
+import java.util.Map;
+
 public class PostHostData {
     public String serviceId;
     public String moduleId;
-    public String dataCenter;
     public String environment;
     public String platform;
     public int sizeCpu;
@@ -26,7 +27,7 @@ public class PostHostData {
     public int sizeStorage;
     public String version;
     public String configVersion;
-    public int count;
+    public Map<String, Integer> counts;
     public String specialInstructions;
     public String reason;
 
