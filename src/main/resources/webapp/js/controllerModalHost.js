@@ -46,6 +46,12 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
+        $scope.showSpecialInstructions = false;
+        $scope.toggleSpecialInstructions = function () {
+            $scope.showSpecialInstructions = true;
+        }
+
+
         $scope.configEnvironment = null;
         for (var i = 0; i < config.environments.length; i++) {
             if (config.environments[i].name === moduleEnvironment.environment) {
@@ -95,7 +101,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 $scope.formSaveHost.configVersion = data.configVersions[0];
             }
         });
-
+        
         $scope.save = function () {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
