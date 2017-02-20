@@ -28,6 +28,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.dataFolder = $scope.config.dataFolder;
         $scope.formSaveModule.logsFolder = $scope.config.logsFolder;
         $scope.formSaveModule.logsRetention = 6;
+        $scope.formSaveModule.logCollection = "Daily";
         $scope.formSaveModule.startCmdLine = "";
         $scope.formSaveModule.startTimeOut = 60;
         $scope.formSaveModule.stopCmdLine = "";
@@ -55,6 +56,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 dataFolder: $scope.formSaveModule.dataFolder,
                 logsFolder: $scope.formSaveModule.logsFolder,
                 logsRetention: $scope.formSaveModule.logsRetention,
+                logCollection: $scope.formSaveModule.logCollection,
                 startCmdLine: $scope.formSaveModule.startCmdLine,
                 startTimeOut: $scope.formSaveModule.startTimeOut,
                 stopCmdLine: $scope.formSaveModule.stopCmdLine,
@@ -102,6 +104,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.dataFolder = module.dataFolder;
         $scope.formUpdateModule.logsFolder = module.logsFolder;
         $scope.formUpdateModule.logsRetention = module.logsRetention;
+        $scope.formUpdateModule.logCollection = module.logCollection;
         $scope.formUpdateModule.startCmdLine = module.startCmdLine;
         $scope.formUpdateModule.startTimeOut = module.startTimeOut;
         $scope.formUpdateModule.stopCmdLine = module.stopCmdLine;
@@ -129,6 +132,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 dataFolder: $scope.formUpdateModule.dataFolder,
                 logsFolder: $scope.formUpdateModule.logsFolder,
                 logsRetention: $scope.formUpdateModule.logsRetention,
+                logCollection: $scope.formUpdateModule.logCollection,
                 startCmdLine: $scope.formUpdateModule.startCmdLine,
                 startTimeOut: $scope.formUpdateModule.startTimeOut,
                 stopCmdLine: $scope.formUpdateModule.stopCmdLine,

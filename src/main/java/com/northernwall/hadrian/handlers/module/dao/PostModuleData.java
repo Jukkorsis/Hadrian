@@ -43,6 +43,7 @@ public class PostModuleData {
     public String dataFolder;
     public String logsFolder;
     public int logsRetention;
+    public String logCollection;
     public String startCmdLine;
     public int startTimeOut;
     public String stopCmdLine;

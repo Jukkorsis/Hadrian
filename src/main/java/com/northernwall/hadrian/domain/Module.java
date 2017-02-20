@@ -43,6 +43,7 @@ public class Module implements Comparable<Module> {
     private String dataFolder;
     private String logsFolder;
     private int logsRetention;
+    private String logCollection;
     private String startCmdLine;
     private int startTimeOut;
     private String stopCmdLine;
@@ -50,7 +51,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention ,String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention, String logCollection, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -70,6 +71,7 @@ public class Module implements Comparable<Module> {
         this.dataFolder = dataFolder;
         this.logsFolder = logsFolder;
         this.logsRetention = logsRetention;
+        this.logCollection = logCollection;
         this.startCmdLine = startCmdLine;
         this.startTimeOut = startTimeOut;
         this.stopCmdLine = stopCmdLine;
@@ -231,6 +233,17 @@ public class Module implements Comparable<Module> {
 
     public void setLogsRetention(int logsRetention) {
         this.logsRetention = logsRetention;
+    }
+
+    public String getLogCollection() {
+        if (logCollection == null) {
+            logCollection = "Daily";
+        }
+        return logCollection;
+    }
+
+    public void setLogCollection(String logCollection) {
+        this.logCollection = logCollection;
     }
 
     public String getStartCmdLine() {

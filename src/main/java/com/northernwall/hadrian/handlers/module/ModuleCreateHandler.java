@@ -203,6 +203,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.dataFolder,
                 data.logsFolder,
                 data.logsRetention,
+                data.logCollection,
                 data.startCmdLine,
                 data.startTimeOut,
                 data.stopCmdLine,

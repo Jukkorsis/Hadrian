@@ -244,6 +244,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setDataFolder(data.dataFolder);
         module.setLogsFolder(data.logsFolder);
         module.setLogsRetention(data.logsRetention);
+        module.setLogCollection(data.logCollection);
         module.setStartCmdLine(data.startCmdLine);
         module.setStartTimeOut(data.startTimeOut);
         module.setStopCmdLine(data.stopCmdLine);

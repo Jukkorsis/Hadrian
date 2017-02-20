@@ -5,20 +5,20 @@
   <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label for="name" class="col-sm-4 control-label">Name:</label>
+      <label class="col-sm-4 control-label">Name:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.moduleName" type="text" class="form-control" id="name" autofocus="true">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Host Abbr:</label>
+      <label class="col-sm-4 control-label">Host Abbr:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.hostAbbr" type="text" class="form-control" id="name">
         <p class="help-block">Used to identify the Service and Module in generated host names. Only letters and numbers allowed.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Environments:</label>
+      <label class="col-sm-4 control-label">Environments:</label>
       <div class="col-sm-8">
         <span ng-repeat="n in config.environmentNames">
           <input ng-model="formUpdateModule.environmentNames[n]" type="checkbox">{{n}} &nbsp;
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Outbound Connectivity:</label>
+      <label class="col-sm-4 control-label">Outbound Connectivity:</label>
       <div class="col-sm-8">
         <select ng-model="formUpdateModule.outbound" class="form-control">
           <option>No</option>
@@ -37,31 +37,81 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Availability Url:</label>
+      <label class="col-sm-4 control-label">Availability Url:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.availabilityUrl" type="text" class="form-control" id="name">
         <p class="help-block">The URL used to get a hosts availability. For example: {{config.availabilityUrl}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Version Url:</label>
+      <label class="col-sm-4 control-label">Version Url:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.versionUrl" type="text" class="form-control" id="name">
         <p class="help-block">The URL used to get a hosts version. For example: {{config.versionUrl}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Smoke Test Url:</label>
+      <label class="col-sm-4 control-label">Smoke Test Url:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.smokeTestUrl" type="text" class="form-control">
         <p class="help-block">Optional. The URL used to invoke a Smoke Test (aka Post Deployment Test). For example: {{config.smokeTestUrl}}.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Smoke Test Cron:</label>
+      <label class="col-sm-4 control-label">Smoke Test Cron:</label>
       <div class="col-sm-8">
         <input ng-model="formUpdateModule.smokeTestCron" type="text" class="form-control">
         <p class="help-block">Optional. The schedule use to preform automated smoke tests on all hosts.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Run As User:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name">
+        <p class="help-block" ng-if="!service.doDeploys">The user account that the service will run as.</p>
+        <p class="help-block" ng-if="service.doDeploys">The user account that the service will run as. The Start and Stop command will be invoked as this user.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Deployment Folder:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name">
+        <p class="help-block" ng-if="!service.doDeploys">The folder where you plan to deploy the service. This is documentation only, the system does not use this information or create this folder.</p>
+        <p class="help-block" ng-if="service.doDeploys">The Start and Stop command will be invoked from this folder. Artifacts and Module files will be copied to this folder. This folder (and sub-folders) are removed during a deployment, and maybe removed during a restart.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Data Folder:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name">
+        <p class="help-block" ng-if="!service.doDeploys">The folder where the service will persist data, if required. The data folder should not be a sub folder of the deployment folder.</p>
+        <p class="help-block" ng-if="service.doDeploys">Only files in this folder are guaranteed to remain across deployments and restarts. The data folder should not be a sub folder of the deployment folder.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Logs Folder:</label>
+      <div class="col-sm-8">
+        <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name">
+        <p class="help-block">Log files should be written to this folder so that they can be automatically collected. Log files must conform to the Log file specification for automatic collection. The logs folder should not be a sub folder of the deployment folder.</p>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-4 control-label">Logs Retention:</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
+          <div class="input-group-addon">months</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">  
+      <label class="col-sm-3 control-label">Log Collection:</label>
+      <div class="col-sm-9">
+        <select ng-model="formUpdateModule.logCollection" class="form-control">
+          <option>Daily</option>
+          <option>Hourly</option>
+        </select>
+        <p class="help-block">Log files are automatically collected on this schedule.</p>
       </div>
     </div>
     <div ng-if="service.doBuilds">
@@ -102,43 +152,6 @@
         <div class="col-sm-8">
           <input ng-model="formUpdateModule.artifactSuffix" type="text" class="form-control" id="name">
           <p class="help-block">Does the service's artifact have a suffix, such as '-jar-with-dependencies'.</p>
-        </div>
-      </div>
-      <div class="form-group form-group-sm">
-        <label for="email" class="col-sm-4 control-label">Run As User:</label>
-        <div class="col-sm-8">
-          <input ng-model="formUpdateModule.runAs" type="text" class="form-control" id="name">
-          <p class="help-block">The Start and Stop command will be invoked as this user</p>
-        </div>
-      </div>
-      <div class="form-group form-group-sm">
-        <label for="email" class="col-sm-4 control-label">Deployment Folder:</label>
-        <div class="col-sm-8">
-          <input ng-model="formUpdateModule.deploymentFolder" type="text" class="form-control" id="name">
-         <p class="help-block">The Start and Stop command will be invoked from this folder. Artifacts and Module files will be copied to this folder. This folder (and sub-folders) are removed during a deployment, and maybe removed during a restart.</p>
-         </div>
-      </div>
-      <div class="form-group form-group-sm">
-        <label for="email" class="col-sm-4 control-label">Data Folder:</label>
-        <div class="col-sm-8">
-          <input ng-model="formUpdateModule.dataFolder" type="text" class="form-control" id="name">
-        <p class="help-block">Only files in this folder are guaranteed to remain across deployments and restarts.</p>
-          </div>
-      </div>
-      <div class="form-group form-group-sm">
-        <label for="email" class="col-sm-4 control-label">Logs Folder:</label>
-        <div class="col-sm-8">
-          <input ng-model="formUpdateModule.logsFolder" type="text" class="form-control" id="name">
-           <p class="help-block">Log files should be written to this folder so that they can be automatically collected.</p>
-       </div>
-      </div>
-      <div class="form-group form-group-sm">
-        <label for="email" class="col-sm-4 control-label">Logs Retention:</label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <input ng-model="formUpdateModule.logsRetention" type="number" class="form-control">
-            <div class="input-group-addon">months</div>
-          </div>
         </div>
       </div>
       <div class="form-group form-group-sm">
