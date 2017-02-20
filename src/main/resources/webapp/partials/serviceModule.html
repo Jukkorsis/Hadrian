@@ -69,7 +69,6 @@
                             <li role="menuitem"><a ng-click="openUpdateModuleModal(m);">Update module</a></li>
                             <li role="menuitem"><a ng-click="openDeleteModuleModal(m);">Delete module</a></li>
                             <li class="divider"></li>
-                            <li class="divider"></li>
                             <li role="menuitem"><a ng-click="openAddUsesModal(m);">Add dependence</a></li>
                             <li role="menuitem"ng-repeat="sr in m.uses">
                                 <a ng-click="deleteServiceRef(service.serviceId, m.moduleId, sr.serverServiceId, sr.serverModuleId);">Remove dependence on {{sr.moduleName}}</a>
@@ -93,17 +92,19 @@
                                     <dd><span ng-repeat="(nname, val) in m.environmentNames">{{nname}} </span></dd>
                                     <dt>Outbound Connectivity:</dt>
                                     <dd>{{m.outbound}}</dd>
+                                    <dt>Run As:</dt>
+                                    <dd>{{m.runAs}}</dd>
+                                    <dt>Deployment Folder:</dt>
+                                    <dd>{{m.deploymentFolder}}</dd>
+                                    <dt>Data Folder:</dt>
+                                    <dd>{{m.dataFolder}}</dd>
+                                    <dt>Logs Folder:</dt>
+                                    <dd>{{m.logsFolder}}</dd>
+                                    <dt>Logs Retention:</dt>
+                                    <dd>{{m.logsRetention}} Months</dd>
+                                    <dt>Log Collection:</dt>
+                                    <dd>{{m.logCollection}}</dd>
                                     <div ng-if="service.doDeploys">
-                                        <dt>Run As:</dt>
-                                        <dd>{{m.runAs}}</dd>
-                                        <dt>Deployment Folder:</dt>
-                                        <dd>{{m.deploymentFolder}}</dd>
-                                        <dt>Data Folder:</dt>
-                                        <dd>{{m.dataFolder}}</dd>
-                                        <dt>Logs Folder:</dt>
-                                        <dd>{{m.logsFolder}}</dd>
-                                        <dt>Logs Retention:</dt>
-                                        <dd>{{m.logsRetention}} Months</dd>
                                         <div ng-if="m.configName">
                                             <dt>{{config.moduleConfigName}}:</dt>
                                             <dd>{{m.configName}}</dd>
