@@ -7,20 +7,20 @@
   <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Platform:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Platform:</label>
+      <div class="col-sm-9">
         <select ng-model="formSaveHost.platform" ng-options="c for c in config.platforms" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Size CPU:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Size CPU:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveHost.sizeCpu" type="number" min="{{config.minCpu}}" max="{{config.maxCpu}}" class="form-control">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Size Memory:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Size Memory:</label>
+      <div class="col-sm-9">
         <div class="input-group">
           <input ng-model="formSaveHost.sizeMemory" type="number" min="{{config.minMemory}}" max="{{config.maxMemory}}" class="form-control">
           <div class="input-group-addon">GB</div>
@@ -28,8 +28,8 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Size Storage:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Size Storage:</label>
+      <div class="col-sm-9">
         <div class="input-group">
           <input ng-model="formSaveHost.sizeStorage" type="number" min="{{config.minStorage}}" max="{{config.maxStorage}}" step="5" class="form-control">
           <div class="input-group-addon">GB</div>
@@ -37,20 +37,20 @@
       </div>
     </div>
     <div ng-if="service.doDeploys" class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Artifact Version:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Artifact Version:</label>
+      <div class="col-sm-9">
         <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
       </div>
     </div>
     <div ng-if="service.doDeploys && module.configName" class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Config Version:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Config Version:</label>
+      <div class="col-sm-9">
         <input type="text" ng-model="formSaveHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Count:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Count:</label>
+      <div class="col-sm-9">
         <table>
           <tr>
             <td ng-repeat="dc in config.dataCenters" class="text-center"><b>{{dc}}</b></td>
@@ -64,8 +64,8 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Special Instructions:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Special Instructions:</label>
+      <div class="col-sm-9">
         <div ng-if="!showSpecialInstructions">
           <button class="btn btn-primary" type="button" ng-click="toggleSpecialInstructions()">Add Special Instructions</button>
         </div>
@@ -76,8 +76,8 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Reason:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Reason:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveHost.reason" type="text" class="form-control">
       </div>
     </div>

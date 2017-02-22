@@ -5,14 +5,14 @@
   <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Title:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Title:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveDocument.title" type="text" maxlength="50" class="form-control" autofocus="true">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="name" class="col-sm-4 control-label">Document Type:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Document Type:</label>
+      <div class="col-sm-9">
         <select ng-model="formSaveDocument.documentType" class="form-control">
           <option value="Link">Link</option>
           <option value="Markdown">Markdown</option>
@@ -24,8 +24,8 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">URL:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">URL:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveDocument.link" type="text" maxlength="300" class="form-control">
         <p class="help-block">The URL used to access the document.</p>
       </div>

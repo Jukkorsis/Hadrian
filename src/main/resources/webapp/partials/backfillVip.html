@@ -6,20 +6,20 @@
   <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Domain:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Domain:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveVip.dns" type="text" class="form-control" autofocus="true">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Root Domain:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Root Domain:</label>
+      <div class="col-sm-9">
         <select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">External:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">External:</label>
+      <div class="col-sm-9">
         <select ng-model="formSaveVip.external" class="form-control">
           <option value="false" selected="selected">False</option>
           <option value="true">True</option>
@@ -27,20 +27,20 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Protocol:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Protocol:</label>
+      <div class="col-sm-9">
         <select ng-model="formSaveVip.protocol" ng-options="c for c in config.protocols" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">VIP Port:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">VIP Port:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveVip.vipPort" type="number" class="form-control">
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-4 control-label">Service Port:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Service Port:</label>
+      <div class="col-sm-9">
         <input ng-model="formSaveVip.servicePort" type="number" class="form-control">
       </div>
     </div>

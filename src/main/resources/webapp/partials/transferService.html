@@ -6,14 +6,14 @@
   <uib-alert>Transferring a service to another team does not make any changes in Git or Maven.</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label for="name" class="col-sm-4 control-label">New Team:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">New Team:</label>
+      <div class="col-sm-9">
         <select ng-model="formTransferService.team" ng-options="r as r.teamName for r in teams.teams" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label for="email" class="col-sm-4 control-label">Reason:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-3 control-label">Reason:</label>
+      <div class="col-sm-9">
         <input ng-model="formTransferService.reason" type="text" class="form-control">
       </div>
     </div>
