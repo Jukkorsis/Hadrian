@@ -1,6 +1,7 @@
 <h3>Service Catalog</h3>
 <div ng-if="catalogLoading">Loading...</div>
 <div ng-if="!catalogLoading">
+  Cross Team Dashboard <a ng-repeat="env in config.environmentNames" href="#/DashboardAll/{{env}}">{{env}} </a><br/>
   <form>
     <div class="form-group">
       <div class="input-group">

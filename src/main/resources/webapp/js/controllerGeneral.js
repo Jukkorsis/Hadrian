@@ -53,10 +53,15 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
         //$scope.selectCatalog();
     }]);
 
-hadrianControllers.controller('CatalogCtrl', ['$scope', '$http',
-    function ($scope, $http) {
+hadrianControllers.controller('CatalogCtrl', ['$scope', '$http', 'Config',
+    function ($scope, $http, Config) {
         $scope.catalogLoading = true;
         $scope.catalog = null;
+
+        Config.get({}, function (config) {
+            $scope.config = config;
+        });
+
         var responsePromise = $http.get("/v1/catalog", {});
         responsePromise.success(function (data, status, headers, config) {
             $scope.catalogSortType = 'teamName';
