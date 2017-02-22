@@ -1031,7 +1031,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     }
                 }
             });
-        }, 15000);
+        }, 20000);
 
         $scope.$on('$destroy', function () {
             $interval.cancel(stopRefresh);

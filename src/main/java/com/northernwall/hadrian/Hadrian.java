@@ -163,7 +163,7 @@ public class Hadrian {
         this.messagingCoodinator = messagingCoodinator;
         this.gson = gson;
 
-        infoHelper = new InfoHelper(parameters, client);
+        infoHelper = new InfoHelper(parameters, client, metricRegistry);
 
         setupJetty();
     }

@@ -31,21 +31,28 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.dshops.metrics.MetricRegistry;
 
 public class InfoHelper {
 
-    private final LoadingCache<String, Integer> availabilityCache;
-    private final LoadingCache<String, String> versionCache;
+    private final MetricRegistry metricRegistry;
+    private final LoadingCache<CacheKey, Integer> availabilityCache;
+    private final LoadingCache<CacheKey, String> versionCache;
 
-    public InfoHelper(Parameters parameters, OkHttpClient client) {
+    public InfoHelper(Parameters parameters, OkHttpClient client, MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+        
         availabilityCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(10, TimeUnit.SECONDS)
+                .expireAfterWrite(15, TimeUnit.SECONDS)
                 .maximumSize(10_000)
-                .build(new CacheLoader<String, Integer>() {
+                .build(new CacheLoader<CacheKey, Integer>() {
                     @Override
-                    public Integer load(String key) throws Exception {
+                    public Integer load(CacheKey key) throws Exception {
                         try {
-                            Builder builder = new Request.Builder().url(key);
+                            metricRegistry.event("readAvailability.miss", 
+                                "targetHost", key.getHost());
+                            String temp = Const.HTTP + key.getUrl().replace(Const.HOST, key.getHost());
+                            Builder builder = new Request.Builder().url(temp);
                             if (parameters.getUsername() != null
                                     && parameters.getUsername().isEmpty()
                                     && parameters.getPassword() != null
@@ -64,13 +71,16 @@ public class InfoHelper {
                 });
 
         versionCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(10, TimeUnit.SECONDS)
+                .expireAfterWrite(15, TimeUnit.SECONDS)
                 .maximumSize(10_000)
-                .build(new CacheLoader<String, String>() {
+                .build(new CacheLoader<CacheKey, String>() {
                     @Override
-                    public String load(String key) throws Exception {
+                    public String load(CacheKey key) throws Exception {
                         try {
-                            Builder builder = new Request.Builder().url(key);
+                            metricRegistry.event("readVersion.miss", 
+                                "targetHost", key.getHost());
+                            String temp = Const.HTTP + key.getUrl().replace(Const.HOST, key.getHost());
+                            Builder builder = new Request.Builder().url(temp);
                             if (parameters.getUsername() != null
                                     && parameters.getUsername().isEmpty()
                                     && parameters.getPassword() != null
@@ -102,7 +112,9 @@ public class InfoHelper {
             return -1;
         }
         try {
-            return availabilityCache.get(Const.HTTP + url.replace(Const.HOST, host));
+            metricRegistry.event("readAvailability.request", 
+                    "targetHost", host);
+            return availabilityCache.get(new CacheKey(host, url));
         } catch (ExecutionException ex) {
             return -1;
         }
@@ -113,7 +125,9 @@ public class InfoHelper {
             return "No Version URL";
         }
         try {
-            return versionCache.get(Const.HTTP + url.replace(Const.HOST, host));
+            metricRegistry.event("readVersion.request", 
+                    "targetHost", host);
+            return versionCache.get(new CacheKey(host, url));
         } catch (ExecutionException ex) {
             return "Internal Error";
         }
