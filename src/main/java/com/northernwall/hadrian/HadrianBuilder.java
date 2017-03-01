@@ -43,7 +43,7 @@ import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
-import org.dshops.listeners.KairosDBListener;
+import org.dshops.metrics.listeners.KairosDBListener;
 import org.dshops.metrics.JvmMetrics;
 import org.dshops.metrics.MetricRegistry;
 import org.dshops.metrics.listeners.ConsoleListener;
