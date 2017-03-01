@@ -41,9 +41,6 @@ public class HostData {
     public String dataCenter;
     public String environment;
     public String platform;
-    public int sizeCpu;
-    public int sizeMemory;
-    public int sizeStorage;
     public String version;
     public String prevVersion;
     public String versionUrl;

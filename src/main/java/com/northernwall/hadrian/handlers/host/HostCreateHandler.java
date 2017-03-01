@@ -75,15 +75,8 @@ public class HostCreateHandler extends BasicHandler {
 
         Config config = configHelper.getConfig();
 
-        checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
-        checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
-        checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
-
         if (!config.environmentNames.contains(data.environment)) {
             throw new Http400BadRequestException("Unknown environment");
-        }
-        if (!config.platforms.contains(data.platform)) {
-            throw new Http400BadRequestException("Unknown operating platform");
         }
 
         Module module = getModule(data.moduleId, null, service);
@@ -128,7 +121,7 @@ public class HostCreateHandler extends BasicHandler {
                 data.moduleId,
                 dataCenter,
                 data.environment,
-                data.platform);
+                module.getPlatform());
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(
                 Const.SEARCH_SPACE_HOST_NAME,
@@ -146,9 +139,6 @@ public class HostCreateHandler extends BasicHandler {
         WorkItem workItemCreate = new WorkItem(Type.host, Operation.create, user, team, service, module, host, null);
         workItemCreate.setSpecialInstructions(data.specialInstructions);
         workItemCreate.setReason(data.reason);
-        workItemCreate.getHost().sizeCpu = data.sizeCpu;
-        workItemCreate.getHost().sizeMemory = data.sizeMemory;
-        workItemCreate.getHost().sizeStorage = data.sizeStorage;
         workItemCreate.getHost().version = data.version;
         workItemCreate.getHost().configVersion = data.configVersion;
         workItems.add(workItemCreate);

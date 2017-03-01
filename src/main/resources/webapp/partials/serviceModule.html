@@ -124,6 +124,14 @@
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
                                 <div ng-if="m.moduleType === 'Deployable' || m.moduleType === 'Simulator'">
+                                    <dt>Platform:</dt>
+                                    <dd>{{m.platform}}</dd>
+                                    <dt>CPU Size:</dt>
+                                    <dd>{{m.sizeCpu}}</dd>
+                                    <dt>Memory Size:</dt>
+                                    <dd>{{m.sizeMemory}}GB</dd>
+                                    <dt>Storage Size:</dt>
+                                    <dd>{{m.sizeStorage}}GB</dd>
                                     <dt>Version URL:</dt>
                                     <dd>{{m.versionUrl}}</dd>
                                     <dt>Availability URL:</dt>

@@ -34,6 +34,10 @@ public class Module implements Comparable<Module> {
     private String artifactSuffix;
     private String outbound;
     private String hostAbbr;
+    private String platform;
+    private int sizeCpu;
+    private int sizeMemory;
+    private int sizeStorage;
     private String versionUrl;
     private String availabilityUrl;
     private String smokeTestUrl;
@@ -51,7 +55,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr,  String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention, String logCollection, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr, String platform, int sizeCpu, int sizeMemory, int sizeStorage, String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention, String logCollection, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -62,6 +66,10 @@ public class Module implements Comparable<Module> {
         this.artifactSuffix = artifactSuffix;
         this.outbound = outbound;
         this.hostAbbr = hostAbbr;
+        this.platform = platform;
+        this.sizeCpu = sizeCpu;
+        this.sizeMemory = sizeMemory;
+        this.sizeStorage = sizeStorage;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.smokeTestUrl = smokeTestUrl;
@@ -161,6 +169,38 @@ public class Module implements Comparable<Module> {
 
     public void setHostAbbr(String hostAbbr) {
         this.hostAbbr = hostAbbr;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public int getSizeCpu() {
+        return sizeCpu;
+    }
+
+    public void setSizeCpu(int sizeCpu) {
+        this.sizeCpu = sizeCpu;
+    }
+
+    public int getSizeMemory() {
+        return sizeMemory;
+    }
+
+    public void setSizeMemory(int sizeMemory) {
+        this.sizeMemory = sizeMemory;
+    }
+
+    public int getSizeStorage() {
+        return sizeStorage;
+    }
+
+    public void setSizeStorage(int sizeStorage) {
+        this.sizeStorage = sizeStorage;
     }
 
     public String getVersionUrl() {

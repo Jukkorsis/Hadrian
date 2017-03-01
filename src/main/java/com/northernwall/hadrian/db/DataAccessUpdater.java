@@ -19,6 +19,7 @@ import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
 import java.util.List;
 import org.slf4j.Logger;
@@ -32,12 +33,37 @@ public class DataAccessUpdater {
         String version = dataAccess.getVersion();
 
         if (version == null || version.isEmpty()) {
-            dataAccess.setVersion("1.7");
+            dataAccess.setVersion("1.8");
             LOGGER.info("New DB, initial version set.");
+        } else if (version.equals("1.7")) {
+            fixModule(dataAccess, config);
+            dataAccess.setVersion("1.8");
+            LOGGER.info("DB has been upgraded to 1.8 from {}", version);
         } else {
             LOGGER.info("Current DB version is {}, no upgrade required.", version);
         }
         fixHost(dataAccess);
+    }
+
+    private static void fixModule(DataAccess dataAccess, Config config) {
+        List<Service> services = dataAccess.getActiveServices();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                List<Module> modules = dataAccess.getModules(service.getServiceId());
+                if (modules != null && !modules.isEmpty()) {
+                    for (Module module : modules) {
+                        if (module.getModuleType() == ModuleType.Deployable
+                                || module.getModuleType() == ModuleType.Simulator) {
+                            module.setPlatform(config.platforms.get(0));
+                            module.setSizeCpu(config.minCpu);
+                            module.setSizeMemory(config.minMemory);
+                            module.setSizeStorage(config.minStorage);
+                            dataAccess.saveModule(module);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void fixHost(DataAccess dataAccess) {

@@ -28,6 +28,36 @@
         <p class="help-block">Select the environments this module will be deployed to.</p>
       </div>
     </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Platform:</label>
+      <div class="col-sm-9">
+        <select ng-model="formSaveModule.platform" ng-options="c for c in config.platforms" class="form-control"></select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Size CPU:</label>
+      <div class="col-sm-9">
+        <input ng-model="formSaveModule.sizeCpu" type="number" min="{{config.minCpu}}" max="{{config.maxCpu}}" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Size Memory:</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <input ng-model="formSaveModule.sizeMemory" type="number" min="{{config.minMemory}}" max="{{config.maxMemory}}" class="form-control">
+          <div class="input-group-addon">GB</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Size Storage:</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <input ng-model="formSaveModule.sizeStorage" type="number" min="{{config.minStorage}}" max="{{config.maxStorage}}" step="5" class="form-control">
+          <div class="input-group-addon">GB</div>
+        </div>
+      </div>
+    </div>
     <div class="form-group form-group-sm">  
       <label class="col-sm-3 control-label">Availability Url:</label>
       <div class="col-sm-9">

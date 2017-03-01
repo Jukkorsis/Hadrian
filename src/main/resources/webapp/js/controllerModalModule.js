@@ -19,6 +19,10 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.artifactSuffix = "";
         $scope.formSaveModule.outbound = "No";
         $scope.formSaveModule.hostAbbr = "";
+        $scope.formSaveModule.platform = $scope.config.platforms[0];
+        $scope.formSaveModule.sizeCpu = $scope.config.minCpu;
+        $scope.formSaveModule.sizeMemory = $scope.config.minMemory;
+        $scope.formSaveModule.sizeStorage = $scope.config.minStorage;
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.smokeTestUrl = "";
@@ -47,6 +51,10 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 artifactSuffix: $scope.formSaveModule.artifactSuffix,
                 outbound: $scope.formSaveModule.outbound,
                 hostAbbr: $scope.formSaveModule.hostAbbr,
+                platform: $scope.formSaveModule.platform,
+                sizeCpu: $scope.formSaveModule.sizeCpu,
+                sizeMemory: $scope.formSaveModule.sizeMemory,
+                sizeStorage: $scope.formSaveModule.sizeStorage,
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 smokeTestUrl: $scope.formSaveModule.smokeTestUrl,
@@ -95,6 +103,10 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.artifactSuffix = module.artifactSuffix;
         $scope.formUpdateModule.outbound = module.outbound;
         $scope.formUpdateModule.hostAbbr = module.hostAbbr;
+        $scope.formUpdateModule.platform = module.platform;
+        $scope.formUpdateModule.sizeCpu = module.sizeCpu;
+        $scope.formUpdateModule.sizeMemory = module.sizeMemory;
+        $scope.formUpdateModule.sizeStorage = module.sizeStorage;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.smokeTestUrl = module.smokeTestUrl;
@@ -123,6 +135,10 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 artifactSuffix: $scope.formUpdateModule.artifactSuffix,
                 outbound: $scope.formUpdateModule.outbound,
                 hostAbbr: $scope.formUpdateModule.hostAbbr,
+                platform: $scope.formUpdateModule.platform,
+                sizeCpu: $scope.formUpdateModule.sizeCpu,
+                sizeMemory: $scope.formUpdateModule.sizeMemory,
+                sizeStorage: $scope.formUpdateModule.sizeStorage,
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 smokeTestUrl: $scope.formUpdateModule.smokeTestUrl,

@@ -6,36 +6,6 @@
   <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
   <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
   <form class="form-horizontal">
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Platform:</label>
-      <div class="col-sm-9">
-        <select ng-model="formSaveHost.platform" ng-options="c for c in config.platforms" class="form-control"></select>
-      </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Size CPU:</label>
-      <div class="col-sm-9">
-        <input ng-model="formSaveHost.sizeCpu" type="number" min="{{config.minCpu}}" max="{{config.maxCpu}}" class="form-control">
-      </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Size Memory:</label>
-      <div class="col-sm-9">
-        <div class="input-group">
-          <input ng-model="formSaveHost.sizeMemory" type="number" min="{{config.minMemory}}" max="{{config.maxMemory}}" class="form-control">
-          <div class="input-group-addon">GB</div>
-        </div>
-      </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Size Storage:</label>
-      <div class="col-sm-9">
-        <div class="input-group">
-          <input ng-model="formSaveHost.sizeStorage" type="number" min="{{config.minStorage}}" max="{{config.maxStorage}}" step="5" class="form-control">
-          <div class="input-group-addon">GB</div>
-        </div>
-      </div>
-    </div>
     <div ng-if="service.doDeploys" class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Artifact Version:</label>
       <div class="col-sm-9">
@@ -66,13 +36,8 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Special Instructions:</label>
       <div class="col-sm-9">
-        <div ng-if="!showSpecialInstructions">
-          <button class="btn btn-primary" type="button" ng-click="toggleSpecialInstructions()">Add Special Instructions</button>
-        </div>
-        <div ng-if="showSpecialInstructions">
-          <textarea ng-model="formSaveHost.specialInstructions" maxlength="500" rows="3" class="form-control"></textarea>
-          <p class="help-block">{{config.hostSpecialInstructions}}</p>
-        </div>
+        <textarea ng-model="formSaveHost.specialInstructions" maxlength="500" rows="3" class="form-control"></textarea>
+        <p class="help-block">{{config.hostSpecialInstructions}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">

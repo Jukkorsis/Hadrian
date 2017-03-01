@@ -46,12 +46,6 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
 
-        $scope.showSpecialInstructions = false;
-        $scope.toggleSpecialInstructions = function () {
-            $scope.showSpecialInstructions = true;
-        }
-
-
         $scope.configEnvironment = null;
         for (var i = 0; i < config.environments.length; i++) {
             if (config.environments[i].name === moduleEnvironment.environment) {
@@ -74,10 +68,6 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         };
 
         $scope.formSaveHost = {};
-        $scope.formSaveHost.platform = $scope.config.platforms[0];
-        $scope.formSaveHost.sizeCpu = $scope.config.minCpu;
-        $scope.formSaveHost.sizeMemory = $scope.config.minMemory;
-        $scope.formSaveHost.sizeStorage = $scope.config.minStorage;
         $scope.formSaveHost.version = "";
         $scope.formSaveHost.configVersion = "";
         $scope.formSaveHost.counts = {};
@@ -109,10 +99,6 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 serviceId: $scope.service.serviceId,
                 moduleId: $scope.moduleEnvironment.moduleId,
                 environment: $scope.moduleEnvironment.environment,
-                platform: $scope.formSaveHost.platform,
-                sizeCpu: $scope.formSaveHost.sizeCpu,
-                sizeMemory: $scope.formSaveHost.sizeMemory,
-                sizeStorage: $scope.formSaveHost.sizeStorage,
                 version: $scope.formSaveHost.version,
                 configVersion: $scope.formSaveHost.configVersion,
                 counts: $scope.formSaveHost.counts,

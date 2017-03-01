@@ -16,11 +16,13 @@
 package com.northernwall.hadrian.handlers.module;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -98,12 +100,14 @@ public class ModuleModifyHandler extends BasicHandler {
     }
 
     private final AccessHelper accessHelper;
+    private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
     private final FolderHelper folderHelper;
 
-    public ModuleModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
+    public ModuleModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
+        this.configHelper = configHelper;
         this.workItemProcessor = workItemProcessor;
         this.folderHelper = folderHelper;
     }
@@ -172,6 +176,15 @@ public class ModuleModifyHandler extends BasicHandler {
             case Deployable:
                 ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
 
+                Config config = configHelper.getConfig();
+                if (!config.platforms.contains(data.platform)) {
+                    throw new Http400BadRequestException("Unknown operating platform");
+                }
+
+                checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
+                checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
+                checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
+
                 if (service.isDoDeploys()) {
                     data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
                     data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
@@ -235,6 +248,10 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setArtifactSuffix(data.artifactSuffix);
         module.setOutbound(data.outbound);
         module.setHostAbbr(data.hostAbbr.toLowerCase());
+        module.setPlatform(data.platform);
+        module.setSizeCpu(data.sizeCpu);
+        module.setSizeMemory(data.sizeMemory);
+        module.setSizeStorage(data.sizeStorage);
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setSmokeTestUrl(data.smokeTestUrl);
@@ -274,6 +291,15 @@ public class ModuleModifyHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
+        if (value < min) {
+            throw new Http400BadRequestException("Requested " + text + " is less than allowed");
+        }
+        if (value > max) {
+            throw new Http400BadRequestException("Requested " + text + " is greater than allowed");
+        }
     }
 
 }

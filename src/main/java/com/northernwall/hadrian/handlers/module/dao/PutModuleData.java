@@ -33,6 +33,10 @@ public class PutModuleData {
     public String artifactSuffix;
     public String outbound;
     public String hostAbbr;
+    public String platform;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;

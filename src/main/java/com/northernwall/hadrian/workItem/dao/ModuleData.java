@@ -33,6 +33,10 @@ public class ModuleData {
         temp.artifactSuffix = module.getArtifactSuffix();
         temp.outbound = module.getOutbound();
         temp.hostAbbr = module.getHostAbbr();
+        temp.platform = module.getPlatform();
+        temp.sizeCpu = module.getSizeCpu();
+        temp.sizeMemory = module.getSizeMemory();
+        temp.sizeStorage = module.getSizeStorage();
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.smokeTestUrl = module.getSmokeTestUrl();
@@ -60,6 +64,10 @@ public class ModuleData {
     public String artifactSuffix;
     public String outbound;
     public String hostAbbr;
+    public String platform;
+    public int sizeCpu;
+    public int sizeMemory;
+    public int sizeStorage;
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;

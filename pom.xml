@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>19.0</version><!--cassandra-driver-core requires v19.0-->
         </dependency>
         <dependency>
             <groupId>com.googlecode.htmlcompressor</groupId>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>org.dshops</groupId>
             <artifactId>metrics-raw-kairosdb</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.cronutils</groupId>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.1.3</version>
+            <version>3.1.4</version>
             <type>jar</type>
         </dependency>
         <!--For Email Work Item Sender support-->

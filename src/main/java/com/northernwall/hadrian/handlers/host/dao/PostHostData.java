@@ -21,10 +21,6 @@ public class PostHostData {
     public String serviceId;
     public String moduleId;
     public String environment;
-    public String platform;
-    public int sizeCpu;
-    public int sizeMemory;
-    public int sizeStorage;
     public String version;
     public String configVersion;
     public Map<String, Integer> counts;

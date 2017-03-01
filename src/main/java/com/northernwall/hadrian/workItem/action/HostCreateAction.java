@@ -51,9 +51,9 @@ public class HostCreateAction extends Action {
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Environment", workItem.getHost().environment);
         notes.put("Platform", workItem.getHost().platform);
-        notes.put("Size_CPU", Integer.toString(workItem.getHost().sizeCpu));
-        notes.put("Size_Memory", Integer.toString(workItem.getHost().sizeMemory));
-        notes.put("Size_Storage", Integer.toString(workItem.getHost().sizeStorage));
+        notes.put("Size_CPU", Integer.toString(workItem.getMainModule().sizeCpu));
+        notes.put("Size_Memory", Integer.toString(workItem.getMainModule().sizeMemory));
+        notes.put("Size_Storage", Integer.toString(workItem.getMainModule().sizeStorage));
         if (workItem.getSpecialInstructions() != null 
                 && !workItem.getSpecialInstructions().isEmpty()) {
             notes.put("Special_Instructions", workItem.getSpecialInstructions());

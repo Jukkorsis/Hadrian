@@ -99,6 +99,14 @@ public class ModuleCreateHandler extends BasicHandler {
             case Deployable:
                 ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
 
+                if (!config.platforms.contains(data.platform)) {
+                    throw new Http400BadRequestException("Unknown operating platform");
+                }
+
+                checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
+                checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
+                checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
+
                 if (service.isDoDeploys()) {
                     data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
                     data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
@@ -194,6 +202,10 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.artifactSuffix,
                 data.outbound,
                 data.hostAbbr.toLowerCase(),
+                data.platform,
+                data.sizeCpu,
+                data.sizeMemory,
+                data.sizeStorage,
                 data.versionUrl,
                 data.availabilityUrl,
                 data.smokeTestUrl,
@@ -233,6 +245,15 @@ public class ModuleCreateHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
+        if (value < min) {
+            throw new Http400BadRequestException("Requested " + text + " is less than allowed");
+        }
+        if (value > max) {
+            throw new Http400BadRequestException("Requested " + text + " is greater than allowed");
+        }
     }
 
 }
