@@ -15,8 +15,10 @@
  */
 package com.northernwall.hadrian.handlers.dashboard.dao;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +28,8 @@ public class GetDashboardData {
     public String teamName;
     public List<GetModuleData> leftModules = new LinkedList<>();
     public List<GetModuleData> rightModules = new LinkedList<>();
+    public Map<String, GetDataCenterData> counts = new HashMap<>();
+
 
     public void addModule(GetModuleData moduleData) {
         if (leftModules.size() == rightModules.size()) {

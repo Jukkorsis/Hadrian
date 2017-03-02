@@ -82,12 +82,17 @@ public class DashboardHandler extends BasicHandler {
                                 getDashboardData.addModule(moduleData);
 
                                 for (Host host : moduleHosts) {
-                                    GetDataCenterData dataCenterData = moduleData.counts.get(host.getDataCenter());
-                                    if (dataCenterData == null) {
-                                        dataCenterData = new GetDataCenterData();
-                                        moduleData.counts.put(host.getDataCenter(), dataCenterData);
+                                    GetDataCenterData moduleDataCenterData = moduleData.counts.get(host.getDataCenter());
+                                    if (moduleDataCenterData == null) {
+                                        moduleDataCenterData = new GetDataCenterData();
+                                        moduleData.counts.put(host.getDataCenter(), moduleDataCenterData);
                                     }
-                                    futures.add(executorService.submit(new ReadAvailabilityRunnable(dataCenterData, host, module, infoHelper)));
+                                    GetDataCenterData totalDataCenterData = getDashboardData.counts.get(host.getDataCenter());
+                                    if (totalDataCenterData == null) {
+                                        totalDataCenterData = new GetDataCenterData();
+                                        getDashboardData.counts.put(host.getDataCenter(), totalDataCenterData);
+                                    }
+                                    futures.add(executorService.submit(new ReadAvailabilityRunnable(moduleDataCenterData, totalDataCenterData, host, module, infoHelper)));
                                 }
                             }
                         }

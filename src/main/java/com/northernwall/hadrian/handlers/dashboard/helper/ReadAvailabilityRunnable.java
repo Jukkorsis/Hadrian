@@ -18,17 +18,19 @@ package com.northernwall.hadrian.handlers.dashboard.helper;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.handlers.dashboard.dao.GetDataCenterData;
-import com.northernwall.hadrian.handlers.service.helper.*;
+import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 
 public class ReadAvailabilityRunnable implements Runnable {
 
-    private final GetDataCenterData dataCenterData;
+    private final GetDataCenterData moduleDataCenterData;
+    private final GetDataCenterData totalDataCenterData;
     private final Host host;
     private final Module module;
     private final InfoHelper infoHelper;
 
-    public ReadAvailabilityRunnable(GetDataCenterData dataCenterData, Host host, Module module, InfoHelper infoHelper) {
-        this.dataCenterData = dataCenterData;
+    public ReadAvailabilityRunnable(GetDataCenterData moduleDataCenterData, GetDataCenterData totalDataCenterData, Host host, Module module, InfoHelper infoHelper) {
+        this.moduleDataCenterData = moduleDataCenterData;
+        this.totalDataCenterData = totalDataCenterData;
         this.host = host;
         this.module = module;
         this.infoHelper = infoHelper;
@@ -38,11 +40,14 @@ public class ReadAvailabilityRunnable implements Runnable {
     public void run() {
         int temp = infoHelper.readAvailability(host.getHostName(), module.getAvailabilityUrl());
         if (temp >= 200 && temp < 300) {
-            dataCenterData.incGood();
+            moduleDataCenterData.incGood();
+            totalDataCenterData.incGood();
         } else if (temp == -1) {
-            dataCenterData.incOff();
+            moduleDataCenterData.incOff();
+            totalDataCenterData.incOff();
         } else {
-            dataCenterData.incBad();
+            moduleDataCenterData.incBad();
+            totalDataCenterData.incBad();
         }
             
     }
