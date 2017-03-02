@@ -6,18 +6,6 @@
   <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
   <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
   <form class="form-horizontal">
-    <div ng-if="service.doDeploys" class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Artifact Version:</label>
-      <div class="col-sm-9">
-        <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
-      </div>
-    </div>
-    <div ng-if="service.doDeploys && module.configName" class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Config Version:</label>
-      <div class="col-sm-9">
-        <input type="text" ng-model="formSaveHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
-      </div>
-    </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Count:</label>
       <div class="col-sm-9">
@@ -31,6 +19,18 @@
             </td>
           </tr>
         </table>
+      </div>
+    </div>
+    <div ng-if="service.doDeploys" class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Artifact Version:</label>
+      <div class="col-sm-9">
+        <input type="text" ng-model="formSaveHost.version" ng-model-options="modelOptions" uib-typeahead="v for v in versions.artifactVersions | filter:$viewValue" class="form-control">
+      </div>
+    </div>
+    <div ng-if="service.doDeploys && module.configName" class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Config Version:</label>
+      <div class="col-sm-9">
+        <input type="text" ng-model="formSaveHost.configVersion" ng-model-options="modelOptions" uib-typeahead="v for v in versions.configVersions | filter:$viewValue" class="form-control">
       </div>
     </div>
     <div class="form-group form-group-sm">
