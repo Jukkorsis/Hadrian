@@ -17,8 +17,6 @@ package com.northernwall.hadrian.handlers.vip;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.domain.Host;
@@ -27,7 +25,6 @@ import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.vip.dao.GetVipDetailRowData;
 import com.northernwall.hadrian.handlers.vip.dao.GetVipDetailsData;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
