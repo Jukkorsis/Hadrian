@@ -95,6 +95,7 @@
                                         <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
                                             <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostModal(i, mn);">Deploy software to {{i.hostName}}</a></li>
                                             <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostModal(i, mn);">Restart {{i.hostName}}</a></li>
+                                            <li role="menuitem" ng-if="config.enableHostReboot"><a ng-click="openRebootHostModal(i, mn);">Reboot {{i.hostName}}</a></li>
                                             <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn);">Decommission {{i.hostName}}</a></li>
                                             <li role="menuitem" ng-if="mn.hasSmokeTest">
                                                 <a ng-click="openDoSmokeTestHostModal(i, mn)">Smoke Test {{i.hostName}}</a>

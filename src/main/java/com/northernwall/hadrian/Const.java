@@ -168,6 +168,8 @@ public class Const {
     public static final String CONFIG_HOST_SPECIAL_INSTRUCTIONS_DEFAULT = "If special instructions are provided then this host provisioning request will be reviewed and processed manually.";
     public static final String CONFIG_ENABLE_HOST_PROVISIONING = "config.enableHostProvisioning";
     public static final boolean CONFIG_ENABLE_HOST_PROVISIONING_DEFAULT = false;
+    public static final String CONFIG_ENABLE_HOST_REBOOT = "config.enableHostReboot";
+    public static final boolean CONFIG_ENABLE_HOST_REBOOT_DEFAULT = false;
     public static final String CONFIG_ENABLE_VIP_PROVISIONING = "config.enableVipProvisioning";
     public static final boolean CONFIG_ENABLE_VIP_PROVISIONING_DEFAULT = false;
     public static final String CONFIG_ENABLE_VIP_MIGRATION = "config.enableVipMigration";

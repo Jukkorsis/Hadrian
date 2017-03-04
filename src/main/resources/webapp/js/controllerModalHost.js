@@ -247,6 +247,48 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
         };
     }]);
 
+hadrianControllers.controller('ModalRebootHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.hostNames = hostNames;
+        $scope.moduleEnvironment = moduleEnvironment;
+        $scope.config = config;
+
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === moduleEnvironment.environment) {
+                $scope.configEnvironment = config.environments[i];
+            }
+        }
+
+        $scope.formRebootHost = {};
+        $scope.formRebootHost.reason = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                moduleId: $scope.moduleEnvironment.moduleId,
+                environment: $scope.moduleEnvironment.environment,
+                hostNames: $scope.hostNames,
+                reason: $scope.formRebootHost.reason
+            };
+
+            var responsePromise = $http.post("/v1/host/reboot", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
 hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
     function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;

@@ -31,6 +31,7 @@ public class Config {
     public String moduleConfigName = "";
     public String hostSpecialInstructions = "";
     public boolean enableHostProvisioning = false;
+    public boolean enableHostReboot = false;
     public boolean enableVipProvisioning = false;
     public boolean enableVipMigration = false;
     public int minCpu = 2;

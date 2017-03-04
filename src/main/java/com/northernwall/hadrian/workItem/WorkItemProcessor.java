@@ -26,6 +26,7 @@ import com.northernwall.hadrian.workItem.action.Action;
 import com.northernwall.hadrian.workItem.action.HostCreateAction;
 import com.northernwall.hadrian.workItem.action.HostDeleteAction;
 import com.northernwall.hadrian.workItem.action.HostDeployAction;
+import com.northernwall.hadrian.workItem.action.HostRebootAction;
 import com.northernwall.hadrian.workItem.action.HostRestartAction;
 import com.northernwall.hadrian.workItem.action.HostSmokeTestAction;
 import com.northernwall.hadrian.workItem.action.HostVipAddAction;
@@ -93,6 +94,7 @@ public class WorkItemProcessor {
         constructAction("hostCreate", HostCreateAction.class);
         constructAction("hostDeploy", HostDeployAction.class);
         constructAction("hostRestart", HostRestartAction.class);
+        constructAction("hostReboot", HostRebootAction.class);
         constructAction("hostSmokeTest", HostSmokeTestAction.class);
         constructAction("hostDelete", HostDeleteAction.class);
 
@@ -285,6 +287,8 @@ public class WorkItemProcessor {
                         return constructAction("hostDeploy", HostDeployAction.class);
                     case restart:
                         return constructAction("hostRestart", HostRestartAction.class);
+                    case reboot:
+                        return constructAction("hostReboot", HostRebootAction.class);
                     case enableVips:
                         return constructAction("hostVipEnable", HostVipEnableAction.class);
                     case disableVips:

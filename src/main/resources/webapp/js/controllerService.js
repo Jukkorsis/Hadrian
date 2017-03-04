@@ -648,6 +648,35 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openRebootHostModal = function (host, moduleEnvironment) {
+            var hostNames = [];
+            hostNames.push(host.hostName);
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/rebootHost.html',
+                controller: 'ModalRebootHostCtrl',
+                resolve: {
+                    config: function () {
+                        return $scope.config;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    hostNames: function () {
+                        return hostNames;
+                    },
+                    moduleEnvironment: function () {
+                        return moduleEnvironment;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                $route.reload();
+            }, function () {
+            });
+        };
+
         $scope.openDeleteHostModal = function (host, moduleEnvironment) {
             var hostNames = [];
             hostNames.push(host.hostName);

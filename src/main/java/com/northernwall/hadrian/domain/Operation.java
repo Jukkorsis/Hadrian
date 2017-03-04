@@ -24,6 +24,7 @@ public enum Operation {
     create,
     deploy,
     restart,
+    reboot,
     update,
     delete, 
     enableVips, 
