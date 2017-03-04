@@ -1,167 +1,167 @@
 <div class="panel panel-default">
-    <div class="panel-body">
-        <form>
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-                    <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
-                </div>      
+  <div class="panel-body">
+    <form>
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+          <input type="text" class="form-control" placeholder="Filter hosts" ng-model="hostFilter">
+        </div>      
+      </div>
+    </form>
+    <uib-tabset type="pills">
+      <uib-tab ng-repeat="n in service.environments" heading="{{n.environment}}">
+        <div ng-repeat="mn in n.modules">
+          <h4>
+            <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
+              <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+              </button>
+              <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                <li role="menuitem" ng-if="config.enableHostProvisioning"><a ng-click="openAddHostModal(mn);">Provision new hosts</a></li>
+                <li role="menuitem"><a ng-click="openBackfillHostModal(mn);">Backfill existing hosts</a></li>
+                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
+              </ul>
             </div>
-        </form>
-        <uib-tabset type="pills">
-            <uib-tab ng-repeat="n in service.environments" heading="{{n.environment}}">
-                <div ng-repeat="mn in n.modules">
-                    <h4>
-                        <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length == 0" is-open="status.isopen">
-                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                <li role="menuitem" ng-if="config.enableHostProvisioning"><a ng-click="openAddHostModal(mn);">Provision new hosts</a></li>
-                                <li role="menuitem"><a ng-click="openBackfillHostModal(mn);">Backfill existing hosts</a></li>
-                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
-                            </ul>
+            <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
+              <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+              </button>
+              <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                <li role="menuitem" ng-if="config.enableHostProvisioning"><a ng-click="openAddHostModal(mn);">Provision new hosts</a></li>
+                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostsModal(mn);">Deploy software to selected hosts</a></li>
+                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostsModal(mn);">Restart software on selected hosts</a></li>
+                <li role="menuitem"><a ng-click="openBackfillHostModal(mn);">Backfill existing hosts</a></li>
+                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
+                <li class="divider" ng-if="mn.cfs.length > 0"></li>
+                <li role="menuitem" ng-repeat="cf in mn.cfs">
+                  <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                </li>
+              </ul>
+            </div>
+            <div class="btn-group" uib-dropdown ng-if="!service.canModify && mn.hosts.length > 0 && mn.cfs.length > 0" is-open="status.isopen">
+              <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+              </button>
+              <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                <li role="menuitem" ng-repeat="cf in mn.cfs">
+                  <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
+                </li>
+              </ul>
+            </div>
+            {{mn.moduleName}}
+          </h4>
+          <div ng-if="mn.hosts.length > 0">
+            <table class="table table-hover table-striped table-condensed">
+              <tr>
+                <th width="35%">
+                  <a ng-click="hostSortType = 'hostName';
+                                              hostSortReverse = !hostSortReverse">
+                    Host
+                  </a>
+                </th>
+                <th width="10%">
+                  <a ng-click="hostSortType = 'dataCenter';
+                                              hostSortReverse = !hostSortReverse">
+                    DC
+                  </a>
+                </th>
+                <th width="15%">
+                  <a ng-click="hostSortType = 'platform';
+                                              hostSortReverse = !hostSortReverse">
+                    Platform
+                  </a>
+                </th>
+                <th width="20%">
+                  <a ng-click="hostSortType = 'version';
+                                              hostSortReverse = !hostSortReverse">
+                    Ver.
+                  </a>
+                </th>
+                <th width="10%">
+                  <a ng-click="hostSortType = 'availability';
+                                              hostSortReverse = !hostSortReverse">
+                    Avail.
+                  </a>
+                </th>
+              </tr>
+              <tr ng-repeat-start="i in mn.hosts| orderBy:hostSortType:hostSortReverse | filter:hostFilter">
+                <td>
+                  <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
+                  <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
+                  <div class="btn-group" uib-dropdown ng-if="!i.busy && service.canModify" is-open="status.isopen">
+                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                      <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                    </button>
+                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                      <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostModal(i, mn);">Deploy software to {{i.hostName}}</a></li>
+                      <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostModal(i, mn);">Restart {{i.hostName}}</a></li>
+                      <li role="menuitem" ng-if="config.enableHostReboot"><a ng-click="openRebootHostModal(i, mn);">Reboot {{i.hostName}}</a></li>
+                      <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn);">Decommission {{i.hostName}}</a></li>
+                      <li role="menuitem" ng-if="mn.hasSmokeTest">
+                        <a ng-click="openDoSmokeTestHostModal(i, mn)">Smoke Test {{i.hostName}}</a>
+                      </li>
+                      <li class="divider" ng-if="mn.cfs.length > 0"></li>
+                      <li role="menuitem" ng-repeat="cf in mn.cfs">
+                        <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify && mn.cfs.length > 0" is-open="status.isopen">
+                    <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
+                      <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
+                    </button>
+                    <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                      <li role="menuitem" ng-repeat="cf in mn.cfs">
+                        <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <span ng-if="!i.busy">
+                    <input ng-model="formSelectHost[i.hostId]" type="checkbox">
+                  </span>
+                  {{i.hostName}}
+                  <span ng-if="i.busy && i.status !== '-'" class="label label-warning">{{i.status}}</span>
+                  <span ng-if="!i.busy && i.status !== '-'" class="label label-danger">{{i.status}}</span>
+                </td>
+                <td>{{i.dataCenter}}</td>
+                <td>{{i.platform}}</td>
+                <td>{{i.version}}</td>
+                <td>
+                  <span ng-if="i.availability === -1">
+                    <span class="label label-danger">Time Out</span>
+                  </span>
+                  <span ng-if="i.availability < 300 && i.availability > 99">
+                    <span class="label label-success">{{i.availability}}</span>
+                  </span>
+                  <span ng-if="i.availability > 299">
+                    <span class="label label-danger">{{i.availability}}</span>
+                  </span>
+                </td>
+              </tr>
+              <tr ng-if="i.expanded" ng-repeat-end="">
+                <td colspan="9">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <dl class="dl-horizontal">
+                        <div ng-repeat="d in i.left">
+                          <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
                         </div>
-                        <div class="btn-group" uib-dropdown ng-if="service.canModify && mn.hosts.length > 0" is-open="status.isopen">
-                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                <li role="menuitem" ng-if="config.enableHostProvisioning"><a ng-click="openAddHostModal(mn);">Provision new hosts</a></li>
-                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostsModal(mn);">Deploy software to selected hosts</a></li>
-                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostsModal(mn);">Restart software on selected hosts</a></li>
-                                <li role="menuitem"><a ng-click="openBackfillHostModal(mn);">Backfill existing hosts</a></li>
-                                <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openModuleFileModal(mn);">Manage files</a></li>
-                                <li class="divider" ng-if="mn.cfs.length > 0"></li>
-                                <li role="menuitem" ng-repeat="cf in mn.cfs">
-                                    <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="btn-group" uib-dropdown ng-if="!service.canModify && mn.hosts.length > 0 && mn.cfs.length > 0" is-open="status.isopen">
-                            <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                <li role="menuitem" ng-repeat="cf in mn.cfs">
-                                    <a ng-click="openDoCustomFunctionHostsModal(mn, cf)">{{cf.name}} on selected hosts</a>
-                                </li>
-                            </ul>
-                        </div>
-                        {{mn.moduleName}}
-                    </h4>
-                    <div ng-if="mn.hosts.length > 0">
-                        <table class="table table-hover table-striped table-condensed">
-                            <tr>
-                                <th width="35%">
-                                    <a ng-click="hostSortType = 'hostName';
-                                                hostSortReverse = !hostSortReverse">
-                                        Host
-                                    </a>
-                                </th>
-                                <th width="10%">
-                                    <a ng-click="hostSortType = 'dataCenter';
-                                                hostSortReverse = !hostSortReverse">
-                                        DC
-                                    </a>
-                                </th>
-                                <th width="15%">
-                                    <a ng-click="hostSortType = 'platform';
-                                                hostSortReverse = !hostSortReverse">
-                                        Platform
-                                    </a>
-                                </th>
-                                <th width="20%">
-                                    <a ng-click="hostSortType = 'version';
-                                                hostSortReverse = !hostSortReverse">
-                                        Ver.
-                                    </a>
-                                </th>
-                                <th width="10%">
-                                    <a ng-click="hostSortType = 'availability';
-                                                hostSortReverse = !hostSortReverse">
-                                        Avail.
-                                    </a>
-                                </th>
-                            </tr>
-                            <tr ng-repeat-start="i in mn.hosts | orderBy:hostSortType:hostSortReverse | filter:hostFilter">
-                                <td>
-                                    <span ng-if="i.expanded" class="glyphicon glyphicon-chevron-down" ng-click="i.expanded = false"></span>
-                                    <span ng-if="!i.expanded" class="glyphicon glyphicon-chevron-right" ng-click="getHostDetails(i);"></span>
-                                    <div class="btn-group" uib-dropdown ng-if="!i.busy && service.canModify" is-open="status.isopen">
-                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                        </button>
-                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                            <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openDeploySoftwareHostModal(i, mn);">Deploy software to {{i.hostName}}</a></li>
-                                            <li role="menuitem" ng-if="service.doDeploys"><a ng-click="openRestartHostModal(i, mn);">Restart {{i.hostName}}</a></li>
-                                            <li role="menuitem" ng-if="config.enableHostReboot"><a ng-click="openRebootHostModal(i, mn);">Reboot {{i.hostName}}</a></li>
-                                            <li role="menuitem"><a ng-click="openDeleteHostModal(i, mn);">Decommission {{i.hostName}}</a></li>
-                                            <li role="menuitem" ng-if="mn.hasSmokeTest">
-                                                <a ng-click="openDoSmokeTestHostModal(i, mn)">Smoke Test {{i.hostName}}</a>
-                                            </li>
-                                            <li class="divider" ng-if="mn.cfs.length > 0"></li>
-                                            <li role="menuitem" ng-repeat="cf in mn.cfs">
-                                                <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify && mn.cfs.length > 0" is-open="status.isopen">
-                                        <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>
-                                            <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
-                                        </button>
-                                        <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                                            <li role="menuitem" ng-repeat="cf in mn.cfs">
-                                                <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <span ng-if="!i.busy">
-                                        <input ng-model="formSelectHost[i.hostId]" type="checkbox">
-                                    </span>
-                                    {{i.hostName}}
-                                    <span ng-if="i.busy && i.status !== '-'" class="label label-warning">{{i.status}}</span>
-                                    <span ng-if="!i.busy && i.status !== '-'" class="label label-danger">{{i.status}}</span>
-                                </td>
-                                <td>{{i.dataCenter}}</td>
-                                <td>{{i.platform}}</td>
-                                <td>{{i.version}}</td>
-                                <td>
-                                    <span ng-if="i.availability === -1">
-                                        <span class="label label-danger">Time Out</span>
-                                    </span>
-                                    <span ng-if="i.availability < 300 && i.availability > 99">
-                                        <span class="label label-success">{{i.availability}}</span>
-                                    </span>
-                                    <span ng-if="i.availability > 299">
-                                        <span class="label label-danger">{{i.availability}}</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr ng-if="i.expanded" ng-repeat-end="">
-                                <td colspan="9">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <dl class="dl-horizontal">
-                                                <div ng-repeat="d in i.left">
-                                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                </div>
-                                            </dl>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <dl class="dl-horizontal">
-                                                <div ng-repeat="d in i.right">
-                                                    <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
-                                                </div>
-                                            </dl>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
+                      </dl>
                     </div>
-                </div>
-            </uib-tab>
-        </uib-tabset>
-    </div>
+                    <div class="col-md-6">
+                      <dl class="dl-horizontal">
+                        <div ng-repeat="d in i.right">
+                          <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </uib-tab>
+    </uib-tabset>
+  </div>
 </div>
