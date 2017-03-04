@@ -57,8 +57,10 @@ public class Host implements Comparable<Host> {
     private String hostName;
     private String serviceId;
     private String moduleId;
-    private boolean busy; // TODO no JSON
-    private String status; // TODO no JSON
+    @com.google.gson.annotations.Expose(serialize = false)
+    private boolean busy;
+    @com.google.gson.annotations.Expose(serialize = false)
+    private String status;
     private String dataCenter;
     private String environment;
     private String platform;
