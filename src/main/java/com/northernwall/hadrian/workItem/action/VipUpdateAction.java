@@ -39,6 +39,7 @@ public class VipUpdateAction extends Action {
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
+        notes.put("LB_Config", workItem.getVip().lbConfig);
         notes.put("External", Boolean.toString(workItem.getVip().external));
         writeAudit(workItem, result, notes, output);
     }
@@ -53,6 +54,7 @@ public class VipUpdateAction extends Action {
         vip.setStatus(false, Const.NO_STATUS);
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
+        vip.setLbConfig(workItem.getVip().lbConfig);
         dataAccess.updateVip(vip);
     }
 

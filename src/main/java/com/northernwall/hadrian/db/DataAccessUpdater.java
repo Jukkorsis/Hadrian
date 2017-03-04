@@ -21,6 +21,7 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Service;
+import com.northernwall.hadrian.domain.Vip;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,16 +34,43 @@ public class DataAccessUpdater {
         String version = dataAccess.getVersion();
 
         if (version == null || version.isEmpty()) {
-            dataAccess.setVersion("1.8");
-            LOGGER.info("New DB, initial version set.");
-        } else if (version.equals("1.7")) {
-            fixModule(dataAccess, config);
-            dataAccess.setVersion("1.8");
-            LOGGER.info("DB has been upgraded to 1.8 from {}", version);
-        } else {
-            LOGGER.info("Current DB version is {}, no upgrade required.", version);
+            version = "1.9";
+            dataAccess.setVersion(version);
+            LOGGER.info("New DB, initial version set to 1.9");
         }
-        fixHost(dataAccess);
+        if (version.equals("1.7")) {
+            fixModule(dataAccess, config);
+            version = "1.8";
+            dataAccess.setVersion(version);
+            LOGGER.info("DB has been upgraded to 1.8 from 1.7");
+        }
+        if (version.equals("1.8")) {
+            fixVip(dataAccess, config);
+            version = "1.9";
+            dataAccess.setVersion(version);
+            LOGGER.info("DB has been upgraded to 1.9 from 1.8");
+        }
+        if (version.equals("1.9")) {
+            fixHost(dataAccess);
+            LOGGER.info("Current DB version is 1.9, no upgrade required.");
+        }
+    }
+
+    private static void fixVip(DataAccess dataAccess, Config config) {
+        List<Service> services = dataAccess.getActiveServices();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                List<Vip> vips = dataAccess.getVips(service.getServiceId());
+                if (vips != null && !vips.isEmpty()) {
+                    for (Vip vip : vips) {
+                        if (vip.getLbConfig() == null || vip.getLbConfig().isEmpty()) {
+                            vip.setLbConfig(config.lbConfigs.get(0));
+                            dataAccess.saveVip(vip);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void fixModule(DataAccess dataAccess, Config config) {

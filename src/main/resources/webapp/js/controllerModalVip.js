@@ -23,6 +23,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.formSaveVip.protocol = $scope.config.protocols[0];
         $scope.formSaveVip.vipPort = 80;
         $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip.lbConfig = $scope.config.lbConfigs[0];
 
         $scope.save = function () {
             var dataObject = {
@@ -34,7 +35,8 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 environment: $scope.environmentModule.environment,
                 protocol: $scope.formSaveVip.protocol,
                 vipPort: $scope.formSaveVip.vipPort,
-                servicePort: $scope.formSaveVip.servicePort
+                servicePort: $scope.formSaveVip.servicePort,
+                lbConfig: $scope.formSaveVip.lbConfig
             };
 
             var responsePromise = $http.post("/v1/vip/create", dataObject, {});
@@ -73,6 +75,7 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
         $scope.formSaveVip.protocol = $scope.config.protocols[0];
         $scope.formSaveVip.vipPort = 80;
         $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip.lbConfig = $scope.config.lbConfigs[0];
 
         $scope.save = function () {
             var dataObject = {
@@ -84,7 +87,8 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
                 environment: $scope.environmentModule.environment,
                 protocol: $scope.formSaveVip.protocol,
                 vipPort: $scope.formSaveVip.vipPort,
-                servicePort: $scope.formSaveVip.servicePort
+                servicePort: $scope.formSaveVip.servicePort,
+                lbConfig: $scope.formSaveVip.lbConfig
             };
 
             var responsePromise = $http.post("/v1/vip/backfill", dataObject, {});
@@ -119,13 +123,15 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         $scope.formUpdateVip = {};
         $scope.formUpdateVip.external = vip.external;
         $scope.formUpdateVip.servicePort = vip.servicePort;
+        $scope.formUpdateVip.lbConfig = vip.lbConfig;
 
         $scope.save = function () {
             var dataObject = {
                 vipId: $scope.vip.vipId,
                 serviceId: $scope.service.serviceId,
                 external: $scope.formUpdateVip.external,
-                servicePort: $scope.formUpdateVip.servicePort
+                servicePort: $scope.formUpdateVip.servicePort,
+                lbConfig: $scope.formUpdateVip.lbConfig
             };
 
             var responsePromise = $http.put("/v1/vip/modify", dataObject, {});

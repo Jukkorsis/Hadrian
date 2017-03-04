@@ -47,12 +47,10 @@ import org.eclipse.jetty.server.Request;
 public class VipBackfillHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
-    private final WorkItemProcessor workItemProcessor;
 
-    public VipBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+    public VipBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
-        this.workItemProcessor = workItemProcessor;
     }
 
     @Override
@@ -85,7 +83,8 @@ public class VipBackfillHandler extends BasicHandler {
                 data.environment,
                 data.protocol,
                 data.vipPort,
-                data.servicePort);
+                data.servicePort,
+                data.lbConfig);
         vip.setMigration(0);
         getDataAccess().saveVip(vip);
 

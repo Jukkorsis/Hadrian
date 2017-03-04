@@ -36,6 +36,7 @@ public class VipData {
         temp.protocol = vip.getProtocol();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        temp.lbConfig = vip.getLbConfig();
         temp.migration = vip.getMigration();
         
         return temp;
@@ -49,6 +50,7 @@ public class VipData {
     public String protocol;
     public int vipPort;
     public int servicePort;
+    public String lbConfig;
     public int migration;
 
 }

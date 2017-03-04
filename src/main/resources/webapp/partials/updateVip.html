@@ -26,6 +26,12 @@
         <input ng-model="formUpdateVip.servicePort" type="number" class="form-control">
       </div>
     </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">LB Config:</label>
+      <div class="col-sm-9">
+        <select ng-model="formUpdateVip.lbConfig" ng-options="c for c in config.lbConfigs" class="form-control"></select>
+      </div>
+    </div>
   </form>
 </div>
 <div class="modal-footer">
