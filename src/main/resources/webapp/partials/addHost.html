@@ -4,7 +4,9 @@
 <div class="modal-body">
   <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
   <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
+  <!--
   <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
+  -->
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Count:</label>
