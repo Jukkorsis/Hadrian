@@ -87,10 +87,10 @@ public class HostCreateHandler extends BasicHandler {
         for (Map.Entry<String, Integer> entry : data.counts.entrySet()) {
             int count = entry.getValue();
             String dataCenter = entry.getKey();
-            
+
             if (config.dataCenters.contains(dataCenter) && count > 0) {
                 checkRange(count, 1, config.maxCount, "host count");
-                
+
                 String prefix = buildPrefix(data.environment, config, dataCenter, module.getHostAbbr());
                 int num = 1;
                 int createdCount = 0;
@@ -129,7 +129,7 @@ public class HostCreateHandler extends BasicHandler {
                 data.serviceId,
                 data.moduleId,
                 host.getHostId());
-        getDataAccess().updateSatus(
+        getDataAccess().updateStatus(
                 host.getHostId(),
                 true,
                 "Creating...");
@@ -155,6 +155,10 @@ public class HostCreateHandler extends BasicHandler {
             WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
             workItems.add(workItemEnable);
         }
+
+        WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+        workItemStatus.setReason("Provisioned %% ago");
+        workItems.add(workItemStatus);
 
         workItemProcessor.processWorkItems(workItems);
     }

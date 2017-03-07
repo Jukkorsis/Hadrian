@@ -37,7 +37,7 @@ public class HostVipRemoveAction extends HostVipBaseAction {
             LOGGER.warn("Could not find host {} being removed from vip", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Removing from VIP...");

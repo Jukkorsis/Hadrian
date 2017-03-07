@@ -106,7 +106,7 @@ public interface DataAccess {
     void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId);
     void deleteSearch(String searchSpace, String searchText);
     
-    void updateSatus(String id, boolean busy, String status);
+    void updateStatus(String id, boolean busy, String status);
 
     void saveAudit(Audit audit, String output);
     List<Audit> getAudit(String serviceId, int year, int month, int startDay, int endDay);

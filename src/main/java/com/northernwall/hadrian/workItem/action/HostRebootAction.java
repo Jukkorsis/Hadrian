@@ -38,7 +38,7 @@ public class HostRebootAction extends Action {
             return;
         }
         if (!host.getStatus().equals(REBOOTING)) {
-            dataAccess.updateSatus(
+            dataAccess.updateStatus(
                     workItem.getHost().hostId,
                     true,
                     REBOOTING);
@@ -64,7 +64,7 @@ public class HostRebootAction extends Action {
             LOGGER.warn("Could not find host {} being rebooted", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 Const.NO_STATUS);
@@ -78,7 +78,7 @@ public class HostRebootAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 REBOOT_FAILED);

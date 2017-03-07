@@ -105,12 +105,12 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                 if (data.all || data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {
-                            getDataAccess().updateSatus(
+                            getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
                                     "Deploying...");
                         } else {
-                            getDataAccess().updateSatus(
+                            getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
                                     "Deploy Queued");
@@ -139,6 +139,10 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                             workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, null);
                             workItems.add(workItem);
                         }
+
+                        workItem = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+                        workItem.setReason("Last deployed %% ago");
+                        workItems.add(workItem);
                     }
                 }
             }

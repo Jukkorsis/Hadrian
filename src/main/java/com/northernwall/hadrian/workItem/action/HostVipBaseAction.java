@@ -47,7 +47,7 @@ public abstract class HostVipBaseAction extends Action {
                 result = processVip(workItem, vip);
                 if (result == Result.error) {
                     failedVip = vip;
-                    dataAccess.updateSatus(
+                    dataAccess.updateStatus(
                             workItem.getHost().hostId,
                             false,
                             "Failed to " + getVerb() + " host " + getPreposition() + " VIP");

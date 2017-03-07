@@ -37,7 +37,7 @@ public class HostSmokeTestAction extends Action {
             LOGGER.warn("Could not find host {} being smoke tested", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Smoke Testing...");
@@ -80,7 +80,7 @@ public class HostSmokeTestAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 host.getHostId(),
                 false,
                 Const.NO_STATUS);
@@ -94,7 +94,7 @@ public class HostSmokeTestAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 "Last smoke test failed");

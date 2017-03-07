@@ -44,6 +44,7 @@ import com.northernwall.hadrian.handlers.utility.HealthWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -273,7 +274,7 @@ public class CassandraDataAccess implements DataAccess {
 
         LOGGER.info("Praparing status statements...");
         LOGGER.info("Status TTL {}", statusTimeToLive);
-        statusSelect = session.prepare("SELECT * FROM entityStatus WHERE id = ? ORDER BY time DESC LIMIT 1;");
+        statusSelect = session.prepare("SELECT id, dateOf(time), busy, status FROM entityStatus WHERE id = ? ORDER BY time DESC LIMIT 1;");
         statusInsert = session.prepare("INSERT INTO entityStatus (id, time, busy, status) VALUES (?, now(), ?, ?) USING TTL " + statusTimeToLive + ";");
 
         LOGGER.info("Prapared statements created");
@@ -408,7 +409,12 @@ public class CassandraDataAccess implements DataAccess {
         for (Host host : hosts) {
             Row row = getStatus(host.getHostId());
             if (row != null) {
-                host.setStatus(row.getBool("busy"), row.getString("status"));
+                String status = row.getString("status");
+                if (status.contains("%%")) {
+                    Date date = row.getTimestamp(1);
+                    status = status.replace("%%", StringUtils.dateRange(date.getTime()));
+                }
+                host.setStatus(row.getBool("busy"), status);
             } else {
                 host.setStatus(false, Const.NO_STATUS);
             }
@@ -863,7 +869,7 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateSatus(String id, boolean busy, String status) {
+    public void updateStatus(String id, boolean busy, String status) {
         BoundStatement boundStatement = new BoundStatement(statusInsert);
         session.execute(boundStatement.bind(
                 id,

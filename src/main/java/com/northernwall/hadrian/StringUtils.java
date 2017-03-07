@@ -34,6 +34,25 @@ public class StringUtils {
             return a.equals(b);
         }
     }
+    
+    public static String dateRange(long ms) {
+        long now = System.currentTimeMillis();
+        long diff = (now - ms) / 60_000;
+        if (diff <= 0) {
+            return "0m";
+        } else if (diff < 60) {
+            return diff + "m";
+        } else if (diff < (60*24)) {
+            long minutes = diff % 60;
+            long hours = diff / 60;
+            return hours + "h " + minutes + "m";
+        } else {
+            diff = diff / 60;
+            long hours = diff % 24;
+            long days = diff / 24;
+            return days + "d " + hours + "h";
+        }
+    }
 
     private StringUtils() {
     }

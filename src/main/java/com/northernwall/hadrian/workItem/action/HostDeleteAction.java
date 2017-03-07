@@ -35,7 +35,7 @@ public class HostDeleteAction extends Action {
             LOGGER.warn("Could not find host {} being deleted", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Deleting...");
@@ -80,7 +80,7 @@ public class HostDeleteAction extends Action {
             return;
         }
         
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 host.getHostId(),
                 false,
                 "Deletion failed");

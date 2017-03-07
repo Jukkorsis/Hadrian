@@ -34,7 +34,7 @@ public class HostRestartAction extends Action {
             LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Restarting...");
@@ -60,7 +60,7 @@ public class HostRestartAction extends Action {
             LOGGER.warn("Could not find host {} being restarted", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 Const.NO_STATUS);
@@ -74,7 +74,7 @@ public class HostRestartAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 "Last restart failed");

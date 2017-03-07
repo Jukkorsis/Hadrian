@@ -34,7 +34,7 @@ public class HostCreateAction extends Action {
             LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Creating...");
@@ -73,7 +73,7 @@ public class HostCreateAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 host.getHostId(),
                 false,
                 Const.NO_STATUS);

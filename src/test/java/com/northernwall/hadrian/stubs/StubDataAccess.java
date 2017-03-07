@@ -11,7 +11,6 @@ import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
-import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.utility.HealthWriter;
@@ -321,7 +320,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateSatus(String id, boolean busy, String status) {
+    public void updateStatus(String id, boolean busy, String status) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

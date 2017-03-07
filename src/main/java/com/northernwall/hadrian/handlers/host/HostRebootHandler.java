@@ -73,20 +73,24 @@ public class HostRebootHandler extends BasicHandler {
                 if (data.hostNames.contains(host.getHostName())) {
                     if (!host.isBusy()) {
                         if (workItems.isEmpty()) {
-                            getDataAccess().updateSatus(
+                            getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
                                     HostRebootAction.REBOOTING);
                         } else {
-                            getDataAccess().updateSatus(
+                            getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
                                     HostRebootAction.REBOOT_QUEUED);
                         }
 
-                        WorkItem workItemDelete = new WorkItem(Type.host, Operation.reboot, user, team, service, module, host, null);
-                        workItemDelete.setReason(data.reason);
-                        workItems.add(workItemDelete);
+                        WorkItem workItem = new WorkItem(Type.host, Operation.reboot, user, team, service, module, host, null);
+                        workItem.setReason(data.reason);
+                        workItems.add(workItem);
+
+                        workItem = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+                        workItem.setReason("Last rebooted %% ago");
+                        workItems.add(workItem);
                     }
                 }
             }

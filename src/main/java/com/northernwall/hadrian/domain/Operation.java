@@ -34,6 +34,7 @@ public enum Operation {
     migrate, 
     smokeTest,
     build, 
-    transfer;
+    transfer,
+    status;
 
 }

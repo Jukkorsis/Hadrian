@@ -34,7 +34,7 @@ public class HostDeployAction extends Action {
             LOGGER.warn("Could not find host {} being deployed too", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Deploying...");
@@ -72,7 +72,7 @@ public class HostDeployAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 Const.NO_STATUS);
@@ -86,7 +86,7 @@ public class HostDeployAction extends Action {
             return;
         }
 
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
                 "Last deployment failed");

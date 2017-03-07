@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.ConfigHelper;
 import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -40,6 +41,7 @@ import com.northernwall.hadrian.workItem.action.ServiceCreateAction;
 import com.northernwall.hadrian.workItem.action.ServiceDeleteAction;
 import com.northernwall.hadrian.workItem.action.ServiceTransferAction;
 import com.northernwall.hadrian.workItem.action.ServiceUpdateAction;
+import com.northernwall.hadrian.workItem.action.StatusUpdateAction;
 import com.northernwall.hadrian.workItem.action.VipCreateAction;
 import com.northernwall.hadrian.workItem.action.VipDeleteAction;
 import com.northernwall.hadrian.workItem.action.VipMigrateAction;
@@ -82,6 +84,8 @@ public class WorkItemProcessor {
         this.metricRegistry = metricRegistry;
 
         //Check if action classes can be constructed
+        constructAction("StatusUpdate", StatusUpdateAction.class);
+        
         constructAction("serviceCreate", ServiceCreateAction.class);
         constructAction("serviceUpdate", ServiceUpdateAction.class);
         constructAction("serviceTransfer", ServiceTransferAction.class);
@@ -258,6 +262,9 @@ public class WorkItemProcessor {
     }
 
     private Action getAction(WorkItem workItem) {
+        if (workItem.getOperation() == Operation.status) {
+            return constructAction("StatusUpdate", StatusUpdateAction.class);
+        }
         switch (workItem.getType()) {
             case service:
                 switch (workItem.getOperation()) {
@@ -345,25 +352,10 @@ public class WorkItemProcessor {
         if (nextId == null || nextId.isEmpty()) {
             //No more hosts to update in the chain
             LOGGER.info("Start next {} -> Done", workItem.getId());
-            if (workItem.getType() == Type.host) {
-                dataAccess.updateSatus(
-                        workItem.getHost().hostId,
-                        false,
-                        Const.NO_STATUS);
-            }
-            return;
+        } else {
+            LOGGER.info("Start next {} -> {}", workItem.getId(), nextId);
+            process(dataAccess.getWorkItem(nextId));
         }
-
-        LOGGER.info("Start next {} -> {}", workItem.getId(), nextId);
-        WorkItem nextWorkItem = dataAccess.getWorkItem(nextId);
-        if (workItem.getType() == Type.host
-                && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
-            dataAccess.updateSatus(
-                    workItem.getHost().hostId,
-                    false,
-                    Const.NO_STATUS);
-        }
-        process(nextWorkItem);
     }
 
     private void stopNext(WorkItem workItem) {
@@ -380,7 +372,7 @@ public class WorkItemProcessor {
 
         if (workItem.getType() == Type.host
                 && !workItem.getHost().hostId.equals(nextWorkItem.getHost().hostId)) {
-            dataAccess.updateSatus(
+            dataAccess.updateStatus(
                     nextWorkItem.getHost().hostId,
                     false,
                     "Queued operation cancelled");

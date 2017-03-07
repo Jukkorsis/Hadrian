@@ -33,7 +33,7 @@ public class HostVipDisableAction extends HostVipBaseAction {
             LOGGER.warn("Could not find host {} who's VIP is being disabled", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Disabling in VIP...");

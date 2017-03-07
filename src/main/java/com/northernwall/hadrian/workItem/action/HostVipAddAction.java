@@ -37,7 +37,7 @@ public class HostVipAddAction extends HostVipBaseAction {
             LOGGER.warn("Could not find host {} being added to vip", workItem.getHost().hostId);
             return;
         }
-        dataAccess.updateSatus(
+        dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
                 "Adding to VIP...");
