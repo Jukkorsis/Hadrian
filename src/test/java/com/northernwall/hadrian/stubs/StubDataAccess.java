@@ -320,7 +320,7 @@ public class StubDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateStatus(String id, boolean busy, String status) {
+    public void updateStatus(String id, boolean busy, String status, String statusCode) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
