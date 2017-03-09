@@ -40,6 +40,8 @@
       <div class="col-sm-9">
         <textarea ng-model="formSaveHost.specialInstructions" maxlength="500" rows="3" class="form-control"></textarea>
         <p class="help-block">{{config.hostSpecialInstructions}}</p>
+        <p class="help-block" ng-if="formSaveHost.specialInstructions">{{config.hostSpecialInstructionsTrueSla}}</p>
+        <p class="help-block" ng-if="!formSaveHost.specialInstructions">{{config.hostSpecialInstructionsFalseSla}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">

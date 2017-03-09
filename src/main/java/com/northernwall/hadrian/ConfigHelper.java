@@ -70,6 +70,8 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
         newConfig.securityGroupName = parameters.getString(Const.CONFIG_SECURITY_GROUP_NAME, Const.CONFIG_SECURITY_GROUP_NAME_DEFAULT);
         newConfig.hostSpecialInstructions = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_DEFAULT);
+        newConfig.hostSpecialInstructionsTrueSla = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_TRUE_SLA, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_TRUE_SLA_DEFAULT);
+        newConfig.hostSpecialInstructionsFalseSla = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_FALSE_SLA, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_FALSE_SLA_DEFAULT);
         if (moduleConfigHelper == null) {
             newConfig.moduleConfigName = "Config Name";
         } else {

@@ -30,6 +30,8 @@ public class Config {
     public String securityGroupName = "";
     public String moduleConfigName = "";
     public String hostSpecialInstructions = "";
+    public String hostSpecialInstructionsTrueSla = "";
+    public String hostSpecialInstructionsFalseSla = "";
     public boolean enableHostProvisioning = false;
     public boolean enableHostReboot = false;
     public boolean enableVipProvisioning = false;
