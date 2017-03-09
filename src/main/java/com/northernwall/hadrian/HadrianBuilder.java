@@ -45,10 +45,11 @@ import com.squareup.okhttp.OkHttpClient;
 import java.net.InetAddress;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import org.dshops.metrics.listeners.KairosDBListener;
+import org.dshops.metrics.EventListener;
 import org.dshops.metrics.JvmMetrics;
 import org.dshops.metrics.MetricRegistry;
 import org.dshops.metrics.listeners.ConsoleListener;
+import org.dshops.metrics.listeners.KairosDBListenerFactory;
 import org.eclipse.jetty.server.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,9 +201,9 @@ public class HadrianBuilder {
         String dataCenter = parameters.getString("metrics.dataCenter", "DC");
 
         metricRegistry = new MetricRegistry.Builder(
-                serviceTeam, 
-                application, 
-                "server", 
+                serviceTeam,
+                application,
+                "server",
                 getHostname(),
                 dataCenter)
                 .build();
@@ -211,17 +212,24 @@ public class HadrianBuilder {
 
         if (parameters.getBoolean("metrics.console", false)) {
             LOGGER.info("Configuring Metrics Console Listener");
-            metricRegistry.addEventListener(new ConsoleListener(System.out));
+            EventListener consoleListener = new ConsoleListener(System.out);
+            metricRegistry.addEventListener(consoleListener);
         }
 
         String kairosDbUrl = parameters.getString("metrics.kairosDb.url", null);
         if (kairosDbUrl != null && !kairosDbUrl.isEmpty()) {
             LOGGER.info("Configuring Metrics KairosDB Listener,  {}", kairosDbUrl);
-            metricRegistry.addEventListener(new KairosDBListener(
+            EventListener kairosListener = KairosDBListenerFactory.buildListener(
+                    kairosDbUrl, 
+                    metricRegistry);
+            /*
+            EventListener kairosListener = new KairosDBListener(
                     kairosDbUrl,
                     parameters.getString("metrics.kairosDb.username", null),
                     parameters.getString("metrics.kairosDb.password", null),
-                    metricRegistry));
+                    metricRegistry);
+             */
+            metricRegistry.addEventListener(kairosListener);
         }
     }
 
