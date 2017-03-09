@@ -38,7 +38,8 @@ public class HostDeleteAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Deleting...");
+                "Deleting...",
+                Const.STATUS_WIP);
     }
 
     @Override
@@ -83,7 +84,8 @@ public class HostDeleteAction extends Action {
         dataAccess.updateStatus(
                 host.getHostId(),
                 false,
-                "Deletion failed");
+                "Delete failed %% ago",
+                Const.STATUS_ERROR);
     }
 
 }

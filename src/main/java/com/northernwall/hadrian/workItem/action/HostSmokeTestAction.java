@@ -40,7 +40,8 @@ public class HostSmokeTestAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Smoke Testing...");
+                "Smoke Testing...",
+                Const.STATUS_WIP);
     }
 
     @Override
@@ -83,7 +84,8 @@ public class HostSmokeTestAction extends Action {
         dataAccess.updateStatus(
                 host.getHostId(),
                 false,
-                Const.NO_STATUS);
+                Const.STATUS_NO,
+                Const.STATUS_NO);
     }
 
     @Override
@@ -97,7 +99,8 @@ public class HostSmokeTestAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                "Last smoke test failed");
+                "Smoke test failed %% ago",
+                Const.STATUS_ERROR);
     }
 
     @Override

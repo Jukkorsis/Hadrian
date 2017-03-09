@@ -37,7 +37,8 @@ public class HostRestartAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Restarting...");
+                "Restarting...",
+                Const.STATUS_WIP);
     }
 
     @Override
@@ -63,7 +64,8 @@ public class HostRestartAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                Const.NO_STATUS);
+                Const.STATUS_NO,
+                Const.STATUS_NO);
     }
 
     @Override
@@ -77,7 +79,8 @@ public class HostRestartAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                "Last restart failed");
+                "Restart failed %% ago",
+                Const.STATUS_ERROR);
     }
 
 }

@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.handlers.host;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -72,7 +73,8 @@ public class HostDeleteHandler extends BasicHandler {
                         getDataAccess().updateStatus(
                                 host.getHostId(),
                                 true,
-                                "Deleting...");
+                                "Deleting...",
+                                Const.STATUS_WIP);
 
                         List<WorkItem> workItems = new ArrayList<>(2);
 

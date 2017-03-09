@@ -56,7 +56,7 @@ public class VipCreateAction extends Action {
             return;
         }
 
-        vip.setStatus(false, Const.NO_STATUS);
+        vip.setStatus(false, Const.STATUS_NO);
         dataAccess.updateVip(vip);
     }
 

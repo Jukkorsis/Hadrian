@@ -472,7 +472,7 @@ public class InMemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateStatus(String id, boolean busy, String status) {
+    public void updateStatus(String id, boolean busy, String status, String statusCode) {
     }
 
 }

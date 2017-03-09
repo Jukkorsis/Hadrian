@@ -375,7 +375,8 @@ public class WorkItemProcessor {
             dataAccess.updateStatus(
                     nextWorkItem.getHost().hostId,
                     false,
-                    "Queued operation cancelled");
+                    "Queued operation cancelled",
+                    Const.STATUS_ERROR);
         }
         dataAccess.deleteWorkItem(nextId);
         dataAccess.saveWorkItemStatus(nextId, 502);

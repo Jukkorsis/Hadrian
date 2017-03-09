@@ -37,7 +37,8 @@ public class HostCreateAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Creating...");
+                "Creating...",
+                Const.STATUS_WIP);
     }
 
     @Override
@@ -54,11 +55,11 @@ public class HostCreateAction extends Action {
         notes.put("Size_CPU", Integer.toString(workItem.getMainModule().sizeCpu));
         notes.put("Size_Memory", Integer.toString(workItem.getMainModule().sizeMemory));
         notes.put("Size_Storage", Integer.toString(workItem.getMainModule().sizeStorage));
-        if (workItem.getSpecialInstructions() != null 
+        if (workItem.getSpecialInstructions() != null
                 && !workItem.getSpecialInstructions().isEmpty()) {
             notes.put("Special_Instructions", workItem.getSpecialInstructions());
         }
-        if (workItem.getReason() != null 
+        if (workItem.getReason() != null
                 && !workItem.getReason().isEmpty()) {
             notes.put("Reason", workItem.getReason());
         }
@@ -76,7 +77,8 @@ public class HostCreateAction extends Action {
         dataAccess.updateStatus(
                 host.getHostId(),
                 false,
-                Const.NO_STATUS);
+                Const.STATUS_NO,
+                Const.STATUS_NO);
     }
 
     @Override
@@ -86,11 +88,11 @@ public class HostCreateAction extends Action {
             LOGGER.warn("Could not find host {} being created", workItem.getHost().hostId);
             return;
         }
-        
+
         LOGGER.warn("Deleting host record due to failure in creating host {]", host.getHostId());
         dataAccess.deleteHost(host);
         dataAccess.deleteSearch(
-                Const.SEARCH_SPACE_HOST_NAME, 
+                Const.SEARCH_SPACE_HOST_NAME,
                 host.getHostName());
     }
 

@@ -51,7 +51,7 @@ public class VipUpdateAction extends Action {
             LOGGER.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
-        vip.setStatus(false, Const.NO_STATUS);
+        vip.setStatus(false, Const.STATUS_NO);
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
         vip.setLbConfig(workItem.getVip().lbConfig);

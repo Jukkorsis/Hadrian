@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.handlers.host;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -79,12 +80,14 @@ public class HostRestartHandler extends BasicHandler {
                             getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
-                                    "Restarting...");
+                                    "Restarting...",
+                                    Const.STATUS_WIP);
                         } else {
                             getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
-                                    "Restart Queued");
+                                    "Restart Queued",
+                                    Const.STATUS_WIP);
                         }
 
                         WorkItem workItem;
@@ -109,7 +112,7 @@ public class HostRestartHandler extends BasicHandler {
                         }
 
                         workItem = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
-                        workItem.setReason("Last restarted %% ago");
+                        workItem.setReason("Restarted %% ago");
                         workItems.add(workItem);
                     }
                 }

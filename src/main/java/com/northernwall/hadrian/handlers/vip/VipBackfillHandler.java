@@ -75,7 +75,7 @@ public class VipBackfillHandler extends BasicHandler {
 
         Vip vip = new Vip(
                 data.serviceId,
-                Const.NO_STATUS,
+                Const.STATUS_NO,
                 data.moduleId,
                 data.dns,
                 data.domain,

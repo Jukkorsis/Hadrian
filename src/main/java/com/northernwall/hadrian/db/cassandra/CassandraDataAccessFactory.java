@@ -122,7 +122,12 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             //Search table
             session.execute("CREATE TABLE IF NOT EXISTS searchName (searchSpace text, searchText text, serviceId text, moduleId text, hostId text, PRIMARY KEY ((searchSpace), searchText));");
             //Status table
-            session.execute("CREATE TABLE IF NOT EXISTS entityStatus (id text, time timeuuid, busy boolean, status text, PRIMARY KEY ((id), time));");
+            session.execute("CREATE TABLE IF NOT EXISTS entityStatus (id text, time timeuuid, busy boolean, status text, statusCode text, PRIMARY KEY ((id), time));");
+            try {
+                session.execute("Alter TABLE entityStatus ADD statusCode text;");
+            } catch (Exception e) {
+                LOGGER.warn("Unable to execute alter table on entityStatus, {}", e.getMessage());
+            }
             //Audit table
             session.execute("CREATE TABLE IF NOT EXISTS auditRecord (serviceId text, year int, month int, day int, time timeuuid, data text, PRIMARY KEY ((serviceId, year, month, day), time));");
             session.execute("CREATE TABLE IF NOT EXISTS auditOutput (serviceId text, auditId text, data text, PRIMARY KEY (serviceId, auditId));");

@@ -132,7 +132,8 @@ public class HostCreateHandler extends BasicHandler {
         getDataAccess().updateStatus(
                 host.getHostId(),
                 true,
-                "Creating...");
+                "Creating...",
+                Const.STATUS_WIP);
 
         List<WorkItem> workItems = new ArrayList<>(3);
 

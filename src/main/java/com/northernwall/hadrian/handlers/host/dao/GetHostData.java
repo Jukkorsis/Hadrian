@@ -18,23 +18,13 @@ package com.northernwall.hadrian.handlers.host.dao;
 import com.northernwall.hadrian.domain.Host;
 
 public class GetHostData {
-    public String hostId;
-    public String hostName;
-    public String serviceId;
-    public String status;
-    public boolean busy;
-    public String dataCenter;
-    public String environment;
-    public String platform;
-    public String version;
-    public int availability;
-
     public static GetHostData create(Host host) {
         GetHostData temp = new GetHostData();
         temp.hostId = host.getHostId();
         temp.hostName = host.getHostName();
         temp.serviceId = host.getServiceId();
         temp.status = host.getStatus();
+        temp.statusCode = host.getStatusCode();
         temp.busy = host.isBusy();
         temp.dataCenter = host.getDataCenter();
         temp.environment = host.getEnvironment();
@@ -43,5 +33,17 @@ public class GetHostData {
         temp.availability = 0;
         return temp;
     }
+    public String hostId;
+    public String hostName;
+    public String serviceId;
+    public String status;
+    public String statusCode;
+    public boolean busy;
+    public String dataCenter;
+    public String environment;
+    public String platform;
+    public String version;
+    public int availability;
+
 
 }

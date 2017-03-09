@@ -18,7 +18,10 @@ package com.northernwall.hadrian;
 import com.squareup.okhttp.MediaType;
 
 public class Const {
-    public static final String NO_STATUS = "-";
+    public static final String STATUS_NO = "-";
+    public static final String STATUS_INFO = "info";
+    public static final String STATUS_WIP = "wip";
+    public static final String STATUS_ERROR = "error";
     
     public static final String HTTP = "http://";
     public static final String HTTPS = "https://";

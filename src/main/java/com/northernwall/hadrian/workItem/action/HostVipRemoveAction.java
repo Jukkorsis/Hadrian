@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -40,7 +41,8 @@ public class HostVipRemoveAction extends HostVipBaseAction {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Removing from VIP...");
+                "Removing from VIP...",
+                Const.STATUS_WIP);
     }
 
     @Override

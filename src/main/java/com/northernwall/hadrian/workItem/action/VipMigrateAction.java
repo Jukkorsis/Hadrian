@@ -57,7 +57,7 @@ public class VipMigrateAction extends Action {
             LOGGER.warn("Could not find vip {} being migrated", workItem.getVip().vipId);
             return;
         }
-        vip.setStatus(false, Const.NO_STATUS);
+        vip.setStatus(false, Const.STATUS_NO);
         dataAccess.updateVip(vip);
     }
 

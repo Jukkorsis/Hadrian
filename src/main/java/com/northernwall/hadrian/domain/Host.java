@@ -60,6 +60,8 @@ public class Host implements Comparable<Host> {
     @com.google.gson.annotations.Expose(serialize = false)
     private boolean busy;
     @com.google.gson.annotations.Expose(serialize = false)
+    private String statusCode;
+    @com.google.gson.annotations.Expose(serialize = false)
     private String status;
     private String dataCenter;
     private String environment;
@@ -70,7 +72,8 @@ public class Host implements Comparable<Host> {
         this.hostName = null;
         this.serviceId = null;
         this.busy = false;
-        this.status = Const.NO_STATUS;
+        this.status = Const.STATUS_NO;
+        this.statusCode = Const.STATUS_NO;
         this.dataCenter = null;
         this.environment = null;
         this.platform = null;
@@ -81,7 +84,8 @@ public class Host implements Comparable<Host> {
         this.hostName = hostName;
         this.serviceId = serviceId;
         this.busy = false;
-        this.status = Const.NO_STATUS;
+        this.status = Const.STATUS_NO;
+        this.statusCode = Const.STATUS_NO;
         this.moduleId = moduleId;
         this.dataCenter = dataCenter;
         this.environment = environment;
@@ -116,13 +120,18 @@ public class Host implements Comparable<Host> {
         return busy;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean busy, String status) {
+    public void setStatus(boolean busy, String status, String statusCode) {
         this.busy = busy;
         this.status = status;
+        this.statusCode = statusCode;
     }
 
     public String getModuleId() {

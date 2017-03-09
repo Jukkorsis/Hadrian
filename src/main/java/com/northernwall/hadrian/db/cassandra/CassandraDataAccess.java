@@ -274,8 +274,8 @@ public class CassandraDataAccess implements DataAccess {
 
         LOGGER.info("Praparing status statements...");
         LOGGER.info("Status TTL {}", statusTimeToLive);
-        statusSelect = session.prepare("SELECT id, dateOf(time), busy, status FROM entityStatus WHERE id = ? ORDER BY time DESC LIMIT 1;");
-        statusInsert = session.prepare("INSERT INTO entityStatus (id, time, busy, status) VALUES (?, now(), ?, ?) USING TTL " + statusTimeToLive + ";");
+        statusSelect = session.prepare("SELECT id, dateOf(time), busy, status, statusCode FROM entityStatus WHERE id = ? ORDER BY time DESC LIMIT 1;");
+        statusInsert = session.prepare("INSERT INTO entityStatus (id, time, busy, status, statusCode) VALUES (?, now(), ?, ?, ?) USING TTL " + statusTimeToLive + ";");
 
         LOGGER.info("Prapared statements created");
 
@@ -407,17 +407,7 @@ public class CassandraDataAccess implements DataAccess {
             return hosts;
         }
         for (Host host : hosts) {
-            Row row = getStatus(host.getHostId());
-            if (row != null) {
-                String status = row.getString("status");
-                if (status.contains("%%")) {
-                    Date date = row.getTimestamp(1);
-                    status = status.replace("%%", StringUtils.dateRange(date.getTime()));
-                }
-                host.setStatus(row.getBool("busy"), status);
-            } else {
-                host.setStatus(false, Const.NO_STATUS);
-            }
+            getHostStatus(host);
         }
         Collections.sort(hosts);
         return hosts;
@@ -429,14 +419,30 @@ public class CassandraDataAccess implements DataAccess {
         if (host == null) {
             return null;
         }
+        getHostStatus(host);
+        return host;
+    }
 
+    private void getHostStatus(Host host) {
         Row row = getStatus(host.getHostId());
         if (row != null) {
-            host.setStatus(row.getBool("busy"), row.getString("status"));
+            String status = row.getString("status");
+            if (status == null || status.isEmpty()) {
+                status = Const.STATUS_NO;
+            } else if (status.contains("%%")) {
+                Date date = row.getTimestamp(1);
+                status = status.replace("%%", StringUtils.dateRange(date.getTime()));
+            }
+            
+            String statusCode = row.getString("statusCode");
+            if (statusCode == null || statusCode.isEmpty()) {
+                statusCode = Const.STATUS_ERROR;
+            }
+            
+            host.setStatus(row.getBool("busy"), status, statusCode);
         } else {
-            host.setStatus(false, Const.NO_STATUS);
+            host.setStatus(false, Const.STATUS_NO, Const.STATUS_NO);
         }
-        return host;
     }
 
     @Override
@@ -869,12 +875,13 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateStatus(String id, boolean busy, String status) {
+    public void updateStatus(String id, boolean busy, String status, String statusCode) {
         BoundStatement boundStatement = new BoundStatement(statusInsert);
         session.execute(boundStatement.bind(
                 id,
                 busy,
-                status));
+                status,
+                statusCode));
     }
 
     private Row getStatus(String id) {

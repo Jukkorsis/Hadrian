@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -50,7 +51,8 @@ public abstract class HostVipBaseAction extends Action {
                     dataAccess.updateStatus(
                             workItem.getHost().hostId,
                             false,
-                            "Failed to " + getVerb() + " host " + getPreposition() + " VIP");
+                            "Failed to " + getVerb() + " host " + getPreposition() + " VIP",
+                            Const.STATUS_ERROR);
                     return result;
                 }
                 successVips.add(vip);

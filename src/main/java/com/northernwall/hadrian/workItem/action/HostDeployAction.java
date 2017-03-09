@@ -37,7 +37,8 @@ public class HostDeployAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 true,
-                "Deploying...");
+                "Deploying...",
+                Const.STATUS_WIP);
     }
 
     @Override
@@ -75,7 +76,8 @@ public class HostDeployAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                Const.NO_STATUS);
+                Const.STATUS_NO,
+                Const.STATUS_NO);
     }
 
     @Override
@@ -89,7 +91,8 @@ public class HostDeployAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                "Last deployment failed");
+                "Deploy failed %% ago",
+                Const.STATUS_ERROR);
     }
 
 }

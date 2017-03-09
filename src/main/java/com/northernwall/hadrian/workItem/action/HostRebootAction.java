@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class HostRebootAction extends Action {
     public static final String REBOOTING = "Rebooting...";
     public static final String REBOOT_QUEUED = "Reboot Queued";
-    public static final String REBOOT_FAILED = "Last reboot failed";
+    public static final String REBOOT_FAILED = "Reboot failed %% ago";
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostRebootAction.class);
 
@@ -41,7 +41,8 @@ public class HostRebootAction extends Action {
             dataAccess.updateStatus(
                     workItem.getHost().hostId,
                     true,
-                    REBOOTING);
+                    REBOOTING,
+                    Const.STATUS_WIP);
         }
     }
 
@@ -67,7 +68,8 @@ public class HostRebootAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                Const.NO_STATUS);
+                Const.STATUS_NO,
+                Const.STATUS_NO);
     }
 
     @Override
@@ -81,7 +83,8 @@ public class HostRebootAction extends Action {
         dataAccess.updateStatus(
                 workItem.getHost().hostId,
                 false,
-                REBOOT_FAILED);
+                REBOOT_FAILED,
+                Const.STATUS_ERROR);
     }
 
 }

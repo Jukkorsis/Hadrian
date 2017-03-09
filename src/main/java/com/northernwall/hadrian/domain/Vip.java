@@ -49,7 +49,7 @@ public class Vip implements Comparable<Vip>{
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = null;
         this.busy = false;
-        this.status = Const.NO_STATUS;
+        this.status = Const.STATUS_NO;
         this.moduleId = null;
         this.dns = null;
         this.domain = null;

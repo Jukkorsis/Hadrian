@@ -18,6 +18,7 @@ package com.northernwall.hadrian.handlers.host;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
@@ -108,12 +109,14 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                             getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
-                                    "Deploying...");
+                                    "Deploying...",
+                                    Const.STATUS_WIP);
                         } else {
                             getDataAccess().updateStatus(
                                     host.getHostId(),
                                     true,
-                                    "Deploy Queued");
+                                    "Deploy Queued",
+                                    Const.STATUS_WIP);
                         }
 
                         WorkItem workItem;
@@ -141,7 +144,7 @@ public class HostDeploySoftwareHandler extends BasicHandler {
                         }
 
                         workItem = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
-                        workItem.setReason("Last deployed %% ago");
+                        workItem.setReason("Deployed %% ago");
                         workItems.add(workItem);
                     }
                 }

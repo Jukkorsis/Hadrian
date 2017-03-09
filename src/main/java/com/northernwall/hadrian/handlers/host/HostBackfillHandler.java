@@ -156,7 +156,8 @@ public class HostBackfillHandler extends BasicHandler {
         getDataAccess().updateStatus(
                 host.getHostId(),
                 false,
-                "Backfilled %% ago");
+                "Backfilled %% ago",
+                Const.STATUS_INFO);
         
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
