@@ -17,10 +17,10 @@
             <dd>{{service.mavenGroupId}}</dd>
           </div>
           <dt>Creation Date:</dt>
-          <dd>{{service.creationDate}}</dd>
+          <dd>{{service.creationDate | date:'medium'}}</dd>
           <div  ng-if="!service.active">
             <dt>Deletion Date:</dt>
-            <dd>{{service.deletionDate}}</dd>
+            <dd>{{service.deletionDate | date:'medium'}}</dd>
           </div>
         </dl>
       </div>

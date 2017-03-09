@@ -16,6 +16,7 @@
 package com.northernwall.hadrian;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.access.AccessHelperFactory;
@@ -42,6 +43,7 @@ import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import java.net.InetAddress;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.dshops.metrics.listeners.KairosDBListener;
 import org.dshops.metrics.JvmMetrics;
@@ -79,7 +81,9 @@ public class HadrianBuilder {
 
     private HadrianBuilder(Parameters parameters) {
         this.parameters = parameters;
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .create();
     }
 
     public HadrianBuilder setDataAccess(DataAccess dataAccess) {

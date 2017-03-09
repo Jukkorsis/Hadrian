@@ -60,7 +60,7 @@
                     <span ng-if="!a.successfull" class="glyphicon glyphicon-thumbs-down text-danger"></span>
                 </td>
                 <td>{{a.requestor}}</td>
-                <td>{{a.timePerformed}}</td>
+                <td>{{a.timePerformed | date:'medium'}}</td>
                 <td>{{a.operation}}</td>
                 <td>{{a.type}}</td>
                 <td>{{a.moduleName}}</td>
@@ -72,7 +72,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
-                                <dt>Requested:</dt><dd>{{a.timeRequested}}</dd>
+                                <dt>Requested:</dt><dd>{{a.timeRequested | date:'medium'}}</dd>
                                 <div ng-repeat="d in a.left">
                                     <dt>{{d.label}}:</dt><dd>{{d.value}}</dd>
                                 </div>
