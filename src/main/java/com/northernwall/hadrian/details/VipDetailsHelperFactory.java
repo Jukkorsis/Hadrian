@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.details;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 

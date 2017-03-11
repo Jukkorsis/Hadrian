@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.module.dao;
 
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.handlers.service.dao.GetCustomFunctionData;

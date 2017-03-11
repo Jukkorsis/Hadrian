@@ -16,8 +16,8 @@
 package com.northernwall.hadrian.details.simple;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.ConfigHelper;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.ConfigHelper;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.details.VipDetailsHelper;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.parameters.Parameters;

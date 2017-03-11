@@ -19,7 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;

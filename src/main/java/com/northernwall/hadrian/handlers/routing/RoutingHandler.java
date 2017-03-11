@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.routing;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.User;
 import java.io.IOException;
 import java.util.LinkedList;

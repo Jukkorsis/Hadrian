@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.report;
 
-import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;

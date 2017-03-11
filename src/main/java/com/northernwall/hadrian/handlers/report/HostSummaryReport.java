@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.handlers.report;
 
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;

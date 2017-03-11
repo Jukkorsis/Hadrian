@@ -1,6 +1,6 @@
 package com.northernwall.hadrian.stubs;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
 

@@ -1,6 +1,6 @@
 package com.northernwall.hadrian.handlers.service.helper;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.handlers.service.dao.GetVersionData;

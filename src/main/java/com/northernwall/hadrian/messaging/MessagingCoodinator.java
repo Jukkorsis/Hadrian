@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.messaging;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;

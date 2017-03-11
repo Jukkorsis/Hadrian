@@ -15,8 +15,8 @@
  */
 package com.northernwall.hadrian.db;
 
-import com.northernwall.hadrian.Const;
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.config.Const;
+import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;

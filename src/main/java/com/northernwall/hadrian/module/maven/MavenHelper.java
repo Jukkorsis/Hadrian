@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.module.maven;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;

@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian;
+package com.northernwall.hadrian.config;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.northernwall.hadrian.domain.Config;
 import com.northernwall.hadrian.domain.Environment;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;

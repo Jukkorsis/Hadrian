@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.routing;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 
 /**
  *

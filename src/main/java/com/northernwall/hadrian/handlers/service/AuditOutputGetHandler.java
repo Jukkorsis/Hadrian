@@ -17,7 +17,7 @@ package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import java.io.IOException;
 import java.io.OutputStreamWriter;

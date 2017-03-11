@@ -20,7 +20,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.domain.CalendarEntry;

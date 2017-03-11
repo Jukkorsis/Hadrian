@@ -22,7 +22,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.Calendar.Builder;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.calendar.simple.SimpleCalendarHelper;

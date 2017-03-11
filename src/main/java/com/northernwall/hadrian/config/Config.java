@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.config;
 
+import com.northernwall.hadrian.domain.Environment;
 import java.util.LinkedList;
 import java.util.List;
 

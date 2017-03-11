@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.handlers.service.helper;
 
-import com.northernwall.hadrian.ConfigHelper;
+import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import java.util.List;
 

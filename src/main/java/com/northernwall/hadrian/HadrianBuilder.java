@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.config.ConfigHelper;
+import com.northernwall.hadrian.config.Const;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.northernwall.hadrian.access.AccessHandlerFactory;

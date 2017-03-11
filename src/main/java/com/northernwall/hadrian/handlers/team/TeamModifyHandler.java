@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.handlers.team;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;

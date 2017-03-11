@@ -16,7 +16,7 @@
 
 package com.northernwall.hadrian.domain;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import java.util.UUID;
 
 /**

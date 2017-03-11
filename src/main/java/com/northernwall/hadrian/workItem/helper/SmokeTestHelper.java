@@ -16,7 +16,7 @@
 package com.northernwall.hadrian.workItem.helper;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.dao.SmokeTestData;
 import com.squareup.okhttp.ConnectionPool;

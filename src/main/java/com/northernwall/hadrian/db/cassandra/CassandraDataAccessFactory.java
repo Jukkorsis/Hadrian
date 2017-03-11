@@ -22,7 +22,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.parameters.Parameters;

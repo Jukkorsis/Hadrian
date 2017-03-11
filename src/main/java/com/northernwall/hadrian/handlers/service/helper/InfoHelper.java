@@ -18,7 +18,7 @@ package com.northernwall.hadrian.handlers.service.helper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;

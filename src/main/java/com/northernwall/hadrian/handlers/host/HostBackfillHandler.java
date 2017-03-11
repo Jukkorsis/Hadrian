@@ -17,14 +17,14 @@ package com.northernwall.hadrian.handlers.host;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.ConfigHelper;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.ConfigHelper;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
-import com.northernwall.hadrian.domain.Config;
+import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;

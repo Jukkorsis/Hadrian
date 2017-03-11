@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian;
+package com.northernwall.hadrian.config;
 
 import com.squareup.okhttp.MediaType;
 

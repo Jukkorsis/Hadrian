@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian;
 
+import com.northernwall.hadrian.config.Const;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;

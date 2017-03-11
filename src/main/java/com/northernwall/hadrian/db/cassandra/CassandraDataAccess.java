@@ -25,7 +25,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Session.State;
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.StringUtils;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;

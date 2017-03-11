@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.access.simple;
 
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.User;

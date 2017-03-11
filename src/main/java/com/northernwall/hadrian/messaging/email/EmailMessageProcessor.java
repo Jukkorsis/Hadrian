@@ -1,7 +1,7 @@
 package com.northernwall.hadrian.messaging.email;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.Const;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageProcessor;
 import com.northernwall.hadrian.messaging.MessageType;
