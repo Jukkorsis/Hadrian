@@ -79,10 +79,10 @@ public class VipCreateHandler extends BasicHandler {
                 data.domain,
                 data.external,
                 data.environment,
-                data.protocol,
+                data.protocolMode,
+                data.priorityMode,
                 data.vipPort,
-                data.servicePort,
-                data.lbConfig);
+                data.servicePort);
         vip.setMigration(2);
         getDataAccess().saveVip(vip);
 

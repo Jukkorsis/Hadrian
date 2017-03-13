@@ -64,7 +64,7 @@ public class VipModifyHandler extends BasicHandler {
         WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
         workItem.getVip().external = data.external;
         workItem.getVip().servicePort = data.servicePort;
-        workItem.getVip().lbConfig = data.lbConfig;
+        workItem.getVip().priorityMode = data.priorityMode;
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

@@ -33,10 +33,12 @@ public class Vip implements Comparable<Vip>{
     private String domain;
     private boolean external;
     private String environment;
-    private String protocol;
+    private String protocol; //Remove in the next version
+    private String protocolMode;
+    private String lbConfig; //Remove in the next version
+    private String priorityMode;
     private int vipPort;
     private int servicePort;
-    private String lbConfig;
     
     /**
      * 0 - not migrated
@@ -55,13 +57,14 @@ public class Vip implements Comparable<Vip>{
         this.domain = null;
         this.external = false;
         this.environment = null;
-        this.protocol = "HTTP";
+        this.protocolMode = null;
+        this.priorityMode = null;
         this.vipPort = 80;
         this.servicePort = 8080;
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String protocol, int vipPort, int servicePort, String lbConfig) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String protocolMode, String priorityMode, int vipPort, int servicePort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -71,10 +74,10 @@ public class Vip implements Comparable<Vip>{
         this.domain = domain;
         this.external = external;
         this.environment = environment;
-        this.protocol = protocol;
+        this.protocolMode = protocolMode;
+        this.priorityMode = priorityMode;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
-        this.lbConfig = lbConfig;
     }
 
     public String getVipId() {
@@ -154,6 +157,30 @@ public class Vip implements Comparable<Vip>{
         this.protocol = protocol;
     }
     
+    public String getProtocolMode() {
+        return protocolMode;
+    }
+
+    public void setProtocolMode(String protocolMode) {
+        this.protocolMode = protocolMode;
+    }
+
+    public String getLbConfig() {
+        return lbConfig;
+    }
+
+    public void setLbConfig(String lbConfig) {
+        this.lbConfig = lbConfig;
+    }
+
+    public String getPriorityMode() {
+        return priorityMode;
+    }
+
+    public void setPriorityMode(String priorityMode) {
+        this.priorityMode = priorityMode;
+    }
+
     public int getVipPort() {
         return vipPort;
     }
@@ -168,14 +195,6 @@ public class Vip implements Comparable<Vip>{
 
     public void setServicePort(int servicePort) {
         this.servicePort = servicePort;
-    }
-
-    public String getLbConfig() {
-        return lbConfig;
-    }
-
-    public void setLbConfig(String lbConfig) {
-        this.lbConfig = lbConfig;
     }
 
     public int getMigration() {

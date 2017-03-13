@@ -49,9 +49,9 @@ public class Config {
     public List<String> environmentNames = new LinkedList<>();
     public List<Environment> environments = new LinkedList<>();
     public List<String> platforms = new LinkedList<>();
-    public List<String> protocols = new LinkedList<>();
+    public List<String> protocolModes = new LinkedList<>();
+    public List<String> priorityModes = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
-    public List<String> lbConfigs = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> scopes = new LinkedList<>();
     public List<String> folderWhiteList = new LinkedList<>();

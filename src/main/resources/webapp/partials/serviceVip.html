@@ -27,10 +27,10 @@
                         <table class="table table-hover table-striped table-condensed">
                             <tr>
                                 <th width="50%">DNS</th>
-                                <th width="10%">Protocol</th>
+                                <th width="10%">Protocol Mode</th>
+                                <th width="10%">Priority Mode</th>
                                 <th width="10%">VIP Port</th>
                                 <th width="10%">Service Port</th>
-                                <th width="10%">LB Config</th>
                                 <th width="10%">External</th>
                             </tr>
                             <tr ng-repeat-start="ep in mn.vips">
@@ -53,10 +53,10 @@
                                         <span class="label label-warning">{{ep.status}}</span>
                                     </span>
                                 </td>
-                                <td>{{ep.protocol}}</td>
+                                <td>{{ep.protocolMode}}</td>
+                                <td>{{ep.priorityMode}}</td>
                                 <td>{{ep.vipPort}}</td>
                                 <td>{{ep.servicePort}}</td>
-                                <td>{{ep.lbConfig}}</td>
                                 <td>{{ep.external}}</td>
                             </tr>
                             <tr ng-if="ep.expanded" ng-repeat-end="">

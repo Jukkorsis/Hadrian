@@ -190,12 +190,12 @@ public class Const {
     public static final String CONFIG_ENVIRONMENTS_ABBR = "{abbr}";
     public static final String CONFIG_PLATFORMS = "config.platforms";
     public static final String CONFIG_PLATFORMS_DEFAULT = "Java7, Java8";
-    public static final String CONFIG_PROTOCOLS = "config.protocols";
-    public static final String CONFIG_PROTOCOLS_DEFAULT = "HTTP, HTTPS, TCP";
+    public static final String CONFIG_PROTOCOL_MODES = "config.protocolModes";
+    public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "HTTP-HTTP, HTTPS-HTTP, TCP-TCP";
+    public static final String CONFIG_PRIORITY_MODES = "config.priorityModes";
+    public static final String CONFIG_PRIORITY_MODES_DEFAULT = "Regional DCs, All DCs, Local DC";
     public static final String CONFIG_DOMAINS = "config.domains";
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
-    public static final String CONFIG_LB_CONFIGS = "config.lbConfigs";
-    public static final String CONFIG_LB_CONFIGS_DEFAULT = "Regional DCs, All DCs, Local DC";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";
     public static final String CONFIG_ARTIFACT_TYPES_DEFAULT = "jar, war, targz";
     public static final String CONFIG_SCOPES = "config.scopes";

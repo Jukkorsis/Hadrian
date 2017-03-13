@@ -34,10 +34,12 @@ public class DataAccessUpdater {
         String version = dataAccess.getVersion();
 
         if (version == null || version.isEmpty()) {
-            version = "1.9";
+            version = "1.10";
             dataAccess.setVersion(version);
-            LOGGER.info("New DB, initial version set to 1.9");
+            LOGGER.info("New DB, initial version set to 1.10");
+            return;
         }
+        
         if (version.equals("1.7")) {
             fixModule(dataAccess, config);
             version = "1.8";
@@ -51,8 +53,47 @@ public class DataAccessUpdater {
             LOGGER.info("DB has been upgraded to 1.9 from 1.8");
         }
         if (version.equals("1.9")) {
+            fixVip2(dataAccess);
+            version = "1.10";
+            dataAccess.setVersion(version);
+            LOGGER.info("DB has been upgraded to 1.10 from 1.9");
+        }
+        if (version.equals("1.10")) {
             fixHost(dataAccess);
-            LOGGER.info("Current DB version is 1.9, no upgrade required.");
+            LOGGER.info("Current DB version is 1.10, no upgrade required.");
+        }
+    }
+
+    private static void fixVip2(DataAccess dataAccess) {
+        List<Service> services = dataAccess.getActiveServices();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                List<Vip> vips = dataAccess.getVips(service.getServiceId());
+                if (vips != null && !vips.isEmpty()) {
+                    for (Vip vip : vips) {
+                        vip.setPriorityMode(vip.getLbConfig());
+                        switch (vip.getProtocol()) {
+                            case "HTTP":
+                                vip.setProtocolMode("HTTP-HTTP");
+                                break;
+                            case "HTTPS":
+                                vip.setProtocolMode("HTTPS-HTTP");
+                                break;
+                            case "TCP":
+                                vip.setProtocolMode("TCP-TCP");
+                                break;
+                            default:
+                                LOGGER.error("Unknown protocol {} on vip {} on {}", 
+                                        vip.getProtocol(), 
+                                        vip.getDns(), 
+                                        service.getServiceName());
+                                vip.setProtocolMode("HTTP-HTTP");
+                                break;
+                        }
+                        dataAccess.saveVip(vip);
+                    }
+                }
+            }
         }
     }
 
@@ -64,7 +105,7 @@ public class DataAccessUpdater {
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
                         if (vip.getLbConfig() == null || vip.getLbConfig().isEmpty()) {
-                            vip.setLbConfig(config.lbConfigs.get(0));
+                            vip.setLbConfig(config.priorityModes.get(0));
                             dataAccess.saveVip(vip);
                         }
                     }

@@ -30,7 +30,6 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.vip.dao.PostVipData;
-import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -81,10 +80,10 @@ public class VipBackfillHandler extends BasicHandler {
                 data.domain,
                 data.external,
                 data.environment,
-                data.protocol,
+                data.protocolMode,
+                data.priorityMode,
                 data.vipPort,
-                data.servicePort,
-                data.lbConfig);
+                data.servicePort);
         vip.setMigration(0);
         getDataAccess().saveVip(vip);
 

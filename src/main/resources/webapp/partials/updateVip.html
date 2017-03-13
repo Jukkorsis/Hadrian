@@ -8,16 +8,13 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">VIP:</label>
       <div class="col-sm-9">
-        {{vip.protocol}}://{{vip.dns}}.{{vip.domain}}:{{vip.vipPort}}
+        {{vip.dns}}.{{vip.domain}}:{{vip.vipPort}}
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">External:</label>
+      <label class="col-sm-3 control-label">Priority Mode:</label>
       <div class="col-sm-9">
-        <select ng-model="formUpdateVip.external" class="form-control" autofocus="true">
-          <option value="false">False</option>
-          <option value="true">True</option>
-        </select>
+        <select ng-model="formUpdateVip.priorityMode" ng-options="c for c in config.priorityModes" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
@@ -27,9 +24,12 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">LB Config:</label>
+      <label class="col-sm-3 control-label">External:</label>
       <div class="col-sm-9">
-        <select ng-model="formUpdateVip.lbConfig" ng-options="c for c in config.lbConfigs" class="form-control"></select>
+        <select ng-model="formUpdateVip.external" class="form-control" autofocus="true">
+          <option value="false">False</option>
+          <option value="true">True</option>
+        </select>
       </div>
     </div>
   </form>

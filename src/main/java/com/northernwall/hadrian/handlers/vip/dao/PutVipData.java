@@ -24,7 +24,7 @@ public class PutVipData {
     public String vipId;
     public String serviceId;
     public boolean external;
+    public String priorityMode;
     public int servicePort;
-    public String lbConfig;
 
 }

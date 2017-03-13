@@ -35,11 +35,11 @@ public class VipUpdateAction extends Action {
 
     @Override
     public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
-        notes.put("Protocol", workItem.getVip().protocol);
+        notes.put("Protocol_Mode", workItem.getVip().protocolMode);
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
-        notes.put("LB_Config", workItem.getVip().lbConfig);
+        notes.put("Priority_Mode", workItem.getVip().priorityMode);
         notes.put("External", Boolean.toString(workItem.getVip().external));
         writeAudit(workItem, result, notes, output);
     }
@@ -54,7 +54,7 @@ public class VipUpdateAction extends Action {
         vip.setStatus(false, Const.STATUS_NO);
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
-        vip.setLbConfig(workItem.getVip().lbConfig);
+        vip.setPriorityMode(workItem.getVip().priorityMode);
         dataAccess.updateVip(vip);
     }
 
