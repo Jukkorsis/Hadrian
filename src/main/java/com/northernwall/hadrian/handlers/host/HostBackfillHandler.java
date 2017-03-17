@@ -35,7 +35,10 @@ import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.handlers.service.dao.PostBackfillHostData;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -52,7 +55,7 @@ import org.slf4j.LoggerFactory;
 public class HostBackfillHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HostBackfillHandler.class);
-    
+
     public static String scrubHostname(String hostname) {
         if (hostname == null) {
             return null;
@@ -77,11 +80,13 @@ public class HostBackfillHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
+    private final Parameters parameter;
 
-    public HostBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper) {
+    public HostBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, Parameters parameter) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
+        this.parameter = parameter;
     }
 
     @Override
@@ -101,7 +106,7 @@ public class HostBackfillHandler extends BasicHandler {
         if (!config.platforms.contains(data.platform)) {
             throw new Http400BadRequestException("unknown operating platform, " + data.platform);
         }
-        
+
         if (data.hosts == null || data.hosts.isEmpty()) {
             throw new Http400BadRequestException("Hosts is empty");
         }
@@ -117,14 +122,9 @@ public class HostBackfillHandler extends BasicHandler {
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                SearchResult searchResult = getDataAccess().doSearch(
-                        Const.SEARCH_SPACE_HOST_NAME, 
-                        scrubedHostName);
-                if (searchResult == null) {
+                if (checkHostAlreadyExists(scrubedHostName)) {
                     doBackfill(scrubedHostName, service, module, data, user);
                     creationCount++;
-                } else {
-                    LOGGER.warn("Could not backfill host {} ({}) becuase it already exists, {}", scrubedHostName, hostname, searchResult.hostId);
                 }
             }
         }
@@ -132,7 +132,7 @@ public class HostBackfillHandler extends BasicHandler {
         if (creationCount == 0) {
             throw new Http400BadRequestException("The listed hosts already exist");
         }
-        
+
         response.setStatus(200);
         request.setHandled(true);
     }
@@ -145,7 +145,7 @@ public class HostBackfillHandler extends BasicHandler {
                 data.dataCenter,
                 data.environment,
                 data.platform);
-        
+
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(
                 Const.SEARCH_SPACE_HOST_NAME,
@@ -158,7 +158,7 @@ public class HostBackfillHandler extends BasicHandler {
                 false,
                 "Backfilled %% ago",
                 Const.STATUS_INFO);
-        
+
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();
         audit.setTimePerformed(GMT.getGmtAsDate());
@@ -169,16 +169,36 @@ public class HostBackfillHandler extends BasicHandler {
         audit.successfull = true;
         audit.moduleName = module.getModuleName();
         audit.hostName = scrubedHostName;
-        
+
         Map<String, String> notes = new HashMap<>();
         notes.put("Reason", "Backfilled host.");
         notes.put("DC", data.dataCenter);
         notes.put("Environment", data.environment);
         notes.put("Plaform", data.platform);
         audit.notes = getGson().toJson(notes);
-        
+
         getDataAccess().saveAudit(audit, null);
     }
 
+    private boolean checkHostAlreadyExists(String hostname) {
+        SearchResult searchResult = getDataAccess().doSearch(
+                Const.SEARCH_SPACE_HOST_NAME,
+                hostname);
+        if (searchResult != null) {
+            LOGGER.warn("Could not backfill host {} becuase it already exists, {}", hostname, searchResult.hostId);
+            return false;
+        }
+        
+        if (parameter.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
+            try {
+                InetAddress address = InetAddress.getByName(hostname);
+                LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
+            } catch (UnknownHostException ex) {
+                LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname, searchResult.hostId);
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

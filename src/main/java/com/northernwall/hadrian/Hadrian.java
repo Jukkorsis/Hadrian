@@ -251,7 +251,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/restart", new HostRestartHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/reboot", new HostRebootHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(dataAccess, gson, accessHelper, configHelper), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(dataAccess, gson, accessHelper, configHelper, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/st/exec", new SmokeTestExecHandler(dataAccess, gson, accessHelper, smokeTestHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(dataAccess, gson, accessHelper, client), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(dataAccess, gson, accessHelper), true);

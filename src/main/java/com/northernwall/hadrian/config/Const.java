@@ -191,7 +191,7 @@ public class Const {
     public static final String CONFIG_PLATFORMS = "config.platforms";
     public static final String CONFIG_PLATFORMS_DEFAULT = "Java7, Java8";
     public static final String CONFIG_PROTOCOL_MODES = "config.protocolModes";
-    public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "HTTP-HTTP, HTTPS-HTTP, TCP-TCP";
+    public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "[{\"name\":\"HTTP-HTTP\"}, {\"name\":\"HTTPS-HTTP\"}, {\"name\":\"TCP-TCP\",\"requiresVipPort\":true}]";
     public static final String CONFIG_PRIORITY_MODES = "config.priorityModes";
     public static final String CONFIG_PRIORITY_MODES_DEFAULT = "Regional DCs, All DCs, Local DC";
     public static final String CONFIG_DOMAINS = "config.domains";
@@ -206,6 +206,10 @@ public class Const {
     public static final String SEARCH_SPACE_GIT_PROJECT = "gitProject";
     public static final String SEARCH_SPACE_MAVEN_GROUP_ARTIFACT = "mavenGroupArtifact";
     public static final String SEARCH_SPACE_HOST_NAME = "hostName";
+    public static final String SEARCH_SPACE_VIP_FQDN = "vipFqdn";
+    
+    public static final String CHECK_RESOLVE_HOSTNAME = "check.resolveHostname";
+    public static final boolean CHECK_RESOLVE_HOSTNAME_DEFAULT = true;
     
     private Const() {
     }
