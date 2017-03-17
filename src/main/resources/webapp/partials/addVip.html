@@ -20,13 +20,18 @@
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Inbound Protocol:</label>
       <div class="col-sm-9">
-        <select ng-model="formSaveVip.inboundProtocol" ng-options="ip as ip.name for ip in config.inboundProtocols" ng-change="formSaveVip.outboundProtocol = formSaveVip.inboundProtocol.outbound[0]; formSaveVip.inboundModifiers = null;" class="form-control"></select>
+        <select ng-model="formSaveVip.inboundProtocol" ng-options="ip as ip.name for ip in config.inboundProtocols" ng-change="formSaveVip.outboundProtocol = formSaveVip.inboundProtocol.outbound[0]; formSaveVip.inboundModifiers = null; formSaveVip.outboundModifiers = null;" class="form-control"></select>
       </div>
     </div>
-    <div class="form-group form-group-sm">
+    <div ng-if="formSaveVip.inboundProtocol.modifiers.length > 0" class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Inbound Modifiers:</label>
       <div class="col-sm-9">
-        <select multiple="multiple" ng-model="formSaveVip.inboundModifiers" ng-options="im as im.name for im in formSaveVip.inboundProtocol.modifiers" class="form-control"></select>
+        <ui-select multiple ng-model="formSaveVip.inboundModifiers" theme="bootstrap" close-on-select="false" title="Choose an optional modifier" class="form-control">
+          <ui-select-match placeholder="Select modifiers...">{{$item.name}}</ui-select-match>
+          <ui-select-choices repeat="im in formSaveVip.inboundProtocol.modifiers">
+            {{im.name}}
+          </ui-select-choices>
+        </ui-select>
         <p class="help-block">Modifiers are optional and multiple can be selected</p>
       </div>
     </div>
@@ -36,17 +41,16 @@
         <select ng-model="formSaveVip.outboundProtocol" ng-options="op as op.name for op in formSaveVip.inboundProtocol.outbound" ng-change="formSaveVip.outboundModifiers = null;" class="form-control"></select>
       </div>
     </div>
-    <div class="form-group form-group-sm">
+    <div ng-if="formSaveVip.outboundProtocol.modifiers.length > 0" class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Outbound Modifiers:</label>
       <div class="col-sm-9">
-        <select multiple ng-model="formSaveVip.outboundModifiers" ng-options="om as om.name for om in formSaveVip.outboundProtocol.modifiers" class="form-control"></select>
+        <ui-select multiple ng-model="formSaveVip.outboundModifiers" theme="bootstrap" close-on-select="false" title="Choose an optional modifier" class="form-control">
+          <ui-select-match placeholder="Select modifiers...">{{$item.name}}</ui-select-match>
+          <ui-select-choices repeat="om in formSaveVip.outboundProtocol.modifiers">
+            {{om.name}}
+          </ui-select-choices>
+        </ui-select>
         <p class="help-block">Modifiers are optional and multiple can be selected</p>
-      </div>
-    </div>
-    <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Priority Mode:</label>
-      <div class="col-sm-9">
-        <select ng-model="formSaveVip.priorityMode" ng-options="c for c in config.priorityModes" class="form-control"></select>
       </div>
     </div>
     <div ng-if="formSaveVip.inboundProtocol.vipPortRequired" class="form-group form-group-sm">
@@ -59,6 +63,12 @@
       <label class="col-sm-3 control-label">Service Port:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveVip.servicePort" type="number" class="form-control">
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Priority Mode:</label>
+      <div class="col-sm-9">
+        <select ng-model="formSaveVip.priorityMode" ng-options="c for c in config.priorityModes" class="form-control"></select>
       </div>
     </div>
     <div class="form-group form-group-sm">
