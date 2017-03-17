@@ -26,6 +26,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip.httpCheckPort = 0;
         $scope.formSaveVip.external = false;
 
         $scope.save = function () {
@@ -42,6 +43,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
+                httpCheckPort: $scope.formSaveVip.httpCheckPort,
                 external: $scope.formSaveVip.external
             };
 
@@ -96,6 +98,7 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
         $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
+        $scope.formSaveVip.httpCheckPort = 0;
         $scope.formSaveVip.external = false;
 
         $scope.save = function () {
@@ -112,6 +115,7 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
+                httpCheckPort: $scope.formSaveVip.httpCheckPort,
                 external: $scope.formSaveVip.external
             };
 

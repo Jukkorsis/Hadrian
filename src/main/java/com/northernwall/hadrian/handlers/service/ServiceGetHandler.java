@@ -160,7 +160,8 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
             for (String modifier : vip.getOutboundModifiers()) {
                 getVipData.outboundText = getVipData.outboundText + " " + modifier;
             }
-            getVipData.outboundText = getVipData.outboundText + " ]";
+            //TODO fix this when a second outbound modifier is added
+            getVipData.outboundText = getVipData.outboundText + " (" + vip.getHttpCheckPort() + ") ]";
         }
     }
 

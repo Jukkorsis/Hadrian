@@ -60,6 +60,9 @@ public class VipCreateAction extends Action {
             notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         }
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
+        if (workItem.getVip().httpCheckPort > 0) {
+            notes.put("HTTP_Check_Port", Integer.toString(workItem.getVip().httpCheckPort));
+        }
         notes.put("Priority_Mode", workItem.getVip().priorityMode);
         notes.put("External", Boolean.toString(workItem.getVip().external));
         writeAudit(workItem, result, notes, output);

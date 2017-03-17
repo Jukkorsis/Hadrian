@@ -44,6 +44,7 @@ public class Vip implements Comparable<Vip>{
     private String priorityMode;
     private int vipPort;
     private int servicePort;
+    private int httpCheckPort;
     
     /**
      * 0 - not migrated
@@ -67,12 +68,13 @@ public class Vip implements Comparable<Vip>{
         this.outboundProtocol = null;
         this.outboundModifiers = new LinkedList<>();
         this.priorityMode = null;
-        this.vipPort = 80;
+        this.vipPort = 0;
         this.servicePort = 8080;
+        this.httpCheckPort = 0;
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort, int httpCheckPort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -89,6 +91,8 @@ public class Vip implements Comparable<Vip>{
         this.priorityMode = priorityMode;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
+        this.httpCheckPort = httpCheckPort;
+        this.migration = 0;
     }
 
     public String getVipId() {
@@ -230,6 +234,14 @@ public class Vip implements Comparable<Vip>{
 
     public void setServicePort(int servicePort) {
         this.servicePort = servicePort;
+    }
+
+    public int getHttpCheckPort() {
+        return httpCheckPort;
+    }
+
+    public void setHttpCheckPort(int httpCheckPort) {
+        this.httpCheckPort = httpCheckPort;
     }
 
     public int getMigration() {

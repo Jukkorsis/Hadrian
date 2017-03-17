@@ -31,5 +31,6 @@ public class PostVipData {
     public String priorityMode;
     public int vipPort;
     public int servicePort;
+    public int httpCheckPort;
 
 }

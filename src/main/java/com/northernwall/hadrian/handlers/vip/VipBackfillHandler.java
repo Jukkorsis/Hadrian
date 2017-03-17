@@ -88,7 +88,8 @@ public class VipBackfillHandler extends BasicHandler {
                 data.outboundModifiers,
                 data.priorityMode,
                 data.vipPort,
-                data.servicePort);
+                data.servicePort,
+                data.httpCheckPort);
         vip.setMigration(0);
         getDataAccess().saveVip(vip);
         getDataAccess().insertSearch(
@@ -131,6 +132,9 @@ public class VipBackfillHandler extends BasicHandler {
             notes.put("VIP_Port", Integer.toString(data.vipPort));
         }
         notes.put("Service_Port", Integer.toString(data.servicePort));
+        if (data.httpCheckPort > 0) {
+            notes.put("HTTP_Check_Port", Integer.toString(data.httpCheckPort));
+        }
         notes.put("Priority_Mode", data.priorityMode);
         notes.put("External", Boolean.toString(data.external));
         notes.put("Reason", "Backfilled vip.");

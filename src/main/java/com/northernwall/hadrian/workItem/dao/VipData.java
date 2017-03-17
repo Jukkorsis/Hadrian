@@ -41,6 +41,7 @@ public class VipData {
         temp.priorityMode = vip.getPriorityMode();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        temp.httpCheckPort = vip.getHttpCheckPort();
         temp.migration = vip.getMigration();
         
         return temp;
@@ -58,6 +59,7 @@ public class VipData {
     public String priorityMode;
     public int vipPort;
     public int servicePort;
+    public int httpCheckPort;
     public int migration;
 
 }
