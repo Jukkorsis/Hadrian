@@ -20,7 +20,6 @@ import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
