@@ -41,6 +41,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,7 +123,9 @@ public class HostBackfillHandler extends BasicHandler {
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                if (checkHostAlreadyExists(scrubedHostName)) {
+                if (checkHostnameMatchsPattern(scrubedHostName)
+                        && checkHostAlreadyExists(scrubedHostName)
+                        && checkHostnameResolves(scrubedHostName)) {
                     doBackfill(scrubedHostName, service, module, data, user);
                     creationCount++;
                 }
@@ -135,6 +138,43 @@ public class HostBackfillHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private boolean checkHostnameMatchsPattern(String hostname) {
+        String pattern = parameters.getString(Const.CHECK_HOSTNAME_PATTERN, null);
+        if (pattern == null || pattern.isEmpty()) {
+            return true;
+        }
+        try {
+            return hostname.matches(pattern);
+        } catch (PatternSyntaxException ex) {
+            LOGGER.error("Match pattern '{}' is illegal, {}", pattern, ex.getMessage());
+            return true;
+        }
+    }
+
+    private boolean checkHostAlreadyExists(String hostname) {
+        SearchResult searchResult = getDataAccess().doSearch(
+                Const.SEARCH_SPACE_HOST_NAME,
+                hostname);
+        if (searchResult != null) {
+            LOGGER.warn("Could not backfill host {} becuase it already exists, {}", hostname, searchResult.hostId);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkHostnameResolves(String hostname) {
+        if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
+            try {
+                InetAddress address = InetAddress.getByName(hostname);
+                LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
+            } catch (UnknownHostException ex) {
+                LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname);
+                return false;
+            }
+        }
+        return true;
     }
 
     private void doBackfill(String scrubedHostName, Service service, Module module, PostBackfillHostData data, User user) {
@@ -178,27 +218,6 @@ public class HostBackfillHandler extends BasicHandler {
         audit.notes = getGson().toJson(notes);
 
         getDataAccess().saveAudit(audit, null);
-    }
-
-    private boolean checkHostAlreadyExists(String hostname) {
-        SearchResult searchResult = getDataAccess().doSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
-                hostname);
-        if (searchResult != null) {
-            LOGGER.warn("Could not backfill host {} becuase it already exists, {}", hostname, searchResult.hostId);
-            return false;
-        }
-        
-        if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
-            try {
-                InetAddress address = InetAddress.getByName(hostname);
-                LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
-            } catch (UnknownHostException ex) {
-                LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname);
-                return false;
-            }
-        }
-        return true;
     }
 
 }

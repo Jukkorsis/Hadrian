@@ -210,6 +210,7 @@ public class Const {
     
     public static final String CHECK_RESOLVE_HOSTNAME = "check.resolveHostname";
     public static final boolean CHECK_RESOLVE_HOSTNAME_DEFAULT = true;
+    public static final String CHECK_HOSTNAME_PATTERN = "check.hostnamePattern";
     
     private Const() {
     }
