@@ -36,12 +36,26 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 domain: $scope.formSaveVip.domain,
                 environment: $scope.environmentModule.environment,
                 inboundProtocol: $scope.formSaveVip.inboundProtocol.code,
+                inboundModifiers: [],
                 outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
+                outboundModifiers: [],
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
                 external: $scope.formSaveVip.external
             };
+
+            if ($scope.formSaveVip.inboundModifiers != null && $scope.formSaveVip.inboundModifiers.length > 0) {
+                for (var i = 0; i < $scope.formSaveVip.inboundModifiers.length; i++) {
+                    dataObject.inboundModifiers.push($scope.formSaveVip.inboundModifiers[i].code);
+                }
+            }
+
+            if ($scope.formSaveVip.outboundModifiers != null && $scope.formSaveVip.outboundModifiers.length > 0) {
+                for (var i = 0; i < $scope.formSaveVip.outboundModifiers.length; i++) {
+                    dataObject.outboundModifiers.push($scope.formSaveVip.outboundModifiers[i].code);
+                }
+            }
 
             var responsePromise = $http.post("/v1/vip/create", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {
@@ -92,12 +106,26 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
                 domain: $scope.formSaveVip.domain,
                 environment: $scope.environmentModule.environment,
                 inboundProtocol: $scope.formSaveVip.inboundProtocol.code,
+                inboundModifiers: [],
                 outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
+                outboundModifiers: [],
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
                 external: $scope.formSaveVip.external
             };
+
+            if ($scope.formSaveVip.inboundModifiers != null && $scope.formSaveVip.inboundModifiers.length > 0) {
+                for (var i = 0; i < $scope.formSaveVip.inboundModifiers.length; i++) {
+                    dataObject.inboundModifiers.push($scope.formSaveVip.inboundModifiers[i].code);
+                }
+            }
+
+            if ($scope.formSaveVip.outboundModifiers != null && $scope.formSaveVip.outboundModifiers.length > 0) {
+                for (var i = 0; i < $scope.formSaveVip.outboundModifiers.length; i++) {
+                    dataObject.outboundModifiers.push($scope.formSaveVip.outboundModifiers[i].code);
+                }
+            }
 
             var responsePromise = $http.post("/v1/vip/backfill", dataObject, {});
             responsePromise.success(function (dataFromServer, status, headers, config) {

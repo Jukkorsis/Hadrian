@@ -17,6 +17,8 @@
 package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.config.Const;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -35,7 +37,9 @@ public class Vip implements Comparable<Vip>{
     private String environment;
     private String protocol; //Remove in the next version
     private String inboundProtocol;
+    private List<String> inboundModifiers;
     private String outboundProtocol;
+    private List<String> outboundModifiers;
     private String lbConfig; //Remove in the next version
     private String priorityMode;
     private int vipPort;
@@ -59,14 +63,16 @@ public class Vip implements Comparable<Vip>{
         this.external = false;
         this.environment = null;
         this.inboundProtocol = null;
+        this.inboundModifiers = new LinkedList<>();
         this.outboundProtocol = null;
+        this.outboundModifiers = new LinkedList<>();
         this.priorityMode = null;
         this.vipPort = 80;
         this.servicePort = 8080;
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, String outboundProtocol, String priorityMode, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -77,7 +83,9 @@ public class Vip implements Comparable<Vip>{
         this.external = external;
         this.environment = environment;
         this.inboundProtocol = inboundProtocol;
+        this.inboundModifiers = inboundModifiers;
         this.outboundProtocol = outboundProtocol;
+        this.outboundModifiers = outboundModifiers;
         this.priorityMode = priorityMode;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
@@ -168,6 +176,14 @@ public class Vip implements Comparable<Vip>{
         this.inboundProtocol = inboundProtocol;
     }
 
+    public List<String> getInboundModifiers() {
+        return inboundModifiers;
+    }
+
+    public void setInboundModifiers(List<String> inboundModifiers) {
+        this.inboundModifiers = inboundModifiers;
+    }
+
     public String getOutboundProtocol() {
         return outboundProtocol;
     }
@@ -176,6 +192,14 @@ public class Vip implements Comparable<Vip>{
         this.outboundProtocol = outboundProtocol;
     }
     
+    public List<String> getOutboundModifiers() {
+        return outboundModifiers;
+    }
+
+    public void setOutboundModifiers(List<String> outboundModifiers) {
+        this.outboundModifiers = outboundModifiers;
+    }
+
     public String getLbConfig() {
         return lbConfig;
     }

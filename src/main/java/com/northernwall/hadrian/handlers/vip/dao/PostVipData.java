@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.handlers.vip.dao;
 
+import java.util.List;
+
 public class PostVipData {
     public String serviceId;
     public String moduleId;
@@ -23,7 +25,9 @@ public class PostVipData {
     public boolean external;
     public String environment;
     public String inboundProtocol;
+    public List<String> inboundModifiers;
     public String outboundProtocol;
+    public List<String> outboundModifiers;
     public String priorityMode;
     public int vipPort;
     public int servicePort;

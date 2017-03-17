@@ -41,30 +41,30 @@ public class DataAccessUpdater {
         }
 
         if (version.equals("1.7")) {
-            fixModule(dataAccess, config);
+            upgradeModule(dataAccess, config);
             version = "1.8";
             dataAccess.setVersion(version);
             LOGGER.info("DB has been upgraded to 1.8 from 1.7");
         }
         if (version.equals("1.8")) {
-            fixVip(dataAccess, config);
+            upgradeVip(dataAccess, config);
             version = "1.9";
             dataAccess.setVersion(version);
             LOGGER.info("DB has been upgraded to 1.9 from 1.8");
         }
         if (version.equals("1.9")) {
-            fixVip2(dataAccess);
+            upgradeVip2(dataAccess);
             version = "1.10";
             dataAccess.setVersion(version);
             LOGGER.info("DB has been upgraded to 1.10 from 1.9");
         }
         if (version.equals("1.10")) {
-            fixHost(dataAccess);
+            fixSearch(dataAccess);
             LOGGER.info("Current DB version is 1.10, no upgrade required.");
         }
     }
 
-    private static void fixVip2(DataAccess dataAccess) {
+    private static void upgradeVip2(DataAccess dataAccess) {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
@@ -106,7 +106,7 @@ public class DataAccessUpdater {
         }
     }
 
-    private static void fixVip(DataAccess dataAccess, Config config) {
+    private static void upgradeVip(DataAccess dataAccess, Config config) {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
@@ -123,7 +123,7 @@ public class DataAccessUpdater {
         }
     }
 
-    private static void fixModule(DataAccess dataAccess, Config config) {
+    private static void upgradeModule(DataAccess dataAccess, Config config) {
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
@@ -144,9 +144,10 @@ public class DataAccessUpdater {
         }
     }
 
-    private static void fixHost(DataAccess dataAccess) {
+    private static void fixSearch(DataAccess dataAccess) {
         int serviceCount = 0;
         int hostCount = 0;
+        int vipCount = 0;
         List<Service> services = dataAccess.getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
@@ -186,18 +187,55 @@ public class DataAccessUpdater {
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
-                        dataAccess.insertSearch(
+                        SearchResult searchResult = dataAccess.doSearch(
                                 Const.SEARCH_SPACE_HOST_NAME,
-                                host.getHostName(),
-                                service.getServiceId(),
-                                host.getModuleId(),
-                                host.getHostId());
-                        hostCount++;
+                                host.getHostName());
+                        if (searchResult == null) {
+                            LOGGER.warn("Host search did not find {} {}, inserting", 
+                                    host.getHostName(), 
+                                    host.getHostId());
+                            dataAccess.insertSearch(
+                                    Const.SEARCH_SPACE_HOST_NAME,
+                                    host.getHostName(),
+                                    service.getServiceId(),
+                                    host.getModuleId(),
+                                    host.getHostId());
+                            hostCount++;
+                        } else if (!searchResult.hostId.equals(host.getHostId())) {
+                            LOGGER.warn("Host search found {}, but with different id {}", 
+                                    host.getHostName(), 
+                                    searchResult.hostId);
+                        }
+                    }
+                }
+                List<Vip> vips = dataAccess.getVips(service.getServiceId());
+                if (vips != null && !vips.isEmpty()) {
+                    for (Vip vip : vips) {
+                        String fqdn = vip.getDns() + "." + vip.getDomain();
+                        SearchResult searchResult = dataAccess.doSearch(
+                                Const.SEARCH_SPACE_VIP_FQDN,
+                                fqdn);
+                        if (searchResult == null) {
+                            LOGGER.warn("VIP search did not find {} {}, inserting", 
+                                    fqdn, 
+                                    vip.getVipId());
+                            dataAccess.insertSearch(
+                                    Const.SEARCH_SPACE_VIP_FQDN,
+                                    fqdn,
+                                    service.getServiceId(),
+                                    vip.getModuleId(),
+                                    vip.getVipId());
+                            vipCount++;
+                        } else if (!searchResult.hostId.equals(vip.getVipId())) {
+                            LOGGER.warn("VIP search found {}, but with different id {}", 
+                                    fqdn, 
+                                    searchResult.hostId);
+                        }
                     }
                 }
             }
         }
-        LOGGER.info("Backfilled {} service, {} hosts", serviceCount, hostCount);
+        LOGGER.info("Backfilled {} service, {} hosts, {} vips", serviceCount, hostCount, vipCount);
     }
 
     private DataAccessUpdater() {

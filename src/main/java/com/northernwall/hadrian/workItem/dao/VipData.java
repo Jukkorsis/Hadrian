@@ -17,6 +17,7 @@
 package com.northernwall.hadrian.workItem.dao;
 
 import com.northernwall.hadrian.domain.Vip;
+import java.util.List;
 
 /**
  *
@@ -34,7 +35,9 @@ public class VipData {
         temp.external = vip.isExternal();
         temp.environment = vip.getEnvironment();
         temp.inboundProtocol = vip.getInboundProtocol();
+        temp.inboundModifiers = vip.getInboundModifiers();
         temp.outboundProtocol = vip.getOutboundProtocol();
+        temp.outboundModifiers = vip.getOutboundModifiers();
         temp.priorityMode = vip.getPriorityMode();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
@@ -49,7 +52,9 @@ public class VipData {
     public boolean external;
     public String environment;
     public String inboundProtocol;
+    public List<String> inboundModifiers;
     public String outboundProtocol;
+    public List<String> outboundModifiers;
     public String priorityMode;
     public int vipPort;
     public int servicePort;

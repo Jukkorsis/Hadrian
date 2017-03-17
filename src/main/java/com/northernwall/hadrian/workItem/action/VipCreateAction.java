@@ -40,9 +40,25 @@ public class VipCreateAction extends Action {
     @Override
     public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         notes.put("Inbound_Protocol", workItem.getVip().inboundProtocol);
+        if (workItem.getVip().inboundModifiers != null && !workItem.getVip().inboundModifiers.isEmpty()) {
+            String temp = "";
+            for (String modifier : workItem.getVip().inboundModifiers) {
+                temp = temp + " " + modifier;
+            }
+            notes.put("Inbound_Modifiers", temp);
+        }
         notes.put("Outbound_Protocol", workItem.getVip().outboundProtocol);
+        if (workItem.getVip().outboundModifiers != null && !workItem.getVip().outboundModifiers.isEmpty()) {
+            String temp = "";
+            for (String modifier : workItem.getVip().outboundModifiers) {
+                temp = temp + " " + modifier;
+            }
+            notes.put("Outbound_Modifiers", temp);
+        }
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
-        notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
+        if (workItem.getVip().vipPort > 0) {
+            notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
+        }
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));
         notes.put("Priority_Mode", workItem.getVip().priorityMode);
         notes.put("External", Boolean.toString(workItem.getVip().external));

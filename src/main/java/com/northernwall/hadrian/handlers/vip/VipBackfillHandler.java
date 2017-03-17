@@ -83,7 +83,9 @@ public class VipBackfillHandler extends BasicHandler {
                 data.external,
                 data.environment,
                 data.inboundProtocol,
+                data.inboundModifiers,
                 data.outboundProtocol,
+                data.outboundModifiers,
                 data.priorityMode,
                 data.vipPort,
                 data.servicePort);
@@ -108,6 +110,29 @@ public class VipBackfillHandler extends BasicHandler {
         audit.vipName = data.dns;
         
         Map<String, String> notes = new HashMap<>();
+        notes.put("Inbound_Protocol", data.inboundProtocol);
+        if (data.inboundModifiers != null && !data.inboundModifiers.isEmpty()) {
+            String temp = "";
+            for (String modifier : data.inboundModifiers) {
+                temp = temp + " " + modifier;
+            }
+            notes.put("Inbound_Modifiers", temp);
+        }
+        notes.put("Outbound_Protocol", data.outboundProtocol);
+        if (data.outboundModifiers != null && !data.outboundModifiers.isEmpty()) {
+            String temp = "";
+            for (String modifier : data.outboundModifiers) {
+                temp = temp + " " + modifier;
+            }
+            notes.put("Outbound_Modifiers", temp);
+        }
+        notes.put("DNS", dns + "." + data.domain);
+        if (data.vipPort > 0) {
+            notes.put("VIP_Port", Integer.toString(data.vipPort));
+        }
+        notes.put("Service_Port", Integer.toString(data.servicePort));
+        notes.put("Priority_Mode", data.priorityMode);
+        notes.put("External", Boolean.toString(data.external));
         notes.put("Reason", "Backfilled vip.");
         audit.notes = getGson().toJson(notes);
         

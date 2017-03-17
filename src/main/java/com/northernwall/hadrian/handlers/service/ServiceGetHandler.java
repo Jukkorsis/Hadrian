@@ -136,6 +136,13 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
         } else {
             getVipData.inboundText = inboundProtocol.name;
         }
+        if (vip.getInboundModifiers() != null && !vip.getInboundModifiers().isEmpty()) {
+            getVipData.inboundText = getVipData.inboundText + " [";
+            for (String modifier : vip.getInboundModifiers()) {
+                getVipData.inboundText = getVipData.inboundText + " " + modifier;
+            }
+            getVipData.inboundText = getVipData.inboundText + " ]";
+        }
         
         OutboundProtocol outboundProtocol = null;
         for (OutboundProtocol temp : inboundProtocol.outbound) {
@@ -147,6 +154,13 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
             getVipData.outboundText = vip.getOutboundProtocol() + " (" + vip.getServicePort() + ")";
         } else {
             getVipData.outboundText = outboundProtocol.name + " (" + vip.getServicePort() + ")";
+        }
+        if (vip.getOutboundModifiers() != null && !vip.getOutboundModifiers().isEmpty()) {
+            getVipData.outboundText = getVipData.outboundText + " [";
+            for (String modifier : vip.getOutboundModifiers()) {
+                getVipData.outboundText = getVipData.outboundText + " " + modifier;
+            }
+            getVipData.outboundText = getVipData.outboundText + " ]";
         }
     }
 
