@@ -80,13 +80,13 @@ public class HostBackfillHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
-    private final Parameters parameter;
+    private final Parameters parameters;
 
-    public HostBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, Parameters parameter) {
+    public HostBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, Parameters parameters) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
-        this.parameter = parameter;
+        this.parameters = parameters;
     }
 
     @Override
@@ -189,7 +189,7 @@ public class HostBackfillHandler extends BasicHandler {
             return false;
         }
         
-        if (parameter.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
+        if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
             try {
                 InetAddress address = InetAddress.getByName(hostname);
                 LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
