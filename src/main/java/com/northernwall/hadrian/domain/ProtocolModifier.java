@@ -22,6 +22,6 @@ package com.northernwall.hadrian.domain;
 public class ProtocolModifier {
     public String name;
     public String code;
-    public boolean aliasPortRequired; 
+    public boolean httpCheckPortRequired; 
     
 }
