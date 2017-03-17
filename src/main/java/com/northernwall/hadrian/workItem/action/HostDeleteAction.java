@@ -20,6 +20,8 @@ import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,23 @@ public class HostDeleteAction extends Action {
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Deleting host {} for {}", workItem.getHost().hostName, workItem.getService().serviceName);
+        String hostname = workItem.getHost().hostName;
+        checkIfHostExists(hostname);
+        LOGGER.info("Deleting host {} for {}", hostname, workItem.getService().serviceName);
         return Result.success;
+    }
+    
+    protected boolean checkIfHostExists(String hostname) {
+        if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
+            try {
+                InetAddress address = InetAddress.getByName(hostname);
+                LOGGER.info("Deleting host {} with IP address {}", hostname, address.getHostAddress());
+            } catch (UnknownHostException ex) {
+                LOGGER.warn("Could not find host {} to delete, IP address does not resolve", hostname);
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
