@@ -33,7 +33,8 @@ public class GetVipData {
         temp.domain = vip.getDomain();
         temp.external = vip.isExternal();
         temp.environment = vip.getEnvironment();
-        temp.protocolMode = vip.getProtocolMode();
+        temp.inboundProtocol = vip.getInboundProtocol();
+        temp.outboundProtocol = vip.getOutboundProtocol();
         temp.priorityMode = vip.getPriorityMode();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
@@ -49,10 +50,11 @@ public class GetVipData {
     public String domain;
     public boolean external;
     public String environment;
-    public String protocolMode;
+    public String inboundProtocol;
+    public String outboundProtocol;
     public String priorityMode;
     public int vipPort;
     public int servicePort;
-    private int migration;
+    public int migration;
 
 }

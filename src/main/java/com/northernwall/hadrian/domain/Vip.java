@@ -34,7 +34,8 @@ public class Vip implements Comparable<Vip>{
     private boolean external;
     private String environment;
     private String protocol; //Remove in the next version
-    private String protocolMode;
+    private String inboundProtocol;
+    private String outboundProtocol;
     private String lbConfig; //Remove in the next version
     private String priorityMode;
     private int vipPort;
@@ -57,14 +58,15 @@ public class Vip implements Comparable<Vip>{
         this.domain = null;
         this.external = false;
         this.environment = null;
-        this.protocolMode = null;
+        this.inboundProtocol = null;
+        this.outboundProtocol = null;
         this.priorityMode = null;
         this.vipPort = 80;
         this.servicePort = 8080;
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String protocolMode, String priorityMode, int vipPort, int servicePort) {
+    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, String outboundProtocol, String priorityMode, int vipPort, int servicePort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -74,7 +76,8 @@ public class Vip implements Comparable<Vip>{
         this.domain = domain;
         this.external = external;
         this.environment = environment;
-        this.protocolMode = protocolMode;
+        this.inboundProtocol = inboundProtocol;
+        this.outboundProtocol = outboundProtocol;
         this.priorityMode = priorityMode;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
@@ -156,15 +159,23 @@ public class Vip implements Comparable<Vip>{
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
+
+    public String getInboundProtocol() {
+        return inboundProtocol;
+    }
+
+    public void setInboundProtocol(String inboundProtocol) {
+        this.inboundProtocol = inboundProtocol;
+    }
+
+    public String getOutboundProtocol() {
+        return outboundProtocol;
+    }
+
+    public void setOutboundProtocol(String outboundProtocol) {
+        this.outboundProtocol = outboundProtocol;
+    }
     
-    public String getProtocolMode() {
-        return protocolMode;
-    }
-
-    public void setProtocolMode(String protocolMode) {
-        this.protocolMode = protocolMode;
-    }
-
     public String getLbConfig() {
         return lbConfig;
     }

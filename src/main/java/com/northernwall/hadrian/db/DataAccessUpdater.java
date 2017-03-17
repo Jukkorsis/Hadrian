@@ -39,7 +39,7 @@ public class DataAccessUpdater {
             LOGGER.info("New DB, initial version set to 1.10");
             return;
         }
-        
+
         if (version.equals("1.7")) {
             fixModule(dataAccess, config);
             version = "1.8";
@@ -72,23 +72,32 @@ public class DataAccessUpdater {
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
                         vip.setPriorityMode(vip.getLbConfig());
-                        switch (vip.getProtocol()) {
-                            case "HTTP":
-                                vip.setProtocolMode("HTTP-HTTP");
-                                break;
-                            case "HTTPS":
-                                vip.setProtocolMode("HTTPS-HTTP");
-                                break;
-                            case "TCP":
-                                vip.setProtocolMode("TCP-TCP");
-                                break;
-                            default:
-                                LOGGER.error("Unknown protocol {} on vip {} on {}", 
-                                        vip.getProtocol(), 
-                                        vip.getDns(), 
-                                        service.getServiceName());
-                                vip.setProtocolMode("HTTP-HTTP");
-                                break;
+                        if (vip.getProtocol() == null) {
+                            vip.setInboundProtocol("HTTP");
+                            vip.setOutboundProtocol("HTTP");
+                        } else {
+                            switch (vip.getProtocol()) {
+                                case "HTTP":
+                                    vip.setInboundProtocol("HTTP");
+                                    vip.setOutboundProtocol("HTTP");
+                                    break;
+                                case "HTTPS":
+                                    vip.setInboundProtocol("HTTPS");
+                                    vip.setOutboundProtocol("HTTP");
+                                    break;
+                                case "TCP":
+                                    vip.setInboundProtocol("TCP");
+                                    vip.setOutboundProtocol("TCP");
+                                    break;
+                                default:
+                                    LOGGER.error("Unknown protocol {} on vip {} on {}",
+                                            vip.getProtocol(),
+                                            vip.getDns(),
+                                            service.getServiceName());
+                                    vip.setInboundProtocol("HTTP");
+                                    vip.setOutboundProtocol("HTTP");
+                                    break;
+                            }
                         }
                         dataAccess.saveVip(vip);
                     }

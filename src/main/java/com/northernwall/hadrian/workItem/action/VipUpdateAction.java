@@ -35,7 +35,8 @@ public class VipUpdateAction extends Action {
 
     @Override
     public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
-        notes.put("Protocol_Mode", workItem.getVip().protocolMode);
+        notes.put("Inbound_Protocol", workItem.getVip().inboundProtocol);
+        notes.put("Outbound_Protocol", workItem.getVip().outboundProtocol);
         notes.put("DNS", workItem.getVip().dns + "." + workItem.getVip().domain);
         notes.put("VIP_Port", Integer.toString(workItem.getVip().vipPort));
         notes.put("Service_Port", Integer.toString(workItem.getVip().servicePort));

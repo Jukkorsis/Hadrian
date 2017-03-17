@@ -19,9 +19,10 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
         $scope.formSaveVip = {};
         $scope.formSaveVip.dns = "";
         $scope.formSaveVip.domain = $scope.config.domains[0];
-        $scope.formSaveVip.protocolMode = $scope.config.protocolModes[0];
+        $scope.formSaveVip.inboundProtocol = $scope.config.inboundProtocols[0];
+        $scope.formSaveVip.outboundProtocol = $scope.formSaveVip.inboundProtocol.outbound[0];
         $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
-        $scope.formSaveVip.vipPort = 80;
+        $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.external = false;
 
@@ -32,7 +33,8 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
                 dns: $scope.formSaveVip.dns,
                 domain: $scope.formSaveVip.domain,
                 environment: $scope.environmentModule.environment,
-                protocolMode: $scope.formSaveVip.protocolMode,
+                inboundProtocol: $scope.formSaveVip.inboundProtocol.code,
+                outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
@@ -71,9 +73,10 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
         $scope.formSaveVip = {};
         $scope.formSaveVip.dns = "";
         $scope.formSaveVip.domain = $scope.config.domains[0];
-        $scope.formSaveVip.protocolMode = $scope.config.protocolModes[0];
+        $scope.formSaveVip.inboundProtocol = $scope.config.inboundProtocols[0];
+        $scope.formSaveVip.outboundProtocol = $scope.formSaveVip.inboundProtocol.outbound[0];
         $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
-        $scope.formSaveVip.vipPort = 80;
+        $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.external = false;
 
@@ -84,7 +87,8 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
                 dns: $scope.formSaveVip.dns,
                 domain: $scope.formSaveVip.domain,
                 environment: $scope.environmentModule.environment,
-                protocolMode: $scope.formSaveVip.protocolMode,
+                inboundProtocol: $scope.formSaveVip.inboundProtocol.code,
+                outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
                 priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
@@ -123,15 +127,13 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
         $scope.formUpdateVip = {};
         $scope.formUpdateVip.priorityMode = vip.priorityMode;
         $scope.formUpdateVip.servicePort = vip.servicePort;
-        $scope.formUpdateVip.external = vip.external;
 
         $scope.save = function () {
             var dataObject = {
                 vipId: $scope.vip.vipId,
                 serviceId: $scope.service.serviceId,
                 priorityMode: $scope.formUpdateVip.priorityMode,
-                servicePort: $scope.formUpdateVip.servicePort,
-                external: $scope.formUpdateVip.external
+                servicePort: $scope.formUpdateVip.servicePort
             };
 
             var responsePromise = $http.put("/v1/vip/modify", dataObject, {});

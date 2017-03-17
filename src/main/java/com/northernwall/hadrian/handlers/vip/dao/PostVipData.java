@@ -22,7 +22,8 @@ public class PostVipData {
     public String domain;
     public boolean external;
     public String environment;
-    public String protocolMode;
+    public String inboundProtocol;
+    public String outboundProtocol;
     public String priorityMode;
     public int vipPort;
     public int servicePort;

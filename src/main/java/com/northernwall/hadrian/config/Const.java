@@ -191,7 +191,7 @@ public class Const {
     public static final String CONFIG_PLATFORMS = "config.platforms";
     public static final String CONFIG_PLATFORMS_DEFAULT = "Java7, Java8";
     public static final String CONFIG_PROTOCOL_MODES = "config.protocolModes";
-    public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "[{\"name\":\"HTTP-HTTP\"}, {\"name\":\"HTTPS-HTTP\"}, {\"name\":\"TCP-TCP\",\"requiresVipPort\":true}]";
+    public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"HTTPS\",\"code\":\"HTTPS\",\"modifiers\":[{\"name\":\"Mutual Auth\",\"code\":\"MutualAuth\"}],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"HTTP and HTTPS\",\"code\":\"HTTP+HTTPS\",\"modifiers\":[{\"name\":\"Redirect HTTP to HTTPS\",\"code\":\"Redirect\"},{\"name\":\"Mutual Auth\",\"code\":\"MutualAuth\"}],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"TCP\",\"code\":\"TCP\",\"modifiers\":[],\"outbound\":[{\"name\":\"TCP\",\"code\":\"TCP\",\"modifiers\":[{\"name\":\"HTTP Availability Check\",\"code\":\"HttpCheck\",\"aliasPortRequired\":true}]}],\"vipPortRequired\":true}]";
     public static final String CONFIG_PRIORITY_MODES = "config.priorityModes";
     public static final String CONFIG_PRIORITY_MODES_DEFAULT = "Regional DCs, All DCs, Local DC";
     public static final String CONFIG_DOMAINS = "config.domains";

@@ -21,6 +21,7 @@ import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -29,6 +30,7 @@ import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.vip.dao.PostVipData;
 import java.io.IOException;
 import java.util.HashMap;
@@ -60,14 +62,14 @@ public class VipBackfillHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, team, "add a vip");
 
+        String dns = VipCreateHandler.checkVipName(data);
         //Check for duplicate VIP
-        List<Vip> vips = getDataAccess().getVips(data.serviceId);
-        for (Vip temp : vips) {
-            if (temp.getDns().equals(data.dns)
-                    && temp.getDomain().equals(data.domain)
-                    && temp.getVipPort() == data.vipPort) {
-                return;
-            }
+        String fqdn = dns + "." + data.domain;
+        SearchResult searchResult = getDataAccess().doSearch(
+                Const.SEARCH_SPACE_VIP_FQDN,
+                fqdn);
+        if (searchResult != null) {
+            throw new Http400BadRequestException("VIP already exists with FQDN of " + fqdn);
         }
 
         Module module = getModule(data.moduleId, null, service);
@@ -76,16 +78,23 @@ public class VipBackfillHandler extends BasicHandler {
                 data.serviceId,
                 Const.STATUS_NO,
                 data.moduleId,
-                data.dns,
+                dns,
                 data.domain,
                 data.external,
                 data.environment,
-                data.protocolMode,
+                data.inboundProtocol,
+                data.outboundProtocol,
                 data.priorityMode,
                 data.vipPort,
                 data.servicePort);
         vip.setMigration(0);
         getDataAccess().saveVip(vip);
+        getDataAccess().insertSearch(
+                Const.SEARCH_SPACE_VIP_FQDN,
+                fqdn,
+                data.serviceId,
+                data.moduleId,
+                vip.getVipId());
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();

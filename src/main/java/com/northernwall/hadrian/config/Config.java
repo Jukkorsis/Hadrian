@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.config;
 
 import com.northernwall.hadrian.domain.Environment;
+import com.northernwall.hadrian.domain.InboundProtocol;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class Config {
     public List<String> environmentNames = new LinkedList<>();
     public List<Environment> environments = new LinkedList<>();
     public List<String> platforms = new LinkedList<>();
-    public List<String> protocolModes = new LinkedList<>();
+    public List<InboundProtocol> inboundProtocols = new LinkedList<>();
     public List<String> priorityModes = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();

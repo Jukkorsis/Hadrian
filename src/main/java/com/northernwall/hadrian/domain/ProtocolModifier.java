@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Richard Thurston.
+ * Copyright 2017 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.northernwall.hadrian.handlers.vip.dao;
+package com.northernwall.hadrian.domain;
 
 /**
  *
- * @author Richard Thurston
+ * @author Richard
  */
-public class PutVipData {
-    public String vipId;
-    public String serviceId;
-    public String priorityMode;
-    public int servicePort;
-
+public class ProtocolModifier {
+    public String name;
+    public String code;
+    public boolean aliasPortRequired; 
+    
 }

@@ -18,6 +18,7 @@ package com.northernwall.hadrian.config;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.northernwall.hadrian.domain.Environment;
+import com.northernwall.hadrian.domain.InboundProtocol;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.ParameterChangeListener;
 import com.northernwall.hadrian.parameters.Parameters;
@@ -43,7 +44,7 @@ public class ConfigHelper implements ParameterChangeListener {
         this.moduleConfigHelper = moduleConfigHelper;
         this.config = new AtomicReference<>();
         this.config.set(loadConfig());
-        
+
         parameters.registerChangeListener(this);
     }
 
@@ -83,11 +84,11 @@ public class ConfigHelper implements ParameterChangeListener {
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_PLATFORMS, Const.CONFIG_PLATFORMS_DEFAULT, newConfig.platforms);
-        loadConfig(Const.CONFIG_PROTOCOL_MODES, Const.CONFIG_PROTOCOL_MODES_DEFAULT, newConfig.protocolModes);
         loadConfig(Const.CONFIG_PRIORITY_MODES, Const.CONFIG_PRIORITY_MODES_DEFAULT, newConfig.priorityModes);
         loadConfig(Const.CONFIG_DOMAINS, Const.CONFIG_DOMAINS_DEFAULT, newConfig.domains);
         loadConfig(Const.CONFIG_ARTIFACT_TYPES, Const.CONFIG_ARTIFACT_TYPES_DEFAULT, newConfig.artifactTypes);
         loadConfig(Const.CONFIG_SCOPES, Const.CONFIG_SCOPES_DEFAULT, newConfig.scopes);
+        loadInboundProtocol(newConfig);
         loadEnvironment(newConfig);
 
         loadFolderWhiteList(parameters.getString(Const.CONFIG_FOLDER_WHITE_LIST, null), newConfig.folderWhiteList);
@@ -95,7 +96,7 @@ public class ConfigHelper implements ParameterChangeListener {
         LOGGER.info("Config loaded, {}", gson.toJson(newConfig));
         return newConfig;
     }
-    
+
     private void loadConfig(String key, String defaultValue, List<String> target) {
         String param = parameters.getString(key, defaultValue);
         if (param == null) {
@@ -110,9 +111,17 @@ public class ConfigHelper implements ParameterChangeListener {
         }
     }
 
+    private void loadInboundProtocol(Config newConfig) {
+        String temp = parameters.getString(Const.CONFIG_PROTOCOL_MODES, Const.CONFIG_PROTOCOL_MODES_DEFAULT);
+        Type listType = new TypeToken<ArrayList<InboundProtocol>>() {
+        }.getType();
+        newConfig.inboundProtocols = gson.fromJson(temp, listType);
+    }
+
     private void loadEnvironment(Config newConfig) {
         String temp = parameters.getString(Const.CONFIG_ENVIRONMENTS, Const.CONFIG_ENVIRONMENTS_DEFAULT);
-        Type listType = new TypeToken<ArrayList<Environment>>(){}.getType();
+        Type listType = new TypeToken<ArrayList<Environment>>() {
+        }.getType();
         newConfig.environments = gson.fromJson(temp, listType);
         for (Environment environment : newConfig.environments) {
             newConfig.environmentNames.add(environment.name);
@@ -135,7 +144,7 @@ public class ConfigHelper implements ParameterChangeListener {
                 }
                 folderWhiteList.add(tempFolder);
             }
-        }        
+        }
     }
 
 }
