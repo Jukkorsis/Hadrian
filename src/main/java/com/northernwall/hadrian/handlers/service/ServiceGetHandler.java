@@ -20,9 +20,12 @@ import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.config.Config;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
+import com.northernwall.hadrian.domain.InboundProtocol;
+import com.northernwall.hadrian.domain.OutboundProtocol;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -102,6 +105,7 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
     private void getVipInfo(Service service, GetServiceData getServiceData) {
         List<Vip> vips = getDataAccess().getVips(service.getServiceId());
         Collections.sort(vips);
+        List<InboundProtocol> inboundProtocols = configHelper.getConfig().inboundProtocols;
         for (Vip vip : vips) {
             GetModuleData getModuleData = null;
             for (GetModuleData temp : getServiceData.modules) {
@@ -111,8 +115,39 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
             }
             if (getModuleData != null) {
                 GetVipData getVipData = GetVipData.create(vip);
+                generateVipText(getVipData, vip, inboundProtocols);
                 getServiceData.addVip(getVipData, getModuleData);
             }
+        }
+    }
+
+    private void generateVipText(GetVipData getVipData, Vip vip, List<InboundProtocol> inboundProtocols) {
+        InboundProtocol inboundProtocol = null;
+        for (InboundProtocol temp : inboundProtocols) {
+            if (temp.code.equals(vip.getInboundProtocol())) {
+                inboundProtocol = temp;
+            }
+        }
+        if (inboundProtocol == null) {
+            getVipData.inboundText = vip.getInboundProtocol();
+            getVipData.outboundText = vip.getOutboundProtocol();
+            return;
+        } else if (inboundProtocol.vipPortRequired) {
+            getVipData.inboundText = inboundProtocol.name + " (" + vip.getVipPort() + ")";
+        } else {
+            getVipData.inboundText = inboundProtocol.name;
+        }
+        
+        OutboundProtocol outboundProtocol = null;
+        for (OutboundProtocol temp : inboundProtocol.outbound) {
+            if (temp.code.equals(vip.getOutboundProtocol())) {
+                outboundProtocol = temp;
+            }
+        }
+        if (outboundProtocol == null) {
+            getVipData.outboundText = vip.getOutboundProtocol() + " (" + vip.getServicePort() + ")";
+        } else {
+            getVipData.outboundText = outboundProtocol.name + " (" + vip.getServicePort() + ")";
         }
     }
 

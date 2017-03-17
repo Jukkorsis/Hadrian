@@ -94,8 +94,6 @@ public class VipCreateHandler extends BasicHandler {
 
         Module module = getModule(data.moduleId, null, service);
         
-        //TODO check the protocol mode
-
         Vip vip = new Vip(
                 data.serviceId,
                 "Creating...",

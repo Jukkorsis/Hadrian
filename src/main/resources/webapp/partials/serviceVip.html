@@ -26,12 +26,10 @@
           <div ng-if="mn.vips.length > 0">
             <table class="table table-hover table-striped table-condensed">
               <tr>
-                <th width="43%">DNS</th>
-                <th width="25%">Protocol</th>
-                <th width="8%">Priority Mode</th>
-                <th width="8%">VIP Port</th>
-                <th width="8%">Service Port</th>
-                <th width="8%">External</th>
+                <th width="40%">DNS</th>
+                <th width="40%">Protocol</th>
+                <th width="10%">Priority Mode</th>
+                <th width="10%">External</th>
               </tr>
               <tr ng-repeat-start="ep in mn.vips">
                 <td>
@@ -55,10 +53,8 @@
                     <span class="label label-warning">{{ep.status}}</span>
                   </span>
                 </td>
-                <td>{{ep.inboundProtocol}} <span class="glyphicon glyphicon-arrow-right"></span> {{ep.outboundProtocol}}</td>
+                <td>{{ep.inboundText}} <span class="glyphicon glyphicon-arrow-right"></span> {{ep.outboundText}}</td>
                 <td>{{ep.priorityMode}}</td>
-                <td><div ng-if="ep.vipPort > 0">{{ep.vipPort}}</div></td>
-                <td>{{ep.servicePort}}</td>
                 <td>{{ep.external}}</td>
               </tr>
               <tr ng-if="ep.expanded" ng-repeat-end="">

@@ -1,0 +1,71 @@
+[
+  {
+    "name":"HTTP",
+    "code":"HTTP",
+    "modifiers":[],
+    "outbound":[
+      {
+        "name":"HTTP",
+        "code":"HTTP",
+        "modifiers":[]
+      }
+    ]
+  },
+  {
+    "name":"HTTPS",
+    "code":"HTTPS",
+    "modifiers":[
+      {
+        "name":"Mutual Auth",
+        "code":"MutualAuth"
+      }
+    ],
+    "outbound":[
+      {
+        "name":"HTTP",
+        "code":"HTTP",
+        "modifiers":[]
+      }
+    ]
+  },
+  {
+    "name":"HTTP and HTTPS",
+    "code":"HTTP+HTTPS",
+    "modifiers":[
+      {
+        "name":"Redirect HTTP to HTTPS",
+        "code":"Redirect"
+      },
+      {
+        "name":"Mutual Auth",
+        "code":"MutualAuth"
+      }
+    ],
+    "outbound":[
+      {
+        "name":"HTTP",
+        "code":"HTTP",
+        "modifiers":[]
+      }
+    ]
+  },
+  {
+    "name":"TCP",
+    "code":"TCP",
+    "modifiers":[],
+    "outbound":[
+      {
+        "name":"TCP",
+        "code":"TCP",
+        "modifiers":[
+          {
+            "name":"HTTP Availability Check",
+            "code":"HttpCheck",
+            "aliasPortRequired":true
+          }
+        ]
+      }
+    ],
+    "vipPortRequired":true
+  }
+]
