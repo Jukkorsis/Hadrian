@@ -94,8 +94,8 @@ public class ModuleModifyHandler extends BasicHandler {
         if (hostAbbr.length() < 3) {
             throw new Http400BadRequestException("Host abbr is to short, minimum is 3");
         }
-        if (hostAbbr.length() > 8) {
-            throw new Http400BadRequestException("Host abbr is to long, maximum is 8");
+        if (hostAbbr.length() > 25) {
+            throw new Http400BadRequestException("Host abbr is to long, maximum is 25");
         }
     }
 
