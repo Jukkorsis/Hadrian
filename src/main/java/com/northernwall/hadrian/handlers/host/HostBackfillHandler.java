@@ -194,7 +194,7 @@ public class HostBackfillHandler extends BasicHandler {
                 InetAddress address = InetAddress.getByName(hostname);
                 LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
             } catch (UnknownHostException ex) {
-                LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname, searchResult.hostId);
+                LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname);
                 return false;
             }
         }
