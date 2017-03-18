@@ -50,7 +50,6 @@ hadrianControllers.controller('MenuCtrl', ['$scope', '$location', 'Tree',
             $scope.menuMode = "home";
         }
         $scope.treeData = Tree.query();
-        //$scope.selectCatalog();
     }]);
 
 hadrianControllers.controller('CatalogCtrl', ['$scope', '$http', 'Config',
