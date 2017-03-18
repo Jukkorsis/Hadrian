@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 import javax.servlet.ServletException;
@@ -120,61 +122,57 @@ public class HostBackfillHandler extends BasicHandler {
 
         int creationCount = 0;
         String[] hostnames = data.hosts.split(",");
+        List<String> scrubedHosts = new LinkedList<>();
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                if (checkHostnameMatchsPattern(scrubedHostName)
-                        && checkHostAlreadyExists(scrubedHostName)
-                        && checkHostnameResolves(scrubedHostName)) {
-                    doBackfill(scrubedHostName, service, module, data, user);
-                    creationCount++;
-                }
+                validateHostname(scrubedHostName);
+                scrubedHosts.add(scrubedHostName);
             }
+        }
+        for (String hostname : scrubedHosts) {
+            doBackfill(hostname, service, module, data, user);
+            creationCount++;
         }
 
         if (creationCount == 0) {
-            throw new Http400BadRequestException("The listed hosts already exist");
+            throw new Http400BadRequestException("No hosts added");
         }
 
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private boolean checkHostnameMatchsPattern(String hostname) {
+    private void validateHostname(String hostname) {
         String pattern = parameters.getString(Const.CHECK_HOSTNAME_PATTERN, null);
-        if (pattern == null || pattern.isEmpty()) {
-            return true;
+        if (pattern != null && !pattern.isEmpty()) {
+            try {
+                if(!hostname.matches(pattern)) {
+                    throw new Http400BadRequestException(hostname + " does not match " + pattern);
+                }
+            } catch (PatternSyntaxException ex) {
+                LOGGER.error("Match pattern '{}' is illegal, {}", pattern, ex.getMessage());
+            }
         }
-        try {
-            return hostname.matches(pattern);
-        } catch (PatternSyntaxException ex) {
-            LOGGER.error("Match pattern '{}' is illegal, {}", pattern, ex.getMessage());
-            return true;
-        }
-    }
 
-    private boolean checkHostAlreadyExists(String hostname) {
         SearchResult searchResult = getDataAccess().doSearch(
                 Const.SEARCH_SPACE_HOST_NAME,
                 hostname);
         if (searchResult != null) {
-            LOGGER.warn("Could not backfill host {} becuase it already exists, {}", hostname, searchResult.hostId);
-            return false;
+            Service service = getDataAccess().getService(searchResult.serviceId);
+            LOGGER.warn("Could not backfill host {} ({}) becuase it already exists on {}", hostname, searchResult.hostId, service.getServiceName());
+            throw new Http400BadRequestException(hostname + " is already associated to service " + service.getServiceName());
         }
-        return true;
-    }
 
-    private boolean checkHostnameResolves(String hostname) {
         if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
             try {
                 InetAddress address = InetAddress.getByName(hostname);
                 LOGGER.info("Backfill host {} resolves to IP address {}", hostname, address.getHostAddress());
             } catch (UnknownHostException ex) {
                 LOGGER.warn("Could not backfill host {} becuase the hostname does not resolve to an IP address", hostname);
-                return false;
+                throw new Http400BadRequestException("Could not resolve IP address for " + hostname + ", check if host exists");
             }
         }
-        return true;
     }
 
     private void doBackfill(String scrubedHostName, Service service, Module module, PostBackfillHostData data, User user) {
