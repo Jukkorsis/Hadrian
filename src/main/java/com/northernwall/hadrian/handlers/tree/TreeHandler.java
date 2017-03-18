@@ -59,8 +59,8 @@ public class TreeHandler extends AbstractHandler {
         TreeData treeData = new TreeData();
         
         treeData.isAdmin = accessHelper.isAdmin(request, "Loading tree");
-        treeData.showMotd = parameters.getBoolean("motd.show", false);
-        treeData.motd = parameters.getString("motd.text", "");
+        treeData.showMotd = parameters.getBoolean(Const.MOTD_SHOW, false);
+        treeData.motd = parameters.getString(Const.MOTD_TEXT, "");
 
         List<Team> teams = dataAccess.getTeams();
         List<Service> services = dataAccess.getAllServices();

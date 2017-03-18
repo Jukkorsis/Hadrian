@@ -212,6 +212,9 @@ public class Const {
     public static final boolean CHECK_RESOLVE_HOSTNAME_DEFAULT = true;
     public static final String CHECK_HOSTNAME_PATTERN = "check.hostnamePattern";
     
+    public static final String MOTD_SHOW = "motd.show";
+    public static final String MOTD_TEXT = "motd.text";
+    
     private Const() {
     }
     
