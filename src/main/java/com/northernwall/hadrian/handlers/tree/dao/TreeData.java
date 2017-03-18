@@ -21,5 +21,7 @@ import java.util.List;
 public class TreeData {
     public boolean isAdmin;
     public List<TreeTeamData> teams = new LinkedList<>();
+    public boolean showMotd;
+    public String motd;
 
 }

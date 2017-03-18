@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.tree.dao.TreeData;
 import com.northernwall.hadrian.handlers.tree.dao.TreeServiceData;
 import com.northernwall.hadrian.handlers.tree.dao.TreeTeamData;
+import com.northernwall.hadrian.parameters.Parameters;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
@@ -43,11 +44,13 @@ public class TreeHandler extends AbstractHandler {
 
     private final DataAccess dataAccess;
     private final AccessHelper accessHelper;
+    private final Parameters parameters;
     private final Gson gson;
 
-    public TreeHandler(DataAccess dataAccess, AccessHelper accessHelper) {
+    public TreeHandler(DataAccess dataAccess, AccessHelper accessHelper, Parameters parameters) {
         this.dataAccess = dataAccess;
         this.accessHelper = accessHelper;
+        this.parameters = parameters;
         gson = new Gson();
     }
 
@@ -56,6 +59,8 @@ public class TreeHandler extends AbstractHandler {
         TreeData treeData = new TreeData();
         
         treeData.isAdmin = accessHelper.isAdmin(request, "Loading tree");
+        treeData.showMotd = parameters.getBoolean("motd.show", false);
+        treeData.motd = parameters.getString("motd.text", "");
 
         List<Team> teams = dataAccess.getTeams();
         List<Service> services = dataAccess.getAllServices();

@@ -208,7 +208,7 @@ public class Hadrian {
         //These urls require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/config", new ConfigGetHandler(configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webapp"), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/tree", new TreeHandler(dataAccess, accessHelper), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/tree", new TreeHandler(dataAccess, accessHelper, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/catalog", new CatalogHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/report", new ReportHandler(accessHelper, dataAccess, configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/team", new TeamGetHandler(dataAccess, gson, accessHelper), true);

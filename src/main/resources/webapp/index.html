@@ -103,6 +103,11 @@ limitations under the License.
           </div>
         </div>
         <div class="col-sm-10 col-xs-12 page-content">
+          <div ng-if="treeData.showMotd" class="panel panel-default">
+            <div class="panel-heading text-center">
+              <h2 class="panel-title">{{treeData.motd}}</h2>
+            </div>
+          </div>
           <div class="view-container">
             <div ng-view class="view-frame"></div>
           </div>
