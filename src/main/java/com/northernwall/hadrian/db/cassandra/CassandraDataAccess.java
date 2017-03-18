@@ -291,6 +291,7 @@ public class CassandraDataAccess implements DataAccess {
     public void getHealth(HealthWriter writer) throws IOException {
         Metadata metadata = session.getCluster().getMetadata();
         State state = session.getState();
+        writer.addStringLine("Cassandra - Schema Version", getVersion());
         writer.addStringLine("Cassandra - Username", username);
         writer.addStringLine("Cassandra - Cluster", metadata.getClusterName());
         if (dataCenter != null) {
