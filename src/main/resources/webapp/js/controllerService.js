@@ -1048,6 +1048,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                                                 if (host.hostId === newHost.hostId) {
                                                     host.busy = newHost.busy;
                                                     host.status = newHost.status;
+                                                    host.statusCode = newHost.statusCode;
                                                     host.version = newHost.version;
                                                     host.availability = newHost.availability;
                                                 }
