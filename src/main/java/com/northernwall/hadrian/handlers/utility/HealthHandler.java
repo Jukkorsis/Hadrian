@@ -16,7 +16,6 @@
 
 package com.northernwall.hadrian.handlers.utility;
 
-import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessagingCoodinator;
@@ -44,7 +43,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class HealthHandler extends AbstractHandler {
 
     private final Handler accessHandler;
-    private final CalendarHelper calendarHelper;
     private final DataAccess dataAccess;
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
@@ -53,9 +51,8 @@ public class HealthHandler extends AbstractHandler {
     private final Scheduler scheduler;
     private final String version;
     
-    public HealthHandler(Handler accessHandler, CalendarHelper calendarHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, MessagingCoodinator messagingCoodinator, Scheduler scheduler) {
+    public HealthHandler(Handler accessHandler, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, Parameters parameters, MessagingCoodinator messagingCoodinator, Scheduler scheduler) {
         this.accessHandler = accessHandler;
-        this.calendarHelper = calendarHelper;
         this.dataAccess = dataAccess;
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
@@ -93,7 +90,6 @@ public class HealthHandler extends AbstractHandler {
         writer.addDateTimeLine("Current Time", OffsetDateTime.now());
         writer.addDateLine("Start Time", new Date(runtimeMXBean.getStartTime()));
         writer.addClassLine("Class - Access Handler", accessHandler);
-        writer.addClassLine("Class - Calendar Helper", calendarHelper);
         writer.addClassLine("Class - Data Access", dataAccess);
         writer.addClassLine("Class - Module Artifact Helper", moduleArtifactHelper);
         writer.addClassLine("Class - Module Config Helper", moduleConfigHelper);

@@ -85,7 +85,6 @@ public class TeamModifyHandler extends BasicHandler {
         team.setTeamSlack(data.teamSlack);
         team.setGitGroup(data.gitGroup);
         team.setTeamPage(data.teamPage);
-        team.setCalendarId(data.calendarId);
         team.setColour(data.colour);
         team.setSecurityGroupName(data.securityGroupName);
 

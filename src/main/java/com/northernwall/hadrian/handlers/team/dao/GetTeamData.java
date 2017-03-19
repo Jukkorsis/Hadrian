@@ -26,7 +26,6 @@ public class GetTeamData {
         temp.teamSlack = team.getTeamSlack();
         temp.gitGroup = team.getGitGroup();
         temp.teamPage = team.getTeamPage();
-        temp.calendarId = team.getCalendarId();
         temp.colour = team.getColour();
         temp.securityGroupName = team.getSecurityGroupName();
         return temp;
@@ -38,7 +37,6 @@ public class GetTeamData {
     public String teamSlack;
     public String gitGroup;
     public String teamPage;
-    public String calendarId;
     public String colour;
     public String securityGroupName;
     public boolean canModify;

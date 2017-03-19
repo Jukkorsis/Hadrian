@@ -143,14 +143,6 @@ public class Const {
     public static final String LEADER_CLASS_NAME = "leader.className";
     public static final String LEADER_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.schedule.SimpleLeader";
 
-    public static final String CALENDAR_HELPER_FACTORY_CLASS_NAME = "calendarHelper.factoryClassName";
-    public static final String CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.calendar.simple.SimpleCalendarHelperFactory";
-    public static final String CALENDAR_GOOGLE_APP_NAME = "calendarHelper.google.appName";
-    public static final String CALENDAR_GOOGLE_ACCOUNT_ID = "calendarHelper.google.accountId";
-    public static final String CALENDAR_GOOGLE_PRIVATE_KEY_ID = "calendarHelper.google.privateKeyId";
-    public static final String CALENDAR_GOOGLE_PEM_FILE = "calendarHelper.google.pemFile";
-    public static final String CALENDAR_GOOGLE_GLOBAL_ID = "calendarHelper.google.globalCalendarId";
-
     public static final String CONFIG_MAVEN_GROUP_ID = "config.mavenGroupId";
     public static final String CONFIG_MAVEN_GROUP_ID_DEFAULT = "";
     public static final String CONFIG_VERSION_URL = "config.versionUrl";

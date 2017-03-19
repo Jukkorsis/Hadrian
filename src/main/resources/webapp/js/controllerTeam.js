@@ -69,7 +69,6 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
         $scope.formUpdateTeam.slack = team.teamSlack;
         $scope.formUpdateTeam.gitGroup = team.gitGroup;
         $scope.formUpdateTeam.teamPage = team.teamPage;
-        $scope.formUpdateTeam.calendarId = team.calendarId;
         $scope.formUpdateTeam.securityGroupName = team.securityGroupName;
         $scope.formUpdateTeam.colour = team.colour;
 
@@ -81,7 +80,6 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
                 teamSlack: $scope.formUpdateTeam.slack,
                 gitGroup: $scope.formUpdateTeam.gitGroup,
                 teamPage: $scope.formUpdateTeam.teamPage,
-                calendarId: $scope.formUpdateTeam.calendarId,
                 securityGroupName: $scope.formUpdateTeam.securityGroupName,
                 colour: $scope.formUpdateTeam.colour
             };

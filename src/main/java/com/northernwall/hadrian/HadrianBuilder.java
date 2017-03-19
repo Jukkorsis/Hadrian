@@ -22,8 +22,6 @@ import com.google.gson.GsonBuilder;
 import com.northernwall.hadrian.access.AccessHandlerFactory;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.access.AccessHelperFactory;
-import com.northernwall.hadrian.calendar.CalendarHelper;
-import com.northernwall.hadrian.calendar.CalendarHelperFactory;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.DataAccessFactory;
 import com.northernwall.hadrian.db.DataAccessUpdater;
@@ -76,7 +74,6 @@ public class HadrianBuilder {
     private HostDetailsHelper hostDetailsHelper;
     private VipDetailsHelper vipDetailsHelper;
     private Handler accessHandler;
-    private CalendarHelper calendarHelper;
     private MessagingCoodinator messagingCoodinator;
     private SmokeTestHelper smokeTestHelper;
     private Scheduler scheduler;
@@ -147,10 +144,6 @@ public class HadrianBuilder {
             buildVipDetailsHelper();
         }
 
-        if (calendarHelper == null) {
-            buildCalendarHelper();
-        }
-
         messagingCoodinator = new MessagingCoodinator(
                 dataAccess,
                 parameters,
@@ -187,7 +180,6 @@ public class HadrianBuilder {
                 accessHandler,
                 hostDetailsHelper,
                 vipDetailsHelper,
-                calendarHelper,
                 workItemProcessor,
                 scheduler,
                 folderHelper,
@@ -372,25 +364,6 @@ public class HadrianBuilder {
             }
             vipDetailsHelper = vipDetailsHelperFactory.create(client, parameters, configHelper, gson);
         }
-    }
-
-    private void buildCalendarHelper() {
-        String factoryName = parameters.getString(Const.CALENDAR_HELPER_FACTORY_CLASS_NAME, Const.CALENDAR_HELPER_FACTORY_CLASS_NAME_DEFAULT);
-        Class c;
-        try {
-            c = Class.forName(factoryName);
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Could not build Hadrian, could not find Calendar Helper class " + factoryName);
-        }
-        CalendarHelperFactory calendarHelperFactory;
-        try {
-            calendarHelperFactory = (CalendarHelperFactory) c.newInstance();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException("Could not build Hadrian, could not instantiation Calendar Helper class " + factoryName);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Could not build Hadrian, could not access Calendar Helper class " + factoryName);
-        }
-        calendarHelper = calendarHelperFactory.create(parameters, client);
     }
 
     private void buildScheduler() {

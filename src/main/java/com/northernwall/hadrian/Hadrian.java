@@ -19,7 +19,6 @@ import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.config.Const;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.calendar.CalendarHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.details.ServiceBuildHelper;
@@ -33,7 +32,6 @@ import com.northernwall.hadrian.handlers.graph.GraphFanOutHandler;
 import com.northernwall.hadrian.handlers.service.AuditCreateHandler;
 import com.northernwall.hadrian.handlers.service.AuditGetHandler;
 import com.northernwall.hadrian.handlers.service.AuditOutputGetHandler;
-import com.northernwall.hadrian.handlers.service.CalendarGetHandler;
 import com.northernwall.hadrian.handlers.service.ConfigGetHandler;
 import com.northernwall.hadrian.handlers.service.CustomFuntionCreateHandler;
 import com.northernwall.hadrian.handlers.service.CustomFuntionExecHandler;
@@ -134,7 +132,6 @@ public class Hadrian {
     private final Handler accessHandler;
     private final HostDetailsHelper hostDetailsHelper;
     private final VipDetailsHelper vipDetailsHelper;
-    private final CalendarHelper calendarHelper;
     private final WorkItemProcessor workItemProcessor;
     private final Scheduler scheduler;
     private final FolderHelper folderHelper;
@@ -146,7 +143,7 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, CalendarHelper calendarHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
@@ -157,7 +154,6 @@ public class Hadrian {
         this.accessHandler = accessHandler;
         this.hostDetailsHelper = hostDetailsHelper;
         this.vipDetailsHelper = vipDetailsHelper;
-        this.calendarHelper = calendarHelper;
         this.workItemProcessor = workItemProcessor;
         this.scheduler = scheduler;
         this.folderHelper = folderHelper;
@@ -192,7 +188,7 @@ public class Hadrian {
         //These urls do not require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, calendarHelper, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator, scheduler), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator, scheduler), true);
         ContentHandler contentHandler = new ContentHandler("/webcontent");
         contentHandler.preload("/js/viz.js");
         contentHandler.preload("/js/angular.js");
@@ -262,7 +258,6 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, gson, client, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler(), true);
-        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/calendar", new CalendarGetHandler(dataAccess, gson, calendarHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/graph/all", new GraphAllHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanout/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanOutHandler(dataAccess), true);

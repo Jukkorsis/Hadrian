@@ -121,14 +121,13 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         };
     }]);
 
-hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'Calendar', 'service', 'hostNames', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, Calendar, service, hostNames, moduleEnvironment) {
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
         $scope.moduleEnvironment = moduleEnvironment;
         $scope.config = config;
-        $scope.calendar = Calendar.get({serviceId: $scope.service.serviceId});
 
         $scope.configEnvironment = null;
         for (var i = 0; i < config.environments.length; i++) {

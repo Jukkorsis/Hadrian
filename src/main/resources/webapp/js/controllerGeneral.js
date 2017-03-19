@@ -249,7 +249,6 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
         $scope.formSaveTeam.slack = "";
         $scope.formSaveTeam.gitGroup = "";
         $scope.formSaveTeam.teamPage = "";
-        $scope.formSaveTeam.calendarId = "";
         $scope.formSaveTeam.securityGroupName = "";
 
         $scope.save = function () {
@@ -259,7 +258,6 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
                 teamSlack: $scope.formSaveTeam.slack,
                 gitGroup: $scope.formSaveTeam.gitGroup,
                 teamPage: $scope.formSaveTeam.teamPage,
-                calendarId: $scope.formSaveTeam.calendarId,
                 securityGroupName: $scope.formSaveTeam.securityGroupName
             };
 

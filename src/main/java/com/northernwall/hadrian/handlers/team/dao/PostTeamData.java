@@ -21,7 +21,6 @@ public class PostTeamData {
     public String teamSlack;
     public String gitGroup;
     public String teamPage;
-    public String calendarId;
     public String securityGroupName;
 
 }
