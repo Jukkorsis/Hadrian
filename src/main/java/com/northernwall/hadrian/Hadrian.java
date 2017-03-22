@@ -49,6 +49,7 @@ import com.northernwall.hadrian.handlers.host.HostFindHandler;
 import com.northernwall.hadrian.handlers.host.HostGetDetailsHandler;
 import com.northernwall.hadrian.handlers.host.HostRebootHandler;
 import com.northernwall.hadrian.handlers.host.HostRestartHandler;
+import com.northernwall.hadrian.handlers.host.HostsGetHandler;
 import com.northernwall.hadrian.handlers.module.ModuleCreateHandler;
 import com.northernwall.hadrian.handlers.module.ModuleDeleteHandler;
 import com.northernwall.hadrian.handlers.module.ModuleFileDeleteHandler;
@@ -248,6 +249,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/reboot", new HostRebootHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(dataAccess, gson, accessHelper, configHelper, parameters), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/hosts", new HostsGetHandler(dataAccess, gson), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/st/exec", new SmokeTestExecHandler(dataAccess, gson, accessHelper, smokeTestHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(dataAccess, gson, accessHelper, client), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/cf/create", new CustomFuntionCreateHandler(dataAccess, gson, accessHelper), true);

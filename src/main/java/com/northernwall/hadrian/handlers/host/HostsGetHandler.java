@@ -18,11 +18,15 @@ package com.northernwall.hadrian.handlers.host;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
-import com.northernwall.hadrian.details.HostDetailsHelper;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
-import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
+import com.northernwall.hadrian.handlers.host.dao.GetHostReducedData;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,23 +36,34 @@ import org.eclipse.jetty.server.Request;
  *
  * @author Richard Thurston
  */
-public class HostGetDetailsHandler extends BasicHandler {
+public class HostsGetHandler extends BasicHandler {
 
-    private final HostDetailsHelper hostDetailsHelper;
-
-    public HostGetDetailsHandler(DataAccess dataAccess, Gson gson, HostDetailsHelper hostDetailsHelper) {
+    public HostsGetHandler(DataAccess dataAccess, Gson gson) {
         super(dataAccess, gson);
-        this.hostDetailsHelper = hostDetailsHelper;
     }
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Service service = getService(request);
-        Host host = getHost(request, service);
-
-        GetHostDetailsData details = hostDetailsHelper.getDetails(host);
-
-        toJson(response, details);
+        List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
+        
+        Map<String, List<GetHostReducedData>> hostMap = new HashMap<>();
+        
+        Module module = null;
+        for (Host host : hosts) {
+            if (module == null || !module.getModuleId().equals(host.getModuleId())) {
+                module = getDataAccess().getModule(service.getServiceId(), host.getModuleId());
+            }
+            
+            List<GetHostReducedData> hostList = hostMap.get(module.getModuleName());
+            if (hostList == null) {
+                hostList = new LinkedList<>();
+                hostMap.put(module.getModuleName(), hostList);
+            }
+            hostList.add(GetHostReducedData.create(host));
+        }
+        
+        toJson(response, hostMap);
         response.setStatus(200);
         request.setHandled(true);
     }
