@@ -15,7 +15,7 @@
       <label class="col-sm-3 control-label">Host Abbr:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveModule.hostAbbr" type="text" class="form-control">
-        <p class="help-block">Used to identify the Service and Module in generated host names. Only letters and numbers allowed.</p>
+        <p class="help-block">Used to identify the Service and Module in generated host names. Only letters and numbers allowed, minimum length of 3 and maximum length of 25.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">    
@@ -68,21 +68,21 @@
       </div>
     </div>
     <div class="form-group form-group-sm">   
-      <label class="col-sm-3 control-label">Availability Url:</label>
+      <label class="col-sm-3 control-label">Availability URL:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveModule.availabilityUrl" type="text" class="form-control">
         <p class="help-block">The URL used to get a hosts availability. For example: {{config.availabilityUrl}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">   
-      <label class="col-sm-3 control-label">Version Url:</label>
+      <label class="col-sm-3 control-label">Version URL:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveModule.versionUrl" type="text" class="form-control">
         <p class="help-block">The URL used to get a hosts version. For example: {{config.versionUrl}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">   
-      <label class="col-sm-3 control-label">Smoke Test Url:</label>
+      <label class="col-sm-3 control-label">Smoke Test URL:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveModule.smokeTestUrl" type="text" class="form-control">
         <p class="help-block">Optional. The URL used to invoke a Smoke Test (aka Post Deployment Test). For example: {{config.smokeTestUrl}}.</p>
@@ -133,6 +133,7 @@
           <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
           <div class="input-group-addon">months</div>
         </div>
+        <p class="help-block">The amount of time the service's logs will be retained on the log server.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">  

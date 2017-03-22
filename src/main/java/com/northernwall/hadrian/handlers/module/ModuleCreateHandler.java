@@ -102,30 +102,35 @@ public class ModuleCreateHandler extends BasicHandler {
                 if (!config.platforms.contains(data.platform)) {
                     throw new Http400BadRequestException("Unknown operating platform");
                 }
+                
+                if (data.runAs == null || data.runAs.isEmpty()) {
+                    throw new Http400BadRequestException("Run As User is missing.");
+                }
+                data.runAs = data.runAs.toLowerCase().trim();
+                if (data.runAs.isEmpty()) {
+                    throw new Http400BadRequestException("Run As User is missing.");
+                }
+                if (data.runAs.equals("root"))  {
+                    throw new Http400BadRequestException("Run As User can not be 'root'.");
+                }
 
                 checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
                 checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
                 checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
 
-                if (service.isDoDeploys()) {
-                    data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
-                    data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
-                    data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
+                data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
+                data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
+                data.dataFolder = folderHelper.scrubFolder(data.dataFolder, "Data", true);
 
-                    folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
+                folderHelper.isWhiteListed(data.deploymentFolder, "Deployment", data.runAs);
 
-                    folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
-                    folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
+                folderHelper.isWhiteListed(data.logsFolder, "Logs", data.runAs);
+                folderHelper.isSubFolder(data.logsFolder, "Logs", data.deploymentFolder, "Deployment");
 
-                    if (data.dataFolder != null
-                            && !data.dataFolder.isEmpty()) {
-                        folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
-                        folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
-                    }
-                } else {
-                    data.deploymentFolder = null;
-                    data.logsFolder = null;
-                    data.dataFolder = null;
+                if (data.dataFolder != null
+                        && !data.dataFolder.isEmpty()) {
+                    folderHelper.isWhiteListed(data.dataFolder, "Data", data.runAs);
+                    folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
                 }
 
                 ModuleModifyHandler.checkEnvironmentNames(data.environmentNames);

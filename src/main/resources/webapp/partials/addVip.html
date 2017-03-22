@@ -72,9 +72,10 @@
       </div>
     </div>
     <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Priority Mode:</label>
+      <label class="col-sm-3 control-label">Pool Contains:</label>
       <div class="col-sm-9">
         <select ng-model="formSaveVip.priorityMode" ng-options="c for c in config.priorityModes" class="form-control"></select>
+        <p class="help-block">This rule is used to determine which hosts are included in a Load Balancer's pool.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
