@@ -451,10 +451,11 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.migrateVip = function (vipId) {
+        $scope.migrateVip = function (vipId, newState) {
             var dataObject = {
                 serviceId: $scope.service.serviceId,
-                vipId: vipId
+                vipId: vipId,
+                newState: newState
             };
 
             var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});

@@ -33,21 +33,46 @@ public class VipMigrateAction extends Action {
             LOGGER.info("Failed the find vip");
             return Result.error;
         }
-        switch (vip.getMigration()) {
-            case 0:
-                LOGGER.info("Migrating Vip {} step 1 for {}", workItem.getVip().dns, workItem.getService().serviceName);
-                vip.setMigration(1);
-                dataAccess.saveVip(vip);
-                return Result.success;
-            case 1:
-                LOGGER.info("Migrating Vip {} step 2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
-                vip.setMigration(2);
-                dataAccess.saveVip(vip);
-                return Result.success;
-            default:
-                LOGGER.info("Failed to migrating Vip {} for {}, current state {}", workItem.getVip().dns, workItem.getService().serviceName, vip.getMigration());
-                return Result.error;
+        if (vip.getMigration() == 1 && workItem.getVip().migration == 2) {
+            return migrateStep1(workItem, vip);
+        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
+            return migrateStep2(workItem, vip);
+        } else if (vip.getMigration() == 3 && workItem.getVip().migration == 2) {
+            return rollbackStep2(workItem, vip);
+        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
+            return migrateStep3(workItem, vip);
+        } else {
+            LOGGER.info("Failed to migrating Vip {} for {}, current state {}", workItem.getVip().dns, workItem.getService().serviceName, vip.getMigration());
+            return Result.error;
         }
+    }
+
+    public Result migrateStep1(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 1->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(2);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result migrateStep2(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 2->3 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(3);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result rollbackStep2(WorkItem workItem, Vip vip) {
+        LOGGER.info("Rolling back Vip {} 3->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(2);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result migrateStep3(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 3->4 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(4);
+        dataAccess.saveVip(vip);
+        return Result.success;
     }
 
     @Override

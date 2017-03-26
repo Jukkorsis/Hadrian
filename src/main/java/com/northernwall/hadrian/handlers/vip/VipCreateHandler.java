@@ -110,7 +110,7 @@ public class VipCreateHandler extends BasicHandler {
                 data.vipPort,
                 data.servicePort,
                 data.httpCheckPort);
-        vip.setMigration(2);
+        vip.setMigration(4);
         getDataAccess().saveVip(vip);
         getDataAccess().insertSearch(
                 Const.SEARCH_SPACE_VIP_FQDN,

@@ -26,7 +26,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
-import com.northernwall.hadrian.handlers.vip.dao.DeleteVipData;
+import com.northernwall.hadrian.handlers.vip.dao.MigrateVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -51,7 +51,7 @@ public class VipMigrateHandler extends BasicHandler {
 
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
-        DeleteVipData data = fromJson(request, DeleteVipData.class);
+        MigrateVipData data = fromJson(request, MigrateVipData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserIsAdmin(request, "Migrate vip");
@@ -62,6 +62,7 @@ public class VipMigrateHandler extends BasicHandler {
         getDataAccess().updateVip(vip);
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.migrate, user, team, service, null, null, vip);
+        workItem.getVip().migration = data.newState;
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

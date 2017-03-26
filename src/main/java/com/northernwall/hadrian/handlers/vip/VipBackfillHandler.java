@@ -34,7 +34,6 @@ import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.vip.dao.PostVipData;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +89,7 @@ public class VipBackfillHandler extends BasicHandler {
                 data.vipPort,
                 data.servicePort,
                 data.httpCheckPort);
-        vip.setMigration(0);
+        vip.setMigration(1);
         getDataAccess().saveVip(vip);
         getDataAccess().insertSearch(
                 Const.SEARCH_SPACE_VIP_FQDN,

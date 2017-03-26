@@ -59,8 +59,29 @@ public class DataAccessUpdater {
             LOGGER.info("DB has been upgraded to 1.10 from 1.9");
         }
         if (version.equals("1.10")) {
+            upgradeVip3(dataAccess);
+            version = "1.11";
+            dataAccess.setVersion(version);
+            LOGGER.info("DB has been upgraded to 1.11 from 1.10");
+        }
+        if (version.equals("1.11")) {
             fixSearch(dataAccess);
-            LOGGER.info("Current DB version is 1.10, no upgrade required.");
+            LOGGER.info("Current DB version is 1.11, no upgrade required.");
+        }
+    }
+
+    private static void upgradeVip3(DataAccess dataAccess) {
+        List<Service> services = dataAccess.getActiveServices();
+        if (services != null && !services.isEmpty()) {
+            for (Service service : services) {
+                List<Vip> vips = dataAccess.getVips(service.getServiceId());
+                if (vips != null && !vips.isEmpty()) {
+                    for (Vip vip : vips) {
+                        vip.setMigration(1);
+                        dataAccess.saveVip(vip);
+                    }
+                }
+            }
         }
     }
 
