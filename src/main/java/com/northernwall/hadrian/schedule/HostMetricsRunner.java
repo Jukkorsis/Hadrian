@@ -29,16 +29,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard
  */
-public class MetricsRunner implements Runnable {
+public class HostMetricsRunner implements Runnable {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MetricsRunner.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HostMetricsRunner.class);
 
     private final Service service;
     private final int group;
     private final DataAccess dataAccess;
     private final MetricRegistry metricRegistry;
 
-    public MetricsRunner(Service service, int group, DataAccess dataAccess, MetricRegistry metricRegistry) {
+    public HostMetricsRunner(Service service, int group, DataAccess dataAccess, MetricRegistry metricRegistry) {
         this.service = service;
         this.group = group;
         this.dataAccess = dataAccess;

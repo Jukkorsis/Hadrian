@@ -116,7 +116,8 @@ public class ScheduleRunner implements Runnable {
                     LOGGER.info("Processing {} with no modules", service.getServiceName());
                 }
                 if (doMetrics) {
-                    scheduledExecutorService.submit(new MetricsRunner(service, group, dataAccess, metricRegistry));
+                    scheduledExecutorService.submit(new HostMetricsRunner(service, group, dataAccess, metricRegistry));
+                    scheduledExecutorService.submit(new VipMetricsRunner(service, group, dataAccess, metricRegistry));
                 }
             }
         }
