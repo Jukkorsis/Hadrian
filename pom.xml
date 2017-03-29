@@ -38,7 +38,7 @@
         <connection>scm:git:https://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:https://github.com/Jukkorsis/Hadrian.git</developerConnection>
         <url>scm:git:https://github.com/Jukkorsis/Hadrian</url>
-        <tag>Hadrian-1.11.2</tag>
+        <tag>Hadrian-1.12.3</tag>
     </scm>
 
     <distributionManagement>
