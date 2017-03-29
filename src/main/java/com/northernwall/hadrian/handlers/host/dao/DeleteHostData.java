@@ -30,6 +30,7 @@ public class DeleteHostData {
     public String moduleName;
     public String environment;
     public List<String> hostNames = new LinkedList<>();
+    public boolean inventoryOnly;
     public String reason;
 
 }

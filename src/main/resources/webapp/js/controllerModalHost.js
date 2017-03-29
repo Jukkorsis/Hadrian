@@ -304,6 +304,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
         }
 
         $scope.formDeleteHost = {};
+        $scope.formDeleteHost.inventoryOnly = false;
         $scope.formDeleteHost.reason = "";
 
         $scope.save = function () {
@@ -312,6 +313,7 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
                 moduleId: $scope.moduleEnvironment.moduleId,
                 environment: $scope.moduleEnvironment.environment,
                 hostNames: $scope.hostNames,
+                inventoryOnly: $scope.formDeleteHost.inventoryOnly,
                 reason: $scope.formDeleteHost.reason
             };
 

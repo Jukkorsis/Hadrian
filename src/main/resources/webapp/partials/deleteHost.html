@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title">Delete Host in {{moduleEnvironment.environment}}</h3>
+  <h3 class="modal-title">Decommission Host in {{moduleEnvironment.environment}}</h3>
 </div>
 <div class="modal-body">
   <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
@@ -16,6 +16,13 @@
         <div ng-repeat="hostName in hostNames">{{hostName}} </div>
       </div>
     </div>
+    <div class="form-group">   
+      <label class="col-sm-3 control-label">Inventory Only:</label>
+      <div class="col-sm-9">
+        <input ng-model="formDeleteHost.inventoryOnly" type="checkbox">
+          <p class="help-block">If checked the host will be removed from inventory, but will not actually be decommissioned. Use this option if a host was incorrectly backfilled to this module.</p>
+      </div>
+    </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Reason:</label>
       <div class="col-sm-9">
@@ -25,7 +32,7 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary" type="button" ng-click="save()">Delete Host</button>
+  <button class="btn btn-primary" type="button" ng-click="save()">Decommission Host</button>
   <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
 

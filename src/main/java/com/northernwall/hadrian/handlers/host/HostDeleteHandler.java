@@ -16,10 +16,12 @@
 package com.northernwall.hadrian.handlers.host;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -32,7 +34,9 @@ import com.northernwall.hadrian.handlers.host.dao.DeleteHostData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,31 +67,16 @@ public class HostDeleteHandler extends BasicHandler {
         Module module = getModule(data.moduleId, data.moduleName, service);
 
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
-        if (hosts == null || hosts.isEmpty()) {
-            return;
-        }
-        for (Host host : hosts) {
-            if (host.getModuleId().equals(module.getModuleId()) && host.getEnvironment().equals(data.environment)) {
-                if (data.hostNames.contains(host.getHostName())) {
-                    if (!host.isBusy()) {
-                        getDataAccess().updateStatus(
-                                host.getHostId(),
-                                true,
-                                "Deleting...",
-                                Const.STATUS_WIP);
-
-                        List<WorkItem> workItems = new ArrayList<>(2);
-
-                        if (service.isDoManageVip()) {
-                            WorkItem workItemDisable = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, null);
-                            workItems.add(workItemDisable);
-                        }
-
-                        WorkItem workItemDelete = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
-                        workItemDelete.setReason(data.reason);
-                        workItems.add(workItemDelete);
-
-                        workItemProcessor.processWorkItems(workItems);
+        if (hosts != null && !hosts.isEmpty()) {
+            for (Host host : hosts) {
+                if (host.getModuleId().equals(module.getModuleId())
+                        && host.getEnvironment().equals(data.environment)
+                        && data.hostNames.contains(host.getHostName())
+                        && !host.isBusy()) {
+                    if (data.inventoryOnly) {
+                        inventoryOnly(data, user, module, host);
+                    } else {
+                        decommissionHost(host, service, user, team, module, data);
                     }
                 }
             }
@@ -95,6 +84,52 @@ public class HostDeleteHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void inventoryOnly(DeleteHostData data, User user, Module module, Host host) {
+        Audit audit = new Audit();
+        audit.serviceId = data.serviceId;
+        audit.setTimePerformed(GMT.getGmtAsDate());
+        audit.timeRequested = GMT.getGmtAsDate();
+        audit.requestor = user.getUsername();
+        audit.type = Type.host;
+        audit.operation = Operation.delete;
+        audit.successfull = true;
+        audit.moduleName = module.getModuleName();
+        audit.hostName = host.getHostName();
+        
+        Map<String, String> notes = new HashMap<>();
+        notes.put("Inventory_Only", "true");
+        notes.put("Reason", data.reason);
+        audit.notes = getGson().toJson(notes);
+        
+        getDataAccess().saveAudit(audit, null);
+        
+        getDataAccess().deleteHost(host);
+        getDataAccess().deleteSearch(
+                Const.SEARCH_SPACE_HOST_NAME,
+                host.getHostName());
+    }
+
+    private void decommissionHost(Host host, Service service, User user, Team team, Module module, DeleteHostData data) throws IOException {
+        getDataAccess().updateStatus(
+                host.getHostId(),
+                true,
+                "Deleting...",
+                Const.STATUS_WIP);
+        
+        List<WorkItem> workItems = new ArrayList<>(2);
+        
+        if (service.isDoManageVip()) {
+            WorkItem workItemDisable = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, null);
+            workItems.add(workItemDisable);
+        }
+        
+        WorkItem workItemDelete = new WorkItem(Type.host, Operation.delete, user, team, service, module, host, null);
+        workItemDelete.setReason(data.reason);
+        workItems.add(workItemDelete);
+        
+        workItemProcessor.processWorkItems(workItems);
     }
 
 }
