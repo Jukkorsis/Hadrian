@@ -39,7 +39,7 @@ public class VipMigrateAction extends Action {
             return migrateStep2(workItem, vip);
         } else if (vip.getMigration() == 3 && workItem.getVip().migration == 2) {
             return rollbackStep2(workItem, vip);
-        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
+        } else if (vip.getMigration() == 3 && workItem.getVip().migration == 4) {
             return migrateStep3(workItem, vip);
         } else {
             LOGGER.info("Failed to migrating Vip {} for {}, current state {}", workItem.getVip().dns, workItem.getService().serviceName, vip.getMigration());

@@ -24,5 +24,6 @@ public class MigrateVipData {
     public String serviceId;
     public String vipId;
     public int newState;
+    public String specialInstructions;
 
 }

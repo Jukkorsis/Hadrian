@@ -451,20 +451,33 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.migrateVip = function (vipId, newState) {
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                vipId: vipId,
-                newState: newState
-            };
-
-            var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $route.reload();
+        $scope.migrateVip = function (vip, newState) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/migrateVip.html',
+                controller: 'ModalMigrateVipCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    serviceId: function () {
+                        return $scope.service.serviceId;
+                    },
+                    vip: function () {
+                        return vip;
+                    },
+                    newState: function () {
+                        return newState;
+                    },
+                    config: function () {
+                        return $scope.config;
+                    }
+                }
             });
-            responsePromise.error(function (data, status, headers, config) {
-                alert("Request to migrate vip has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 

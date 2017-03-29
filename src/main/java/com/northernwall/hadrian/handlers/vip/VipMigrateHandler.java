@@ -63,6 +63,7 @@ public class VipMigrateHandler extends BasicHandler {
 
         WorkItem workItem = new WorkItem(Type.vip, Operation.migrate, user, team, service, null, null, vip);
         workItem.getVip().migration = data.newState;
+        workItem.setSpecialInstructions(data.specialInstructions);
         workItemProcessor.processWorkItem(workItem);
         
         response.setStatus(200);

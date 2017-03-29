@@ -186,3 +186,57 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
             $modalInstance.dismiss('cancel');
         };
     }]);
+
+hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'serviceId', 'vip', 'newState',
+    function ($scope, $http, $modalInstance, $route, config, serviceId, vip, newState) {
+        $scope.errorMsg = null;
+        $scope.serviceId = serviceId;
+        $scope.vip = vip;
+        $scope.newState = newState;
+        $scope.formMigrateVip = {};
+        $scope.formMigrateVip.specialInstructions = null;
+        $scope.config = config;
+        
+        if (vip.migration === 1 && newState === 2) { 
+            $scope.modalTitle = "Migrate VIP Step 1";
+            $scope.buttonTitle = "Migrate VIP";
+            $scope.showSpecialInstructions = false;
+        }
+        if (vip.migration === 2 && newState === 3) { 
+            $scope.modalTitle = "Migrate VIP Step 2";
+            $scope.buttonTitle = "Migrate VIP";
+            $scope.showSpecialInstructions = true;
+        }
+        if (vip.migration === 3 && newState === 2) { 
+            $scope.modalTitle = "Rollback VIP Migration";
+            $scope.buttonTitle = "Rollback";
+            $scope.showSpecialInstructions = true;
+        }
+        if (vip.migration === 3 && newState === 4) { 
+            $scope.modalTitle = "Migrate VIP Step 3";
+            $scope.buttonTitle = "Migrate VIP";
+            $scope.showSpecialInstructions = false;
+        }
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.serviceId,
+                vipId: $scope.vip.vipId,
+                newState: $scope.newState,
+                specialInstructions: $scope.formMigrateVip.specialInstructions
+            };
+
+            var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});
+            responsePromise.success(function (dataFromServer, status, headers, config) {
+                $modalInstance.close();
+                $route.reload();
+            });
+            responsePromise.error(function (data, status, headers, config) {
+                $scope.errorMsg = data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);

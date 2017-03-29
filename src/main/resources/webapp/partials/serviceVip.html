@@ -44,10 +44,10 @@
                       <li role="menuitem"><a ng-click="openUpdateVipModal(ep);">Update VIP</a></li>
                       -->
                       <li role="menuitem"><a ng-click="deleteVip(ep.vipId);">Delete VIP</a></li>
-                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 1"><a ng-click="migrateVip(ep.vipId, 2);">VIP Migrate Step 1</a></li>
-                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 2"><a ng-click="migrateVip(ep.vipId, 3);">VIP Migrate Step 2</a></li>
-                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="migrateVip(ep.vipId, 2);">VIP Migrate Rollback</a></li>
-                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="migrateVip(ep.vipId, 4);">VIP Migrate Step 3</a></li>
+                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 1"><a ng-click="migrateVip(ep, 2);">VIP Migrate Step 1</a></li>
+                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 2"><a ng-click="migrateVip(ep, 3);">VIP Migrate Step 2</a></li>
+                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="migrateVip(ep, 2);">VIP Migrate Rollback</a></li>
+                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="migrateVip(ep, 4);">VIP Migrate Step 3</a></li>
                     </ul>
                   </div>
                   <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
