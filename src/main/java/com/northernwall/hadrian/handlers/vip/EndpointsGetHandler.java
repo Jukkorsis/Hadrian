@@ -20,7 +20,6 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
-import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
@@ -63,6 +62,7 @@ public class EndpointsGetHandler extends BasicHandler {
             if (vip.getModuleId().equals(module.getModuleId())) {
                 GetEndpointData endpoint = GetEndpointData.create(vip);
                 endpoint.monitoringPath = monitoringPath;
+                endpoints.add(endpoint);
             }
         }
 
