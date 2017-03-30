@@ -41,6 +41,7 @@ public class Team implements Comparable<Team> {
         this.gitGroup = gitGroup;
         this.teamPage = teamPage;
         this.colour = colour;
+        this.securityGroupName = securityGroupName;
     }
 
     public String getTeamId() {
