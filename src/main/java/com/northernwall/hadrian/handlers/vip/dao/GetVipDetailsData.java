@@ -21,9 +21,25 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GetVipDetailsData {
+
+    /**
+     * Map of DC to the IP Address the LB listens on
+     */
     public Map<String, String> address = new ConcurrentHashMap<>();
+
+    /**
+     * Map of DC to the DNS name of the IP Address the LB listens on
+     */
     public Map<String, String> name = new ConcurrentHashMap<>();
+
+    /**
+     * Map of DC to number of connections into the LB
+     */
     public Map<String, String> connections = new ConcurrentHashMap<>();
+    
+    /**
+     * List of rows, where each row represents a host in the LB's pool
+     */
     public List<GetVipDetailRowData> rows = new LinkedList<>();
 
     public synchronized GetVipDetailRowData find(String hostName) {
