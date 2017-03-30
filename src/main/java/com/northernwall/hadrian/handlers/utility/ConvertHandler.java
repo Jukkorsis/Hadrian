@@ -163,6 +163,19 @@ public class ConvertHandler extends BasicHandler {
         List<Service> services = getDataAccess().getActiveServices();
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
+                List<Module> modules = getDataAccess().getModules(service.getServiceId());
+                if (modules != null && !modules.isEmpty()) {
+                    for (Module module : modules) {
+                        if (module.getPlatform().equals(oldValue)) {
+                            LOGGER.info("Found a module with '{}' environment, {} in {}", 
+                                    oldValue, 
+                                    module.getModuleName(), 
+                                    service.getServiceName());
+                            module.setPlatform(newValue);
+                            getDataAccess().updateModule(module);
+                        }
+                    }
+                }
                 List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
