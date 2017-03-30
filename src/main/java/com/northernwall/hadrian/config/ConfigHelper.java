@@ -69,6 +69,12 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.logsFolder = parameters.getString(Const.CONFIG_LOGS_FOLDER, Const.CONFIG_LOGS_FOLDER_DEFAULT);
         newConfig.gitUiURL = parameters.getString(Const.GIT_UI_URL, Const.GIT_UI_URL_DEFAULT);
         newConfig.securityGroupName = parameters.getString(Const.CONFIG_SECURITY_GROUP_NAME, Const.CONFIG_SECURITY_GROUP_NAME_DEFAULT);
+        newConfig.minCpu = parameters.getInt(Const.CONFIG_MIN_CPU, Const.CONFIG_MIN_CPU_DEFAULT);
+        newConfig.maxCpu = parameters.getInt(Const.CONFIG_MAX_CPU, Const.CONFIG_MAX_CPU_DEFAULT);
+        newConfig.minMemory = parameters.getInt(Const.CONFIG_MIN_MEMORY, Const.CONFIG_MIN_MEMORY_DEFAULT);
+        newConfig.maxMemory = parameters.getInt(Const.CONFIG_MAX_MEMORY, Const.CONFIG_MAX_MEMORY_DEFAULT);
+        newConfig.minStorage = parameters.getInt(Const.CONFIG_MIN_STORAGE, Const.CONFIG_MIN_STORAGE_DEFAULT);
+        newConfig.maxStorage = parameters.getInt(Const.CONFIG_MAX_STORAGE, Const.CONFIG_MAX_STORAGE_DEFAULT);
         newConfig.hostSpecialInstructions = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_DEFAULT);
         newConfig.hostSpecialInstructionsTrueSla = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_TRUE_SLA, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_TRUE_SLA_DEFAULT);
         newConfig.hostSpecialInstructionsFalseSla = parameters.getString(Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_FALSE_SLA, Const.CONFIG_HOST_SPECIAL_INSTRUCTIONS_FALSE_SLA_DEFAULT);
