@@ -30,29 +30,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
 public class DocumentDeleteHandler extends BasicHandler {
-
+    
     private final AccessHelper accessHelper;
-
+    
     public DocumentDeleteHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
     }
-
+    
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         DeleteDocumentData data = fromJson(request, DeleteDocumentData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
         accessHelper.checkIfUserCanModify(request, team, "remove document");
-
-        for (Document doc : service.getDocuments()) {
-            if (doc.getDocId().equals(data.docId)) {
-                service.getDocuments().remove(doc);
+        
+        Document doc = null;
+        for (Document temp : service.getDocuments()) {
+            if (temp.getDocId().equals(data.docId)) {
+                doc = temp;
             }
+        }
+        
+        if (doc != null) {
+            service.getDocuments().remove(doc);
+            getDataAccess().updateService(service);
         }
         
         response.setStatus(200);
         request.setHandled(true);
     }
-
+    
 }

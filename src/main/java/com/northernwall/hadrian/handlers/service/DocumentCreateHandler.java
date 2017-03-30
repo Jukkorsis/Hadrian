@@ -73,6 +73,7 @@ public class DocumentCreateHandler extends BasicHandler {
 
         Document document = new Document(data.documentType, data.title, data.link);
         service.getDocuments().add(document);
+        getDataAccess().updateService(service);
 
         response.setStatus(200);
         request.setHandled(true);
