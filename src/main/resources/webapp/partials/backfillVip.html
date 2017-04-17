@@ -6,15 +6,24 @@
   <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
-      <label class="col-sm-3 control-label">Domain:</label>
+      <label class="col-sm-3 control-label">Domain/Cname:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveVip.dns" type="text" class="form-control" autofocus="true">
+        <p class="help-block">Enter only the Domain/Cname, for example "foo". Do not enter names with data center abbreviations, such as "foo-wdc".</p>
+        <p class="help-block">Minimum length of 3 and maximum length of 30.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Root Domain:</label>
       <div class="col-sm-9">
         <select ng-model="formSaveVip.domain" ng-options="c for c in config.domains" class="form-control"></select>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">FQDN:</label>
+      <div class="col-sm-9">
+        {{formSaveVip.dns}}.{{formSaveVip.domain}}
+        <p class="help-block">The Fully Qualified Domain Name that people and other services use to access your service.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
@@ -85,6 +94,7 @@
           <option value="false" selected="selected">False</option>
           <option value="true">True</option>
         </select>
+        <p class="help-block">Does this service need to be accessible from the Internet.</p>
       </div>
     </div>
   </form>
