@@ -22,6 +22,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.Action;
 import com.northernwall.hadrian.workItem.action.HostCreateAction;
@@ -60,7 +61,6 @@ import org.dshops.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class WorkItemProcessor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WorkItemProcessor.class);
@@ -85,7 +85,7 @@ public class WorkItemProcessor {
 
         //Check if action classes can be constructed
         constructAction("StatusUpdate", StatusUpdateAction.class);
-        
+
         constructAction("serviceCreate", ServiceCreateAction.class);
         constructAction("serviceUpdate", ServiceUpdateAction.class);
         constructAction("serviceTransfer", ServiceTransferAction.class);
@@ -193,6 +193,12 @@ public class WorkItemProcessor {
 
     public void processCallback(CallbackData callbackData) {
         WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
+        if (workItem == null) {
+            throw new Http404NotFoundException("Unable to find Work Item with requestId "
+                    + callbackData.requestId
+                    + ", unable to process callback.");
+        }
+
         Action action = getAction(workItem);
         Result result = Result.error;
 
