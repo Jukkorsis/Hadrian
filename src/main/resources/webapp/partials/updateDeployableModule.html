@@ -34,7 +34,7 @@
           <option>No</option>
           <option>Required</option>
         </select>
-        <p class="help-block">Does the service open a connection to any external services.</p>
+        <p class="help-block">Does the service open any connection to services on the Internet.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
@@ -65,6 +65,15 @@
           <input ng-model="formUpdateModule.sizeStorage" type="number" min="{{config.minStorage}}" max="{{config.maxStorage}}" step="5" class="form-control">
           <div class="input-group-addon">GB</div>
         </div>
+      </div>
+    </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Special Instructions:</label>
+      <div class="col-sm-9">
+        <textarea ng-model="formUpdateModule.specialInstructions" maxlength="500" rows="3" class="form-control"></textarea>
+        <p class="help-block">{{config.hostSpecialInstructions}}</p>
+        <p class="help-block" ng-if="formUpdateModule.specialInstructions">SLA: {{config.hostSpecialInstructionsTrueSla}}</p>
+        <p class="help-block" ng-if="!formUpdateModule.specialInstructions">SLA: {{config.hostSpecialInstructionsFalseSla}}</p>
       </div>
     </div>
     <div class="form-group form-group-sm">

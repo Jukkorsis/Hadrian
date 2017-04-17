@@ -58,6 +58,15 @@
         </div>
       </div>
     </div>
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Special Instructions:</label>
+      <div class="col-sm-9">
+        <textarea ng-model="formSaveModule.specialInstructions" maxlength="500" rows="3" class="form-control"></textarea>
+        <p class="help-block">{{config.hostSpecialInstructions}}</p>
+        <p class="help-block" ng-if="formSaveModule.specialInstructions">SLA: {{config.hostSpecialInstructionsTrueSla}}</p>
+        <p class="help-block" ng-if="!formSaveModule.specialInstructions">SLA: {{config.hostSpecialInstructionsFalseSla}}</p>
+      </div>
+    </div>
     <div class="form-group form-group-sm">  
       <label class="col-sm-3 control-label">Availability Url:</label>
       <div class="col-sm-9">

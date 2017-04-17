@@ -38,6 +38,7 @@ public class Module implements Comparable<Module> {
     private int sizeCpu;
     private int sizeMemory;
     private int sizeStorage;
+    private String specialInstructions;
     private String versionUrl;
     private String availabilityUrl;
     private String smokeTestUrl;
@@ -55,7 +56,7 @@ public class Module implements Comparable<Module> {
     private String configName;
     private Map<String,Boolean> environmentNames = new HashMap<>();
 
-    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr, String platform, int sizeCpu, int sizeMemory, int sizeStorage, String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention, String logCollection, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
+    public Module(String moduleName, String serviceId, ModuleType moduleType, String gitFolder, String mavenArtifactId, String artifactType, String artifactSuffix, String outbound, String hostAbbr, String platform, int sizeCpu, int sizeMemory, int sizeStorage, String specialInstructions, String versionUrl, String availabilityUrl, String smokeTestUrl, String smokeTestCron, String runAs, String deploymentFolder, String dataFolder, String logsFolder, int logsRetention, String logCollection, String startCmdLine, int startTimeOut, String stopCmdLine, int stopTimeOut, String configName, Map<String,Boolean> environmentNames) {
         this.moduleId = UUID.randomUUID().toString();
         this.moduleName = moduleName;
         this.serviceId = serviceId;
@@ -70,6 +71,7 @@ public class Module implements Comparable<Module> {
         this.sizeCpu = sizeCpu;
         this.sizeMemory = sizeMemory;
         this.sizeStorage = sizeStorage;
+        this.specialInstructions = specialInstructions;
         this.versionUrl = versionUrl;
         this.availabilityUrl = availabilityUrl;
         this.smokeTestUrl = smokeTestUrl;
@@ -201,6 +203,14 @@ public class Module implements Comparable<Module> {
 
     public void setSizeStorage(int sizeStorage) {
         this.sizeStorage = sizeStorage;
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
+    }
+
+    public void setSpecialInstructions(String specialInstructions) {
+        this.specialInstructions = specialInstructions;
     }
 
     public String getVersionUrl() {

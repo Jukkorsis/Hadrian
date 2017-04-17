@@ -211,6 +211,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.sizeCpu,
                 data.sizeMemory,
                 data.sizeStorage,
+                data.specialInstructions,
                 data.versionUrl,
                 data.availabilityUrl,
                 data.smokeTestUrl,

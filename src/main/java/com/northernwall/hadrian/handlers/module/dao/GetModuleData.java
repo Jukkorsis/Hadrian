@@ -41,6 +41,7 @@ public class GetModuleData {
         temp.sizeCpu = module.getSizeCpu();
         temp.sizeMemory = module.getSizeMemory();
         temp.sizeStorage = module.getSizeStorage();
+        temp.specialInstructions = module.getSpecialInstructions();
         temp.versionUrl = module.getVersionUrl();
         temp.availabilityUrl = module.getAvailabilityUrl();
         temp.smokeTestUrl = module.getSmokeTestUrl();
@@ -77,6 +78,7 @@ public class GetModuleData {
     public int sizeCpu;
     public int sizeMemory;
     public int sizeStorage;
+    public String specialInstructions;
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;

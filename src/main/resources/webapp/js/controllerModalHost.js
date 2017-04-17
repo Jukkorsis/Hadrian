@@ -74,7 +74,7 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
         for (var i = 0; i < config.dataCenters.length; i++) {
             $scope.formSaveHost.counts[config.dataCenters[i]] = 0;
         }
-        $scope.formSaveHost.specialInstructions = "";
+        $scope.formSaveHost.specialInstructions = $scope.module.specialInstructions;
         $scope.formSaveHost.reason = "";
 
         var responsePromise = $http.get(

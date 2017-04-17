@@ -257,6 +257,7 @@ public class ModuleModifyHandler extends BasicHandler {
         module.setSizeCpu(data.sizeCpu);
         module.setSizeMemory(data.sizeMemory);
         module.setSizeStorage(data.sizeStorage);
+        module.setSpecialInstructions(data.specialInstructions);
         module.setVersionUrl(data.versionUrl);
         module.setAvailabilityUrl(data.availabilityUrl);
         module.setSmokeTestUrl(data.smokeTestUrl);

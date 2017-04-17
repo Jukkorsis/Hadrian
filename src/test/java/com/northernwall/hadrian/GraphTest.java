@@ -41,8 +41,8 @@ public class GraphTest {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Graph graph = new Graph(outputStream, false);
-            Module service = new Module("service", "abc-123", ModuleType.Deployable, null, null, null, null, null, null, null, 0, 0, 0, null, null, null, null, null, null, null, null, 0, null, null, 0, null, 0, null, null);
-            Module library = new Module("lib-rary", "def-567", ModuleType.Library, null, null, null, null, null, null, null, 0, 0, 0, null, null, null, null, null, null, null, null, 0, null, null, 0, null, 0, null, null);
+            Module service = new Module("service", "abc-123", ModuleType.Deployable, null, null, null, null, null, null, null, 0, 0, 0, null, null, null, null, null, null, null, null, null, 0, null, null, 0, null, 0, null, null);
+            Module library = new Module("lib-rary", "def-567", ModuleType.Library, null, null, null, null, null, null, null, 0, 0, 0, null, null, null, null, null, null, null, null, null, 0, null, null, 0, null, 0, null, null);
             graph.writeModule(service, "black");
             graph.writeModule(library, "blue");
             graph.close();

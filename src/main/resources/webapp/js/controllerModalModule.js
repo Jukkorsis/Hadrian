@@ -23,6 +23,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
         $scope.formSaveModule.sizeCpu = $scope.config.minCpu;
         $scope.formSaveModule.sizeMemory = $scope.config.minMemory;
         $scope.formSaveModule.sizeStorage = $scope.config.minStorage;
+        $scope.formSaveModule.specialInstructions = "";
         $scope.formSaveModule.versionUrl = $scope.config.versionUrl;
         $scope.formSaveModule.availabilityUrl = $scope.config.availabilityUrl;
         $scope.formSaveModule.smokeTestUrl = "";
@@ -55,6 +56,7 @@ hadrianControllers.controller('ModalAddModuleCtrl', ['$scope', '$http', '$modalI
                 sizeCpu: $scope.formSaveModule.sizeCpu,
                 sizeMemory: $scope.formSaveModule.sizeMemory,
                 sizeStorage: $scope.formSaveModule.sizeStorage,
+                specialInstructions: $scope.formSaveModule.specialInstructions,
                 versionUrl: $scope.formSaveModule.versionUrl,
                 availabilityUrl: $scope.formSaveModule.availabilityUrl,
                 smokeTestUrl: $scope.formSaveModule.smokeTestUrl,
@@ -107,6 +109,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
         $scope.formUpdateModule.sizeCpu = module.sizeCpu;
         $scope.formUpdateModule.sizeMemory = module.sizeMemory;
         $scope.formUpdateModule.sizeStorage = module.sizeStorage;
+        $scope.formUpdateModule.specialInstructions = module.specialInstructions;
         $scope.formUpdateModule.versionUrl = module.versionUrl;
         $scope.formUpdateModule.availabilityUrl = module.availabilityUrl;
         $scope.formUpdateModule.smokeTestUrl = module.smokeTestUrl;
@@ -139,6 +142,7 @@ hadrianControllers.controller('ModalUpdateModuleCtrl', ['$scope', '$http', '$mod
                 sizeCpu: $scope.formUpdateModule.sizeCpu,
                 sizeMemory: $scope.formUpdateModule.sizeMemory,
                 sizeStorage: $scope.formUpdateModule.sizeStorage,
+                specialInstructions: $scope.formUpdateModule.specialInstructions,
                 versionUrl: $scope.formUpdateModule.versionUrl,
                 availabilityUrl: $scope.formUpdateModule.availabilityUrl,
                 smokeTestUrl: $scope.formUpdateModule.smokeTestUrl,

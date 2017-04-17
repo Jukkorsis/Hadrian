@@ -37,6 +37,7 @@ public class PutModuleData {
     public int sizeCpu;
     public int sizeMemory;
     public int sizeStorage;
+    public String specialInstructions;
     public String versionUrl;
     public String availabilityUrl;
     public String smokeTestUrl;
