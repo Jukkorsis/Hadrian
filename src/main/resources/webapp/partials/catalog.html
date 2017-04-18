@@ -1,15 +1,7 @@
 <h3>Service Catalog</h3>
 <div ng-if="catalogLoading">Loading...</div>
 <div ng-if="!catalogLoading">
-  Cross Team Dashboard <a ng-repeat="env in config.environmentNames" href="#/DashboardAll/{{env}}">{{env}} </a><br/>
-  <form>
-    <div class="form-group">
-      <div class="input-group">
-        <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-        <input type="text" class="form-control" placeholder="Filter services" ng-model="catalogFilter">
-      </div>      
-    </div>
-  </form>
+  Cross Team Dashboard <a ng-repeat="env in config.environmentNames" href="#!/DashboardAll/{{env}}">{{env}} </a><br/>
   <table class="table table-hover table-striped table-condensed">
     <tr>
       <th width="10%">
@@ -31,9 +23,9 @@
         Service Description
       </th>
     </tr>
-    <tr ng-repeat="s in catalog.services| orderBy:catalogSortType:catalogSortReverse | filter:catalogFilter">
-      <td><a href="#/Team/{{s.teamId}}">{{s.teamName}}</a></td>
-      <td><a href="#/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
+    <tr ng-repeat="s in catalog.services| orderBy:catalogSortType:catalogSortReverse">
+      <td><a href="#!/Team/{{s.teamId}}">{{s.teamName}}</a></td>
+      <td><a href="#!/Service/{{s.serviceId}}">{{s.serviceName}}</a></td>
       <td>{{s.scope}}</td>
       <td class="text-center">
         <span ng-if="s.haFunctionality" class="glyphicon glyphicon-check text-success"></span>

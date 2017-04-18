@@ -2,14 +2,32 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$sce', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails', 'VipDetails',
-    function ($scope, $route, $interval, $http, $routeParams, $sce, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails, VipDetails) {
+hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '$http', '$routeParams', '$location', '$sce', '$uibModal', 'filterFilter', 'Config', 'Team', 'Service', 'ServiceRefresh', 'HostDetails', 'VipDetails',
+    function ($scope, $route, $interval, $http, $routeParams, $location, $sce, $uibModal, filterFilter, Config, Team, Service, ServiceRefresh, HostDetails, VipDetails) {
         $scope.loading = true;
         $scope.hostSortType = 'hostName';
         $scope.hostSortReverse = false;
         $scope.hostFilter = '';
 
         $scope.auditFilter = '';
+
+        if (!$routeParams.tabName) {
+            $scope.activeTabIndex = 0;
+        } else if ($routeParams.tabName === 'Hosts') {
+            $scope.activeTabIndex = 1;
+        } else if ($routeParams.tabName === 'VIPs') {
+            $scope.activeTabIndex = 2;
+        } else if ($routeParams.tabName === 'CustomFunctions') {
+            $scope.activeTabIndex = 3;
+        } else if ($routeParams.tabName === 'Configuration') {
+            $scope.activeTabIndex = 4;
+        } else if ($routeParams.tabName === 'Docs') {
+            $scope.activeTabIndex = 5;
+        } else if ($routeParams.tabName === 'Audit') {
+            $scope.activeTabIndex = 6;
+        } else {
+            $scope.activeTabIndex = 0;
+        }
 
         $scope.formSelectHost = {};
 
@@ -23,6 +41,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         Config.get({}, function (config) {
             $scope.config = config;
         });
+
+        $scope.selectTab = function (tabName) {
+            $location.path("Service/" + $routeParams.serviceId + "/" + tabName);
+        }
 
         $scope.openUpdateServiceModal = function () {
             var modalInstance = $uibModal.open({
@@ -139,10 +161,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             };
 
             var responsePromise = $http.post("/v1/service/deleteRef", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
+            responsePromise.then(function (response) {
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 alert("Request to remove dependence has failed!");
                 $route.reload();
             });
@@ -442,10 +464,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             };
 
             var responsePromise = $http.post("/v1/vip/delete", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
+            responsePromise.then(function (response) {
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 alert("Request to delete vip has failed!");
                 $route.reload();
             });
@@ -894,10 +916,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             };
 
             var responsePromise = $http.post("/v1/cf/delete", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
+            responsePromise.then(function (response) {
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 alert("Request to delete custom function has failed!");
                 $route.reload();
             });
@@ -928,10 +950,10 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             };
 
             var responsePromise = $http.post("/v1/document/delete", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
+            responsePromise.then(function (response) {
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 alert("Request to delete vip has failed!");
                 $route.reload();
             });
@@ -943,9 +965,9 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             } else {
                 $scope.service.docType = "Loading";
                 var responsePromise = $http.get("/v1/document?serviceId=" + $scope.service.serviceId + "&docId=" + doc.docId, {});
-                responsePromise.success(function (output, status, headers, config) {
+                responsePromise.then(function (response) {
                     if (doc.documentType === "Text") {
-                        $scope.service.docBody = output;
+                        $scope.service.docBody = response.data;
                     }
                     if (doc.documentType === "Markdown") {
                         var converter = new showdown.Converter();
@@ -954,8 +976,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     }
                     $scope.service.docType = doc.documentType;
                 });
-                responsePromise.error(function (data, status, headers, config) {
-                    $scope.service.docBody = data;
+                responsePromise.catch(function (response) {
+                    $scope.service.docBody = response.data;
                     $scope.service.docType = "Text";
                 });
             }
@@ -970,8 +992,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
         $scope.searchAudit = function () {
             var responsePromise = $http.get("/v1/service/audit?serviceId=" + $scope.service.serviceId + "&year=" + $scope.search.year + "&month=" + $scope.search.month + "&start=" + $scope.search.start + "&end=" + $scope.search.end, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $scope.audits = dataFromServer.audits;
+            responsePromise.then(function (response) {
+                $scope.audits = response.data.audits;
                 for (var j = 0; j < $scope.audits.length; j++) {
                     var a = $scope.audits[j];
                     if (a.notes !== null && a.notes.length > 2) {
@@ -997,7 +1019,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     }
                 }
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 alert("Request to search audit records has failed!");
                 $route.reload();
             });
@@ -1009,8 +1031,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             if (audit.outputDownloaded != true) {
                 audit.output = "Loading...";
                 var responsePromise = $http.get("/v1/service/auditOutput?serviceId=" + $scope.service.serviceId + "&auditId=" + audit.auditId, {});
-                responsePromise.success(function (output, status, headers, config) {
-                    audit.output = output;
+                responsePromise.then(function (response) {
+                    audit.output = response.data;
                     audit.outputDownloaded = true;
                 });
             }

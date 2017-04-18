@@ -17,31 +17,31 @@
     <span ng-if="!service.active">Service was deleted on {{service.deletionDate}}, see audit for details.</span>
     <span style="white-space:pre-wrap;">{{service.description}}</span>
     <div ng-if="service.active && service.serviceType === 'Service'">
-        <uib-tabset type="pills">
-            <uib-tab heading="Modules">
+        <uib-tabset active="activeTabIndex" type="pills">
+            <uib-tab index="0" heading="Modules" select="selectTab('Modules')">
                 <div ng-include src="'partials/serviceModule.html'"></div>
             </uib-tab>
-            <uib-tab heading="Hosts">
+            <uib-tab index="1" heading="Hosts" select="selectTab('Hosts')">
                 <div ng-include src="'partials/serviceHost.html'"></div>
             </uib-tab>
-            <uib-tab heading="VIPs">
+            <uib-tab index="2" heading="VIPs" select="selectTab('VIPs')">
                 <div ng-include src="'partials/serviceVip.html'"></div>
             </uib-tab>
             <!--
-            <uib-tab heading="Data Stores">
+            <uib-tab heading="Data Stores" select="selectTab('DataStores')">
                 <div ng-include src="'partials/serviceDataStore.html'"></div>
             </uib-tab>
             -->
-            <uib-tab heading="Custom Functions">
+            <uib-tab index="3" heading="Custom Functions" select="selectTab('CustomFunctions')">
                 <div ng-include src="'partials/serviceCustomFunction.html'"></div>
             </uib-tab>
-            <uib-tab heading="Configuration">
+            <uib-tab index="4" heading="Configuration" select="selectTab('Configuration')">
                 <div ng-include src="'partials/serviceConfig.html'"></div>
             </uib-tab>
-            <uib-tab heading="Docs">
+            <uib-tab index="5" heading="Docs" select="selectTab('Docs')">
                 <div ng-include src="'partials/serviceDocs.html'"></div>
             </uib-tab>
-            <uib-tab heading="Audit">
+            <uib-tab index="6" heading="Audit" select="selectTab('Audit')">
                 <div ng-include src="'partials/serviceAudit.html'"></div>
             </uib-tab>
         </uib-tabset>

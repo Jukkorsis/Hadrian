@@ -62,11 +62,10 @@ hadrianControllers.controller('CatalogCtrl', ['$scope', '$http', 'Config',
         });
 
         var responsePromise = $http.get("/v1/catalog", {});
-        responsePromise.success(function (data, status, headers, config) {
+        responsePromise.then(function (response) {
             $scope.catalogSortType = 'teamName';
             $scope.catalogSortReverse = false;
-            $scope.catalogFilter = null;
-            $scope.catalog = data;
+            $scope.catalog = response.data;
             $scope.catalogLoading = false;
         });
     }]);
@@ -82,18 +81,18 @@ hadrianControllers.controller('GraphCtrl', ['$scope', '$http', 'Services',
         $scope.doGraph = function () {
             if ($scope.formGraph.style == "all") {
                 var responsePromise = $http.get("/v1/graph/all", {});
-                responsePromise.success(function (dot, status, headers, config) {
-                    document.getElementById("viz").innerHTML = Viz(dot);
+                responsePromise.then(function (response) {
+                    document.getElementById("viz").innerHTML = Viz(response.data);
                 });
             } else if ($scope.formGraph.style == "fanIn") {
                 var responsePromise = $http.get("/v1/graph/fanin/" + $scope.formGraph.service.serviceId, {});
-                responsePromise.success(function (dot, status, headers, config) {
-                    document.getElementById("viz").innerHTML = Viz(dot);
+                responsePromise.then(function (response) {
+                    document.getElementById("viz").innerHTML = Viz(response.data);
                 });
             } else if ($scope.formGraph.style == "fanOut") {
                 var responsePromise = $http.get("/v1/graph/fanout/" + $scope.formGraph.service.serviceId, {});
-                responsePromise.success(function (dot, status, headers, config) {
-                    document.getElementById("viz").innerHTML = Viz(dot);
+                responsePromise.then(function (response) {
+                    document.getElementById("viz").innerHTML = Viz(response.data);
                 });
             }
         }
@@ -109,11 +108,11 @@ hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
             $scope.findStatus = "Searching...";
             $scope.findHost = null;
             var responsePromise = $http.get("/v1/host/find?hostName=" + $scope.findHostName, {});
-            responsePromise.success(function (data, status, headers, config) {
+            responsePromise.then(function (response) {
                 $scope.findStatus = "";
-                $scope.findHost = data;
+                $scope.findHost = response.data;
             });
-            responsePromise.error(function (data, status, headers, config) {
+            responsePromise.catch(function (response) {
                 $scope.findStatus = "Could not find host " + $scope.findHostName;
                 $scope.findHost = null;
             });
@@ -139,22 +138,22 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$
         $scope.convertEnvironment = function () {
             $scope.formEnvironmentConvert.result = "Converting";
             var responsePromise = $http.post("/v1/convert?attr=environment&old=" + $scope.formEnvironmentConvert.oldValue + "&new=" + $scope.formEnvironmentConvert.newValue, {});
-            responsePromise.success(function (data, status, headers, config) {
+            responsePromise.then(function (response) {
                 $scope.formEnvironmentConvert.result = "Done";
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.formEnvironmentConvert.result = data;
+            responsePromise.catch(function (response) {
+                $scope.formEnvironmentConvert.result = response.data;
             });
         }
 
         $scope.convertPlatform = function () {
             $scope.formPlatfromConvert.result = "Converting";
             var responsePromise = $http.post("/v1/convert?attr=platform&old=" + $scope.formPlatfromConvert.oldValue + "&new=" + $scope.formPlatfromConvert.newValue, {});
-            responsePromise.success(function (data, status, headers, config) {
+            responsePromise.then(function (response) {
                 $scope.formPlatfromConvert.result = "Done";
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.formPlatfromConvert.result = data;
+            responsePromise.catch(function (response) {
+                $scope.formPlatfromConvert.result = response.data;
             });
         }
 
@@ -175,11 +174,11 @@ hadrianControllers.controller('ParametersCtrl', ['$scope', '$http', '$route', '$
         $scope.openResetAllServicesModal = function () {
             $scope.adminResult = "Requesting all services be reset...";
             var responsePromise = $http.post("/v1/service/resetAll", {});
-            responsePromise.success(function (data, status, headers, config) {
+            responsePromise.then(function (response) {
                 $scope.adminResult = "Reseting all services started...";
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.adminResult = data;
+            responsePromise.catch(function (response) {
+                $scope.adminResult = response.data;
             });
         }
 
@@ -235,8 +234,8 @@ hadrianControllers.controller('WorkItemsCtrl', ['$scope', '$http', '$route', 'Wo
 
     }]);
 
-hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalInstance', '$window', 'Config',
-    function ($scope, $http, $modalInstance, $window, Config) {
+hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$uibModalInstance', '$window', 'Config',
+    function ($scope, $http, $uibModalInstance, $window, Config) {
         $scope.errorMsg = null;
 
         Config.get({}, function (config) {
@@ -262,17 +261,17 @@ hadrianControllers.controller('ModalAddTeamCtrl', ['$scope', '$http', '$modalIns
             };
 
             var responsePromise = $http.post("/v1/team/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $window.location.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 

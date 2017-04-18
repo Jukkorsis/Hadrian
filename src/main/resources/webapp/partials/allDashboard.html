@@ -9,7 +9,7 @@
           <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
         </tr>
         <tr ng-repeat="module in dashboard.leftModules">
-          <td><h3><a href="#/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
+          <td><h3><a href="#!/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
           <td ng-repeat="dc in config.dataCenters">
             <h3 style="line-height:0">
               <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total" style="margin-bottom:0">
@@ -29,7 +29,7 @@
           <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
         </tr>
         <tr ng-repeat="module in dashboard.rightModules">
-          <td><h3><a href="#/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
+          <td><h3><a href="#!/Service/{{module.serviceId}}">{{module.serviceName}}</a> <small>{{module.moduleName}}</small></h3></td>
           <td ng-repeat="dc in config.dataCenters">
             <h3 style="line-height:0">
               <uib-progress ng-if="module.counts[dc].total > 0" max="module.counts[dc].total" style="margin-bottom:0">

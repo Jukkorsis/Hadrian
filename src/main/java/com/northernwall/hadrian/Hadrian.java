@@ -194,10 +194,12 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator, scheduler), true);
         ContentHandler contentHandler = new ContentHandler("/webcontent");
         contentHandler.preload("/js/viz.js");
-        contentHandler.preload("/js/angular.js");
-        contentHandler.preload("/js/angular-animate.js");
+        contentHandler.preload("/js/angular.min.js");
+        contentHandler.preload("/js/angular-animate.min.js");
         contentHandler.preload("/js/ace.js");
-        contentHandler.preload("/js/ui-bootstrap-tpls-0.14.2.min.js");
+        contentHandler.preload("/js/ui-bootstrap-tpls.min.js");
+        contentHandler.preload("/js/select.min.js");
+        contentHandler.preload("/js/showdown.min.js");
         contentHandler.preload("/css/bootstrap.min.css");
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", contentHandler, false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(gson, workItemProcessor), true);

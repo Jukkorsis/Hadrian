@@ -59,8 +59,8 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modalInstance', '$route', 'team', 'config',
-    function ($scope, $http, $modalInstance, $route, team, config) {
+hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'team', 'config',
+    function ($scope, $http, $uibModalInstance, $route, team, config) {
         $scope.errorMsg = null;
         $scope.config = config;
         $scope.formUpdateTeam = {};
@@ -85,22 +85,22 @@ hadrianControllers.controller('ModalUpdateTeamCtrl', ['$scope', '$http', '$modal
             };
 
             var responsePromise = $http.put("/v1/team/modify", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modalInstance', '$window', '$uibModal', 'Config', 'team', 'check',
-    function ($scope, $http, $modalInstance, $window, $uibModal, Config, team, check) {
+hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$uibModalInstance', '$window', '$uibModal', 'Config', 'team', 'check',
+    function ($scope, $http, $uibModalInstance, $window, $uibModal, Config, team, check) {
         $scope.team = team;
         $scope.errorMsg = null;
         Config.get({}, function (config) {
@@ -158,12 +158,12 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                 };
 
                 var responsePromise = $http.post("/v1/service/create", dataObject, {});
-                responsePromise.success(function (dataFromServer, status, headers, config) {
-                    $modalInstance.close();
+                responsePromise.then(function (response) {
+                    $uibModalInstance.close();
                     
                     let templateUrl = "partials/addDeployableModule.html";
                     let moduleType = "Deployable";
-                    if (dataFromServer.serviceType === "Shared Library") {
+                    if (response.data.serviceType === "Shared Library") {
                         templateUrl = "partials/addLibraryModule.html";
                         moduleType = "Library";
                     }
@@ -179,7 +179,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                                 return $scope.team;
                             },
                             service: function () {
-                                return dataFromServer;
+                                return response.data;
                             },
                             config: function () {
                                 return $scope.config;
@@ -188,7 +188,7 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                                 return moduleType;
                             },
                             initialMsg: function () {
-                                return 'Service ' + dataFromServer.serviceName + ' has been saved.';
+                                return 'Service ' + response.data.serviceName + ' has been saved.';
                             }
                         }
                     });
@@ -197,13 +197,13 @@ hadrianControllers.controller('ModalAddServiceCtrl', ['$scope', '$http', '$modal
                     }, function () {
                     });
                 });
-                responsePromise.error(function (data, status, headers, config) {
-                    $scope.errorMsg = data;
+                responsePromise.catch(function (response) {
+                    $scope.errorMsg = response.data;
                 });
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         });
     }]);

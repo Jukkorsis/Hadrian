@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ModalAddDocumentCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service',
-    function ($scope, $http, $modalInstance, $route, service) {
+hadrianControllers.controller('ModalAddDocumentCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'service',
+    function ($scope, $http, $uibModalInstance, $route, service) {
         $scope.errorMsg = null;
         $scope.service = service;
 
@@ -22,17 +22,17 @@ hadrianControllers.controller('ModalAddDocumentCtrl', ['$scope', '$http', '$moda
             };
 
             var responsePromise = $http.post("/v1/document/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 

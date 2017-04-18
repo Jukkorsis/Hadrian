@@ -33,6 +33,14 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/service.html',
                     controller: 'ServiceCtrl'
                 }).
+                when('/Service/:serviceId/:tabName', {
+                    templateUrl: 'partials/service.html',
+                    controller: 'ServiceCtrl'
+                }).
+                when('/Service/:serviceId/:tabName/:envName', {
+                    templateUrl: 'partials/service.html',
+                    controller: 'ServiceCtrl'
+                }).
                 when('/Catalog', {
                     templateUrl: 'partials/catalog.html',
                     controller: 'CatalogCtrl'

@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, moduleEnvironment) {
+hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.moduleEnvironment = moduleEnvironment;
@@ -25,22 +25,22 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$mod
             };
 
             var responsePromise = $http.put("/v1/host/backfill", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, moduleEnvironment) {
+hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.moduleEnvironment = moduleEnvironment;
@@ -84,13 +84,13 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
                 $scope.moduleEnvironment.moduleId +
                 "&envName=" +
                 $scope.configEnvironment.name, {});
-        responsePromise.success(function (data, status, headers, config) {
-            $scope.versions = data;
+        responsePromise.then(function (response) {
+            $scope.versions = response.data;
             if ($scope.formSaveHost.version === "") {
-                $scope.formSaveHost.version = data.artifactVersions[0];
+                $scope.formSaveHost.version = response.data.artifactVersions[0];
             }
             if ($scope.formSaveHost.configVersion === "") {
-                $scope.formSaveHost.configVersion = data.configVersions[0];
+                $scope.formSaveHost.configVersion = response.data.configVersions[0];
             }
         });
         
@@ -107,22 +107,22 @@ hadrianControllers.controller('ModalAddHostCtrl', ['$scope', '$http', '$modalIns
             };
 
             var responsePromise = $http.post("/v1/host/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
+hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
@@ -162,13 +162,13 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
                 $scope.moduleEnvironment.moduleId +
                 "&envName=" +
                 $scope.configEnvironment.name, {});
-        responsePromise.success(function (data, status, headers, config) {
+        responsePromise.then(function (response) {
             $scope.versions = data;
             if ($scope.formUpdateHost.version === "") {
-                $scope.formUpdateHost.version = data.artifactVersions[0];
+                $scope.formUpdateHost.version = response.data.artifactVersions[0];
             }
             if ($scope.formUpdateHost.configVersion === "") {
-                $scope.formUpdateHost.configVersion = data.configVersions[0];
+                $scope.formUpdateHost.configVersion = response.data.configVersions[0];
             }
         });
 
@@ -186,22 +186,22 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$m
             };
 
             var responsePromise = $http.put("/v1/host/deploy", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
+hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
@@ -232,22 +232,22 @@ hadrianControllers.controller('ModalRestartHostCtrl', ['$scope', '$http', '$moda
             };
 
             var responsePromise = $http.put("/v1/host/restart", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalRebootHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
+hadrianControllers.controller('ModalRebootHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
@@ -274,22 +274,22 @@ hadrianControllers.controller('ModalRebootHostCtrl', ['$scope', '$http', '$modal
             };
 
             var responsePromise = $http.post("/v1/host/reboot", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
-    function ($scope, $http, $modalInstance, $route, config, service, hostNames, moduleEnvironment) {
+hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'hostNames', 'moduleEnvironment',
+    function ($scope, $http, $uibModalInstance, $route, config, service, hostNames, moduleEnvironment) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.hostNames = hostNames;
@@ -318,22 +318,22 @@ hadrianControllers.controller('ModalDeleteHostCtrl', ['$scope', '$http', '$modal
             };
 
             var responsePromise = $http.post("/v1/host/delete", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$modalInstance', 'config', 'service', 'moduleId', 'endPoint',
-    function ($scope, $http, $modalInstance, config, service, moduleId, endPoint) {
+hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$uibModalInstance', 'config', 'service', 'moduleId', 'endPoint',
+    function ($scope, $http, $uibModalInstance, config, service, moduleId, endPoint) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.endPoint = endPoint;
@@ -342,16 +342,16 @@ hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$modalI
         $scope.status = "Loading";
         $scope.output = "";
         var responsePromise = $http.get("/v1/st/exec?serviceId=" + service.serviceId + "&moduleId=" + moduleId + "&endPoint=" + endPoint, {});
-        responsePromise.success(function (data, status, headers, config) {
-            $scope.status = data.result;
-            $scope.output = data.output;
+        responsePromise.then(function (response) {
+            $scope.status = response.data.result;
+            $scope.output = response.data.output;
         });
-        responsePromise.error(function (data, status, headers, config) {
+        responsePromise.catch(function (response) {
             $scope.status = "Error";
         });
 
         $scope.cancel = function () {
-            $modalInstance.close();
+            $uibModalInstance.close();
         };
     }]);
 

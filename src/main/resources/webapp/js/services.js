@@ -2,7 +2,7 @@
 
 /* Services */
 
-var hadrianServices = angular.module('hadrianServices', ['ngResource']);
+var hadrianServices = angular.module('hadrianServices', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui.bootstrap']);
 
 hadrianServices.factory('Tree', ['$resource', function($resource) {
         return $resource('/v1/tree', {}, {

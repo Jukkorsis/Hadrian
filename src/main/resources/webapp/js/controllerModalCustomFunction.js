@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'module',
-    function ($scope, $http, $modalInstance, $route, service, module) {
+hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'service', 'module',
+    function ($scope, $http, $uibModalInstance, $route, service, module) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.module = module;
@@ -25,22 +25,22 @@ hadrianControllers.controller('ModalAddCustomFunctionCtrl', ['$scope', '$http', 
             };
 
             var responsePromise = $http.post("/v1/cf/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http', '$modalInstance', '$route', 'service', 'cf',
-    function ($scope, $http, $modalInstance, $route, service, cf) {
+hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'service', 'cf',
+    function ($scope, $http, $uibModalInstance, $route, service, cf) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.cf = cf;
@@ -62,16 +62,16 @@ hadrianControllers.controller('ModalUpdateCustomFunctionCtrl', ['$scope', '$http
             };
 
             var responsePromise = $http.put("/v1/cf/modify", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);

@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'environmentModule',
-    function ($scope, $http, $modalInstance, $route, config, service, environmentModule) {
+hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'environmentModule',
+    function ($scope, $http, $uibModalInstance, $route, config, service, environmentModule) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.environmentModule = environmentModule;
@@ -60,22 +60,22 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$modalInst
             }
 
             var responsePromise = $http.post("/v1/vip/create", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'environmentModule',
-    function ($scope, $http, $modalInstance, $route, config, service, environmentModule) {
+hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'environmentModule',
+    function ($scope, $http, $uibModalInstance, $route, config, service, environmentModule) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.environmentModule = environmentModule;
@@ -132,22 +132,22 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$moda
             }
 
             var responsePromise = $http.post("/v1/vip/backfill", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'service', 'vip',
-    function ($scope, $http, $modalInstance, $route, config, service, vip) {
+hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'vip',
+    function ($scope, $http, $uibModalInstance, $route, config, service, vip) {
         $scope.errorMsg = null;
         $scope.service = service;
         $scope.vip = vip;
@@ -173,22 +173,22 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$modalI
             };
 
             var responsePromise = $http.put("/v1/vip/modify", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
 
-hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$modalInstance', '$route', 'config', 'serviceId', 'vip', 'newState',
-    function ($scope, $http, $modalInstance, $route, config, serviceId, vip, newState) {
+hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'serviceId', 'vip', 'newState',
+    function ($scope, $http, $uibModalInstance, $route, config, serviceId, vip, newState) {
         $scope.errorMsg = null;
         $scope.serviceId = serviceId;
         $scope.vip = vip;
@@ -227,16 +227,16 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$modal
             };
 
             var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});
-            responsePromise.success(function (dataFromServer, status, headers, config) {
-                $modalInstance.close();
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
                 $route.reload();
             });
-            responsePromise.error(function (data, status, headers, config) {
-                $scope.errorMsg = data;
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
             });
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     }]);
