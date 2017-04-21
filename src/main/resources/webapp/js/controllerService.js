@@ -11,9 +11,8 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
 
         $scope.auditFilter = '';
 
-        if (!$routeParams.tabName) {
-            $scope.activeTabIndex = 0;
-        } else if ($routeParams.tabName === 'Hosts') {
+        $scope.activeTabIndex = 0;
+        if ($routeParams.tabName === 'Hosts') {
             $scope.activeTabIndex = 1;
         } else if ($routeParams.tabName === 'VIPs') {
             $scope.activeTabIndex = 2;
@@ -25,9 +24,26 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             $scope.activeTabIndex = 5;
         } else if ($routeParams.tabName === 'Audit') {
             $scope.activeTabIndex = 6;
-        } else {
-            $scope.activeTabIndex = 0;
         }
+
+        Config.get({}, function (config) {
+            $scope.config = config;
+            $scope.activeHostEnvIndex = 0;
+            $scope.activeVipEnvIndex = 0;
+            $scope.selectedHostEnv = $scope.config.environments[0].name;
+            $scope.selectedVipEnv = $scope.config.environments[0].name;
+            if ($routeParams.envName !== null) {
+                $scope.selectedHostEnv = $routeParams.envName;
+                $scope.selectedVipEnv = $routeParams.envName;
+                for (let environmentIndex = 0; environmentIndex < $scope.config.environments.length; environmentIndex++) {
+                    let environment = $scope.config.environments[environmentIndex];
+                    if ($routeParams.envName === environment.name) {
+                        $scope.activeHostEnvIndex = environmentIndex;
+                        $scope.activeVipEnvIndex = environmentIndex;
+                    }
+                }
+            }
+        });
 
         $scope.formSelectHost = {};
 
@@ -38,12 +54,51 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 $scope.team = team;
             });
         });
-        Config.get({}, function (config) {
-            $scope.config = config;
-        });
 
         $scope.selectTab = function (tabName) {
-            $location.path("Service/" + $routeParams.serviceId + "/" + tabName);
+            $route.current.pathParams ['tabName'] = tabName;
+            if (tabName === 'Hosts') {
+                $route.current.pathParams ['envName'] = $scope.selectedHostEnv;
+                $location.path("Service/" + $routeParams.serviceId + "/" + tabName + "/" + $scope.selectedHostEnv);
+            } else if (tabName === 'VIPs') {
+                $route.current.pathParams ['envName'] = $scope.selectedVipEnv;
+                $location.path("Service/" + $routeParams.serviceId + "/" + tabName + "/" + $scope.selectedVipEnv);
+            } else {
+                delete $route.current.pathParams ['envName'];
+                $location.path("Service/" + $routeParams.serviceId + "/" + tabName);
+            }
+        }
+
+        $scope.selectHostEnv = function (envName) {
+            if (envName === null || $scope.service === null) {
+                return;
+            }
+            $scope.selectedHostEnv = envName;
+            if ($routeParams.tabName === 'Hosts') {
+                $route.current.pathParams ['envName'] = envName;
+                $location.path("Service/" + $routeParams.serviceId + "/Hosts/" + envName);
+            }
+        }
+
+        $scope.selectVipEnv = function (envName) {
+            if (envName === null || $scope.service === null) {
+                return;
+            }
+            $scope.selectedVipEnv = envName;
+            if ($routeParams.tabName === 'VIPs') {
+                $route.current.pathParams ['envName'] = envName;
+                $location.path("Service/" + $routeParams.serviceId + "/VIPs/" + envName);
+            }
+        }
+
+        $scope.getEnvModules = function (envName) {
+            for (let environmentIndex = 0; environmentIndex < $scope.service.environments.length; environmentIndex++) {
+                let environment = $scope.service.environments[environmentIndex];
+                if (envName === environment.name) {
+                    return environment.modules;
+                }
+            }
+            return null;
         }
 
         $scope.openUpdateServiceModal = function () {

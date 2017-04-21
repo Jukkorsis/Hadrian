@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GetEnvironmentData {
 
-    public String environment;
+    public String name;
     public List<GetModuleEnvironmentData> modules = new LinkedList<>();
 
     void addModule(Module module) {
@@ -24,7 +24,7 @@ public class GetEnvironmentData {
         GetModuleEnvironmentData moduleEnvironmentData = new GetModuleEnvironmentData(
                 module.getModuleId(),
                 module.getModuleName(),
-                environment,
+                name,
                 hasSmokeTest);
         modules.add(moduleEnvironmentData);
     }

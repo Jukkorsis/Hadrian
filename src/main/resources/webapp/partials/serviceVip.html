@@ -8,9 +8,10 @@
         </div>      
       </div>
     </form>
-    <uib-tabset type="pills">
-      <uib-tab ng-repeat="n in service.environments" heading="{{n.environment}}">
-        <div ng-repeat="mn in n.modules">
+    <uib-tabset active="activeVipEnvIndex" type="pills">
+      <uib-tab ng-repeat="env in config.environments" heading="{{env.name}}" select="selectVipEnv(env.name)">
+        {{env.description}}
+        <div ng-repeat="mn in getEnvModules(env.name)">
           <h4>
             <div class="btn-group" uib-dropdown ng-if="service.canModify" is-open="status.isopen">
               <button id="single-button" type="button" class="btn btn btn-info btn-xs" uib-dropdown-toggle>

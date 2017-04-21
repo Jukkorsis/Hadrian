@@ -118,18 +118,18 @@ public class GetServiceData {
 
     public void addEnvironment(String environment) {
         for (GetEnvironmentData environmentData : environments) {
-            if (environmentData.environment.equals(environment)) {
+            if (environmentData.name.equals(environment)) {
                 return;
             }
         }
         GetEnvironmentData environmentData = new GetEnvironmentData();
-        environmentData.environment = environment;
+        environmentData.name = environment;
         environments.add(environmentData);
     }
 
     public void addModuleEnvironment(Module module, String environment) {
         for (GetEnvironmentData environmentData : environments) {
-            if (environmentData.environment.equals(environment)) {
+            if (environmentData.name.equals(environment)) {
                 environmentData.addModule(module);
                 return;
             }
@@ -138,7 +138,7 @@ public class GetServiceData {
 
     public void addHost(GetHostData hostData, GetModuleData moduleData) {
         for (GetEnvironmentData environmentData : environments) {
-            if (environmentData.environment.equals(hostData.environment)) {
+            if (environmentData.name.equals(hostData.environment)) {
                 environmentData.addHost(hostData, moduleData);
                 return;
             }
@@ -147,7 +147,7 @@ public class GetServiceData {
 
     public void addVip(GetVipData vipData, GetModuleData moduleData) {
         for (GetEnvironmentData environmentData : environments) {
-            if (environmentData.environment.equals(vipData.environment)) {
+            if (environmentData.name.equals(vipData.environment)) {
                 environmentData.addVip(vipData, moduleData);
                 return;
             }

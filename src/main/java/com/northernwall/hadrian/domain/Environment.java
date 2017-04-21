@@ -7,5 +7,6 @@ public class Environment {
     public boolean allowUrl = false;
     public boolean allowSnapshots = true;
     public String warning = null;
+    public String description = null;
 
 }

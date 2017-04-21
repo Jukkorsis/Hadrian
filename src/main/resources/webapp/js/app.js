@@ -29,17 +29,10 @@ hadrianApp.config(['$routeProvider',
                     templateUrl: 'partials/allDashboard.html',
                     controller: 'AllDashboardCtrl'
                 }).
-                when('/Service/:serviceId', {
+                when('/Service/:serviceId/:tabName?/:envName?', {
                     templateUrl: 'partials/service.html',
-                    controller: 'ServiceCtrl'
-                }).
-                when('/Service/:serviceId/:tabName', {
-                    templateUrl: 'partials/service.html',
-                    controller: 'ServiceCtrl'
-                }).
-                when('/Service/:serviceId/:tabName/:envName', {
-                    templateUrl: 'partials/service.html',
-                    controller: 'ServiceCtrl'
+                    controller: 'ServiceCtrl',
+                    reloadOnSearch: false
                 }).
                 when('/Catalog', {
                     templateUrl: 'partials/catalog.html',
