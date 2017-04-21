@@ -54,13 +54,15 @@ public class ModuleCreateHandler extends BasicHandler {
     private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
     private final FolderHelper folderHelper;
+    private final ModuleValidator moduleValidator;
 
-    public ModuleCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
+    public ModuleCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper, ModuleValidator moduleValidator) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.workItemProcessor = workItemProcessor;
         this.folderHelper = folderHelper;
+        this.moduleValidator = moduleValidator;
     }
 
     @Override
@@ -97,7 +99,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 data.outbound = "No";
                 data.smokeTestUrl = "";
             case Deployable:
-                ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
+                moduleValidator.checkHostAbbr(data.hostAbbr);
 
                 if (!config.platforms.contains(data.platform)) {
                     throw new Http400BadRequestException("Unknown operating platform");
@@ -114,9 +116,9 @@ public class ModuleCreateHandler extends BasicHandler {
                     throw new Http400BadRequestException("Run As User can not be 'root'.");
                 }
 
-                checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
-                checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
-                checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
+                moduleValidator.checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
+                moduleValidator.checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
+                moduleValidator.checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
 
                 data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
                 data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
@@ -133,7 +135,7 @@ public class ModuleCreateHandler extends BasicHandler {
                     folderHelper.isSubFolder(data.dataFolder, "Data", data.deploymentFolder, "Deployment");
                 }
 
-                ModuleModifyHandler.checkEnvironmentNames(data.environmentNames);
+                moduleValidator.checkEnvironmentNames(data.environmentNames);
                 break;
         }
 
@@ -251,15 +253,6 @@ public class ModuleCreateHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
-    }
-
-    private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
-        if (value < min) {
-            throw new Http400BadRequestException("Requested " + text + " is less than allowed");
-        }
-        if (value > max) {
-            throw new Http400BadRequestException("Requested " + text + " is greater than allowed");
-        }
     }
 
 }

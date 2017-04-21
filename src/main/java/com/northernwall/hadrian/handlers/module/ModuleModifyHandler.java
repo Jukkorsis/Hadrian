@@ -39,9 +39,7 @@ import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.routing.Http405NotAllowedException;
 import com.northernwall.hadrian.schedule.ScheduleRunner;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,59 +55,19 @@ public class ModuleModifyHandler extends BasicHandler {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ModuleModifyHandler.class);
 
-    public static void checkEnvironmentNames(Map<String, Boolean> environmentNames) throws Http400BadRequestException {
-        if (environmentNames == null || environmentNames.isEmpty()) {
-            throw new Http400BadRequestException("At least one environment must be selected");
-        }
-
-        List<String> falseKeys = null;
-        for (Map.Entry<String, Boolean> entry : environmentNames.entrySet()) {
-            if (!entry.getValue()) {
-                if (falseKeys == null) {
-                    falseKeys = new LinkedList<>();
-                }
-                falseKeys.add(entry.getKey());
-            }
-        }
-
-        if (falseKeys != null) {
-            for (String key : falseKeys) {
-                environmentNames.remove(key);
-            }
-        }
-
-        if (environmentNames.isEmpty()) {
-            throw new Http400BadRequestException("At least one environment must be selected");
-        }
-    }
-
-    public static void checkHostAbbr(String hostAbbr) throws Http400BadRequestException {
-        if (hostAbbr == null
-                || hostAbbr.isEmpty()) {
-            throw new Http400BadRequestException("Host abbr is missing");
-        }
-        if (!hostAbbr.matches("^[a-zA-Z0-9]+$")) {
-            throw new Http400BadRequestException("Host abbr contains an illegal character");
-        }
-        if (hostAbbr.length() < 3) {
-            throw new Http400BadRequestException("Host abbr is to short, minimum is 3");
-        }
-        if (hostAbbr.length() > 25) {
-            throw new Http400BadRequestException("Host abbr is to long, maximum is 25");
-        }
-    }
-
     private final AccessHelper accessHelper;
     private final ConfigHelper configHelper;
     private final WorkItemProcessor workItemProcessor;
     private final FolderHelper folderHelper;
+    private final ModuleValidator moduleValidator;
 
-    public ModuleModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper) {
+    public ModuleModifyHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, ConfigHelper configHelper, WorkItemProcessor workItemProcessor, FolderHelper folderHelper, ModuleValidator moduleValidator) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.configHelper = configHelper;
         this.workItemProcessor = workItemProcessor;
         this.folderHelper = folderHelper;
+        this.moduleValidator = moduleValidator;
     }
 
     @Override
@@ -174,7 +132,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 data.smokeTestUrl = "";
                 data.smokeTestCron = "";
             case Deployable:
-                ModuleModifyHandler.checkHostAbbr(data.hostAbbr);
+                moduleValidator.checkHostAbbr(data.hostAbbr);
 
                 Config config = configHelper.getConfig();
                 if (!config.platforms.contains(data.platform)) {
@@ -192,9 +150,9 @@ public class ModuleModifyHandler extends BasicHandler {
                     throw new Http400BadRequestException("Run As User can not be 'root'.");
                 }
 
-                checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
-                checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
-                checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
+                moduleValidator.checkRange(data.sizeCpu, config.minCpu, config.maxCpu, "CPU size");
+                moduleValidator.checkRange(data.sizeMemory, config.minMemory, config.maxMemory, "memory size");
+                moduleValidator.checkRange(data.sizeStorage, config.minStorage, config.maxStorage, "storage size");
 
                 data.deploymentFolder = folderHelper.scrubFolder(data.deploymentFolder, "Deployment", false);
                 data.logsFolder = folderHelper.scrubFolder(data.logsFolder, "Logs", false);
@@ -233,7 +191,7 @@ public class ModuleModifyHandler extends BasicHandler {
                     throw new Http400BadRequestException("Illegal cron, " + e.getMessage());
                 }
 
-                checkEnvironmentNames(data.environmentNames);
+                moduleValidator.checkEnvironmentNames(data.environmentNames);
                 break;
         }
 
@@ -297,15 +255,6 @@ public class ModuleModifyHandler extends BasicHandler {
 
         response.setStatus(200);
         request.setHandled(true);
-    }
-
-    private void checkRange(int value, int min, int max, String text) throws Http400BadRequestException {
-        if (value < min) {
-            throw new Http400BadRequestException("Requested " + text + " is less than allowed");
-        }
-        if (value > max) {
-            throw new Http400BadRequestException("Requested " + text + " is greater than allowed");
-        }
     }
 
 }

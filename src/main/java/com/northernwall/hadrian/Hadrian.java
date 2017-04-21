@@ -56,6 +56,7 @@ import com.northernwall.hadrian.handlers.module.ModuleFileDeleteHandler;
 import com.northernwall.hadrian.handlers.module.ModuleModifyHandler;
 import com.northernwall.hadrian.handlers.module.ModuleFileCreateHandler;
 import com.northernwall.hadrian.handlers.module.ModuleFileGetHandler;
+import com.northernwall.hadrian.handlers.module.ModuleValidator;
 import com.northernwall.hadrian.handlers.service.ServiceBuildHandler;
 import com.northernwall.hadrian.handlers.service.ServiceCreateHandler;
 import com.northernwall.hadrian.handlers.service.ServiceDeleteHandler;
@@ -143,6 +144,7 @@ public class Hadrian {
     private final MessagingCoodinator messagingCoodinator;
     private final Gson gson;
     private final InfoHelper infoHelper;
+    private final ModuleValidator moduleValidator;
     private int port;
     private Server server;
 
@@ -166,6 +168,7 @@ public class Hadrian {
         this.gson = gson;
 
         infoHelper = new InfoHelper(parameters, client, metricRegistry);
+        moduleValidator = new ModuleValidator(configHelper);
 
         setupJetty();
     }
@@ -242,8 +245,8 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/v1/endpoint/", new EndpointGetHandler(dataAccess, gson), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/endpoint", new EndpointsGetHandler(dataAccess, gson), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/module/file", new ModuleFileGetHandler(dataAccess, gson, accessHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/create", new ModuleCreateHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper, moduleValidator), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper, moduleValidator), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/file", new ModuleFileCreateHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.DELETE, TargetRule.EQUALS, "/v1/module/file", new ModuleFileDeleteHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
