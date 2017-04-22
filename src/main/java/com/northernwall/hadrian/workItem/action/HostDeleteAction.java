@@ -88,6 +88,11 @@ public class HostDeleteAction extends Action {
         dataAccess.deleteSearch(
                 Const.SEARCH_SPACE_HOST_NAME, 
                 host.getHostName());
+
+        messagingCoodinator.sendMessage("Host '"
+                + workItem.getHost().hostName
+                + "' has been decommissioned.",
+                workItem.getTeam().teamId);
     }
 
     @Override
@@ -103,6 +108,11 @@ public class HostDeleteAction extends Action {
                 false,
                 "Delete failed %% ago",
                 Const.STATUS_ERROR);
+
+        messagingCoodinator.sendMessage("Failed to decommission host '"
+                + workItem.getHost().hostName
+                + "'.",
+                workItem.getTeam().teamId);
     }
 
 }

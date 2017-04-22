@@ -23,6 +23,7 @@ import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.action.Action;
 import com.northernwall.hadrian.workItem.action.HostCreateAction;
@@ -68,16 +69,18 @@ public class WorkItemProcessor {
     private final Parameters parameters;
     private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
+    private final MessagingCoodinator messagingCoodinator;
     private final OkHttpClient client;
     private final Gson gson;
     private final SmokeTestHelper smokeTestHelper;
     private final MetricRegistry metricRegistry;
     private final ExecutorService executor;
 
-    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry) {
+    public WorkItemProcessor(Parameters parameters, ConfigHelper configHelper, DataAccess dataAccess, MessagingCoodinator messagingCoodinator, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry) {
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.dataAccess = dataAccess;
+        this.messagingCoodinator = messagingCoodinator;
         this.client = client;
         this.gson = gson;
         this.smokeTestHelper = smokeTestHelper;
@@ -341,7 +344,7 @@ public class WorkItemProcessor {
                 factoryName = defaultClass.getName();
             }
             Action action = (Action) c.newInstance();
-            action.init(name, dataAccess, parameters, configHelper, client, gson, smokeTestHelper);
+            action.init(name, dataAccess, messagingCoodinator, parameters, configHelper, client, gson, smokeTestHelper);
             LOGGER.info("Constructed action {} with {}", name, factoryName);
             return action;
         } catch (ClassNotFoundException ex) {

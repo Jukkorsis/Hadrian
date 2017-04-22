@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageProcessor;
-import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
-import java.util.Map;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -37,17 +35,18 @@ public class EmailMessageProcessor extends MessageProcessor {
     }
 
     @Override
-    public void process(MessageType messageType, Team team, Map<String, String> data) {
-        if (team.getTeamEmail() == null || team.getTeamEmail().isEmpty()) {
+    public void process(String text, Team team) {
+        if (smtpHostname == null || smtpHostname.isEmpty()) {
             return;
         }
-        if (messageType == null
-                || messageType.emailSubject == null
-                || messageType.emailSubject.isEmpty()
-                || messageType.emailBody == null
-                || messageType.emailBody.isEmpty()) {
+        if (text == null
+                || text.isEmpty()
+                || team == null
+                || team.getTeamSlack() == null
+                || team.getTeamSlack().isEmpty()) {
             return;
         }
+        
         try {
             Email email = new SimpleEmail();
             if (smtpHostname != null) {
@@ -59,8 +58,8 @@ public class EmailMessageProcessor extends MessageProcessor {
             }
             email.setSSLOnConnect(smtpSsl);
             email.setFrom(team.getTeamEmail());
-            email.setSubject(replaceTerms(messageType.emailSubject, data));
-            email.setMsg(replaceTerms(messageType.emailBody, data));
+            email.setSubject(text);
+            email.setMsg(text);
             email.addTo(team.getTeamEmail());
             email.send();
         } catch (EmailException ex) {

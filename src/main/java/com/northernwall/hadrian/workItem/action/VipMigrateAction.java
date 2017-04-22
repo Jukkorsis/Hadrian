@@ -84,6 +84,13 @@ public class VipMigrateAction extends Action {
         }
         vip.setStatus(false, Const.STATUS_NO);
         dataAccess.updateVip(vip);
+
+        messagingCoodinator.sendMessage("VIP '"
+                + workItem.getVip().dns
+                + "."
+                + workItem.getVip().domain
+                + "' migration step was successful.",
+                workItem.getTeam().teamId);
     }
 
     @Override
@@ -96,6 +103,13 @@ public class VipMigrateAction extends Action {
 
         vip.setStatus(false, "Migration step " + vip.getMigration() + " failed");
         dataAccess.updateVip(vip);
+
+        messagingCoodinator.sendMessage("VIP '"
+                + workItem.getVip().dns
+                + "."
+                + workItem.getVip().domain
+                + "' migration step failed.",
+                workItem.getTeam().teamId);
     }
 
 }

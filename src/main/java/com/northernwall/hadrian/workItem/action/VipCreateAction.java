@@ -78,6 +78,13 @@ public class VipCreateAction extends Action {
 
         vip.setStatus(false, Const.STATUS_NO);
         dataAccess.updateVip(vip);
+
+        messagingCoodinator.sendMessage("Created new VIP '"
+                + workItem.getVip().dns
+                + "."
+                + workItem.getVip().domain
+                + "'.",
+                workItem.getTeam().teamId);
     }
 
     @Override
@@ -93,6 +100,12 @@ public class VipCreateAction extends Action {
                 Const.SEARCH_SPACE_VIP_FQDN, 
                 vip.getDns() + "." + vip.getDomain());
 
+        messagingCoodinator.sendMessage("VIP '"
+                + workItem.getVip().dns
+                + "."
+                + workItem.getVip().domain
+                + "' creation has failed.",
+                workItem.getTeam().teamId);
     }
 
 }

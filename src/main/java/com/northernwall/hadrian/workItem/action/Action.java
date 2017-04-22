@@ -22,6 +22,7 @@ import com.northernwall.hadrian.GMT;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.workItem.Result;
 import com.northernwall.hadrian.workItem.dao.CallbackData;
@@ -37,6 +38,7 @@ public abstract class Action {
 
     private String name;
     protected DataAccess dataAccess;
+    protected MessagingCoodinator messagingCoodinator;
     protected Parameters parameters;
     protected ConfigHelper configHelper;
     protected OkHttpClient client;
@@ -46,9 +48,10 @@ public abstract class Action {
     public Action() {
     }
 
-    public final void init(String name, DataAccess dataAccess, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper) {
+    public final void init(String name, DataAccess dataAccess, MessagingCoodinator messagingCoodinator, Parameters parameters, ConfigHelper configHelper, OkHttpClient client, Gson gson, SmokeTestHelper smokeTestHelper) {
         this.name = name;
         this.dataAccess = dataAccess;
+        this.messagingCoodinator = messagingCoodinator;
         this.parameters = parameters;
         this.configHelper = configHelper;
         this.client = client;

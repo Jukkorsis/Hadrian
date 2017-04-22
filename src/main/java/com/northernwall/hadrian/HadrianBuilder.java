@@ -147,7 +147,8 @@ public class HadrianBuilder {
         messagingCoodinator = new MessagingCoodinator(
                 dataAccess,
                 parameters,
-                client);
+                client, 
+                gson);
 
         smokeTestHelper = new SmokeTestHelper(
                 parameters,
@@ -160,6 +161,7 @@ public class HadrianBuilder {
                 parameters,
                 configHelper,
                 dataAccess,
+                messagingCoodinator,
                 client,
                 gson,
                 smokeTestHelper,

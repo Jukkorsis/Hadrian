@@ -19,14 +19,12 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.messaging.MessageProcessor;
-import com.northernwall.hadrian.messaging.MessageType;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +35,7 @@ public class SlackMessageProcessor extends MessageProcessor {
     private OkHttpClient client;
     private String slackUrl;
     private String slackUser;
+    private String slackIcon;
 
     @Override
     public void init(Parameters parameters, Gson gson, OkHttpClient client) {
@@ -44,15 +43,17 @@ public class SlackMessageProcessor extends MessageProcessor {
         this.client = client;
         slackUrl = parameters.getString("slackUrl", null);
         slackUser = parameters.getString("slackUser", "Hadrian");
+        slackIcon = parameters.getString("slackIcon", " :rocket:");
     }
 
     @Override
-    public void process(MessageType messageType, Team team, Map<String, String> data) {
-        if (messageType == null
-                || messageType.slackBody == null
-                || messageType.slackBody.isEmpty()
-                || slackUrl == null
-                || slackUrl.isEmpty()
+    public void process(String text, Team team) {
+        if (slackUrl == null || slackUrl.isEmpty()) {
+            return;
+        }
+        if (text == null
+                || text.isEmpty()
+                || team == null
                 || team.getTeamSlack() == null
                 || team.getTeamSlack().isEmpty()) {
             return;
@@ -61,8 +62,8 @@ public class SlackMessageProcessor extends MessageProcessor {
         SlackMessage msg = new SlackMessage();
         msg.channel = team.getTeamSlack();
         msg.username = slackUser;
-        msg.text = replaceTerms(messageType.slackBody, data);
-        msg.icon_emoji = messageType.slackIcon;
+        msg.text = text;
+        msg.icon_emoji = slackIcon;
         
         RequestBody body = RequestBody.create(Const.JSON_MEDIA_TYPE, gson.toJson(msg));
         

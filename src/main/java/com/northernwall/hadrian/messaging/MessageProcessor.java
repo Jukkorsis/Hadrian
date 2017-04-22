@@ -30,7 +30,7 @@ public abstract class MessageProcessor {
 
     public abstract void init(Parameters parameters, Gson gson, OkHttpClient client);
     
-    public abstract void process(MessageType messageType, Team team, Map<String, String> data);
+    public abstract void process(String text, Team team);
     
     protected String replaceTerms(String pattern, Map<String, String> data) {
         if (pattern == null || pattern.isEmpty()) {

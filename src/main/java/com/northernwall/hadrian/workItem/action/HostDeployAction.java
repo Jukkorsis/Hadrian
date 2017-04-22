@@ -78,6 +78,20 @@ public class HostDeployAction extends Action {
                 false,
                 Const.STATUS_NO,
                 Const.STATUS_NO);
+
+        if (workItem.getHost().version == null) {
+            messagingCoodinator.sendMessage("Deployment to host '"
+                    + workItem.getHost().hostName
+                    + "' successful.",
+                    workItem.getTeam().teamId);
+        } else {
+            messagingCoodinator.sendMessage("Deployed "
+                    + workItem.getHost().version
+                    + "to host '"
+                    + workItem.getHost().hostName
+                    + "'.",
+                    workItem.getTeam().teamId);
+        }
     }
 
     @Override
@@ -93,6 +107,11 @@ public class HostDeployAction extends Action {
                 false,
                 "Deploy failed %% ago",
                 Const.STATUS_ERROR);
+        
+            messagingCoodinator.sendMessage("Deployment to host '"
+                    + workItem.getHost().hostName
+                    + "' failed.",
+                    workItem.getTeam().teamId);
     }
 
 }

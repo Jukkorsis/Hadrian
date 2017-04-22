@@ -79,6 +79,11 @@ public class HostCreateAction extends Action {
                 false,
                 Const.STATUS_NO,
                 Const.STATUS_NO);
+
+        messagingCoodinator.sendMessage("Created new host '"
+                + workItem.getHost().hostName
+                + "'.",
+                workItem.getTeam().teamId);
     }
 
     @Override
@@ -94,6 +99,11 @@ public class HostCreateAction extends Action {
         dataAccess.deleteSearch(
                 Const.SEARCH_SPACE_HOST_NAME,
                 host.getHostName());
+
+        messagingCoodinator.sendMessage("Creation of host '"
+                + workItem.getHost().hostName
+                + "' failed.",
+                workItem.getTeam().teamId);
     }
 
 }

@@ -23,6 +23,7 @@ public class TeamData {
             return null;
         }
         TeamData temp = new TeamData();
+        temp.teamId = team.getTeamId();
         temp.teamName = team.getTeamName();
         temp.teamEmail = team.getTeamEmail();
         temp.gitGroup = team.getGitGroup();
@@ -30,6 +31,7 @@ public class TeamData {
         return temp;
     }
     
+    public String teamId;
     public String teamName;
     public String teamEmail;
     public String gitGroup;

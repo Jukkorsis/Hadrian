@@ -86,14 +86,8 @@ public class SmokeTestRunner implements Runnable {
             }
         }
         if (!failedHosts.isEmpty()) {
-            MessageType messageType = messagingCoodinator.getMessageType("failedSmokeTest");
-            if (messageType != null) {
-                Map<String, String> data = new HashMap<>();
-                data.put("count", Integer.toString(failedHosts.size()));
-                data.put("host", JoinHosts(failedHosts));
-                Team team = dataAccess.getTeam(service.getTeamId());
-                messagingCoodinator.sendMessage(messageType, team, service, data);
-            }
+            Team team = dataAccess.getTeam(service.getTeamId());
+            messagingCoodinator.sendMessage("Smoke test failed on hosts " + JoinHosts(failedHosts), team);
         }
     }
 
