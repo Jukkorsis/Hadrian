@@ -17,7 +17,6 @@ package com.northernwall.hadrian.handlers.module;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.config.ConfigHelper;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;

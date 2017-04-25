@@ -16,7 +16,6 @@
 package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
@@ -77,8 +76,13 @@ public class ServiceCreateHandler extends BasicHandler {
         }
 
         if (data.doBuilds) {
-            if (data.gitProject == null || data.gitProject.isEmpty()) {
+            if (data.gitProject == null
+                    || data.gitProject.isEmpty()
+                    || data.gitProject.equalsIgnoreCase(".git")) {
                 throw new Http400BadRequestException("Git Project is mising or empty");
+            }
+            if (data.gitProject.toLowerCase().endsWith(".git")) {
+                data.gitProject = data.gitProject.substring(0, data.gitProject.length() - 4);
             }
             if (data.gitProject.length() > 30) {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
