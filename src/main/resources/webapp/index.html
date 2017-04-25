@@ -63,28 +63,28 @@ limitations under the License.
                 <b>Dev Teams</b>
                 <div style="padding-left: 20px;">
                   <div ng-repeat="team in treeData.teams">
-                    <a ng-click="selectDevTeam(team, true);"><span class="glyphicon glyphicon-chevron-right"></span> {{team.teamName}}</a>
+                    <a ng-click="selectDevTeam(team, true);" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> {{team.teamName}}</a>
                   </div>
                 </div>
                 <b>Tools</b>
                 <div style="padding-left: 20px;">
-                  <div><a ng-click="selectCatalog();"><span class="glyphicon glyphicon-chevron-right"></span> Service Catalog</a></div>
-                  <div><a ng-click="selectGraphs();"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
-                  <div><a ng-click="selectFindHost();"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
+                  <div><a ng-click="selectCatalog();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Service Catalog</a></div>
+                  <div><a ng-click="selectGraphs();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Graphs</a></div>
+                  <div><a ng-click="selectFindHost();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Find Host</a></div>
                   <div ng-if="treeData.isAdmin">
-                    <a ng-click="selectWorkItems();"><span class="glyphicon glyphicon-chevron-right"></span> Work Items</a><br/>
-                    <a ng-click="selectParameters();"><span class="glyphicon glyphicon-chevron-right"></span> Parameters</a>
+                    <a ng-click="selectWorkItems();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Work Items</a><br/>
+                    <a ng-click="selectParameters();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Parameters</a>
                   </div>
-                  <a ng-click="selectHelp();"><span class="glyphicon glyphicon-chevron-right"></span> Help</a>
+                  <a ng-click="selectHelp();" style="cursor: pointer"><span class="glyphicon glyphicon-chevron-right"></span> Help</a>
                 </div>
               </div>
               <div ng-if="menuMode == 'devTeam'">
-                <p class="text-right"><a ng-click="selectCatalog();">Back to Teams and Tools</a></p>
-                <b><a ng-click="selectDevTeam(team, false);">{{team.teamName}}</a></b>
+                <p class="text-right"><a ng-click="selectCatalog();" style="cursor: pointer">Back to Teams and Tools</a></p>
+                <b><a ng-click="selectDevTeam(team, false);" style="cursor: pointer">{{team.teamName}}</a></b>
                 <div style="padding-left: 20px;">
                   <div ng-repeat="service in team.services">
                     <div ng-if="service.isActive || showInactive">
-                      <a ng-click="selectService(service);">
+                      <a ng-click="selectService(service);" style="cursor: pointer">
                         <span ng-if="service.isActive" class="glyphicon glyphicon-chevron-right"></span>
                         <span ng-if="!service.isActive" class="glyphicon glyphicon-chevron-right text-danger"></span>
                         {{service.serviceName}}
