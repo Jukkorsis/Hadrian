@@ -29,6 +29,7 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.StringUtils;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
@@ -87,6 +88,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement hostUpdate;
     private final PreparedStatement hostDelete;
     private final PreparedStatement searchSelect;
+    private final PreparedStatement searchSelect2;
     private final PreparedStatement searchInsert;
     private final PreparedStatement searchDelete;
     private final PreparedStatement moduleSelect;
@@ -265,11 +267,13 @@ public class CassandraDataAccess implements DataAccess {
         auditOutputInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         LOGGER.info("Praparing search statements...");
-        searchSelect = session.prepare("SELECT * FROM searchName WHERE searchSpace = ? AND searchText = ?;");
+        searchSelect = session.prepare("SELECT * FROM searchName WHERE searchSpace = ? AND searchText1 = ? AND searchText2 = ?;");
         searchSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        searchInsert = session.prepare("INSERT INTO searchName (searchSpace, searchText, serviceId, moduleId, hostId) VALUES (?, ?, ?, ?, ?);");
+        searchSelect2 = session.prepare("SELECT * FROM searchName WHERE searchSpace = ? AND searchText1 = ?;");
+        searchSelect2.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        searchInsert = session.prepare("INSERT INTO searchName (searchSpace, searchText1, searchText2, teamId, serviceId, moduleId, hostId, vipId) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         searchInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        searchDelete = session.prepare("DELETE FROM searchName WHERE searchSpace = ? AND searchText = ?;");
+        searchDelete = session.prepare("DELETE FROM searchName WHERE searchSpace = ? AND searchText1 = ? AND searchText2 = ?;");
         searchDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         LOGGER.info("Praparing status statements...");
@@ -819,11 +823,16 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
-    public SearchResult doSearch(String searchSpace, String searchText) {
+    public SearchResult doSearch(SearchSpace searchSpace, String searchText1) {
+        return doSearch(searchSpace, searchText1, "-");
+    }
+
+    private SearchResult doSearch(SearchSpace searchSpace, String searchText1, String searchText2) {
         BoundStatement boundStatement = new BoundStatement(searchSelect);
         ResultSet results = session.execute(boundStatement.bind(
-                searchSpace,
-                searchText.toLowerCase()));
+                searchSpace.name(),
+                searchText1.toLowerCase(),
+                searchText2));
 
         if (results == null || results.isExhausted()) {
             return null;
@@ -832,47 +841,85 @@ public class CassandraDataAccess implements DataAccess {
 
         SearchResult result = new SearchResult();
         result.searchSpace = searchSpace;
-        result.searchText = searchText;
+        result.searchText1 = searchText1;
+        result.searchText2 = searchText2;
+        result.teamId = row.getString("teamId");
         result.serviceId = row.getString("serviceId");
         result.moduleId = row.getString("moduleId");
         result.hostId = row.getString("hostId");
+        result.vipId = row.getString("vipId");
 
         return result;
     }
 
     @Override
-    public void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId) {
-        SearchResult searchResult = doSearch(searchSpace, searchText);
+    public List<SearchResult> doSearchList(SearchSpace searchSpace, String searchText1) {
+        BoundStatement boundStatement = new BoundStatement(searchSelect2);
+        ResultSet results = session.execute(boundStatement.bind(
+                searchSpace.name(),
+                searchText1.toLowerCase()));
+
+        if (results == null || results.isExhausted()) {
+            return null;
+        }
+        
+        List<SearchResult> list = new LinkedList<>();
+        for (Row row : results.all()) {
+            SearchResult result = new SearchResult();
+            result.searchSpace = searchSpace;
+            result.searchText1 = searchText1;
+            result.searchText2 = row.getString("searchText2");
+            result.teamId = row.getString("teamId");
+            result.serviceId = row.getString("serviceId");
+            result.moduleId = row.getString("moduleId");
+            result.hostId = row.getString("hostId");
+            result.vipId = row.getString("vipId");
+            list.add(result);
+        }
+
+        return list;
+    }
+
+    @Override
+    public void insertSearch(SearchSpace searchSpace, String searchText1, String teamId, String serviceId, String moduleId, String hostId, String vipId) {
+        insertSearch(searchSpace, searchText1, "-", teamId, serviceId, moduleId, hostId, vipId);
+    }
+
+    @Override
+    public void insertSearch(SearchSpace searchSpace, String searchText1, String searchText2, String teamId, String serviceId, String moduleId, String hostId, String vipId) {
+        SearchResult searchResult = doSearch(searchSpace, searchText1, searchText2);
         if (searchResult != null) {
-            if (StringUtils.same(searchResult.serviceId, serviceId)
-                    && StringUtils.same(searchResult.moduleId, moduleId)
-                    && StringUtils.same(searchResult.hostId, hostId)) {
-                return;
-            }
-            LOGGER.warn("Insert into search is really an update s:{} {} m:{} {} h:{} {}",
-                    searchResult.serviceId,
-                    serviceId,
-                    searchResult.moduleId,
-                    moduleId,
-                    searchResult.hostId,
-                    hostId);
+            LOGGER.warn("Insert into search failed, record already exists s:{} t1:{} t2:{}",
+                    searchSpace, 
+                    searchText1,
+                    searchText2);
+            return;
         }
 
         BoundStatement boundStatement = new BoundStatement(searchInsert);
         session.execute(boundStatement.bind(
-                searchSpace,
-                searchText.toLowerCase(),
+                searchSpace.name(),
+                searchText1.toLowerCase(),
+                searchText2.toLowerCase(),
+                teamId,
                 serviceId,
                 moduleId,
-                hostId));
+                hostId,
+                vipId));
     }
 
     @Override
-    public void deleteSearch(String searchSpace, String searchText) {
+    public void deleteSearch(SearchSpace searchSpace, String searchText1) {
+        deleteSearch(searchSpace, searchText1, "-");
+    }
+
+    @Override
+    public void deleteSearch(SearchSpace searchSpace, String searchText1, String searchText2) {
         BoundStatement boundStatement = new BoundStatement(searchDelete);
         session.execute(boundStatement.bind(
-                searchSpace,
-                searchText.toLowerCase()));
+                searchSpace.name(),
+                searchText1.toLowerCase(),
+                searchText2.toLowerCase()));
     }
 
     @Override

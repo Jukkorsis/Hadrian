@@ -20,7 +20,9 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.handlers.vip.dao.GetEndpointData;
@@ -43,20 +45,18 @@ public class EndpointGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String fqdn = target.substring(13);
-        SearchResult result = getDataAccess().doSearch(Const.SEARCH_SPACE_VIP_FQDN, fqdn);
+        SearchResult result = getDataAccess().doSearch(
+                SearchSpace.vipFqdn, 
+                fqdn);
         
         if (result == null) {
             throw new Http404NotFoundException("Could not find endpoint");
         }
         
+        Service service = getDataAccess().getService(result.serviceId);
+        Module module = getDataAccess().getModule(result.serviceId, result.moduleId);
         Vip vip = getDataAccess().getVip(result.serviceId, result.hostId);
-        GetEndpointData endpoint = GetEndpointData.create(vip);
-        
-        Module module = getDataAccess().getModule(result.serviceId, vip.getModuleId());
-        
-        endpoint.monitoringPath = module.getAvailabilityUrl();
-        int i = endpoint.monitoringPath.indexOf("/");
-        endpoint.monitoringPath = endpoint.monitoringPath.substring(i);
+        GetEndpointData endpoint = GetEndpointData.create(service, module, vip);
         
         toJson(response, endpoint);
         response.setStatus(200);

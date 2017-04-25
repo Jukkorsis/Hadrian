@@ -20,6 +20,7 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
@@ -95,7 +96,7 @@ public class ModuleDeleteHandler extends BasicHandler {
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             getDataAccess().deleteSearch(
-                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT, 
+                    SearchSpace.mavenGroupArtifact, 
                     service.getMavenGroupId() + "." + module.getMavenArtifactId());
         }
 

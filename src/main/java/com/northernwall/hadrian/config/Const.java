@@ -206,12 +206,6 @@ public class Const {
     public static final String CONFIG_SCOPES_DEFAULT = "Not in scope, In scope";
     public static final String CONFIG_FOLDER_WHITE_LIST = "config.folderWhiteList";
     
-    public static final String SEARCH_SPACE_SERVICE_NAME = "serviceName";
-    public static final String SEARCH_SPACE_GIT_PROJECT = "gitProject";
-    public static final String SEARCH_SPACE_MAVEN_GROUP_ARTIFACT = "mavenGroupArtifact";
-    public static final String SEARCH_SPACE_HOST_NAME = "hostName";
-    public static final String SEARCH_SPACE_VIP_FQDN = "vipFqdn";
-    
     public static final String CHECK_RESOLVE_HOSTNAME = "check.resolveHostname";
     public static final boolean CHECK_RESOLVE_HOSTNAME_DEFAULT = true;
     public static final String CHECK_HOSTNAME_PATTERN = "check.hostnamePattern";

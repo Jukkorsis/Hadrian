@@ -15,7 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
-import com.northernwall.hadrian.config.Const;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -36,8 +36,9 @@ public class VipDeleteAction extends Action {
     public void success(WorkItem workItem) {
         dataAccess.deleteVip(workItem.getService().serviceId, workItem.getVip().vipId);
         dataAccess.deleteSearch(
-                Const.SEARCH_SPACE_VIP_FQDN, 
-                workItem.getVip().dns + "." + workItem.getVip().domain);
+                SearchSpace.vipFqdn,
+                workItem.getVip().dns + "." + workItem.getVip().domain,
+                workItem.getVip().vipId);
     }
 
     @Override

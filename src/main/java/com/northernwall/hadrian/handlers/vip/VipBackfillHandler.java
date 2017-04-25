@@ -22,6 +22,7 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -65,7 +66,7 @@ public class VipBackfillHandler extends BasicHandler {
         //Check for duplicate VIP
         String fqdn = dns + "." + data.domain;
         SearchResult searchResult = getDataAccess().doSearch(
-                Const.SEARCH_SPACE_VIP_FQDN,
+                SearchSpace.vipFqdn,
                 fqdn);
         if (searchResult != null) {
             throw new Http400BadRequestException("VIP already exists with FQDN of " + fqdn);
@@ -92,10 +93,12 @@ public class VipBackfillHandler extends BasicHandler {
         vip.setMigration(1);
         getDataAccess().saveVip(vip);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_VIP_FQDN,
+                SearchSpace.vipFqdn,
                 fqdn,
+                team.getTeamId(),
                 data.serviceId,
                 data.moduleId,
+                null,
                 vip.getVipId());
 
         Audit audit = new Audit();

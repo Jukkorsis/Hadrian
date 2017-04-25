@@ -23,6 +23,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.config.Config;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
@@ -174,7 +175,7 @@ public class ModuleModifyHandler extends BasicHandler {
                         && data.mavenArtifactId != null
                         && !data.mavenArtifactId.isEmpty()) {
                     SearchResult searchResult = getDataAccess().doSearch(
-                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            SearchSpace.mavenGroupArtifact,
                             service.getMavenGroupId() + "." + data.mavenArtifactId);
                     if (searchResult != null
                             && !searchResult.moduleId.equals(data.moduleId)) {
@@ -200,7 +201,7 @@ public class ModuleModifyHandler extends BasicHandler {
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             getDataAccess().deleteSearch(
-                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    SearchSpace.mavenGroupArtifact,
                     service.getMavenGroupId() + "." + module.getMavenArtifactId());
         }
 
@@ -240,10 +241,12 @@ public class ModuleModifyHandler extends BasicHandler {
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             getDataAccess().insertSearch(
-                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    SearchSpace.mavenGroupArtifact,
                     service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                    service.getTeamId(),
                     service.getServiceId(),
                     module.getModuleId(),
+                    null,
                     null);
         }
 

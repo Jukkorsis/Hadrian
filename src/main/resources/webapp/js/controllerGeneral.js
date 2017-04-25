@@ -102,19 +102,19 @@ hadrianControllers.controller('FindHostCtrl', ['$scope', '$http',
     function ($scope, $http) {
         $scope.findHostName = "";
         $scope.findStatus = "";
-        $scope.findHost = null;
+        $scope.hosts = null;
 
         $scope.doFindHost = function () {
             $scope.findStatus = "Searching...";
-            $scope.findHost = null;
+            $scope.hosts = null;
             var responsePromise = $http.get("/v1/host/find?hostName=" + $scope.findHostName, {});
             responsePromise.then(function (response) {
                 $scope.findStatus = "";
-                $scope.findHost = response.data;
+                $scope.hosts = response.data;
             });
             responsePromise.catch(function (response) {
                 $scope.findStatus = "Could not find host " + $scope.findHostName;
-                $scope.findHost = null;
+                $scope.hosts = null;
             });
         }
     }]);

@@ -23,6 +23,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.config.Config;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
@@ -98,10 +99,10 @@ public class HostCreateHandler extends BasicHandler {
                 while (createdCount < count && num <= config.maxTotalCount) {
                     String hostName = buildHostName(prefix, num);
                     num++;
-                    SearchResult searchResult = getDataAccess().doSearch(
-                            Const.SEARCH_SPACE_HOST_NAME,
+                    List<SearchResult> searchResults = getDataAccess().doSearchList(
+                            SearchSpace.hostName,
                             hostName);
-                    if (searchResult == null) {
+                    if (searchResults == null || searchResults.isEmpty()) {
                         createdCount++;
                         LOGGER.info("Building host {} - {}/{}", hostName, createdCount, count);
                         doCreateHost(hostName, data, dataCenter, user, team, service, module);
@@ -124,11 +125,14 @@ public class HostCreateHandler extends BasicHandler {
                 module.getPlatform());
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
+                SearchSpace.hostName,
                 hostName,
+                host.getHostId(),
+                service.getTeamId(),
                 data.serviceId,
                 data.moduleId,
-                host.getHostId());
+                host.getHostId(),
+                null);
         getDataAccess().updateStatus(
                 host.getHostId(),
                 true,

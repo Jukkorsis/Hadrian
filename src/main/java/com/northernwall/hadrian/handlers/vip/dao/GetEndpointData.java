@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.handlers.vip.dao;
 
+import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import java.util.List;
 
@@ -23,8 +25,16 @@ import java.util.List;
  * @author Richard
  */
 public class GetEndpointData {
-    public static GetEndpointData create(Vip vip) {
+
+    public static GetEndpointData create(Service service, Module module, Vip vip) {
         GetEndpointData temp = new GetEndpointData();
+        
+        temp.serviceName = service.getServiceName();
+
+        temp.moduleName = module.getModuleName();
+        int i = module.getAvailabilityUrl().indexOf("/");
+        temp.monitoringPath = module.getAvailabilityUrl().substring(i);
+
         temp.dns = vip.getDns();
         temp.domain = vip.getDomain();
         temp.environment = vip.getEnvironment();
@@ -32,7 +42,7 @@ public class GetEndpointData {
         temp.inboundModifiers = vip.getInboundModifiers();
         temp.outboundProtocol = vip.getOutboundProtocol();
         temp.outboundModifiers = vip.getOutboundModifiers();
-        temp.poolContainsMode  = vip.getPriorityMode();
+        temp.poolContainsMode = vip.getPriorityMode();
         temp.external = vip.isExternal();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
@@ -40,7 +50,9 @@ public class GetEndpointData {
         temp.migration = vip.getMigration();
         return temp;
     }
-    
+
+    public String serviceName;
+    public String moduleName;
     public String dns;
     public String domain;
     public String environment;

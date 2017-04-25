@@ -102,9 +102,12 @@ public interface DataAccess {
     int getWorkItemStatus(String id);
     void saveWorkItemStatus(String id, int i);
 
-    SearchResult doSearch(String searchSpace, String searchText);
-    void insertSearch(String searchSpace, String searchText, String serviceId, String moduleId, String hostId);
-    void deleteSearch(String searchSpace, String searchText);
+    SearchResult doSearch(SearchSpace searchSpace, String searchText1);
+    List<SearchResult> doSearchList(SearchSpace searchSpace, String searchText1);
+    void insertSearch(SearchSpace searchSpace, String searchText1, String teamId, String serviceId, String moduleId, String hostId, String vipId);
+    void insertSearch(SearchSpace searchSpace, String searchText1, String searchText2, String teamId, String serviceId, String moduleId, String hostId, String vipId);
+    void deleteSearch(SearchSpace searchSpace, String searchText1);
+    void deleteSearch(SearchSpace searchSpace, String searchText1, String searchText2);
     
     void updateStatus(String id, boolean busy, String status, String statusCode);
 

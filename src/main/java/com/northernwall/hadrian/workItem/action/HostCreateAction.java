@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.config.Const;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -97,8 +98,9 @@ public class HostCreateAction extends Action {
         LOGGER.warn("Deleting host record due to failure in creating host {]", host.getHostId());
         dataAccess.deleteHost(host);
         dataAccess.deleteSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
-                host.getHostName());
+                SearchSpace.hostName,
+                host.getHostName(),
+                host.getHostId());
 
         messagingCoodinator.sendMessage("Creation of host '"
                 + workItem.getHost().hostName

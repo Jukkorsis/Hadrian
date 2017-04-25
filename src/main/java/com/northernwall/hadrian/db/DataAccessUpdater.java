@@ -34,7 +34,7 @@ public class DataAccessUpdater {
         String version = dataAccess.getVersion();
 
         if (version == null || version.isEmpty()) {
-            version = "1.10";
+            version = "1.12";
             dataAccess.setVersion(version);
             LOGGER.info("New DB, initial version set to 1.10");
             return;
@@ -65,8 +65,13 @@ public class DataAccessUpdater {
             LOGGER.info("DB has been upgraded to 1.11 from 1.10");
         }
         if (version.equals("1.11")) {
+            version = "1.12";
+            dataAccess.setVersion(version);
+            LOGGER.info("DB has been upgraded to 1.12 from 1.11");
+        }
+        if (version.equals("1.12")) {
             fixSearch(dataAccess);
-            LOGGER.info("Current DB version is 1.11, no upgrade required.");
+            LOGGER.info("Current DB version is 1.12, no upgrade required.");
         }
     }
 
@@ -173,17 +178,21 @@ public class DataAccessUpdater {
         if (services != null && !services.isEmpty()) {
             for (Service service : services) {
                 dataAccess.insertSearch(
-                        Const.SEARCH_SPACE_SERVICE_NAME,
+                        SearchSpace.serviceName,
                         service.getServiceName(),
+                        service.getTeamId(),
                         service.getServiceId(),
+                        null,
                         null,
                         null);
                 if (service.getGitProject() != null
                         && !service.getGitProject().isEmpty()) {
                     dataAccess.insertSearch(
-                            Const.SEARCH_SPACE_GIT_PROJECT,
+                            SearchSpace.gitProject,
                             service.getGitProject(),
+                            service.getTeamId(),
                             service.getServiceId(),
+                            null,
                             null,
                             null);
                 }
@@ -196,10 +205,12 @@ public class DataAccessUpdater {
                             if (module.getMavenArtifactId() != null
                                     && !module.getMavenArtifactId().isEmpty()) {
                                 dataAccess.insertSearch(
-                                        Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                                        SearchSpace.mavenGroupArtifact,
                                         service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                                        service.getTeamId(),
                                         service.getServiceId(),
                                         module.getModuleId(),
+                                        null,
                                         null);
                             }
                         }
@@ -208,50 +219,32 @@ public class DataAccessUpdater {
                 List<Host> hosts = dataAccess.getHosts(service.getServiceId());
                 if (hosts != null && !hosts.isEmpty()) {
                     for (Host host : hosts) {
-                        SearchResult searchResult = dataAccess.doSearch(
-                                Const.SEARCH_SPACE_HOST_NAME,
-                                host.getHostName());
-                        if (searchResult == null) {
-                            LOGGER.warn("Host search did not find {} {}, inserting", 
-                                    host.getHostName(), 
-                                    host.getHostId());
-                            dataAccess.insertSearch(
-                                    Const.SEARCH_SPACE_HOST_NAME,
-                                    host.getHostName(),
-                                    service.getServiceId(),
-                                    host.getModuleId(),
-                                    host.getHostId());
-                            hostCount++;
-                        } else if (!searchResult.hostId.equals(host.getHostId())) {
-                            LOGGER.warn("Host search found {}, but with different id {}", 
-                                    host.getHostName(), 
-                                    searchResult.hostId);
-                        }
+                        dataAccess.insertSearch(
+                                SearchSpace.hostName,
+                                host.getHostName(),
+                                host.getHostId(),
+                                service.getTeamId(),
+                                service.getServiceId(),
+                                host.getModuleId(),
+                                host.getHostId(),
+                                null);
+                        hostCount++;
                     }
                 }
                 List<Vip> vips = dataAccess.getVips(service.getServiceId());
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
                         String fqdn = vip.getDns() + "." + vip.getDomain();
-                        SearchResult searchResult = dataAccess.doSearch(
-                                Const.SEARCH_SPACE_VIP_FQDN,
-                                fqdn);
-                        if (searchResult == null) {
-                            LOGGER.warn("VIP search did not find {} {}, inserting", 
-                                    fqdn, 
-                                    vip.getVipId());
-                            dataAccess.insertSearch(
-                                    Const.SEARCH_SPACE_VIP_FQDN,
-                                    fqdn,
-                                    service.getServiceId(),
-                                    vip.getModuleId(),
-                                    vip.getVipId());
-                            vipCount++;
-                        } else if (!searchResult.hostId.equals(vip.getVipId())) {
-                            LOGGER.warn("VIP search found {}, but with different id {}", 
-                                    fqdn, 
-                                    searchResult.hostId);
-                        }
+                        dataAccess.insertSearch(
+                                SearchSpace.vipFqdn,
+                                fqdn,
+                                vip.getVipId(),
+                                service.getTeamId(),
+                                service.getServiceId(),
+                                vip.getModuleId(),
+                                null,
+                                vip.getVipId());
+                        vipCount++;
                     }
                 }
             }

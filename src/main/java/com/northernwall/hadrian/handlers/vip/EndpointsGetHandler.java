@@ -20,7 +20,9 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.handlers.vip.dao.GetEndpointData;
@@ -45,24 +47,25 @@ public class EndpointsGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String hostname = request.getParameter("hostname");
-        SearchResult result = getDataAccess().doSearch(Const.SEARCH_SPACE_HOST_NAME, hostname);
+        List<SearchResult> searchResults = getDataAccess().doSearchList(
+                SearchSpace.hostName,
+                hostname);
 
-        if (result == null) {
+        if (searchResults == null || searchResults.isEmpty()) {
             throw new Http404NotFoundException("Could not find hostname");
         }
 
-        Module module = getDataAccess().getModule(result.serviceId, result.moduleId);
-        String monitoringPath = module.getAvailabilityUrl();
-        int i = monitoringPath.indexOf("/");
-        monitoringPath = monitoringPath.substring(i);
-
         List<GetEndpointData> endpoints = new LinkedList<>();
-        List<Vip> vips = getDataAccess().getVips(result.serviceId);
-        for (Vip vip : vips) {
-            if (vip.getModuleId().equals(module.getModuleId())) {
-                GetEndpointData endpoint = GetEndpointData.create(vip);
-                endpoint.monitoringPath = monitoringPath;
-                endpoints.add(endpoint);
+        for (SearchResult searchResult : searchResults) {
+            Service service = getDataAccess().getService(searchResult.serviceId);
+            Module module = getDataAccess().getModule(searchResult.serviceId, searchResult.moduleId);
+
+            List<Vip> vips = getDataAccess().getVips(searchResult.serviceId);
+            for (Vip vip : vips) {
+                if (vip.getModuleId().equals(module.getModuleId())) {
+                    GetEndpointData endpoint = GetEndpointData.create(service, module, vip);
+                    endpoints.add(endpoint);
+                }
             }
         }
 

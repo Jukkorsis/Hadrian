@@ -23,6 +23,7 @@ import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.config.Config;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
 import com.northernwall.hadrian.domain.Operation;
@@ -183,7 +184,7 @@ public class ModuleCreateHandler extends BasicHandler {
                 && data.mavenArtifactId != null
                 && !data.mavenArtifactId.isEmpty()) {
             SearchResult searchResult = getDataAccess().doSearch(
-                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    SearchSpace.mavenGroupArtifact,
                     service.getMavenGroupId() + "." + data.mavenArtifactId);
             if (searchResult != null) {
                 throw new Http405NotAllowedException("A service and module already exists with this maven group and artifact");
@@ -238,10 +239,12 @@ public class ModuleCreateHandler extends BasicHandler {
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             getDataAccess().insertSearch(
-                    Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                    SearchSpace.mavenGroupArtifact,
                     service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                    service.getTeamId(),
                     service.getServiceId(),
                     module.getModuleId(),
+                    null,
                     null);
         }
 

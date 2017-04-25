@@ -16,6 +16,7 @@
 package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.config.Const;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
@@ -97,8 +98,9 @@ public class VipCreateAction extends Action {
         LOGGER.warn("Deleting host record due to failure in creating host {]", vip.getVipId());
         dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         dataAccess.deleteSearch(
-                Const.SEARCH_SPACE_VIP_FQDN, 
-                vip.getDns() + "." + vip.getDomain());
+                SearchSpace.vipFqdn,
+                vip.getDns() + "." + vip.getDomain(),
+                vip.getVipId());
 
         messagingCoodinator.sendMessage("VIP '"
                 + workItem.getVip().dns

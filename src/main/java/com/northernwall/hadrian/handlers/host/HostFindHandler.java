@@ -18,20 +18,21 @@ package com.northernwall.hadrian.handlers.host;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.details.HostDetailsHelper;
-import com.google.gson.stream.JsonWriter;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.host.dao.FindHostData;
+import com.northernwall.hadrian.handlers.host.dao.GetHostDetailsData;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,53 +60,67 @@ public class HostFindHandler extends BasicHandler {
             throw new Http400BadRequestException("hostName is empty");
         }
 
-        SearchResult searchResult = getDataAccess().doSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
+        List<SearchResult> searchResults = getDataAccess().doSearchList(
+                SearchSpace.hostName,
                 hostName);
-        if (searchResult == null) {
+        if (searchResults == null || searchResults.isEmpty()) {
             throw new Http404NotFoundException("Could not find host " + hostName);
         }
-        
-        Host host = getDataAccess().getHost(searchResult.serviceId, searchResult.hostId);
-        if (host == null) {
-            throw new Http404NotFoundException("Could not find host " + hostName + ".");
+
+        List<FindHostData> result = new LinkedList<>();
+        GetHostDetailsData getHostDetailsData = null;
+        for (SearchResult searchResult : searchResults) {
+            Host host = getDataAccess().getHost(searchResult.serviceId, searchResult.hostId);
+            if (host == null) {
+                getDataAccess().deleteSearch(
+                        SearchSpace.hostName,
+                        searchResult.searchText1,
+                        searchResult.searchText2);
+            } else {
+                Service service = getDataAccess().getService(host.getServiceId());
+                if (service == null) {
+                    throw new Http404NotFoundException("Could not find service for host " + hostName);
+                }
+
+                Module module = getDataAccess().getModule(host.getServiceId(), host.getModuleId());
+                if (module == null) {
+                    throw new Http404NotFoundException("Could not find module host " + hostName);
+                }
+
+                Team team = getDataAccess().getTeam(service.getTeamId());
+                if (team == null) {
+                    throw new Http404NotFoundException("Could not find team host " + hostName);
+                }
+
+                FindHostData findHostData = new FindHostData();
+                findHostData.teamId = team.getTeamId();
+                findHostData.teamName = team.getTeamName();
+                findHostData.serviceId = service.getServiceId();
+                findHostData.serviceName = service.getServiceName();
+                findHostData.moduleId = module.getModuleId();
+                findHostData.moduleName = module.getModuleName();
+                findHostData.hostId = host.getHostId();
+                findHostData.hostName = host.getHostName();
+                findHostData.status = host.getStatus();
+                findHostData.busy = host.isBusy();
+                findHostData.dataCenter = host.getDataCenter();
+                findHostData.environment = host.getEnvironment();
+                findHostData.platform = host.getPlatform();
+
+                findHostData.version = infoHelper.readVersion(hostName, module.getVersionUrl());
+                findHostData.availability = infoHelper.readAvailability(hostName, module.getAvailabilityUrl());
+                if (getHostDetailsData == null) {
+                    getHostDetailsData = hostDetailsHelper.getDetails(host);
+                }
+                findHostData.details = getHostDetailsData;
+                result.add(findHostData);
+            }
+        }
+        if (result.isEmpty()) {
+            throw new Http404NotFoundException("Could not find host " + hostName);
         }
 
-        Service service = getDataAccess().getService(host.getServiceId());
-        if (service == null) {
-            throw new Http404NotFoundException("Could not find service for host " + hostName);
-        }
-
-        Module module = getDataAccess().getModule(host.getServiceId(), host.getModuleId());
-        if (module == null) {
-            throw new Http404NotFoundException("Could not find module host " + hostName);
-        }
-
-        Team team = getDataAccess().getTeam(service.getTeamId());
-        if (module == null) {
-            throw new Http404NotFoundException("Could not find team host " + hostName);
-        }
-
-        FindHostData findHostData = new FindHostData();
-        findHostData.teamId = team.getTeamId();
-        findHostData.teamName = team.getTeamName();
-        findHostData.serviceId = service.getServiceId();
-        findHostData.serviceName = service.getServiceName();
-        findHostData.moduleId = module.getModuleId();
-        findHostData.moduleName = module.getModuleName();
-        findHostData.hostId = host.getHostId();
-        findHostData.hostName = host.getHostName();
-        findHostData.status = host.getStatus();
-        findHostData.busy = host.isBusy();
-        findHostData.dataCenter = host.getDataCenter();
-        findHostData.environment = host.getEnvironment();
-        findHostData.platform = host.getPlatform();
-
-        findHostData.version = infoHelper.readVersion(hostName, module.getVersionUrl());
-        findHostData.availability = infoHelper.readAvailability(hostName, module.getAvailabilityUrl());
-        findHostData.details = hostDetailsHelper.getDetails(host);
-
-        toJson(response, findHostData);
+        toJson(response, result);
         response.setStatus(200);
         request.setHandled(true);
     }

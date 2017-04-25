@@ -21,6 +21,7 @@
       <div class="col-sm-9">
         <input ng-model="formDeleteHost.inventoryOnly" type="checkbox">
           <p class="help-block">If checked the host will be removed from inventory, but will not actually be decommissioned. Use this option if a host was incorrectly backfilled to this module.</p>
+          <p class="help-block">If the host is associated to more that one module, then the host will not be decommissioned. The host will only removed from this module.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">

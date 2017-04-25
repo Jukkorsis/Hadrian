@@ -20,6 +20,7 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Team;
@@ -67,7 +68,7 @@ public class ServiceCreateHandler extends BasicHandler {
         if (data.serviceName.length() > 30) {
             throw new Http400BadRequestException("Service Name is to long, max is 30");
         }
-        if (getDataAccess().doSearch(Const.SEARCH_SPACE_SERVICE_NAME, data.serviceName) != null) {
+        if (getDataAccess().doSearch(SearchSpace.serviceName, data.serviceName) != null) {
             throw new Http405NotAllowedException("A service already exists with this name");
         }
 
@@ -82,7 +83,7 @@ public class ServiceCreateHandler extends BasicHandler {
             if (data.gitProject.length() > 30) {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
             }
-            if (getDataAccess().doSearch(Const.SEARCH_SPACE_GIT_PROJECT, data.gitProject) != null) {
+            if (getDataAccess().doSearch(SearchSpace.gitProject, data.gitProject) != null) {
                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
             }
         } else {
@@ -131,17 +132,21 @@ public class ServiceCreateHandler extends BasicHandler {
 
         getDataAccess().saveService(service);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_SERVICE_NAME,
+                SearchSpace.serviceName,
                 data.serviceName,
+                service.getTeamId(),
                 service.getServiceId(),
+                null,
                 null,
                 null);
         if (data.gitProject != null
                 && !data.gitProject.isEmpty()) {
             getDataAccess().insertSearch(
-                    Const.SEARCH_SPACE_GIT_PROJECT,
+                    SearchSpace.gitProject,
                     data.gitProject,
+                    service.getTeamId(),
                     service.getServiceId(),
+                    null,
                     null,
                     null);
         }

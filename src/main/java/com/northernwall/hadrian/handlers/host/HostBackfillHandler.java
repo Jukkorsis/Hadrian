@@ -25,6 +25,7 @@ import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.domain.Audit;
 import com.northernwall.hadrian.config.Config;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleType;
@@ -126,7 +127,7 @@ public class HostBackfillHandler extends BasicHandler {
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                validateHostname(scrubedHostName);
+                validateHostname(team, scrubedHostName);
                 scrubedHosts.add(scrubedHostName);
             }
         }
@@ -143,11 +144,11 @@ public class HostBackfillHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    private void validateHostname(String hostname) {
+    private void validateHostname(Team team, String hostname) {
         String pattern = parameters.getString(Const.CHECK_HOSTNAME_PATTERN, null);
         if (pattern != null && !pattern.isEmpty()) {
             try {
-                if(!hostname.matches(pattern)) {
+                if (!hostname.matches(pattern)) {
                     throw new Http400BadRequestException(hostname + " does not match " + pattern);
                 }
             } catch (PatternSyntaxException ex) {
@@ -155,13 +156,16 @@ public class HostBackfillHandler extends BasicHandler {
             }
         }
 
-        SearchResult searchResult = getDataAccess().doSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
+        List<SearchResult> searchResults = getDataAccess().doSearchList(
+                SearchSpace.hostName,
                 hostname);
-        if (searchResult != null) {
-            Service service = getDataAccess().getService(searchResult.serviceId);
-            LOGGER.warn("Could not backfill host {} ({}) becuase it already exists on {}", hostname, searchResult.hostId, service.getServiceName());
-            throw new Http400BadRequestException(hostname + " is already associated to service " + service.getServiceName());
+        if (searchResults != null && !searchResults.isEmpty()) {
+            for (SearchResult searchResult : searchResults) {
+                if (!team.getTeamId().equals(searchResult.teamId)) {
+                    LOGGER.warn("Could not backfill host {} becuase it already exists on team {}", hostname, team.getTeamName());
+                    throw new Http400BadRequestException(hostname + " is already associated to team " + team.getTeamName());
+                }
+            }
         }
 
         if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
@@ -186,11 +190,14 @@ public class HostBackfillHandler extends BasicHandler {
 
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_HOST_NAME,
+                SearchSpace.hostName,
                 scrubedHostName,
+                host.getHostId(),
+                service.getTeamId(),
                 service.getServiceId(),
                 module.getModuleId(),
-                host.getHostId());
+                host.getHostId(),
+                null);
         getDataAccess().updateStatus(
                 host.getHostId(),
                 false,

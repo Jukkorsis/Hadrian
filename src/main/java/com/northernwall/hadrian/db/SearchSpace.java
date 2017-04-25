@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Richard Thurston.
+ * Copyright 2017 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@ package com.northernwall.hadrian.db;
  *
  * @author Richard
  */
-public class SearchResult {
-    public SearchSpace searchSpace;
-    public String searchText1;
-    public String searchText2;
-    public String teamId;
-    public String serviceId;
-    public String moduleId;
-    public String hostId;
-    public String vipId;
-    
+public enum SearchSpace {
+    serviceName,
+    gitProject,
+    mavenGroupArtifact,
+    hostName,
+    vipFqdn    
+   
 }

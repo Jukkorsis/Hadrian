@@ -21,6 +21,7 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
@@ -73,7 +74,7 @@ public class ServiceModifyHandler extends BasicHandler {
         }
 
         SearchResult searchResult = getDataAccess().doSearch(
-                Const.SEARCH_SPACE_SERVICE_NAME,
+                SearchSpace.serviceName,
                 data.serviceName);
         if (searchResult != null && !searchResult.serviceId.equals(data.serviceId)) {
             throw new Http405NotAllowedException("A service already exists with this name");
@@ -87,7 +88,7 @@ public class ServiceModifyHandler extends BasicHandler {
                 throw new Http400BadRequestException("Git Project is to long, max is 30");
             }
             searchResult = getDataAccess().doSearch(
-                    Const.SEARCH_SPACE_GIT_PROJECT,
+                    SearchSpace.gitProject,
                     data.gitProject);
             if (searchResult != null && !searchResult.serviceId.equals(data.serviceId)) {
                 throw new Http405NotAllowedException("A service already exists at this Git Project location");
@@ -106,7 +107,7 @@ public class ServiceModifyHandler extends BasicHandler {
                     if (module.getMavenArtifactId() != null
                             && !module.getMavenArtifactId().isEmpty()) {
                         searchResult = getDataAccess().doSearch(
-                                Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                                SearchSpace.mavenGroupArtifact,
                                 data.mavenGroupId + "." + module.getMavenArtifactId());
                         if (searchResult != null
                                 && !searchResult.moduleId.equals(module.getModuleId())) {
@@ -132,12 +133,12 @@ public class ServiceModifyHandler extends BasicHandler {
         }
 
         getDataAccess().deleteSearch(
-                Const.SEARCH_SPACE_SERVICE_NAME,
+                SearchSpace.serviceName,
                 service.getServiceName());
         if (service.getGitProject() != null
                 && !service.getGitProject().isEmpty()) {
             getDataAccess().deleteSearch(
-                    Const.SEARCH_SPACE_GIT_PROJECT,
+                    SearchSpace.gitProject,
                     service.getGitProject());
         }
 
@@ -150,7 +151,7 @@ public class ServiceModifyHandler extends BasicHandler {
                 if (module.getMavenArtifactId() != null
                         && !module.getMavenArtifactId().isEmpty()) {
                     getDataAccess().deleteSearch(
-                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            SearchSpace.mavenGroupArtifact,
                             service.getMavenGroupId() + "." + module.getMavenArtifactId());
                 }
             }
@@ -182,17 +183,21 @@ public class ServiceModifyHandler extends BasicHandler {
 
         getDataAccess().updateService(service);
         getDataAccess().insertSearch(
-                Const.SEARCH_SPACE_SERVICE_NAME,
+                SearchSpace.serviceName,
                 data.serviceName,
+                service.getTeamId(),
                 service.getServiceId(),
+                null,
                 null,
                 null);
         if (service.getGitProject() != null
                 && !service.getGitProject().isEmpty()) {
             getDataAccess().insertSearch(
-                    Const.SEARCH_SPACE_GIT_PROJECT,
+                    SearchSpace.gitProject,
                     data.gitProject,
+                    service.getTeamId(),
                     service.getServiceId(),
+                    null,
                     null,
                     null);
         }
@@ -204,10 +209,12 @@ public class ServiceModifyHandler extends BasicHandler {
                 if (module.getMavenArtifactId() != null
                         && !module.getMavenArtifactId().isEmpty()) {
                     getDataAccess().insertSearch(
-                            Const.SEARCH_SPACE_MAVEN_GROUP_ARTIFACT,
+                            SearchSpace.mavenGroupArtifact,
                             service.getMavenGroupId() + "." + module.getMavenArtifactId(),
+                            service.getTeamId(),
                             service.getServiceId(),
                             module.getModuleId(),
+                            null,
                             null);
                 }
             }
