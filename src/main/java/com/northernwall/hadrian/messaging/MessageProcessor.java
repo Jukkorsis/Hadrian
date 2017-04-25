@@ -32,18 +32,4 @@ public abstract class MessageProcessor {
     
     public abstract void process(String text, Team team);
     
-    protected String replaceTerms(String pattern, Map<String, String> data) {
-        if (pattern == null || pattern.isEmpty()) {
-            return "";
-        }
-        for (Entry<String, String> entry : data.entrySet()) {
-            if (entry.getKey() != null && !entry.getKey().isEmpty() && entry.getValue() != null) {
-                String target = "{"+entry.getKey()+"}";
-                if (pattern.contains(target)) {
-                    pattern = pattern.replace(target, entry.getValue());
-                }
-            }
-        }
-        return pattern;
-    }
 }
