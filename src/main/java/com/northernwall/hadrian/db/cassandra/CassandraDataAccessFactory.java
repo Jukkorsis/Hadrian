@@ -105,7 +105,6 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             
             //Version tables
             session.execute("CREATE TABLE IF NOT EXISTS version (component text, version text, PRIMARY KEY (component));");
-            String version = getVersion(session);
 
             //Data tables
             session.execute("CREATE TABLE IF NOT EXISTS service (id text, data text, PRIMARY KEY (id));");
@@ -125,9 +124,6 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefClient (clientServiceId text, clientModuleId text, serverServiceId text, serverModuleId text, PRIMARY KEY (clientServiceId, clientModuleId, serverServiceId, serverModuleId));");
             session.execute("CREATE TABLE IF NOT EXISTS moduleRefServer (serverServiceId text, serverModuleId text, clientServiceId text, clientModuleId text, PRIMARY KEY (serverServiceId, serverModuleId, clientServiceId, clientModuleId));");
             //Search table
-            if (version != null && version.equals("1.11")) {
-                session.execute("DROP TABLE searchName;");
-            }
             session.execute("CREATE TABLE IF NOT EXISTS searchName (searchSpace text, searchText1 text, searchText2 text, teamId text, serviceId text, moduleId text, hostId text, vipId text, PRIMARY KEY ((searchSpace), searchText1, searchText2));");
             //Status table
             session.execute("CREATE TABLE IF NOT EXISTS entityStatus (id text, time timeuuid, busy boolean, status text, statusCode text, PRIMARY KEY ((id), time));");
@@ -148,15 +144,6 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             cluster.close();
         }
         LOGGER.info("Connection to cluster closed");
-    }
-
-    private String getVersion(Session session) {
-        BoundStatement boundStatement = new BoundStatement(session.prepare("SELECT * FROM version WHERE component = ?;"));
-        ResultSet results = session.execute(boundStatement.bind("datastore"));
-        for (Row row : results) {
-            return row.getString("version");
-        }
-        return null;
     }
 
 }

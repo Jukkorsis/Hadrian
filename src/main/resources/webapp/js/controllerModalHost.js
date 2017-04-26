@@ -163,7 +163,7 @@ hadrianControllers.controller('ModalDeploySoftwareCtrl', ['$scope', '$http', '$u
                 "&envName=" +
                 $scope.configEnvironment.name, {});
         responsePromise.then(function (response) {
-            $scope.versions = data;
+            $scope.versions = response.data;
             if ($scope.formUpdateHost.version === "") {
                 $scope.formUpdateHost.version = response.data.artifactVersions[0];
             }
