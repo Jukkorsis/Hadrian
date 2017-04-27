@@ -137,23 +137,26 @@
       </div>
     </div>
     <div class="form-group form-group-sm">  
-      <label class="col-sm-3 control-label">Logs Retention:</label>
-      <div class="col-sm-9">
-        <div class="input-group">
-          <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
-          <div class="input-group-addon">months</div>
-        </div>
-        <p class="help-block">The amount of time the service's logs will be retained on the log server.</p>
-      </div>
-    </div>
-    <div class="form-group form-group-sm">  
       <label class="col-sm-3 control-label">Log Collection:</label>
       <div class="col-sm-9">
         <select ng-model="formSaveModule.logCollection" class="form-control">
           <option>Daily</option>
           <option>Hourly</option>
+          <option>None</option>
         </select>
         <p class="help-block">Log files are automatically collected on this schedule.</p>
+      </div>
+    </div>
+    <div ng-if="formSaveModule.logCollection !== 'None'">
+      <div class="form-group form-group-sm">  
+        <label class="col-sm-3 control-label">Logs Retention:</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input ng-model="formSaveModule.logsRetention" type="number" class="form-control">
+            <div class="input-group-addon">months</div>
+          </div>
+          <p class="help-block">The amount of time the service's logs will be retained on the log server.</p>
+        </div>
       </div>
     </div>
     <div ng-if="service.doBuilds">
