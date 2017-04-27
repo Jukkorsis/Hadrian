@@ -2,10 +2,10 @@
   <h3 class="modal-title">Provision New Hosts in {{moduleEnvironment.environment}}</h3>
 </div>
 <div class="modal-body">
-  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-  <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
+  <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
+  <div class="alert alert-warning" ng-if="configEnvironment.warning">{{configEnvironment.warning}}</div>
   <!--
-  <uib-alert>Newly provisioned hosts will be added to this Module's VIPs and enabled.</uib-alert>
+  <div class="alert alert-danger">Newly provisioned hosts will be added to this Module's VIPs and enabled.</div>
   -->
   <form class="form-horizontal">
     <div class="form-group form-group-sm">

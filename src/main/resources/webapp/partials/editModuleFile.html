@@ -3,8 +3,8 @@
     <button class="btn btn-primary" ng-click="addNewFile()" type="button">New File</button>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
+    <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
+    <div class="alert alert-warning" ng-if="configEnvironment.warning">{{configEnvironment.warning}}</div>
     <uib-accordion close-others="true">
         <div uib-accordion-group class="panel-default" ng-repeat="file in dataFromServer track by $index"
              heading="{{file.name}}">

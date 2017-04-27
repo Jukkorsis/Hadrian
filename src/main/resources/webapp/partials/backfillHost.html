@@ -2,8 +2,8 @@
     <h3 class="modal-title">Backfill Existing Hosts</h3>
 </div>
 <div class="modal-body">
-    <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-    <uib-alert>Backfilled hosts will NOT be automatically added to any VIPs.</uib-alert>
+    <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
+    <div class="alert alert-success">Backfilled hosts will NOT be automatically added to any VIPs.</div>
     <form class="form-horizontal">
         <div class="form-group form-group-sm">
             <label class="col-sm-3 control-label">Data Center:</label>

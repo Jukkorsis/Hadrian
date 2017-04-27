@@ -2,8 +2,8 @@
   <h3 class="modal-title">Provision New VIP to {{environmentModule.environment}}</h3>
 </div>
 <div class="modal-body">
-  <uib-alert ng-if="errorMsg !== null" type="danger">{{errorMsg}}</uib-alert>
-  <uib-alert ng-if="configEnvironment.warning" type="warning">{{configEnvironment.warning}}</uib-alert>
+  <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
+  <div class="alert alert-warning" ng-if="configEnvironment.warning">{{configEnvironment.warning}}</div>
   <form class="form-horizontal">
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Domain/Cname:</label>
