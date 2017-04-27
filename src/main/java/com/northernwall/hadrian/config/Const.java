@@ -189,7 +189,7 @@ public class Const {
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";
     public static final String CONFIG_ENVIRONMENTS = "config.environments";
-    public static final String CONFIG_ENVIRONMENTS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\",\"warning\":\"Please be aware that your change will affect Production.\",\"description\":\"Production systems\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\",\"description\":\"Customer Integration Environment\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\",\"description\":\"Manual testing and system integration\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true,\"description\":\"Automated regression testing\"}]";
+    public static final String CONFIG_ENVIRONMENTS_DEFAULT = "[{\"name\":\"Prod\",\"pattern\":\"{dc}-prd-{abbr}-\",\"allowSnapshots\":false,\"warning\":\"Please be aware that your change will affect Production.\",\"description\":\"Production systems\"},{\"name\":\"CIE\",\"pattern\":\"{dc}-cie-{abbr}-\",\"description\":\"Customer Integration Environment\"},{\"name\":\"Sandbox\",\"pattern\":\"{dc}-tst-{abbr}-\",\"description\":\"Manual testing and system integration\"},{\"name\":\"Reg\",\"pattern\":\"{dc}-tst-{abbr}reg-\",\"allowUrl\":true,\"description\":\"Automated regression testing\"}]";
     public static final String CONFIG_ENVIRONMENTS_DC = "{dc}";
     public static final String CONFIG_ENVIRONMENTS_ABBR = "{abbr}";
     public static final String CONFIG_PLATFORMS = "config.platforms";

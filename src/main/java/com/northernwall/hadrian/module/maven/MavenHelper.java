@@ -61,11 +61,12 @@ public class MavenHelper implements ModuleArtifactHelper {
             try {
                 Request.Builder builder = new Request.Builder();
                 String mavenRepo = parameters.getString(Const.MAVEN_URL, Const.MAVEN_URL_DEFAULT);
-                String url = mavenRepo
+                String baseUrl = mavenRepo
                         + service.getMavenGroupId().replace(".", "/")
                         + "/"
                         + module.getMavenArtifactId()
-                        + "/maven-metadata.xml";
+                        + "/";
+                String url = baseUrl + "maven-metadata.xml";
                 builder.url(url);
                 String mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
                 String mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
@@ -77,7 +78,7 @@ public class MavenHelper implements ModuleArtifactHelper {
                 Response response = client.newCall(request).execute();
 
                 try (InputStream inputStream = response.body().byteStream()) {
-                    versions = processMavenStream(inputStream, includeSnapshots);
+                    versions = processMavenStream(inputStream, baseUrl, includeSnapshots);
                 }
             } catch (Exception ex) {
                 LOGGER.error("Error reading maven version from {} {}, {}",
@@ -90,7 +91,7 @@ public class MavenHelper implements ModuleArtifactHelper {
         return versions;
     }
 
-    private List<String> processMavenStream(InputStream inputStream, boolean includeSnapshots) throws Exception {
+    private List<String> processMavenStream(InputStream inputStream, String baseUrl, boolean includeSnapshots) throws Exception {
         List<String> versions = new LinkedList<>();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -100,7 +101,14 @@ public class MavenHelper implements ModuleArtifactHelper {
         for (int i = 0; i < versionsNode.getChildNodes().getLength(); i++) {
             Node child = versionsNode.getChildNodes().item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                if (includeSnapshots || !child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
+                if (child.getTextContent().endsWith(Const.MAVEN_SNAPSHOT)) {
+                    if (includeSnapshots) {
+                        String snapshotVersion = determineSnapshotVersion(baseUrl, child.getTextContent());
+                        if (snapshotVersion != null) {
+                            versions.add(snapshotVersion);
+                        }
+                    }
+                } else {
                     versions.add(child.getTextContent());
                 }
             }
@@ -111,6 +119,58 @@ public class MavenHelper implements ModuleArtifactHelper {
             return versions.subList(0, maxMavenVersions);
         }
         return versions;
+    }
+
+    private String determineSnapshotVersion(String baseUrl, String snapshot) {
+        try {
+            Request.Builder builder = new Request.Builder();
+            String url = baseUrl
+                    + snapshot
+                    + "/maven-metadata.xml";
+            builder.url(url);
+            String mavenUsername = parameters.getString(Const.MAVEN_USERNAME, Const.MAVEN_USERNAME_DEFAULT);
+            String mavenPassword = parameters.getString(Const.MAVEN_PASSWORD, Const.MAVEN_PASSWORD_DEFAULT);
+            if (!mavenUsername.equals(Const.MAVEN_USERNAME_DEFAULT)) {
+                String credential = Credentials.basic(mavenUsername, mavenPassword);
+                builder.header("Authorization", credential);
+            }
+            Request request = builder.build();
+            Response response = client.newCall(request).execute();
+
+            try (InputStream inputStream = response.body().byteStream()) {
+                return snapshot + "-" + processMavenSnapshotStream(inputStream);
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error reading maven snapshot version data from {} {}, {}",
+                    baseUrl,
+                    snapshot,
+                    ex.getMessage());
+        }
+        return null;
+    }
+
+    private String processMavenSnapshotStream(InputStream inputStream) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(inputStream);
+        Element root = doc.getDocumentElement();
+
+        String timestamp = null;
+        String buildNumber = null;
+
+        Node snapshotNode = root.getElementsByTagName("snapshot").item(0);
+        for (int i = 0; i < snapshotNode.getChildNodes().getLength(); i++) {
+            Node child = snapshotNode.getChildNodes().item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                if (child.getNodeName().equals("timestamp")) {
+                    timestamp = child.getTextContent();
+                } else if (child.getNodeName().equals("buildNumber")) {
+                    buildNumber = child.getTextContent();
+                }
+            }
+        }
+
+        return timestamp + "-" + buildNumber;
     }
 
 }
