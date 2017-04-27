@@ -109,10 +109,13 @@ public class DataAccessUpdater {
                 if (vips != null && !vips.isEmpty()) {
                     for (Vip vip : vips) {
                         String fqdn = vip.getDns() + "." + vip.getDomain();
+                        dataAccess.deleteSearch(
+                                SearchSpace.serviceName, 
+                                fqdn,
+                                vip.getVipId());
                         dataAccess.insertSearch(
                                 SearchSpace.vipFqdn,
                                 fqdn,
-                                vip.getVipId(),
                                 service.getTeamId(),
                                 service.getServiceId(),
                                 vip.getModuleId(),
