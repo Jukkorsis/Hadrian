@@ -98,6 +98,7 @@ import com.northernwall.hadrian.handlers.utility.RedirectHandler;
 import com.northernwall.hadrian.handlers.utility.VersionHandler;
 import com.northernwall.hadrian.handlers.vip.EndpointsGetHandler;
 import com.northernwall.hadrian.handlers.vip.VipBackfillHandler;
+import com.northernwall.hadrian.handlers.vip.VipValidator;
 import com.northernwall.hadrian.handlers.workitem.WorkItemGetHandler;
 import com.northernwall.hadrian.module.ModuleArtifactHelper;
 import com.northernwall.hadrian.messaging.MessageSendHandler;
@@ -145,6 +146,7 @@ public class Hadrian {
     private final Gson gson;
     private final InfoHelper infoHelper;
     private final ModuleValidator moduleValidator;
+    private final VipValidator vipValidator;
     private int port;
     private Server server;
 
@@ -169,6 +171,7 @@ public class Hadrian {
 
         infoHelper = new InfoHelper(parameters, client, metricRegistry);
         moduleValidator = new ModuleValidator(configHelper);
+        vipValidator = new VipValidator(configHelper);
 
         setupJetty();
     }
@@ -237,8 +240,8 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/build", new ServiceBuildHandler(dataAccess, gson, accessHelper, new ServiceBuildHelper(dataAccess, client, parameters, gson)), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/service/transfer", new ServiceTransferHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/vip/details", new VipGetDetailsHandler(dataAccess, gson, vipDetailsHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/backfill", new VipBackfillHandler(dataAccess, gson, accessHelper), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/create", new VipCreateHandler(dataAccess, gson, vipValidator, accessHelper, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/backfill", new VipBackfillHandler(dataAccess, gson, vipValidator, accessHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/modify", new VipModifyHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/delete", new VipDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/vip/migrate", new VipMigrateHandler(dataAccess, gson, accessHelper, workItemProcessor), true);

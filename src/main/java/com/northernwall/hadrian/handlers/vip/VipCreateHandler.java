@@ -18,7 +18,6 @@ package com.northernwall.hadrian.handlers.vip;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.db.SearchSpace;
@@ -45,32 +44,13 @@ import org.eclipse.jetty.server.Request;
  */
 public class VipCreateHandler extends BasicHandler {
     
-    public static String checkVipName(PostVipData data) throws Http400BadRequestException {
-        String dns = data.dns;
-        if (dns == null || dns.isEmpty()) {
-            throw new Http400BadRequestException("VIP name is missing");
-        }
-        dns = dns.trim();
-        if (dns == null || dns.isEmpty()) {
-            throw new Http400BadRequestException("VIP name is missing");
-        }
-        if (!dns.matches("^[a-zA-Z0-9/-]+$")) {
-            throw new Http400BadRequestException("VIP name contains an illegal character");
-        }
-        if (dns.length() < 3) {
-            throw new Http400BadRequestException("VIP name is to short, minimum is 3");
-        }
-        if (dns.length() > 30) {
-            throw new Http400BadRequestException("VIP name is to long, maximum is 30");
-        }
-        return dns;
-    }
-
+    private final VipValidator vipValidator;
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
 
-    public VipCreateHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+    public VipCreateHandler(DataAccess dataAccess, Gson gson, VipValidator vipValidator, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
         super(dataAccess, gson);
+        this.vipValidator = vipValidator;
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
     }
@@ -83,7 +63,7 @@ public class VipCreateHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, team, "add a vip");
 
-        String dns = checkVipName(data);
+        String dns = vipValidator.checkVipName(data);
         //Check for duplicate VIP
         String fqdn = dns + "." + data.domain;
         SearchResult searchResult = getDataAccess().doSearch(

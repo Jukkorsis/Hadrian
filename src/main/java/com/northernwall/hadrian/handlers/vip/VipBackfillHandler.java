@@ -47,10 +47,12 @@ import org.eclipse.jetty.server.Request;
  */
 public class VipBackfillHandler extends BasicHandler {
 
+    private final VipValidator vipValidator;
     private final AccessHelper accessHelper;
 
-    public VipBackfillHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper) {
+    public VipBackfillHandler(DataAccess dataAccess, Gson gson, VipValidator vipValidator, AccessHelper accessHelper) {
         super(dataAccess, gson);
+        this.vipValidator = vipValidator;
         this.accessHelper = accessHelper;
     }
 
@@ -62,7 +64,7 @@ public class VipBackfillHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, team, "add a vip");
 
-        String dns = VipCreateHandler.checkVipName(data);
+        String dns = vipValidator.checkVipName(data);
         //Check for duplicate VIP
         String fqdn = dns + "." + data.domain;
         SearchResult searchResult = getDataAccess().doSearch(
