@@ -55,7 +55,7 @@ public class EndpointGetHandler extends BasicHandler {
         
         Service service = getDataAccess().getService(result.serviceId);
         Module module = getDataAccess().getModule(result.serviceId, result.moduleId);
-        Vip vip = getDataAccess().getVip(result.serviceId, result.hostId);
+        Vip vip = getDataAccess().getVip(result.serviceId, result.vipId);
         GetEndpointData endpoint = GetEndpointData.create(service, module, vip);
         
         toJson(response, endpoint);
