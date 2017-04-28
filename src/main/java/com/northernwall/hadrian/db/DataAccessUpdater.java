@@ -41,6 +41,8 @@ public class DataAccessUpdater {
         if (version.equals("1.12")) {
             fixSearch(dataAccess);
             LOGGER.info("Current DB version is 1.12, no upgrade required.");
+        } else {
+            throw new RuntimeException("DB is an old version, please upgrade. " + version);
         }
     }
 
@@ -110,7 +112,7 @@ public class DataAccessUpdater {
                     for (Vip vip : vips) {
                         String fqdn = vip.getDns() + "." + vip.getDomain();
                         dataAccess.deleteSearch(
-                                SearchSpace.serviceName, 
+                                SearchSpace.vipFqdn, 
                                 fqdn,
                                 vip.getVipId());
                         dataAccess.insertSearch(
