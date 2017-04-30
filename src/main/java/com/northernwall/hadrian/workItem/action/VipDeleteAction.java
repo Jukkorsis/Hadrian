@@ -37,8 +37,7 @@ public class VipDeleteAction extends Action {
         dataAccess.deleteVip(workItem.getService().serviceId, workItem.getVip().vipId);
         dataAccess.deleteSearch(
                 SearchSpace.vipFqdn,
-                workItem.getVip().dns + "." + workItem.getVip().domain,
-                workItem.getVip().vipId);
+                workItem.getVip().dns + "." + workItem.getVip().domain);
     }
 
     @Override
