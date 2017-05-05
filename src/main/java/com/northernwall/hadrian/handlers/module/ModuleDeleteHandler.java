@@ -97,15 +97,17 @@ public class ModuleDeleteHandler extends BasicHandler {
 
         for (String env : configHelper.getConfig().environmentNames) {
             List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(
-                    service.getServiceId(), 
-                    module.getModuleId(), 
+                    service.getServiceId(),
+                    module.getModuleId(),
                     env);
-            for (ModuleFile moduleFile : moduleFiles) {
-                getDataAccess().deleteModuleFile(
-                    service.getServiceId(), 
-                    module.getModuleId(), 
-                    env, 
-                    moduleFile.getName());
+            if (moduleFiles != null && !moduleFiles.isEmpty()) {
+                for (ModuleFile moduleFile : moduleFiles) {
+                    getDataAccess().deleteModuleFile(
+                            service.getServiceId(),
+                            module.getModuleId(),
+                            env,
+                            moduleFile.getName());
+                }
             }
         }
 
