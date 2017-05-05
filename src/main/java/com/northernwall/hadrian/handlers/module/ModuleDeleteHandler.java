@@ -16,13 +16,14 @@
 package com.northernwall.hadrian.handlers.module;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
+import com.northernwall.hadrian.domain.ModuleFile;
 import com.northernwall.hadrian.domain.ModuleRef;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Service;
@@ -50,11 +51,13 @@ public class ModuleDeleteHandler extends BasicHandler {
 
     private final AccessHelper accessHelper;
     private final WorkItemProcessor workItemProcessor;
+    private final ConfigHelper configHelper;
 
-    public ModuleDeleteHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor) {
+    public ModuleDeleteHandler(DataAccess dataAccess, Gson gson, AccessHelper accessHelper, WorkItemProcessor workItemProcessor, ConfigHelper configHelper) {
         super(dataAccess, gson);
         this.accessHelper = accessHelper;
         this.workItemProcessor = workItemProcessor;
+        this.configHelper = configHelper;
     }
 
     @Override
@@ -91,12 +94,27 @@ public class ModuleDeleteHandler extends BasicHandler {
         Collections.sort(modules);
 
         getDataAccess().deleteModule(data.serviceId, data.moduleId);
+
+        for (String env : configHelper.getConfig().environmentNames) {
+            List<ModuleFile> moduleFiles = getDataAccess().getModuleFiles(
+                    service.getServiceId(), 
+                    module.getModuleId(), 
+                    env);
+            for (ModuleFile moduleFile : moduleFiles) {
+                getDataAccess().deleteModuleFile(
+                    service.getServiceId(), 
+                    module.getModuleId(), 
+                    env, 
+                    moduleFile.getName());
+            }
+        }
+
         if (service.getMavenGroupId() != null
                 && !service.getMavenGroupId().isEmpty()
                 && module.getMavenArtifactId() != null
                 && !module.getMavenArtifactId().isEmpty()) {
             getDataAccess().deleteSearch(
-                    SearchSpace.mavenGroupArtifact, 
+                    SearchSpace.mavenGroupArtifact,
                     service.getMavenGroupId() + "." + module.getMavenArtifactId());
         }
 

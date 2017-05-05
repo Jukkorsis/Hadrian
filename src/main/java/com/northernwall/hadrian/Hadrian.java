@@ -252,7 +252,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/modify", new ModuleModifyHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor, folderHelper, moduleValidator), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/file", new ModuleFileCreateHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.DELETE, TargetRule.EQUALS, "/v1/module/file", new ModuleFileDeleteHandler(dataAccess, gson, accessHelper), true);
-        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/module/delete", new ModuleDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor, configHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/details", new HostGetDetailsHandler(dataAccess, gson, hostDetailsHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/host/find", new HostFindHandler(dataAccess, gson, infoHelper, hostDetailsHelper), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/create", new HostCreateHandler(dataAccess, gson, accessHelper, configHelper, workItemProcessor), true);
