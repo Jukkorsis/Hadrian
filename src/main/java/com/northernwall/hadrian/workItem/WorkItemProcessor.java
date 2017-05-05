@@ -157,6 +157,9 @@ public class WorkItemProcessor {
     }
 
     private void process(WorkItem workItem) {
+        workItem.setProcessDateNow();
+        dataAccess.updateWorkItem(workItem);
+
         Action action = getAction(workItem);
         Result result = Result.error;
 
@@ -213,6 +216,17 @@ public class WorkItemProcessor {
         } catch (Exception e) {
             LOGGER.warn("Failure while performing action calback {}, {}", action.getName(), e.getMessage());
         } finally {
+            String specialInstructionsFlag = "None";
+            if (workItem.getSpecialInstructions() != null
+                    && !workItem.getSpecialInstructions().isEmpty()) {
+                specialInstructionsFlag = "Has";
+            }
+            metricRegistry.event(
+                    "action.asyncDuration",
+                    workItem.getAsyncDuration(),
+                    "action", action.getName(),
+                    "result", result.toString(),
+                    "specialInstructions", specialInstructionsFlag);
             timer.stop("result", result.toString());
         }
 

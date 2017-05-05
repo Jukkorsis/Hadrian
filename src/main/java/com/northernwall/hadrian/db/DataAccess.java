@@ -97,6 +97,7 @@ public interface DataAccess {
     List<WorkItem> getWorkItems();
     WorkItem getWorkItem(String id);
     void saveWorkItem(WorkItem workItem);
+    void updateWorkItem(WorkItem workItem);
     void deleteWorkItem(String id);
 
     int getWorkItemStatus(String id);

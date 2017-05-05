@@ -39,6 +39,7 @@ public class WorkItem {
     private String nextId;
     private String username;
     private Date requestDate;
+    private Date processDate;
     private TeamData team;
     private ServiceData service;
     private ModuleData mainModule;
@@ -55,6 +56,7 @@ public class WorkItem {
         this.nextId = null;
         this.username = user.getUsername();
         this.requestDate = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+        this.processDate = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         this.team = TeamData.create(team);
         this.service = ServiceData.create(service);
         this.mainModule = ModuleData.create(module);
@@ -111,6 +113,23 @@ public class WorkItem {
 
     public void setRequestDate(Date requestDate) {
         this.requestDate = requestDate;
+    }
+
+    public Date getProcessDate() {
+        return processDate;
+    }
+
+    public void setProcessDate(Date processDate) {
+        this.processDate = processDate;
+    }
+
+    public void setProcessDateNow() {
+        this.processDate = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+    }
+    
+    public long getAsyncDuration() {
+        Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+        return (now.getTime() - processDate.getTime()) / 1000;
     }
 
     public TeamData getTeam() {

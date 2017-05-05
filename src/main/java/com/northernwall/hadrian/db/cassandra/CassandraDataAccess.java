@@ -120,6 +120,7 @@ public class CassandraDataAccess implements DataAccess {
     private final PreparedStatement vipDelete;
     private final PreparedStatement workItemSelect;
     private final PreparedStatement workItemInsert;
+    private final PreparedStatement workItemUpdate;
     private final PreparedStatement workItemDelete;
     private final PreparedStatement workItemStatusSelect;
     private final PreparedStatement workItemStatusInsert;
@@ -248,6 +249,8 @@ public class CassandraDataAccess implements DataAccess {
         workItemSelect.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemInsert = session.prepare("INSERT INTO workItem (id, data) VALUES (?, ?);");
         workItemInsert.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        workItemUpdate = session.prepare("UPDATE workItem SET data = ? WHERE id = ?;");
+        workItemUpdate.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         workItemDelete = session.prepare("DELETE FROM workItem WHERE id = ?;");
         workItemDelete.setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
@@ -438,12 +441,12 @@ public class CassandraDataAccess implements DataAccess {
                 Date date = row.getTimestamp(1);
                 status = status.replace("%%", StringUtils.dateRange(date.getTime()));
             }
-            
+
             String statusCode = row.getString("statusCode");
             if (statusCode == null || statusCode.isEmpty()) {
                 statusCode = Const.STATUS_ERROR;
             }
-            
+
             host.setStatus(row.getBool("busy"), status, statusCode);
         } else {
             host.setStatus(false, Const.STATUS_NO, Const.STATUS_NO);
@@ -734,6 +737,11 @@ public class CassandraDataAccess implements DataAccess {
     }
 
     @Override
+    public void updateWorkItem(WorkItem workItem) {
+        updateData(workItem.getId(), gson.toJson(workItem), workItemUpdate);
+    }
+
+    @Override
     public void deleteWorkItem(String id) {
         deleteData(id, workItemDelete);
     }
@@ -862,7 +870,7 @@ public class CassandraDataAccess implements DataAccess {
         if (results == null || results.isExhausted()) {
             return null;
         }
-        
+
         List<SearchResult> list = new LinkedList<>();
         for (Row row : results.all()) {
             SearchResult result = new SearchResult();
@@ -890,7 +898,7 @@ public class CassandraDataAccess implements DataAccess {
         SearchResult searchResult = doSearch(searchSpace, searchText1, searchText2);
         if (searchResult != null) {
             LOGGER.warn("Insert into search failed, record already exists s:{} t1:{} t2:{}",
-                    searchSpace, 
+                    searchSpace,
                     searchText1,
                     searchText2);
             return;
