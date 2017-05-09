@@ -22,7 +22,7 @@ public class PostVipData {
     public String moduleId;
     public String dns;
     public String domain;
-    public boolean external;
+    public String external;
     public String environment;
     public String inboundProtocol;
     public List<String> inboundModifiers;
@@ -32,5 +32,11 @@ public class PostVipData {
     public int vipPort;
     public int servicePort;
     public int httpCheckPort;
+    
+    public boolean isExternal() {
+        return external != null
+                && !external.isEmpty()
+                && external.equalsIgnoreCase("true");
+    }
 
 }

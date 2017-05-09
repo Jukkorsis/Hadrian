@@ -81,7 +81,7 @@ public class VipCreateHandler extends BasicHandler {
                 data.moduleId,
                 dns,
                 data.domain,
-                data.external,
+                data.isExternal(),
                 data.environment,
                 data.inboundProtocol,
                 data.inboundModifiers,

@@ -27,7 +27,7 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$uibModalI
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.httpCheckPort = 0;
-        $scope.formSaveVip.external = false;
+        $scope.formSaveVip.external = "false";
 
         $scope.save = function () {
             var dataObject = {
@@ -99,7 +99,7 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$uibM
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.httpCheckPort = 0;
-        $scope.formSaveVip.external = false;
+        $scope.formSaveVip.external = "false";
 
         $scope.save = function () {
             var dataObject = {
