@@ -25,6 +25,7 @@ import com.northernwall.hadrian.domain.CustomFunction;
 import com.northernwall.hadrian.domain.DataStore;
 import com.northernwall.hadrian.domain.InboundProtocol;
 import com.northernwall.hadrian.domain.OutboundProtocol;
+import com.northernwall.hadrian.domain.ProtocolModifier;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
@@ -127,23 +128,35 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
                 inboundProtocol = temp;
             }
         }
+        
         if (inboundProtocol == null) {
             getVipData.inboundText = vip.getInboundProtocol();
             getVipData.outboundText = vip.getOutboundProtocol();
             return;
-        } else if (inboundProtocol.vipPortRequired) {
+        }
+        
+        if (inboundProtocol.vipPortRequired) {
             getVipData.inboundText = inboundProtocol.name + " (" + vip.getVipPort() + ")";
         } else {
             getVipData.inboundText = inboundProtocol.name;
         }
         if (vip.getInboundModifiers() != null && !vip.getInboundModifiers().isEmpty()) {
             getVipData.inboundText = getVipData.inboundText + " [";
+            boolean first = true;
             for (String modifier : vip.getInboundModifiers()) {
-                getVipData.inboundText = getVipData.inboundText + " " + modifier;
+                if (first) {
+                    first = false;
+                    getVipData.inboundText = getVipData.inboundText
+                            + generateModiferText(vip, modifier, inboundProtocol.modifiers);
+                } else {
+                    getVipData.inboundText = getVipData.inboundText
+                            + ", "
+                            + generateModiferText(vip, modifier, inboundProtocol.modifiers);
+                }
             }
-            getVipData.inboundText = getVipData.inboundText + " ]";
+            getVipData.inboundText = getVipData.inboundText + "]";
         }
-        
+
         OutboundProtocol outboundProtocol = null;
         for (OutboundProtocol temp : inboundProtocol.outbound) {
             if (temp.code.equals(vip.getOutboundProtocol())) {
@@ -157,12 +170,39 @@ public class ServiceGetHandler extends ServiceRefreshHandler {
         }
         if (vip.getOutboundModifiers() != null && !vip.getOutboundModifiers().isEmpty()) {
             getVipData.outboundText = getVipData.outboundText + " [";
+            boolean first = true;
             for (String modifier : vip.getOutboundModifiers()) {
-                getVipData.outboundText = getVipData.outboundText + " " + modifier;
+                if (first) {
+                    first = false;
+                    getVipData.outboundText = getVipData.outboundText
+                            + generateModiferText(vip, modifier, outboundProtocol.modifiers);
+                } else {
+                    getVipData.outboundText = getVipData.outboundText
+                            + ", "
+                            + generateModiferText(vip, modifier, outboundProtocol.modifiers);
+                }
             }
-            //TODO fix this when a second outbound modifier is added
-            getVipData.outboundText = getVipData.outboundText + " (" + vip.getHttpCheckPort() + ") ]";
+            getVipData.outboundText = getVipData.outboundText + "]";
         }
+    }
+
+    private String generateModiferText(Vip vip, String modifier, List<ProtocolModifier> protocolModifiers) {
+        if (protocolModifiers != null && !protocolModifiers.isEmpty()) {
+            for (ProtocolModifier protocolModifier : protocolModifiers) {
+                if (protocolModifier.code.equals(modifier)) {
+                    if (protocolModifier.httpCheckPortRequired) {
+                        return protocolModifier.name
+                                + " ("
+                                + vip.getHttpCheckPort()
+                                + ")";
+                    } else {
+                        return protocolModifier.name;
+                    }
+                }
+            }
+            return modifier;
+        }
+        return "";
     }
 
 }
