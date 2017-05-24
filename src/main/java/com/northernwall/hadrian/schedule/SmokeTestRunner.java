@@ -100,7 +100,7 @@ public class SmokeTestRunner implements Runnable {
                 break;
             default:
                 for (int i = 0; i < (size - 1); i++) {
-                    hostNames = hostNames + failedHosts.get(0).getHostName() + ", ";
+                    hostNames = hostNames + failedHosts.get(i).getHostName() + ", ";
                 }
                 hostNames = hostNames + " and " + failedHosts.get(size - 1).getHostName();
                 break;
