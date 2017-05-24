@@ -72,9 +72,7 @@ public class HostMetricsRunner implements Runnable {
                         "metricDataCenter",
                         hostCounter.dataCenter,
                         "metricEnvironment",
-                        hostCounter.environment,
-                        "metricPlatform",
-                        hostCounter.platform);
+                        hostCounter.environment);
             }
         }
     }
@@ -83,8 +81,7 @@ public class HostMetricsRunner implements Runnable {
         if (!hostCounters.isEmpty()) {
             for (HostCounter hostCounter : hostCounters) {
                 if (hostCounter.dataCenter.equals(host.getDataCenter())
-                        && hostCounter.environment.equals(host.getEnvironment())
-                        && hostCounter.platform.equals(host.getPlatform())) {
+                        && hostCounter.environment.equals(host.getEnvironment())) {
                     return hostCounter;
                 }
             }
@@ -93,7 +90,6 @@ public class HostMetricsRunner implements Runnable {
         HostCounter hostCounter = new HostCounter();
         hostCounter.dataCenter = host.getDataCenter();
         hostCounter.environment = host.getEnvironment();
-        hostCounter.platform = host.getPlatform();
         hostCounters.add(hostCounter);
         return hostCounter;
     }

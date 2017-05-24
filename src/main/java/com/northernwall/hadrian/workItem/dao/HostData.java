@@ -27,7 +27,6 @@ public class HostData {
         temp.hostName = host.getHostName();
         temp.dataCenter = host.getDataCenter();
         temp.environment = host.getEnvironment();
-        temp.platform = host.getPlatform();
         temp.version = null;
         temp.prevVersion = null;
         temp.versionUrl = null;
@@ -40,7 +39,6 @@ public class HostData {
     public String hostName;
     public String dataCenter;
     public String environment;
-    public String platform;
     public String version;
     public String prevVersion;
     public String versionUrl;

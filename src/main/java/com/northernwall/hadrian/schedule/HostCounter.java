@@ -22,7 +22,6 @@ package com.northernwall.hadrian.schedule;
 public class HostCounter {
     public String dataCenter;
     public String environment;
-    public String platform;
     public long count = 0;
     
 }

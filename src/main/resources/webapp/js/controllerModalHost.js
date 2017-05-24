@@ -11,7 +11,6 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$uib
 
         $scope.formBackfillHost = {};
         $scope.formBackfillHost.dataCenter = $scope.config.dataCenters[0];
-        $scope.formBackfillHost.platform = $scope.config.platforms[0];
         $scope.formBackfillHost.hosts = "";
 
         $scope.save = function () {
@@ -20,7 +19,6 @@ hadrianControllers.controller('ModalBackfillHostCtrl', ['$scope', '$http', '$uib
                 moduleId: $scope.moduleEnvironment.moduleId,
                 dataCenter: $scope.formBackfillHost.dataCenter,
                 environment: $scope.moduleEnvironment.environment,
-                platform: $scope.formBackfillHost.platform,
                 hosts: $scope.formBackfillHost.hosts
             };
 

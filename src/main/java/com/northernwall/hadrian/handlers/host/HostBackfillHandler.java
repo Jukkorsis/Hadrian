@@ -185,8 +185,7 @@ public class HostBackfillHandler extends BasicHandler {
                 service.getServiceId(),
                 module.getModuleId(),
                 data.dataCenter,
-                data.environment,
-                data.platform);
+                data.environment);
 
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(

@@ -121,8 +121,7 @@ public class HostCreateHandler extends BasicHandler {
                 data.serviceId,
                 data.moduleId,
                 dataCenter,
-                data.environment,
-                module.getPlatform());
+                data.environment);
         getDataAccess().saveHost(host);
         getDataAccess().insertSearch(
                 SearchSpace.hostName,

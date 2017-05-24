@@ -176,19 +176,6 @@ public class ConvertHandler extends BasicHandler {
                         }
                     }
                 }
-                List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
-                if (hosts != null && !hosts.isEmpty()) {
-                    for (Host host : hosts) {
-                        if (host.getPlatform().equals(oldValue)) {
-                            LOGGER.info("Found a host with '{}' environment, {} in {}", 
-                                    oldValue, 
-                                    host.getHostName(), 
-                                    service.getServiceName());
-                            host.setPlatform(newValue);
-                            getDataAccess().updateHost(host);
-                        }
-                    }
-                }
             }
         }
 

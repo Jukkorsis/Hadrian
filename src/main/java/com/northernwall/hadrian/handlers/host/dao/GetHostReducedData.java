@@ -23,13 +23,11 @@ public class GetHostReducedData {
         temp.hostName = host.getHostName();
         temp.dataCenter = host.getDataCenter();
         temp.environment = host.getEnvironment();
-        temp.platform = host.getPlatform();
         return temp;
     }
     
     public String hostName;
     public String dataCenter;
     public String environment;
-    public String platform;
 
 }

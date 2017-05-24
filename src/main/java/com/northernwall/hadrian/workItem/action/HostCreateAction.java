@@ -52,7 +52,6 @@ public class HostCreateAction extends Action {
     public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
         notes.put("DC", workItem.getHost().dataCenter);
         notes.put("Environment", workItem.getHost().environment);
-        notes.put("Platform", workItem.getHost().platform);
         notes.put("Size_CPU", Integer.toString(workItem.getMainModule().sizeCpu));
         notes.put("Size_Memory", Integer.toString(workItem.getMainModule().sizeMemory));
         notes.put("Size_Storage", Integer.toString(workItem.getMainModule().sizeStorage));

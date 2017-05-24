@@ -65,7 +65,6 @@ public class Host implements Comparable<Host> {
     private String status;
     private String dataCenter;
     private String environment;
-    private String platform;
 
     public Host() {
         this.hostId = UUID.randomUUID().toString();
@@ -76,10 +75,9 @@ public class Host implements Comparable<Host> {
         this.statusCode = Const.STATUS_NO;
         this.dataCenter = null;
         this.environment = null;
-        this.platform = null;
     }
 
-    public Host(String hostName, String serviceId, String moduleId, String dataCenter, String environment, String platform) {
+    public Host(String hostName, String serviceId, String moduleId, String dataCenter, String environment) {
         this.hostId = UUID.randomUUID().toString();
         this.hostName = hostName;
         this.serviceId = serviceId;
@@ -89,7 +87,6 @@ public class Host implements Comparable<Host> {
         this.moduleId = moduleId;
         this.dataCenter = dataCenter;
         this.environment = environment;
-        this.platform = platform;
     }
 
     public String getHostId() {
@@ -156,14 +153,6 @@ public class Host implements Comparable<Host> {
 
     public void setEnvironment(String environment) {
         this.environment = environment;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
     }
 
     @Override

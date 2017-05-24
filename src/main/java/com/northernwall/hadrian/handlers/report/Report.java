@@ -90,12 +90,12 @@ public abstract class Report {
     }
 
     protected void outputHostHeader() {
-            writer.print(",HostName,DataCenter,Environmnt,Platform");
+            writer.print(",HostName,DataCenter,Environmnt");
     }
 
     protected void outputHostRow(Host host) {
         if (host == null) {
-            writer.print(",,,,");
+            writer.print(",,,");
             return;
         }
         
@@ -105,8 +105,6 @@ public abstract class Report {
         writer.print(host.getDataCenter());
         writer.print(",");
         writer.print(host.getEnvironment());
-        writer.print(",");
-        writer.print(host.getPlatform());
     }
 
     protected void outputListHeader(List<String> headers) {
