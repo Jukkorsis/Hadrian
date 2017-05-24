@@ -107,9 +107,6 @@ public class HostBackfillHandler extends BasicHandler {
         if (!config.environmentNames.contains(data.environment)) {
             throw new Http400BadRequestException("unknown environment, " + data.environment);
         }
-        if (!config.platforms.contains(data.platform)) {
-            throw new Http400BadRequestException("unknown operating platform, " + data.platform);
-        }
 
         if (data.hosts == null || data.hosts.isEmpty()) {
             throw new Http400BadRequestException("Hosts is empty");
@@ -218,7 +215,6 @@ public class HostBackfillHandler extends BasicHandler {
         notes.put("Reason", "Backfilled host.");
         notes.put("DC", data.dataCenter);
         notes.put("Environment", data.environment);
-        notes.put("Plaform", data.platform);
         audit.notes = getGson().toJson(notes);
 
         getDataAccess().saveAudit(audit, null);

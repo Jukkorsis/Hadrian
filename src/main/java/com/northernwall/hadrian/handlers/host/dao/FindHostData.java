@@ -13,7 +13,6 @@ public class FindHostData {
     public boolean busy;
     public String dataCenter;
     public String environment;
-    public String platform;
     public String version;
     public int availability;
 
