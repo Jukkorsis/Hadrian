@@ -52,8 +52,8 @@ public class VipValidator {
             }
         }
         
-        if (dns.length() < 3) {
-            throw new Http400BadRequestException("VIP name is to short, minimum is 3");
+        if (dns.length() < 2) {
+            throw new Http400BadRequestException("VIP name is to short, minimum is 2");
         }
         
         if (dns.length() > 30) {

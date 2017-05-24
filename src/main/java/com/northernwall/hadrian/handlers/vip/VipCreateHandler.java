@@ -109,5 +109,4 @@ public class VipCreateHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-
 }
