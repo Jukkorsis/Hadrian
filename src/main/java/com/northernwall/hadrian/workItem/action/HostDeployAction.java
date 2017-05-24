@@ -87,7 +87,7 @@ public class HostDeployAction extends Action {
         } else {
             messagingCoodinator.sendMessage("Deployed "
                     + workItem.getHost().version
-                    + "to host '"
+                    + " to host '"
                     + workItem.getHost().hostName
                     + "'.",
                     workItem.getTeam().teamId);
