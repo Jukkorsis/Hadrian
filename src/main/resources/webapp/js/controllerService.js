@@ -1026,7 +1026,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                     }
                     if (doc.documentType === "Markdown") {
                         var converter = new showdown.Converter();
-                        var html = converter.makeHtml(output);
+                        var html = converter.makeHtml(response.data);
                         $scope.service.docBody = $sce.trustAsHtml(html);
                     }
                     $scope.service.docType = doc.documentType;
