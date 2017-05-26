@@ -200,21 +200,29 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
         if (vip.migration === 1 && newState === 2) { 
             $scope.modalTitle = "Migrate VIP Step 1";
             $scope.buttonTitle = "Migrate VIP";
+            $scope.helpText1 = "Once step 1 is complete the F5s will be setup, but requests will still be processed by the A10s.";
+            $scope.helpText2 = "Use " + vip.dns + "-f5." + vip.domain + " to test.";
             $scope.showSpecialInstructions = false;
         }
         if (vip.migration === 2 && newState === 3) { 
             $scope.modalTitle = "Migrate VIP Step 2";
             $scope.buttonTitle = "Migrate VIP";
+            $scope.helpText1 = "Examples: External IP address needs to be preserved. Contact team to coodinate the execution of step 2. etc.";
+            $scope.helpText2 = "Step 2 involves manual tasks. Once step 2 is complete requests will be processed by the F5s.";
             $scope.showSpecialInstructions = true;
         }
         if (vip.migration === 3 && newState === 2) { 
             $scope.modalTitle = "Rollback VIP Migration";
             $scope.buttonTitle = "Rollback";
+            $scope.helpText1 = "Rolling back step 2 involves manual tasks.";
+            $scope.helpText2 = "Please also escalate to Ops";
             $scope.showSpecialInstructions = true;
         }
         if (vip.migration === 3 && newState === 4) { 
             $scope.modalTitle = "Migrate VIP Step 3";
             $scope.buttonTitle = "Migrate VIP";
+            $scope.helpText1 = "Completely step 3 indicates that the migration to F5 was completed successfully.";
+            $scope.helpText2 = " ";
             $scope.showSpecialInstructions = false;
         }
 
