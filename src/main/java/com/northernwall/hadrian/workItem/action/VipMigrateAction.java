@@ -19,6 +19,7 @@ import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
+import com.northernwall.hadrian.workItem.dao.CallbackData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,55 @@ public class VipMigrateAction extends Action {
     }
 
     public Result migrateStep3(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 3->4 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(4);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    @Override
+    public Result processCallback(WorkItem workItem, CallbackData callbackData) {
+        Vip vip = dataAccess.getVip(workItem.getService().serviceId, workItem.getVip().vipId);
+        if (vip == null) {
+            LOGGER.info("Failed the find vip");
+            return Result.error;
+        }
+        if (vip.getMigration() == 1 && workItem.getVip().migration == 2) {
+            return migrateStep1Callback(workItem, vip);
+        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
+            return migrateStep2Callback(workItem, vip);
+        } else if (vip.getMigration() == 3 && workItem.getVip().migration == 2) {
+            return rollbackStep2Callback(workItem, vip);
+        } else if (vip.getMigration() == 3 && workItem.getVip().migration == 4) {
+            return migrateStep3Callback(workItem, vip);
+        } else {
+            LOGGER.info("Failed to migrating Vip {} for {}, current state {}", workItem.getVip().dns, workItem.getService().serviceName, vip.getMigration());
+            return Result.error;
+        }
+    }
+
+    public Result migrateStep1Callback(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 1->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(2);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result migrateStep2Callback(WorkItem workItem, Vip vip) {
+        LOGGER.info("Migrating Vip {} 2->3 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(3);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result rollbackStep2Callback(WorkItem workItem, Vip vip) {
+        LOGGER.info("Rolling back Vip {} 3->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        vip.setMigration(2);
+        dataAccess.saveVip(vip);
+        return Result.success;
+    }
+
+    public Result migrateStep3Callback(WorkItem workItem, Vip vip) {
         LOGGER.info("Migrating Vip {} 3->4 for {}", workItem.getVip().dns, workItem.getService().serviceName);
         vip.setMigration(4);
         dataAccess.saveVip(vip);
