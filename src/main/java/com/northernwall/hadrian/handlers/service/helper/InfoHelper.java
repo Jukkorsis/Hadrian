@@ -92,16 +92,26 @@ public class InfoHelper {
                             Request request = builder.build();
                             Response response = client.newCall(request).execute();
                             if (response.isSuccessful()) {
-                                return response.body().string();
+                                String version = response.body().string();
+                                if (version == null || version.isEmpty()) {
+                                    return "Error: empty";
+                                }
+                                if (version.contains("<html")) {
+                                    return "Error: html returned";
+                                }
+                                if (version.length() > 21) {
+                                    return version.substring(0, 20);
+                                }
+                                return version;
                             } else {
                                 return "Error: " + response.code();
                             }
                         } catch (UnknownHostException ex) {
-                            return "Unknown Host";
+                            return "Error: Unknown Host";
                         } catch (ConnectException | SocketTimeoutException ex) {
-                            return "Time Out";
+                            return "Error: Time Out";
                         } catch (IOException ex) {
-                            return "IO Exception";
+                            return "Exception";
                         }
                     }
                 });
