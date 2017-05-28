@@ -42,6 +42,7 @@ import com.northernwall.hadrian.handlers.service.DocumentCreateHandler;
 import com.northernwall.hadrian.handlers.service.DocumentDeleteHandler;
 import com.northernwall.hadrian.handlers.service.DocumentGetHandler;
 import com.northernwall.hadrian.handlers.host.HostBackfillHandler;
+import com.northernwall.hadrian.handlers.host.HostCommentHandler;
 import com.northernwall.hadrian.handlers.host.HostCreateHandler;
 import com.northernwall.hadrian.handlers.host.HostDeleteHandler;
 import com.northernwall.hadrian.handlers.host.HostDeploySoftwareHandler;
@@ -261,6 +262,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/reboot", new HostRebootHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/delete", new HostDeleteHandler(dataAccess, gson, accessHelper, workItemProcessor), true);
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/backfill", new HostBackfillHandler(dataAccess, gson, accessHelper, configHelper, parameters), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/host/comment", new HostCommentHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/hosts", new HostsGetHandler(dataAccess, gson), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/st/exec", new SmokeTestExecHandler(dataAccess, gson, accessHelper, smokeTestHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/cf/exec", new CustomFuntionExecHandler(dataAccess, gson, accessHelper, client), true);

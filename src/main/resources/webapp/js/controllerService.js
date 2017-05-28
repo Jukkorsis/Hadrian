@@ -832,6 +832,26 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
+        $scope.openCommentHostModal = function (host, mn) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/commentHost.html',
+                controller: 'ModalCommentHostCtrl',
+                resolve: {
+                    service: function () {
+                        return $scope.service;
+                    },
+                    host: function () {
+                        return host;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+            }, function () {
+            });
+        };
+
         $scope.getVipDetails = function (vip) {
             vip.loaded = false;
             vip.expanded = true;
@@ -1142,6 +1162,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                                                     host.statusCode = newHost.statusCode;
                                                     host.version = newHost.version;
                                                     host.availability = newHost.availability;
+                                                    host.comment = newHost.comment;
                                                 }
                                             }
                                         }

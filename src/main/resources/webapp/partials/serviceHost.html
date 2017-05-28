@@ -95,6 +95,7 @@
                       <li role="menuitem" ng-repeat="cf in mn.cfs">
                         <a ng-click="openDoCustomFunctionHostModal(i, cf)">{{cf.name}} on {{i.hostName}}</a>
                       </li>
+                      <li role="menuitem"><a ng-click="openCommentHostModal(i, mn);">Comment on {{i.hostName}}</a></li>
                     </ul>
                   </div>
                   <div class="btn-group" uib-dropdown ng-if="!i.busy && !service.canModify && mn.cfs.length > 0" is-open="status.isopen">

@@ -353,4 +353,33 @@ hadrianControllers.controller('ModalSmokeTestCtrl', ['$scope', '$http', '$uibMod
         };
     }]);
 
+hadrianControllers.controller('ModalCommentHostCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'service', 'host',
+    function ($scope, $http, $uibModalInstance, $route, service, host) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.host = host;
 
+        $scope.formSaveHost = {};
+        $scope.formSaveHost.comment = host.comment;
+
+        $scope.save = function () {
+            var dataObject = {
+                serviceId: $scope.service.serviceId,
+                hostId: $scope.host.hostId,
+                comment: $scope.formSaveHost.comment
+            };
+
+            var responsePromise = $http.post("/v1/host/comment", dataObject, {});
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
+                $route.reload();
+            });
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]);
