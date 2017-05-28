@@ -62,6 +62,11 @@ public class ReportHandler extends AbstractHandler {
                             dataAccess,
                             response.getWriter());
                     break;
+                case "vipsummary":
+                    report = new VipSummaryReport(
+                            dataAccess,
+                            response.getWriter());
+                    break;
                 default:
                     throw new Http400BadRequestException("Unknown report type");
             }
