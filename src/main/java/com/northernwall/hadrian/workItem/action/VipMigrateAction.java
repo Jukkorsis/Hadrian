@@ -135,12 +135,32 @@ public class VipMigrateAction extends Action {
         vip.setStatus(false, Const.STATUS_NO);
         dataAccess.updateVip(vip);
 
-        messagingCoodinator.sendMessage("VIP '"
-                + workItem.getVip().dns
-                + "."
-                + workItem.getVip().domain
-                + "' migration step was successful.",
-                workItem.getTeam().teamId);
+        switch (vip.getMigration()) {
+            case 2:
+                messagingCoodinator.sendMessage("VIP '"
+                        + workItem.getVip().dns
+                        + "."
+                        + workItem.getVip().domain
+                        + "' migration to step 2 was successful. The F5s have been configured, requests are being processed by the A10s",
+                        workItem.getTeam().teamId);
+                break;
+            case 3:
+                messagingCoodinator.sendMessage("VIP '"
+                        + workItem.getVip().dns
+                        + "."
+                        + workItem.getVip().domain
+                        + "' migration to step 3 was successful. The F5s have been configured and are processing requests",
+                        workItem.getTeam().teamId);
+                break;
+            case 4:
+                messagingCoodinator.sendMessage("VIP '"
+                        + workItem.getVip().dns
+                        + "."
+                        + workItem.getVip().domain
+                        + "' migration has now been completed",
+                        workItem.getTeam().teamId);
+                break;
+        }
     }
 
     @Override
@@ -158,7 +178,7 @@ public class VipMigrateAction extends Action {
                 + workItem.getVip().dns
                 + "."
                 + workItem.getVip().domain
-                + "' migration step failed.",
+                + "' migration step failed. Contact PST and Ops.",
                 workItem.getTeam().teamId);
     }
 
