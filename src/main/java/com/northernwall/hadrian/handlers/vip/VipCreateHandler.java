@@ -18,6 +18,7 @@ package com.northernwall.hadrian.handlers.vip;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.db.SearchSpace;
@@ -33,6 +34,8 @@ import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.vip.dao.PostVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,7 +80,6 @@ public class VipCreateHandler extends BasicHandler {
         
         Vip vip = new Vip(
                 data.serviceId,
-                "Creating...",
                 data.moduleId,
                 dns,
                 data.domain,
@@ -101,9 +103,22 @@ public class VipCreateHandler extends BasicHandler {
                 data.moduleId,
                 null,
                 vip.getVipId());
+        getDataAccess().updateStatus(
+                vip.getVipId(),
+                true,
+                "Creating...",
+                Const.STATUS_WIP);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);
-        workItemProcessor.processWorkItem(workItem);
+        List<WorkItem> workItems = new ArrayList<>(3);
+
+        WorkItem workItemCreate = new WorkItem(Type.vip, Operation.create, user, team, service, module, null, vip);
+        workItems.add(workItemCreate);
+                
+        WorkItem workItemStatus = new WorkItem(Type.vip, Operation.status, user, team, service, module, null, vip);
+        workItemStatus.setReason("Provisioned %% ago");
+        workItems.add(workItemStatus);
+                
+        workItemProcessor.processWorkItems(workItems);
 
         response.setStatus(200);
         request.setHandled(true);

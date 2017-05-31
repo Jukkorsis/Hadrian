@@ -566,12 +566,47 @@ public class CassandraDataAccess implements DataAccess {
 
     @Override
     public List<Vip> getVips(String serviceId) {
-        return getServiceData(serviceId, vipSelect, Vip.class);
+        List<Vip> vips = getServiceData(serviceId, vipSelect, Vip.class);
+        if (vips == null || vips.isEmpty()) {
+            return vips;
+        }
+        for (Vip vip : vips) {
+            getVipStatus(vip);
+        }
+        Collections.sort(vips);
+        return vips;
     }
 
     @Override
     public Vip getVip(String serviceId, String vipId) {
-        return getServiceData(serviceId, vipId, vipSelect2, Vip.class);
+        Vip vip = getServiceData(serviceId, vipId, vipSelect2, Vip.class);
+        if (vip == null) {
+            return null;
+        }
+        getVipStatus(vip);
+        return vip;
+    }
+
+    private void getVipStatus(Vip vip) {
+        Row row = getStatus(vip.getVipId());
+        if (row != null) {
+            String status = row.getString("status");
+            if (status == null || status.isEmpty()) {
+                status = Const.STATUS_NO;
+            } else if (status.contains("%%")) {
+                Date date = row.getTimestamp(1);
+                status = status.replace("%%", StringUtils.dateRange(date.getTime()));
+            }
+
+            String statusCode = row.getString("statusCode");
+            if (statusCode == null || statusCode.isEmpty()) {
+                statusCode = Const.STATUS_ERROR;
+            }
+
+            vip.setStatus(row.getBool("busy"), status, statusCode);
+        } else {
+            vip.setStatus(false, Const.STATUS_NO, Const.STATUS_NO);
+        }
     }
 
     @Override

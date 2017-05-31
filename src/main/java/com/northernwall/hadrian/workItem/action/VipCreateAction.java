@@ -77,9 +77,6 @@ public class VipCreateAction extends Action {
             return;
         }
 
-        vip.setStatus(false, Const.STATUS_NO);
-        dataAccess.updateVip(vip);
-
         messagingCoodinator.sendMessage("Created new VIP '"
                 + workItem.getVip().dns
                 + "."

@@ -52,7 +52,13 @@ public class VipUpdateAction extends Action {
             LOGGER.warn("Could not find vip {} being updated", workItem.getVip().vipId);
             return;
         }
-        vip.setStatus(false, Const.STATUS_NO);
+        
+        dataAccess.updateStatus(
+                vip.getVipId(),
+                false,
+                "Updated %% ago",
+                Const.STATUS_ERROR);
+
         vip.setExternal(workItem.getVip().external);
         vip.setServicePort(workItem.getVip().servicePort);
         vip.setPriorityMode(workItem.getVip().priorityMode);
@@ -67,8 +73,11 @@ public class VipUpdateAction extends Action {
             return;
         }
 
-        vip.setStatus(false, "Update failed");
-        dataAccess.updateVip(vip);
+        dataAccess.updateStatus(
+                vip.getVipId(),
+                false,
+                "Update failed %% ago",
+                Const.STATUS_ERROR);
     }
 
 }

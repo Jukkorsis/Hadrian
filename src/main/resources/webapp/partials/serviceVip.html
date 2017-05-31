@@ -52,9 +52,9 @@
                     </ul>
                   </div>
                   <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
-                  <span ng-if="ep.status !== '-'">
-                    <span class="label label-warning">{{ep.status}}</span>
-                  </span>
+                  <span ng-if="ep.statusCode == 'info'" class="label label-success">{{ep.status}}</span>
+                  <span ng-if="ep.statusCode == 'wip'" class="label label-warning">{{ep.status}}</span>
+                  <span ng-if="ep.statusCode == 'error'" class="label label-danger">{{ep.status}}</span>
                 </td>
                 <td>{{ep.inboundText}} <span class="glyphicon glyphicon-arrow-right"></span> {{ep.outboundText}}</td>
                 <td>{{ep.priorityMode}}</td>

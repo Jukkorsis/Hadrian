@@ -18,7 +18,9 @@ package com.northernwall.hadrian.handlers.vip;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.access.AccessHelper;
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Operation;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.Service;
@@ -29,6 +31,8 @@ import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.handlers.vip.dao.PutVipData;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,16 +59,28 @@ public class VipModifyHandler extends BasicHandler {
 
         Service service = getService(data.serviceId, null);
         Vip vip = getVip(data.vipId, service);
+        Module module = getModule(vip.getModuleId(), null, service);
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, team, "modify a vip");
 
-        vip.setStatus(true, "Updating...");
-        getDataAccess().saveVip(vip);
+        getDataAccess().updateStatus(
+                vip.getVipId(),
+                true,
+                "Updating...",
+                Const.STATUS_WIP);
 
-        WorkItem workItem = new WorkItem(Type.vip, Operation.update, user, team, service, null, null, vip);
-        workItem.getVip().servicePort = data.servicePort;
-        workItem.getVip().priorityMode = data.priorityMode;
-        workItemProcessor.processWorkItem(workItem);
+        List<WorkItem> workItems = new ArrayList<>(3);
+
+        WorkItem workItemUpdate = new WorkItem(Type.vip, Operation.update, user, team, service, module, null, vip);
+        workItemUpdate.getVip().servicePort = data.servicePort;
+        workItemUpdate.getVip().priorityMode = data.priorityMode;
+        workItems.add(workItemUpdate);
+                
+        WorkItem workItemStatus = new WorkItem(Type.vip, Operation.status, user, team, service, module, null, vip);
+        workItemStatus.setReason("Updated %% ago");
+        workItems.add(workItemStatus);
+        
+        workItemProcessor.processWorkItems(workItems);
         
         response.setStatus(200);
         request.setHandled(true);

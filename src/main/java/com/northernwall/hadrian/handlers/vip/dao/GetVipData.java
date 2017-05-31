@@ -28,6 +28,7 @@ public class GetVipData {
         temp.vipId = vip.getVipId();
         temp.serviceId = vip.getServiceId();
         temp.busy = vip.isBusy();
+        temp.statusCode = vip.getStatusCode();
         temp.status = vip.getStatus();
         temp.dns = vip.getDns();
         temp.domain = vip.getDomain();
@@ -48,6 +49,7 @@ public class GetVipData {
     public String serviceId;
     public boolean busy;
     public String status;
+    public String statusCode;
     public String dns;
     public String domain;
     public boolean external;

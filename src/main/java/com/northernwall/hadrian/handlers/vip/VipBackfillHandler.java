@@ -78,7 +78,6 @@ public class VipBackfillHandler extends BasicHandler {
 
         Vip vip = new Vip(
                 data.serviceId,
-                Const.STATUS_NO,
                 data.moduleId,
                 dns,
                 data.domain,
@@ -102,6 +101,11 @@ public class VipBackfillHandler extends BasicHandler {
                 data.moduleId,
                 null,
                 vip.getVipId());
+        getDataAccess().updateStatus(
+                vip.getVipId(),
+                false,
+                "Backfilled %% ago",
+                Const.STATUS_INFO);
 
         Audit audit = new Audit();
         audit.serviceId = service.getServiceId();

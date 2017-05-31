@@ -17,6 +17,7 @@ package com.northernwall.hadrian.workItem.action;
 
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
 import java.util.Map;
@@ -30,13 +31,26 @@ public class StatusUpdateAction extends Action {
     @Override
     public void updateStatus(WorkItem workItem) {
         if (workItem.getHost() != null) {
-            Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+            String hostId = workItem.getHost().hostId;
+            Host host = dataAccess.getHost(workItem.getService().serviceId, hostId);
             if (host == null) {
-                LOGGER.warn("Could not find host {} to update it's status", workItem.getHost().hostId);
+                LOGGER.warn("Could not find host {} to update it's status", hostId);
                 return;
             }
             dataAccess.updateStatus(
-                    workItem.getHost().hostId,
+                    hostId,
+                    false,
+                    workItem.getReason(),
+                    Const.STATUS_INFO);
+        } else if (workItem.getVip() != null) {
+            String vipId = workItem.getVip().vipId;
+            Vip vip = dataAccess.getVip(workItem.getService().serviceId, vipId);
+            if (vip == null) {
+                LOGGER.warn("Could not find vip {} to update it's status", vipId);
+                return;
+            }
+            dataAccess.updateStatus(
+                    vipId,
                     false,
                     workItem.getReason(),
                     Const.STATUS_INFO);

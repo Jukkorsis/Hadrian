@@ -15,6 +15,7 @@
  */
 package com.northernwall.hadrian.workItem.action;
 
+import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
@@ -38,6 +39,11 @@ public class VipDeleteAction extends Action {
         dataAccess.deleteSearch(
                 SearchSpace.vipFqdn,
                 workItem.getVip().dns + "." + workItem.getVip().domain);
+
+        messagingCoodinator.sendMessage("Vip '"
+                + workItem.getVip().dns
+                + "' has been decommissioned.",
+                workItem.getTeam().teamId);
     }
 
     @Override
@@ -48,8 +54,16 @@ public class VipDeleteAction extends Action {
             return;
         }
 
-        vip.setStatus(false, "Delete failed");
-        dataAccess.updateVip(vip);
+        dataAccess.updateStatus(
+                vip.getVipId(),
+                false,
+                "Delete failed %% ago",
+                Const.STATUS_ERROR);
+
+        messagingCoodinator.sendMessage("Failed to decommission vip '"
+                + workItem.getVip().dns
+                + "'.",
+                workItem.getTeam().teamId);
     }
 
 }

@@ -2,16 +2,19 @@ package com.northernwall.hadrian.handlers.service;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.google.gson.stream.JsonWriter;
 import com.northernwall.hadrian.config.ConfigHelper;
 import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Host;
+import com.northernwall.hadrian.domain.InboundProtocol;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.ModuleRef;
+import com.northernwall.hadrian.domain.OutboundProtocol;
+import com.northernwall.hadrian.domain.ProtocolModifier;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.host.dao.GetHostData;
 import com.northernwall.hadrian.handlers.module.dao.GetModuleData;
 import com.northernwall.hadrian.handlers.service.dao.GetModuleRefData;
@@ -19,8 +22,8 @@ import com.northernwall.hadrian.handlers.service.dao.GetServiceData;
 import com.northernwall.hadrian.handlers.service.helper.InfoHelper;
 import com.northernwall.hadrian.handlers.service.helper.ReadAvailabilityRunnable;
 import com.northernwall.hadrian.handlers.service.helper.ReadVersionRunnable;
+import com.northernwall.hadrian.handlers.vip.dao.GetVipData;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +62,7 @@ public class ServiceRefreshHandler extends BasicHandler {
 
         if (service.isActive()) {
             getModuleInfo(service, getServiceData, false);
+            getVipInfo(service, getServiceData);
             List<Future> futures = new LinkedList<>();
             getHostInfo(service, getServiceData, futures);
             waitForFutures(futures, 151, 100);
@@ -124,6 +128,109 @@ public class ServiceRefreshHandler extends BasicHandler {
         }
 
         Collections.sort(getModuleData.usedBy);
+    }
+
+    protected void getVipInfo(Service service, GetServiceData getServiceData) {
+        List<Vip> vips = getDataAccess().getVips(service.getServiceId());
+        Collections.sort(vips);
+        List<InboundProtocol> inboundProtocols = configHelper.getConfig().inboundProtocols;
+        for (Vip vip : vips) {
+            GetModuleData getModuleData = null;
+            for (GetModuleData temp : getServiceData.modules) {
+                if (vip.getModuleId().equals(temp.moduleId)) {
+                    getModuleData = temp;
+                }
+            }
+            if (getModuleData != null) {
+                GetVipData getVipData = GetVipData.create(vip);
+                generateVipText(getVipData, vip, inboundProtocols);
+                getServiceData.addVip(getVipData, getModuleData);
+            }
+        }
+    }
+
+    private void generateVipText(GetVipData getVipData, Vip vip, List<InboundProtocol> inboundProtocols) {
+        InboundProtocol inboundProtocol = null;
+        for (InboundProtocol temp : inboundProtocols) {
+            if (temp.code.equals(vip.getInboundProtocol())) {
+                inboundProtocol = temp;
+            }
+        }
+        
+        if (inboundProtocol == null) {
+            getVipData.inboundText = vip.getInboundProtocol();
+            getVipData.outboundText = vip.getOutboundProtocol();
+            return;
+        }
+        
+        if (inboundProtocol.vipPortRequired) {
+            getVipData.inboundText = inboundProtocol.name + " (" + vip.getVipPort() + ")";
+        } else {
+            getVipData.inboundText = inboundProtocol.name;
+        }
+        if (vip.getInboundModifiers() != null && !vip.getInboundModifiers().isEmpty()) {
+            getVipData.inboundText = getVipData.inboundText + " [";
+            boolean first = true;
+            for (String modifier : vip.getInboundModifiers()) {
+                if (first) {
+                    first = false;
+                    getVipData.inboundText = getVipData.inboundText
+                            + generateModiferText(vip, modifier, inboundProtocol.modifiers);
+                } else {
+                    getVipData.inboundText = getVipData.inboundText
+                            + ", "
+                            + generateModiferText(vip, modifier, inboundProtocol.modifiers);
+                }
+            }
+            getVipData.inboundText = getVipData.inboundText + "]";
+        }
+
+        OutboundProtocol outboundProtocol = null;
+        for (OutboundProtocol temp : inboundProtocol.outbound) {
+            if (temp.code.equals(vip.getOutboundProtocol())) {
+                outboundProtocol = temp;
+            }
+        }
+        if (outboundProtocol == null) {
+            getVipData.outboundText = vip.getOutboundProtocol() + " (" + vip.getServicePort() + ")";
+        } else {
+            getVipData.outboundText = outboundProtocol.name + " (" + vip.getServicePort() + ")";
+        }
+        if (vip.getOutboundModifiers() != null && !vip.getOutboundModifiers().isEmpty()) {
+            getVipData.outboundText = getVipData.outboundText + " [";
+            boolean first = true;
+            for (String modifier : vip.getOutboundModifiers()) {
+                if (first) {
+                    first = false;
+                    getVipData.outboundText = getVipData.outboundText
+                            + generateModiferText(vip, modifier, outboundProtocol.modifiers);
+                } else {
+                    getVipData.outboundText = getVipData.outboundText
+                            + ", "
+                            + generateModiferText(vip, modifier, outboundProtocol.modifiers);
+                }
+            }
+            getVipData.outboundText = getVipData.outboundText + "]";
+        }
+    }
+
+    private String generateModiferText(Vip vip, String modifier, List<ProtocolModifier> protocolModifiers) {
+        if (protocolModifiers != null && !protocolModifiers.isEmpty()) {
+            for (ProtocolModifier protocolModifier : protocolModifiers) {
+                if (protocolModifier.code.equals(modifier)) {
+                    if (protocolModifier.httpCheckPortRequired) {
+                        return protocolModifier.name
+                                + " ("
+                                + vip.getHttpCheckPort()
+                                + ")";
+                    } else {
+                        return protocolModifier.name;
+                    }
+                }
+            }
+            return modifier;
+        }
+        return "";
     }
 
     protected void getHostInfo(Service service, GetServiceData getServiceData, List<Future> futures) {

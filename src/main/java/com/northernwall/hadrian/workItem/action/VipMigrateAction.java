@@ -132,9 +132,6 @@ public class VipMigrateAction extends Action {
             LOGGER.warn("Could not find vip {} being migrated", workItem.getVip().vipId);
             return;
         }
-        vip.setStatus(false, Const.STATUS_NO);
-        dataAccess.updateVip(vip);
-
         switch (vip.getMigration()) {
             case 2:
                 messagingCoodinator.sendMessage("VIP '"
@@ -171,8 +168,12 @@ public class VipMigrateAction extends Action {
             return;
         }
 
-        vip.setStatus(false, "Migration step " + vip.getMigration() + " failed");
-        dataAccess.updateVip(vip);
+        dataAccess.updateStatus(
+                vip.getVipId(),
+                false,
+                "Migration step " + vip.getMigration() + " failed %% ago",
+                Const.STATUS_ERROR);
+
 
         messagingCoodinator.sendMessage("VIP '"
                 + workItem.getVip().dns

@@ -28,7 +28,11 @@ import java.util.UUID;
 public class Vip implements Comparable<Vip>{
     private String vipId;
     private String serviceId;
+    @com.google.gson.annotations.Expose(serialize = false)
     private boolean busy;
+    @com.google.gson.annotations.Expose(serialize = false)
+    private String statusCode;
+    @com.google.gson.annotations.Expose(serialize = false)
     private String status;
     private String moduleId;
     private String dns;
@@ -58,6 +62,7 @@ public class Vip implements Comparable<Vip>{
         this.serviceId = null;
         this.busy = false;
         this.status = Const.STATUS_NO;
+        this.statusCode = Const.STATUS_NO;
         this.moduleId = null;
         this.dns = null;
         this.domain = null;
@@ -74,11 +79,12 @@ public class Vip implements Comparable<Vip>{
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String status, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort, int httpCheckPort) {
+    public Vip(String serviceId, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort, int httpCheckPort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
-        this.status = status;
+        this.status = Const.STATUS_NO;
+        this.statusCode = Const.STATUS_NO;
         this.moduleId = moduleId;
         this.dns = dns;
         this.domain = domain;
@@ -115,13 +121,18 @@ public class Vip implements Comparable<Vip>{
         return busy;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean busy, String status) {
+    public void setStatus(boolean busy, String status, String statusCode) {
         this.busy = busy;
         this.status = status;
+        this.statusCode = statusCode;
     }
 
     public String getModuleId() {

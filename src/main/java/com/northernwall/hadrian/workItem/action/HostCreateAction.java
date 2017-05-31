@@ -74,12 +74,6 @@ public class HostCreateAction extends Action {
             return;
         }
 
-        dataAccess.updateStatus(
-                host.getHostId(),
-                false,
-                Const.STATUS_NO,
-                Const.STATUS_NO);
-
         messagingCoodinator.sendMessage("Created new host '"
                 + workItem.getHost().hostName
                 + "'.",

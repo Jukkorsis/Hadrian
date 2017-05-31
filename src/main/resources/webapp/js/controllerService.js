@@ -1166,6 +1166,18 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                                                 }
                                             }
                                         }
+                                        for (var vipIndex = 0; vipIndex < module.vips.length; vipIndex++) {
+                                            var vip = module.vips[vipIndex];
+                                            for (var newVipIndex = 0; newVipIndex < newModule.vips.length; newVipIndex++) {
+                                                var newVip = newModule.vips[newVipIndex];
+                                                if (vip.vipId === newVip.vipId) {
+                                                    vip.busy = newVip.busy;
+                                                    vip.status = newVip.status;
+                                                    vip.statusCode = newVip.statusCode;
+                                                    vip.migration = newVip.migration;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
