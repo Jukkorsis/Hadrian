@@ -157,43 +157,52 @@ public class WorkItemProcessor {
     }
 
     private void process(WorkItem workItem) {
-        workItem.setProcessDateNow();
-        dataAccess.updateWorkItem(workItem);
-
-        Action action = getAction(workItem);
-        Result result = Result.error;
-
-        Timer timer = metricRegistry.timer(
-                "action.duration",
-                "action", action.getName());
-        try {
-            action.updateStatus(workItem);
-            result = action.process(workItem);
-        } catch (Exception e) {
-            LOGGER.warn("Failure while performing action {}, {}", action.getName(), e.getMessage());
-        } finally {
-            timer.stop("result", result.toString());
+        if (workItem == null) {
+            LOGGER.error("Illegal call to process with null work item");
         }
+        try {
+            workItem.setProcessDateNow();
+            dataAccess.updateWorkItem(workItem);
 
-        switch (result) {
-            case success:
-                action.success(workItem);
-                action.recordAudit(workItem, result, new HashMap<>(), null);
-                LOGGER.info("Work item {} has been successfully processed, no callback expected. {}", action.getName(), workItem.getId());
-                dataAccess.deleteWorkItem(workItem.getId());
-                dataAccess.saveWorkItemStatus(workItem.getId(), 200);
-                startNext(workItem);
-                break;
-            case error:
-                action.error(workItem);
-                action.recordAudit(workItem, result, new HashMap<>(), null);
-                LOGGER.warn("Work item {} failed to be process, no callback expected. {}", action.getName(), workItem.getId());
-                dataAccess.deleteWorkItem(workItem.getId());
-                dataAccess.saveWorkItemStatus(workItem.getId(), 502);
-                stopNext(workItem);
-                break;
-            case wip:
-                LOGGER.info("Work item {} is being processed, waiting for callback. {}", action.getName(), workItem.getId());
+            Action action = getAction(workItem);
+            Result result = Result.error;
+
+            Timer timer = metricRegistry.timer(
+                    "action.duration",
+                    "action", action.getName());
+            try {
+                action.updateStatus(workItem);
+                result = action.process(workItem);
+            } catch (Exception e) {
+                LOGGER.warn("Failure while performing action {}, {}", action.getName(), e.getMessage());
+            } finally {
+                timer.stop("result", result.toString());
+            }
+
+            switch (result) {
+                case success:
+                    action.success(workItem);
+                    action.recordAudit(workItem, result, new HashMap<>(), null);
+                    LOGGER.info("Work item {} has been successfully processed, no callback expected. {}", action.getName(), workItem.getId());
+                    dataAccess.deleteWorkItem(workItem.getId());
+                    dataAccess.saveWorkItemStatus(workItem.getId(), 200);
+                    startNext(workItem);
+                    break;
+                case error:
+                    action.error(workItem);
+                    action.recordAudit(workItem, result, new HashMap<>(), null);
+                    LOGGER.warn("Work item {} failed to be process, no callback expected. {}", action.getName(), workItem.getId());
+                    dataAccess.deleteWorkItem(workItem.getId());
+                    dataAccess.saveWorkItemStatus(workItem.getId(), 502);
+                    stopNext(workItem);
+                    break;
+                case wip:
+                    LOGGER.info("Work item {} is being processed, waiting for callback. {}", action.getName(), workItem.getId());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception '{}' while processing workitem {}",
+                    e.getMessage(),
+                    workItem.getId());
         }
     }
 
