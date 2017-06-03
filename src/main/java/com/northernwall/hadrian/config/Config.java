@@ -38,6 +38,7 @@ public class Config {
     public boolean enableHostReboot = false;
     public boolean enableVipProvisioning = false;
     public boolean enableVipMigration = false;
+    public boolean enableSshAccess = false;
     public int minCpu = 0;
     public int maxCpu = 0;
     public int minMemory = 0;

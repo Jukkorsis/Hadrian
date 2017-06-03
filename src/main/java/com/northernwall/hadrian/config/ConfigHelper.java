@@ -87,6 +87,7 @@ public class ConfigHelper implements ParameterChangeListener {
         newConfig.enableHostReboot = parameters.getBoolean(Const.CONFIG_ENABLE_HOST_REBOOT, Const.CONFIG_ENABLE_HOST_REBOOT_DEFAULT);
         newConfig.enableVipProvisioning = parameters.getBoolean(Const.CONFIG_ENABLE_VIP_PROVISIONING, Const.CONFIG_ENABLE_VIP_PROVISIONING_DEFAULT);
         newConfig.enableVipMigration = parameters.getBoolean(Const.CONFIG_ENABLE_VIP_MIGRATION, Const.CONFIG_ENABLE_VIP_MIGRATION_DEFAULT);
+        newConfig.enableSshAccess = parameters.getBoolean(Const.CONFIG_ENABLE_SSH_ACCESS, Const.CONFIG_ENABLE_SSH_ACCESS_DEFAULT);
 
         loadConfig(Const.CONFIG_DATA_CENTERS, Const.CONFIG_DATA_CENTERS_DEFAULT, newConfig.dataCenters);
         loadConfig(Const.CONFIG_PLATFORMS, Const.CONFIG_PLATFORMS_DEFAULT, newConfig.platforms);

@@ -188,6 +188,8 @@ public class Const {
     public static final boolean CONFIG_ENABLE_VIP_PROVISIONING_DEFAULT = false;
     public static final String CONFIG_ENABLE_VIP_MIGRATION = "config.enableVipMigration";
     public static final boolean CONFIG_ENABLE_VIP_MIGRATION_DEFAULT = false;
+    public static final String CONFIG_ENABLE_SSH_ACCESS = "config.enableSshAccess";
+    public static final boolean CONFIG_ENABLE_SSH_ACCESS_DEFAULT = false;
 
     public static final String CONFIG_DATA_CENTERS = "config.dataCenters";
     public static final String CONFIG_DATA_CENTERS_DEFAULT = "dc";

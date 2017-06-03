@@ -23,11 +23,8 @@ import java.util.List;
  *
  * @author Richard
  */
-public class SshData {
+public class PostSshData {
 
-    public String teamId;
-    public String title;
-    public List<SshEntry> sshEntries = new LinkedList<>();
-    public List<String> sshGrants = new LinkedList<>();
+    public List<SshEntry> sshGrants = new LinkedList<>();
     
 }

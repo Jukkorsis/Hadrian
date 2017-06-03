@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.sshAccess;
+package com.northernwall.hadrian.handlers.ssh.dao;
+
+import com.northernwall.hadrian.sshAccess.SshEntry;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author Richard
  */
-public class SshEntry implements Comparable<SshEntry>{
-    public String title;
-    public String type;
-    public String name;
+public class GetSshData {
 
-    @Override
-    public int compareTo(SshEntry e) {
-        return title.compareTo(e.title);
-    }
+    public String teamId;
+    public String title;
+    public List<SshEntry> sshEntries = new LinkedList<>();
     
 }

@@ -16,12 +16,16 @@
 package com.northernwall.hadrian.handlers.ssh;
 
 import com.google.gson.Gson;
+import com.northernwall.hadrian.access.AccessHelper;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.handlers.BasicHandler;
-import com.northernwall.hadrian.handlers.ssh.dao.GetSshData;
+import com.northernwall.hadrian.handlers.ssh.dao.PostSshData;
 import com.northernwall.hadrian.sshAccess.SshAccess;
+import com.northernwall.hadrian.sshAccess.SshEntry;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,26 +35,43 @@ import org.eclipse.jetty.server.Request;
  *
  * @author Richard
  */
-public class SshGetHandler extends BasicHandler {
+public class SshUpdateHandler extends BasicHandler {
     private final SshAccess sshAccess;
+    private final AccessHelper accessHelper;
 
-    public SshGetHandler(DataAccess dataAccess, Gson gson, SshAccess sshAccess) {
+    public SshUpdateHandler(DataAccess dataAccess, Gson gson, SshAccess sshAccess, AccessHelper accessHelper) {
         super(dataAccess, gson);
         this.sshAccess = sshAccess;
+        this.accessHelper = accessHelper;
     }
     
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
+        PostSshData data = fromJson(request, PostSshData.class);
         Team team = getTeam(request);
+        accessHelper.canUserModify(request, team);
         
-        GetSshData sshData = new GetSshData();
-        sshData.teamId = team.getTeamId();
-        sshData.title = team.getTeamName();
-        sshData.sshEntries = sshAccess.getSshEntries();
+        List<SshEntry> sshEntries = sshAccess.getSshEntries();
+        
+        if (data.sshGrants != null && !data.sshGrants.isEmpty()) {
+            team.getSshEntries().clear();
+            for (SshEntry entry : data.sshGrants) {
+                addEntry(entry, sshEntries, team);
+            }
+            getDataAccess().saveTeam(team);
+        }
 
-        toJson(response, sshData);
         response.setStatus(200);
         request.setHandled(true);
+    }
+
+    private void addEntry(SshEntry entry, List<SshEntry> sshEntries, Team team) {
+        for (SshEntry sshEntry : sshEntries) {
+            if (sshEntry.title.equals(entry.title)) {
+                team.getSshEntries().add(sshEntry);
+                return;
+            }
+        }
     }
     
 }

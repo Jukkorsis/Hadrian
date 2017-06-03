@@ -85,6 +85,7 @@ import com.northernwall.hadrian.handlers.routing.TargetRule;
 import com.northernwall.hadrian.handlers.routing.RoutingHandler;
 import com.northernwall.hadrian.handlers.service.ServiceTransferHandler;
 import com.northernwall.hadrian.handlers.ssh.SshGetHandler;
+import com.northernwall.hadrian.handlers.ssh.SshUpdateHandler;
 import com.northernwall.hadrian.handlers.team.TeamCreateHandler;
 import com.northernwall.hadrian.handlers.team.TeamGetHandler;
 import com.northernwall.hadrian.handlers.team.TeamModifyHandler;
@@ -278,6 +279,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, gson, client, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/ssh", new SshGetHandler(dataAccess, gson, sshAccess), true);
+        routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/ssh", new SshUpdateHandler(dataAccess, gson, sshAccess, accessHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler(), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/graph/all", new GraphAllHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess), true);

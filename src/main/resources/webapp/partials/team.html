@@ -7,7 +7,7 @@
       </button>
       <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
         <li role="menuitem"><a ng-click="openUpdateTeamModal();">Update {{team.teamName}}</a></li>
-        <li role="menuitem"><a ng-click="openSshAccessModal(team.teamId);">SSH Access</a></li>
+        <li role="menuitem" ng-if="config.enableSshAccess"><a ng-click="openSshAccessModal(team);">Manage SSH Access</a></li>
         <li role="menuitem"><a ng-click="openAddServiceModal(false);">Add a service to {{team.teamName}}</a></li>
       </ul>
     </div>
@@ -33,6 +33,10 @@
     <dd>{{team.colour}}</dd>
     <dt>{{config.securityGroupName}}:</dt>
     <dd>{{team.securityGroupName}}</dd>
+    <dt>SSH Access:</dt>
+    <dd>
+      <div ng-repeat="e in team.sshEntries">{{e.title}}</div>
+    </dd>
     <dt>Dashboard:</dt>
     <dd><a ng-repeat="env in config.environmentNames" href="#!/Dashboard/{{team.teamId}}/{{env}}">{{env}} </a></dd>
   </dl>

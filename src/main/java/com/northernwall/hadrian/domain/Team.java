@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.northernwall.hadrian.domain;
 
+import com.northernwall.hadrian.sshAccess.SshEntry;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,6 +27,7 @@ import java.util.UUID;
  * @author Richard Thurston
  */
 public class Team implements Comparable<Team> {
+
     private String teamId;
     private String teamName;
     private String teamEmail;
@@ -32,6 +36,7 @@ public class Team implements Comparable<Team> {
     private String teamPage;
     private String colour;
     private String securityGroupName;
+    private List<SshEntry> sshEntries = new LinkedList<>();
 
     public Team(String teamName, String teamEmail, String teamSlack, String gitGroup, String teamPage, String colour, String securityGroupName) {
         this.teamId = UUID.randomUUID().toString();
@@ -112,6 +117,14 @@ public class Team implements Comparable<Team> {
 
     public void setSecurityGroupName(String securityGroupName) {
         this.securityGroupName = securityGroupName;
+    }
+
+    public List<SshEntry> getSshEntries() {
+        if (sshEntries == null) {
+            sshEntries = new LinkedList<>();
+        }
+        Collections.sort(sshEntries);
+        return sshEntries;
     }
 
     @Override

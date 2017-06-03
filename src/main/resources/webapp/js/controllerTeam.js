@@ -36,15 +36,15 @@ hadrianControllers.controller('TeamCtrl', ['$scope', '$route', '$routeParams', '
             });
         };
 
-        $scope.openSshAccessModal = function (teamId) {
+        $scope.openSshAccessModal = function (team) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 backdrop: 'static',
                 templateUrl: 'partials/ssh.html',
                 controller: 'ModalSshCtrl',
                 resolve: {
-                    teamId: function () {
-                        return teamId;
+                    team: function () {
+                        return team;
                     }
                 }
             });

@@ -16,6 +16,8 @@
 package com.northernwall.hadrian.handlers.team.dao;
 
 import com.northernwall.hadrian.domain.Team;
+import com.northernwall.hadrian.sshAccess.SshEntry;
+import java.util.List;
 
 public class GetTeamData {
     public static GetTeamData create(Team team) {
@@ -28,6 +30,7 @@ public class GetTeamData {
         temp.teamPage = team.getTeamPage();
         temp.colour = team.getColour();
         temp.securityGroupName = team.getSecurityGroupName();
+        temp.sshEntries = team.getSshEntries();
         return temp;
     }
     
@@ -39,7 +42,7 @@ public class GetTeamData {
     public String teamPage;
     public String colour;
     public String securityGroupName;
+    public List<SshEntry> sshEntries;
     public boolean canModify;
-
 
 }
