@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Richard Thurston.
+ * Copyright 2017 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.sshAccess;
+
+import com.google.gson.Gson;
+import com.northernwall.hadrian.parameters.Parameters;
 
 /**
  *
- * @author rthursto
+ * @author Richard
  */
-public enum Operation {
-
-    create,
-    deploy,
-    restart,
-    reboot,
-    update,
-    delete, 
-    backfill, 
-    enableVips, 
-    disableVips, 
-    addVips, 
-    removeVips, 
-    migrate, 
-    smokeTest,
-    build, 
-    transfer,
-    status;
-
+public interface SshAccessFactory {
+    SshAccess create(Parameters parameters, Gson gson);
+    
 }

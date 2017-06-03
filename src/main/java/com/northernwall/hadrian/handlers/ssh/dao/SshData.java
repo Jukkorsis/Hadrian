@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Richard Thurston.
+ * Copyright 2017 Richard Thurston.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.northernwall.hadrian.domain;
+package com.northernwall.hadrian.handlers.ssh.dao;
+
+import com.northernwall.hadrian.sshAccess.SshEntry;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
- * @author rthursto
+ * @author Richard
  */
-public enum Operation {
+public class SshData {
 
-    create,
-    deploy,
-    restart,
-    reboot,
-    update,
-    delete, 
-    backfill, 
-    enableVips, 
-    disableVips, 
-    addVips, 
-    removeVips, 
-    migrate, 
-    smokeTest,
-    build, 
-    transfer,
-    status;
-
+    public String teamId;
+    public String title;
+    public List<SshEntry> sshEntries = new LinkedList<>();
+    public List<String> sshGrants = new LinkedList<>();
+    
 }

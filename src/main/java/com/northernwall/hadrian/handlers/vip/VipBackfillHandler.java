@@ -113,7 +113,7 @@ public class VipBackfillHandler extends BasicHandler {
         audit.timeRequested = GMT.getGmtAsDate();
         audit.requestor = user.getUsername();
         audit.type = Type.vip;
-        audit.operation = Operation.create;
+        audit.operation = Operation.backfill;
         audit.successfull = true;
         audit.moduleName = module.getModuleName();
         audit.vipName = data.dns;

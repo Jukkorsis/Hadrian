@@ -84,6 +84,7 @@ import com.northernwall.hadrian.handlers.routing.MethodRule;
 import com.northernwall.hadrian.handlers.routing.TargetRule;
 import com.northernwall.hadrian.handlers.routing.RoutingHandler;
 import com.northernwall.hadrian.handlers.service.ServiceTransferHandler;
+import com.northernwall.hadrian.handlers.ssh.SshGetHandler;
 import com.northernwall.hadrian.handlers.team.TeamCreateHandler;
 import com.northernwall.hadrian.handlers.team.TeamGetHandler;
 import com.northernwall.hadrian.handlers.team.TeamModifyHandler;
@@ -107,6 +108,7 @@ import com.northernwall.hadrian.messaging.MessagingCoodinator;
 import com.northernwall.hadrian.module.ModuleConfigHelper;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.schedule.Scheduler;
+import com.northernwall.hadrian.sshAccess.SshAccess;
 import com.northernwall.hadrian.workItem.WorkItemCallbackHandler;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
@@ -132,6 +134,7 @@ public class Hadrian {
     private final OkHttpClient client;
     private final ConfigHelper configHelper;
     private final DataAccess dataAccess;
+    private final SshAccess sshAccess;
     private final ModuleArtifactHelper moduleArtifactHelper;
     private final ModuleConfigHelper moduleConfigHelper;
     private final AccessHelper accessHelper;
@@ -151,11 +154,12 @@ public class Hadrian {
     private int port;
     private Server server;
 
-    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
+    Hadrian(Parameters parameters, OkHttpClient client, ConfigHelper configHelper, DataAccess dataAccess, SshAccess sshAccess, ModuleArtifactHelper moduleArtifactHelper, ModuleConfigHelper moduleConfigHelper, AccessHelper accessHelper, Handler accessHandler, HostDetailsHelper hostDetailsHelper, VipDetailsHelper vipDetailsHelper, WorkItemProcessor workItemProcessor, Scheduler scheduler, FolderHelper folderHelper, SmokeTestHelper smokeTestHelper, MetricRegistry metricRegistry, MessagingCoodinator messagingCoodinator, Gson gson) {
         this.parameters = parameters;
         this.client = client;
         this.configHelper = configHelper;
         this.dataAccess = dataAccess;
+        this.sshAccess = sshAccess;
         this.moduleArtifactHelper = moduleArtifactHelper;
         this.moduleConfigHelper = moduleConfigHelper;
         this.accessHelper = accessHelper;
@@ -273,6 +277,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.PUTPOST, TargetRule.EQUALS, "/v1/document/delete", new DocumentDeleteHandler(dataAccess, gson, accessHelper), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/document", new DocumentGetHandler(dataAccess, gson, client, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/workitems", new WorkItemGetHandler(dataAccess), true);
+        routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/ssh", new SshGetHandler(dataAccess, gson, sshAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/datastore", new DataStoreGetHandler(), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/graph/all", new GraphAllHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.MATCHES, "/v1/graph/fanin/\\w+-\\w+-\\w+-\\w+-\\w+", new GraphFanInHandler(dataAccess), true);

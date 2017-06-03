@@ -116,6 +116,9 @@ public class Const {
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME = "dataAccess.factoryClassName";
     public static final String DATA_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.db.inMemory.InMemoryDataAccessFactory";
 
+    public static final String SSH_ACCESS_FACTORY_CLASS_NAME = "sshAccess.factoryClassName";
+    public static final String SSH_ACCESS_FACTORY_CLASS_NAME_DEFAULT = "com.northernwall.hadrian.sshAccess.simple.SimpleSshAccessFactory";
+
     public static final String CASS_NODES = "dataAccess.cassandra.nodes";
     public static final String CASS_NODES_DEFAULT = "127.0.0.1";
     public static final String CASS_DATA_CENTER = "dataAccess.cassandra.dataCenter";

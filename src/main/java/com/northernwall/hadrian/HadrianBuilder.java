@@ -38,6 +38,8 @@ import com.northernwall.hadrian.module.ModuleConfigHelperFactory;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.schedule.Leader;
 import com.northernwall.hadrian.schedule.Scheduler;
+import com.northernwall.hadrian.sshAccess.SshAccess;
+import com.northernwall.hadrian.sshAccess.SshAccessFactory;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import com.northernwall.hadrian.workItem.helper.SmokeTestHelper;
 import com.squareup.okhttp.ConnectionPool;
@@ -68,6 +70,7 @@ public class HadrianBuilder {
     private FolderHelper folderHelper;
     private ConfigHelper configHelper;
     private DataAccess dataAccess;
+    private SshAccess sshAccess;
     private ModuleArtifactHelper moduleArtifactHelper;
     private ModuleConfigHelper moduleConfigHelper;
     private AccessHelper accessHelper;
@@ -115,6 +118,8 @@ public class HadrianBuilder {
         if (dataAccess == null) {
             buildDataAccess();
         }
+        
+        buildSshAccess();
 
         if (moduleArtifactHelper == null) {
             buildModuleArtifactHelper();
@@ -176,6 +181,7 @@ public class HadrianBuilder {
                 client,
                 configHelper,
                 dataAccess,
+                sshAccess,
                 moduleArtifactHelper,
                 moduleConfigHelper,
                 accessHelper,
@@ -246,6 +252,25 @@ public class HadrianBuilder {
             throw new RuntimeException("Could not build Hadrian, could not access DataAccess class " + factoryName);
         }
         dataAccess = factory.createDataAccess(parameters, gson, metricRegistry);
+    }
+
+    private void buildSshAccess() {
+        String factoryName = parameters.getString(Const.SSH_ACCESS_FACTORY_CLASS_NAME, Const.SSH_ACCESS_FACTORY_CLASS_NAME_DEFAULT);
+        Class c;
+        try {
+            c = Class.forName(factoryName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not find SshAccess class " + factoryName);
+        }
+        SshAccessFactory factory;
+        try {
+            factory = (SshAccessFactory) c.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not instantiation SshAccess class " + factoryName);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Could not build Hadrian, could not access SshAccess class " + factoryName);
+        }
+        sshAccess = factory.create(parameters, gson);
     }
 
     private void buildModuleArtifactHelper() {
