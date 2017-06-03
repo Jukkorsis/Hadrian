@@ -215,7 +215,7 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
             $scope.modalTitle = "Rollback VIP Migration";
             $scope.buttonTitle = "Rollback";
             $scope.helpText1 = "Rolling back step 2 involves manual tasks.";
-            $scope.helpText2 = "Please also escalate to Ops";
+            $scope.helpText2 = "Please also escalate to Ops.";
             $scope.showSpecialInstructions = true;
         }
         if (vip.migration === 3 && newState === 4) { 

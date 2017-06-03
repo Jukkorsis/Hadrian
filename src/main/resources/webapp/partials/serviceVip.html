@@ -55,6 +55,11 @@
                   <span ng-if="ep.statusCode == 'info'" class="label label-success">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'wip'" class="label label-warning">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'error'" class="label label-danger">{{ep.status}}</span>
+                  <br/>
+                  <span ng-if="ep.migration == 1">Requests are being processed by the A10s.</span>
+                  <span ng-if="ep.migration == 2">F5 configured, requests still using A10.</span>
+                  <span ng-if="ep.migration == 3">Requests are now being processed by the F5s, monitor requests.</span>
+                  <span ng-if="ep.migration == 4">Requests are being processed by the F5s.</span>
                 </td>
                 <td>{{ep.inboundText}} <span class="glyphicon glyphicon-arrow-right"></span> {{ep.outboundText}}</td>
                 <td>{{ep.priorityMode}}</td>
@@ -98,10 +103,6 @@
                   <div ng-if="!ep.loaded">
                     Loading...
                   </div>
-                  <div ng-if="ep.migration == 1">Requests are being processed by the A10s.</div>
-                  <div ng-if="ep.migration == 2">F5 configured, requests still using A10.</div>
-                  <div ng-if="ep.migration == 3">Requests are now being processed by the F5s, monitor requests.</div>
-                  <div ng-if="ep.migration == 4">Requests are being processed by the F5s.</div>
                 </td>
               </tr>
             </table>
