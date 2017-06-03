@@ -187,6 +187,45 @@ hadrianControllers.controller('ModalUpdateVipCtrl', ['$scope', '$http', '$uibMod
         };
     }]);
 
+hadrianControllers.controller('ModalDeleteVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'service', 'vip',
+    function ($scope, $http, $uibModalInstance, $route, config, service, vip) {
+        $scope.errorMsg = null;
+        $scope.service = service;
+        $scope.vip = vip;
+        $scope.config = config;
+
+        $scope.configEnvironment = null;
+        for (var i = 0; i < config.environments.length; i++) {
+            if (config.environments[i].name === vip.environment) {
+                $scope.configEnvironment = config.environments[i];
+            }
+        }
+
+        $scope.formDeleteVip = {};
+        $scope.formDeleteVip.reason = "";
+
+        $scope.save = function () {
+            var dataObject = {
+                vipId: $scope.vip.vipId,
+                serviceId: $scope.service.serviceId,
+                reason: $scope.formDeleteVip.reason
+            };
+
+            var responsePromise = $http.post("/v1/vip/delete", dataObject, {});
+            responsePromise.then(function (response) {
+                $uibModalInstance.close();
+                $route.reload();
+            });
+            responsePromise.catch(function (response) {
+                $scope.errorMsg = response.data;
+            });
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]);
+
 hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibModalInstance', '$route', 'config', 'serviceId', 'vip', 'newState',
     function ($scope, $http, $uibModalInstance, $route, config, serviceId, vip, newState) {
         $scope.errorMsg = null;

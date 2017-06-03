@@ -20,6 +20,7 @@ import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.domain.WorkItem;
 import com.northernwall.hadrian.workItem.Result;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,12 @@ public class VipDeleteAction extends Action {
     public Result process(WorkItem workItem) {
         LOGGER.info("Deleting Vip {} for {}", workItem.getVip().dns, workItem.getService().serviceName);
         return Result.success;
+    }
+
+    @Override
+    public void recordAudit(WorkItem workItem, Result result, Map<String, String> notes, String output) {
+        notes.put("Reason", workItem.getReason());
+        writeAudit(workItem, result, notes, output);
     }
 
     @Override

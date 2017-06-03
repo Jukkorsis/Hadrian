@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h3 class="modal-title">Decommission {{vip.dns}}.{{vip.domain}}</h3>
+</div>
+<div class="modal-body">
+  <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
+  <div class="alert alert-warning" ng-if="configEnvironment.warning">{{configEnvironment.warning}}</div>
+  <form class="form-horizontal">
+    <div class="form-group form-group-sm">
+      <label class="col-sm-3 control-label">Reason:</label>
+      <div class="col-sm-9">
+        <input ng-model="formDeleteVip.reason" type="text" class="form-control" autofocus="true">
+      </div>
+    </div>
+  </form>
+  <div ng-if="vip.migration == 1">
+    This A10 based VIP will be removed for inventory but will not be decommissioned in the A10s.<br/>
+    Please open a follow up ticket to Ops to decomission the VIP in the A10s.
+  </div>
+  <div ng-if="vip.migration == 2 || vip.migration == 3">
+    This VIP will be removed for inventory, along with being removed from the F5s.<br/>
+    This VIP will not be decommissioned in the A10s.<br/>
+    Please open a follow up ticket to Ops to decomission the VIP in the A10s.
+  </div>
+  <div ng-if="vip.migration == 4">
+    This F5 based VIP will be removed for inventory along with being removed from the F5s.
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" type="button" ng-click="save()">Decommission VIP</button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+

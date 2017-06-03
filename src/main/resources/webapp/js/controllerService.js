@@ -512,23 +512,31 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             });
         };
 
-        $scope.deleteVip = function (vipId) {
-            var dataObject = {
-                serviceId: $scope.service.serviceId,
-                vipId: vipId
-            };
-
-            var responsePromise = $http.post("/v1/vip/delete", dataObject, {});
-            responsePromise.then(function (response) {
-                $route.reload();
+        $scope.openDeleteVipModal = function (vip) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                backdrop: 'static',
+                templateUrl: 'partials/deleteVip.html',
+                controller: 'ModalDeleteVipCtrl',
+                resolve: {
+                    config: function () {
+                        return $scope.config;
+                    },
+                    service: function () {
+                        return $scope.service;
+                    },
+                    vip: function () {
+                        return vip;
+                    }
+                }
             });
-            responsePromise.catch(function (response) {
-                alert("Request to delete vip has failed!");
+            modalInstance.result.then(function () {
                 $route.reload();
+            }, function () {
             });
         };
 
-        $scope.migrateVip = function (vip, newState) {
+        $scope.openMigrateVipModal = function (vip, newState) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 backdrop: 'static',

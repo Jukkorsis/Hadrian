@@ -23,5 +23,6 @@ package com.northernwall.hadrian.handlers.vip.dao;
 public class DeleteVipData {
     public String serviceId;
     public String vipId;
+    public String reason;
 
 }
