@@ -17,6 +17,8 @@ package com.northernwall.hadrian.handlers.ssh;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.db.DataAccess;
+import com.northernwall.hadrian.db.SearchResult;
+import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
@@ -51,43 +53,80 @@ public class SshModuleGetHandler extends BasicHandler {
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         List<GetSshModuleData> sshModuleDatas = new LinkedList<>();
         List<SshEntry> sshEntries = sshAccess.getSshEntries();
-        
-        getAll(sshEntries, sshModuleDatas);
+
+        String hostname = request.getParameter("hostname");
+        if (hostname == null || hostname.isEmpty()) {
+            handleAll(sshEntries, sshModuleDatas);
+        } else {
+            handleHostname(hostname, sshEntries, sshModuleDatas);
+        }
 
         toJson(response, sshModuleDatas);
         response.setStatus(200);
         request.setHandled(true);
     }
 
-    private void getAll(List<SshEntry> sshEntries, List<GetSshModuleData> sshModuleDatas) {
+    private void handleAll(List<SshEntry> sshEntries, List<GetSshModuleData> sshModuleDatas) {
         List<Team> teams = getDataAccess().getTeams();
         List<Service> services = getDataAccess().getActiveServices();
         Collections.sort(teams);
-        if (teams != null && !teams.isEmpty() && services != null && !services.isEmpty()) {
+        if (teams != null
+                && !teams.isEmpty()
+                && services != null
+                && !services.isEmpty()) {
             for (Team team : teams) {
                 List<Service> teamServices = Service.filterTeam(team.getTeamId(), services);
-                if (teamServices != null && !teamServices.isEmpty()) {
+                if (teamServices != null
+                        && !teamServices.isEmpty()) {
                     Collections.sort(teamServices);
                     for (Service service : teamServices) {
                         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
                         List<Module> modules = getDataAccess().getModules(service.getServiceId());
-                        if (modules != null && !modules.isEmpty() && hosts != null && !hosts.isEmpty()) {
+                        if (modules != null
+                                && !modules.isEmpty()
+                                && hosts != null
+                                && !hosts.isEmpty()) {
                             for (Module module : modules) {
-                                GetSshModuleData sshModuleData = new GetSshModuleData();
-                                sshModuleData.team = team.getTeamName();
-                                sshModuleData.service = service.getServiceName();
-                                sshModuleData.module = module.getModuleName();
-                                sshModuleData.runas = module.getRunAs();
-                                for (Host host : hosts) {
-                                    sshModuleData.hostnames.add(host.getHostName());
-                                }
-                                sshModuleData.access = mergeSshEntries(team, sshEntries);
-                                sshModuleDatas.add(sshModuleData);
+                                buildSshModuleData(team, service, module, hosts, sshEntries, sshModuleDatas);
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private void handleHostname(String hostname, List<SshEntry> sshEntries, List<GetSshModuleData> sshModuleDatas) {
+        List<SearchResult> results = getDataAccess().doSearchList(SearchSpace.hostName, hostname);
+        if (results == null || results.isEmpty()) {
+            return;
+        }
+        for (SearchResult result : results) {
+            Team team = getDataAccess().getTeam(result.teamId);
+            Service service = getDataAccess().getService(result.serviceId);
+            Module module = getDataAccess().getModule(result.serviceId, result.moduleId);
+            List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
+            buildSshModuleData(team, service, module, hosts, sshEntries, sshModuleDatas);
+        }
+    }
+
+    private void buildSshModuleData(Team team, Service service, Module module, List<Host> hosts, List<SshEntry> sshEntries, List<GetSshModuleData> sshModuleDatas) {
+        GetSshModuleData sshModuleData = new GetSshModuleData();
+        sshModuleData.team = team.getTeamName();
+        sshModuleData.service = service.getServiceName();
+        sshModuleData.module = module.getModuleName();
+        sshModuleData.runas = module.getRunAs();
+        for (Host host : hosts) {
+            if (host.getModuleId().equals(module.getModuleId())) {
+                sshModuleData.hostnames.add(host.getHostName());
+            }
+        }
+        sshModuleData.access = mergeSshEntries(team, sshEntries);
+        if (sshModuleData.hostnames != null
+                && !sshModuleData.hostnames.isEmpty()
+                && sshModuleData.access != null
+                && !sshModuleData.access.isEmpty()) {
+            sshModuleDatas.add(sshModuleData);
         }
     }
 
