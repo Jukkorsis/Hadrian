@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.northernwall.hadrian.parameters.Parameters;
 import com.northernwall.hadrian.sshAccess.SshAccess;
 import com.northernwall.hadrian.sshAccess.SshAccessFactory;
+import com.squareup.okhttp.OkHttpClient;
 
 /**
  *
@@ -27,7 +28,7 @@ import com.northernwall.hadrian.sshAccess.SshAccessFactory;
 public class SimpleSshAccessFactory implements SshAccessFactory {
     
     @Override
-    public SshAccess create(Parameters parameters, Gson gson) {
+    public SshAccess create(Parameters parameters, Gson gson, OkHttpClient client) {
         return new SimpleSshAccess(parameters, gson);
     }
     

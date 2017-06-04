@@ -17,12 +17,13 @@ package com.northernwall.hadrian.sshAccess;
 
 import com.google.gson.Gson;
 import com.northernwall.hadrian.parameters.Parameters;
+import com.squareup.okhttp.OkHttpClient;
 
 /**
  *
  * @author Richard
  */
 public interface SshAccessFactory {
-    SshAccess create(Parameters parameters, Gson gson);
+    SshAccess create(Parameters parameters, Gson gson, OkHttpClient client);
     
 }

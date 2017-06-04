@@ -270,7 +270,7 @@ public class HadrianBuilder {
         } catch (IllegalAccessException ex) {
             throw new RuntimeException("Could not build Hadrian, could not access SshAccess class " + factoryName);
         }
-        sshAccess = factory.create(parameters, gson);
+        sshAccess = factory.create(parameters, gson, client);
     }
 
     private void buildModuleArtifactHelper() {
