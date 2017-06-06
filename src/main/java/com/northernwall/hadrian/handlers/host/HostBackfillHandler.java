@@ -146,10 +146,23 @@ public class HostBackfillHandler extends BasicHandler {
         if (pattern != null && !pattern.isEmpty()) {
             try {
                 if (!hostname.matches(pattern)) {
-                    throw new Http400BadRequestException(hostname + " does not match " + pattern);
+                    String whiteList = parameters.getString(Const.CHECK_HOSTNAME_WHITELIST, null);
+                    boolean found = false;
+                    if (whiteList != null && !whiteList.isEmpty()) {
+                        String[] parts = whiteList.split(",");
+                        for (String part : parts) {
+                            if (hostname.equalsIgnoreCase(part)) {
+                                found = true;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        throw new Http400BadRequestException(hostname + " does not match " + pattern + " or whitelist.");
+                    }
                 }
             } catch (PatternSyntaxException ex) {
                 LOGGER.error("Match pattern '{}' is illegal, {}", pattern, ex.getMessage());
+                throw new RuntimeException("Internal pattern match failure, check pattern");
             }
         }
 
