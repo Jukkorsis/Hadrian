@@ -89,6 +89,9 @@
                         <td>
                           {{h.hostName}}
                           <span ng-if="h.warning !== '-'" uib-popover="{{h.warning}}" popover-trigger="mouseenter" class="glyphicon glyphicon-info-sign text-danger"></span>
+                          <div ng-if="h.comment">
+                            {{h.comment}}
+                          </div>
                         </td>
                         <td ng-repeat="dc in config.dataCenters" class="text-center">
                           {{getVipDetailsPriority(h.details, dc)}}

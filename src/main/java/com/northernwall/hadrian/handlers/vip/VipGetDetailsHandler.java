@@ -38,23 +38,23 @@ import org.eclipse.jetty.server.Request;
  * @author Richard Thurston
  */
 public class VipGetDetailsHandler extends BasicHandler {
-    
+
     private final VipDetailsHelper vipDetailsHelper;
     private final GetVipDetailRowDataComparator comparator;
-    
+
     public VipGetDetailsHandler(DataAccess dataAccess, Gson gson, VipDetailsHelper vipDetailsHelper) {
         super(dataAccess, gson);
         this.vipDetailsHelper = vipDetailsHelper;
         this.comparator = new GetVipDetailRowDataComparator();
     }
-    
+
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         Service service = getService(request);
         Vip vip = getVip(request, service);
-        
+
         GetVipDetailsData details = vipDetailsHelper.getDetails(vip);
-        
+
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         for (Host host : hosts) {
             if (host.getEnvironment().equals(vip.getEnvironment())
@@ -63,17 +63,23 @@ public class VipGetDetailsHandler extends BasicHandler {
                 for (GetVipDetailRowData row : details.rows) {
                     if (host.getHostName().equalsIgnoreCase(row.hostName)) {
                         found = true;
+                        if (host.getComment() != null && !host.getComment().isEmpty()) {
+                            row.comment = host.getComment();
+                        }
                     }
                 }
                 if (!found) {
                     GetVipDetailRowData temp = new GetVipDetailRowData();
                     temp.hostName = host.getHostName();
                     temp.warning = "Host not found in VIP";
+                    if (host.getComment() != null && !host.getComment().isEmpty()) {
+                        temp.comment = host.getComment();
+                    }
                     details.rows.add(temp);
                 }
             }
         }
-        
+
         for (GetVipDetailRowData row : details.rows) {
             boolean found = false;
             for (Host host : hosts) {
@@ -85,12 +91,12 @@ public class VipGetDetailsHandler extends BasicHandler {
                 row.warning = "Host in VIP, but not in inventory";
             }
         }
-        
+
         Collections.sort(details.rows, comparator);
-        
+
         toJson(response, details);
         response.setStatus(200);
         request.setHandled(true);
     }
-    
+
 }

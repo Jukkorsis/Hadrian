@@ -19,5 +19,10 @@ public class GetVipDetailRowData {
      * Short text describing any issues with this host in the pool
      */
     public String warning = "-";
+    
+    /**
+     * Host level comment
+     */
+    public String comment;
 
 }
