@@ -58,7 +58,7 @@ public class VipMigrateHandler extends BasicHandler {
         MigrateVipData data = fromJson(request, MigrateVipData.class);
         Service service = getService(data.serviceId, null);
         Team team = getTeam(service.getTeamId(), null);
-        User user = accessHelper.checkIfUserIsAdmin(request, "Migrate vip");
+        User user = accessHelper.checkIfUserCanModify(request, team, "Migrate vip");
 
         Vip vip = getVip(data.vipId, service);
         Module module = getModule(vip.getModuleId(), null, service);
