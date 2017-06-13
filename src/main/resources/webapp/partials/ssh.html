@@ -16,8 +16,12 @@
     <div class="form-group">
       <label class="col-sm-3 control-label">SSH Entries:</label>
       <div class="col-sm-9">
-        <div ng-repeat="e in newEntries">
-          {{e.title}} <button class="btn btn-sm btn-primary" type="button" ng-click="remove(e)"><span class="glyphicon glyphicon-remove"></span></button>
+        <table class="table table-hover table-striped table-condensed">
+          <tr ng-repeat="e in newEntries">
+            <td>{{e.title}}</td>
+            <td><button class="btn btn-sm btn-primary" type="button" ng-click="remove(e)"><span class="glyphicon glyphicon-remove"></span></button></td>
+          </tr>
+        </table>
       </div>
     </div>
   </form>
