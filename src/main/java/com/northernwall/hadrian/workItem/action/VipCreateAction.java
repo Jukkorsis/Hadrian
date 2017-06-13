@@ -96,8 +96,7 @@ public class VipCreateAction extends Action {
         dataAccess.deleteVip(vip.getServiceId(), vip.getVipId());
         dataAccess.deleteSearch(
                 SearchSpace.vipFqdn,
-                vip.getDns() + "." + vip.getDomain(),
-                vip.getVipId());
+                vip.getDns() + "." + vip.getDomain());
 
         messagingCoodinator.sendMessage("VIP '"
                 + workItem.getVip().dns
