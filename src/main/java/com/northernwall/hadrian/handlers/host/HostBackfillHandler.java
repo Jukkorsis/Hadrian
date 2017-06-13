@@ -166,18 +166,6 @@ public class HostBackfillHandler extends BasicHandler {
             }
         }
 
-        List<SearchResult> searchResults = getDataAccess().doSearchList(
-                SearchSpace.hostName,
-                hostname);
-        if (searchResults != null && !searchResults.isEmpty()) {
-            for (SearchResult searchResult : searchResults) {
-                if (!team.getTeamId().equals(searchResult.teamId)) {
-                    LOGGER.warn("Could not backfill host {} becuase it already exists on team {}", hostname, team.getTeamName());
-                    throw new Http400BadRequestException(hostname + " is already associated to team " + team.getTeamName());
-                }
-            }
-        }
-
         if (parameters.getBoolean(Const.CHECK_RESOLVE_HOSTNAME, Const.CHECK_RESOLVE_HOSTNAME_DEFAULT)) {
             try {
                 InetAddress address = InetAddress.getByName(hostname);
