@@ -24,7 +24,6 @@ import com.northernwall.hadrian.handlers.ssh.dao.PostSshData;
 import com.northernwall.hadrian.sshAccess.SshAccess;
 import com.northernwall.hadrian.sshAccess.SshEntry;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,8 +66,7 @@ public class SshUpdateHandler extends BasicHandler {
 
     private void addEntry(SshEntry entry, List<SshEntry> sshEntries, Team team) {
         for (SshEntry sshEntry : sshEntries) {
-            if (sshEntry.title.equals(entry.title)) {
-                team.getSshEntries().add(sshEntry);
+            if (sshEntry.equals(entry)) {
                 return;
             }
         }

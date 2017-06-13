@@ -15,6 +15,8 @@
  */
 package com.northernwall.hadrian.sshAccess;
 
+import java.util.Objects;
+
 /**
  *
  * @author Richard
@@ -27,6 +29,35 @@ public class SshEntry implements Comparable<SshEntry>{
     @Override
     public int compareTo(SshEntry e) {
         return title.compareTo(e.title);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + Objects.hashCode(this.type);
+        hash = 13 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SshEntry other = (SshEntry) obj;
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
     }
     
 }
