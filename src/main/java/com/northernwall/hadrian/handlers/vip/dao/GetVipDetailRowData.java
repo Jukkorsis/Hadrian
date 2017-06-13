@@ -25,4 +25,6 @@ public class GetVipDetailRowData {
      */
     public String comment;
 
+    public boolean disabled = false;
+    
 }

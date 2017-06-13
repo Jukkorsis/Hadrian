@@ -66,6 +66,9 @@ public class VipGetDetailsHandler extends BasicHandler {
                         if (host.getComment() != null && !host.getComment().isEmpty()) {
                             row.comment = host.getComment();
                         }
+                        if (vip.getDisabledHosts().contains(host.getHostName())) {
+                            row.disabled = true;
+                        }
                     }
                 }
                 if (!found) {
@@ -75,20 +78,22 @@ public class VipGetDetailsHandler extends BasicHandler {
                     if (host.getComment() != null && !host.getComment().isEmpty()) {
                         temp.comment = host.getComment();
                     }
+                    temp.disabled = true;
                     details.rows.add(temp);
                 }
             }
         }
 
         for (GetVipDetailRowData row : details.rows) {
-            boolean found = false;
-            for (Host host : hosts) {
-                if (host.getHostName().equalsIgnoreCase(row.hostName)) {
-                    found = true;
+            if (row.warning.equals("-")) {
+                for (Host host : hosts) {
+                    if (host.getHostName().equalsIgnoreCase(row.hostName)) {
+                        row.warning = "Host in VIP, but not in inventory";
+                        if (vip.getDisabledHosts().contains(host.getHostName())) {
+                            row.disabled = true;
+                        }
+                    }
                 }
-            }
-            if (!found) {
-                row.warning = "Host in VIP, but not in inventory";
             }
         }
 

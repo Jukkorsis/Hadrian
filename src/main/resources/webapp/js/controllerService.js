@@ -934,6 +934,40 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
+        $scope.addHostToVip = function (h, vip) {
+            if (h.disabled) {
+                var dataObject = {
+                    serviceId: vip.serviceId,
+                    vipId: vip.vipId,
+                    hostame: h.hostName
+                };
+                var responsePromise = $http.post("/v1/vip/addHost", dataObject, {});
+                responsePromise.then(function (response) {
+                    $route.reload();
+                });
+                responsePromise.catch(function (response) {
+                    $route.reload();
+                });
+            }
+        };
+
+        $scope.removeHostFromVip = function (h, vip) {
+            if (!h.disabled) {
+                var dataObject = {
+                    serviceId: vip.serviceId,
+                    vipId: vip.vipId,
+                    hostname: h.hostName
+                };
+                var responsePromise = $http.post("/v1/vip/removeHost", dataObject, {});
+                responsePromise.then(function (response) {
+                    $route.reload();
+                });
+                responsePromise.catch(function (response) {
+                    $route.reload();
+                });
+            }
+        };
+
         $scope.openAddCustomFunctionModal = function (module) {
             var modalInstance = $uibModal.open({
                 animation: true,

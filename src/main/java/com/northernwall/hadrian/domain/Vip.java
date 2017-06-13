@@ -49,6 +49,7 @@ public class Vip implements Comparable<Vip>{
     private int vipPort;
     private int servicePort;
     private int httpCheckPort;
+    private List<String> disabledHosts;
     
     /**
      * 0 - not migrated
@@ -76,6 +77,7 @@ public class Vip implements Comparable<Vip>{
         this.vipPort = 0;
         this.servicePort = 8080;
         this.httpCheckPort = 0;
+        this.disabledHosts = new LinkedList<>();
         this.migration = 0;
     }
 
@@ -98,6 +100,7 @@ public class Vip implements Comparable<Vip>{
         this.vipPort = vipPort;
         this.servicePort = servicePort;
         this.httpCheckPort = httpCheckPort;
+        this.disabledHosts = new LinkedList<>();
         this.migration = 0;
     }
 
@@ -253,6 +256,10 @@ public class Vip implements Comparable<Vip>{
 
     public void setHttpCheckPort(int httpCheckPort) {
         this.httpCheckPort = httpCheckPort;
+    }
+
+    public List<String> getDisabledHosts() {
+        return disabledHosts;
     }
 
     public int getMigration() {
