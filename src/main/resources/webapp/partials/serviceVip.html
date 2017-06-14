@@ -51,7 +51,7 @@
                       <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="openMigrateVipModal(ep, 4);">VIP Migrate Step 3</a></li>
                     </ul>
                   </div>
-                  <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
+                  {{ep.dns}}.{{ep.domain}}
                   <span ng-if="ep.statusCode == 'info'" class="label label-success">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'wip'" class="label label-warning">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'error'" class="label label-danger">{{ep.status}}</span>
