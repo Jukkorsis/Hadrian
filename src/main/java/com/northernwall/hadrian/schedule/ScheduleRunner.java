@@ -97,11 +97,11 @@ public class ScheduleRunner implements Runnable {
                 if (modules != null && !modules.isEmpty()) {
                     LOGGER.info("Processing {} with {} modules", service.getServiceName(), modules.size());
                     for (Module module : modules) {
-                        LOGGER.info("Processing {} {} with type {}", module.getModuleName(), service.getServiceName(), module.getModuleType());
+                        LOGGER.debug("Processing {} {} with type {}", module.getModuleName(), service.getServiceName(), module.getModuleType());
                         if (module.getModuleType() == ModuleType.Deployable) {
                             String smokeTestCron = module.getSmokeTestCron();
                             String smokeTestUrl = module.getSmokeTestUrl();
-                            LOGGER.info("Processing {} {} with '{}' {}", module.getModuleName(), service.getServiceName(), smokeTestCron, smokeTestUrl);
+                            LOGGER.debug("Processing {} {} with '{}' {}", module.getModuleName(), service.getServiceName(), smokeTestCron, smokeTestUrl);
                             if (smokeTestUrl != null
                                     && !smokeTestUrl.isEmpty()
                                     && smokeTestCron != null
@@ -112,8 +112,6 @@ public class ScheduleRunner implements Runnable {
                             }
                         }
                     }
-                } else {
-                    LOGGER.info("Processing {} with no modules", service.getServiceName());
                 }
                 if (doMetrics) {
                     scheduledExecutorService.submit(new HostMetricsRunner(service, group, dataAccess, metricRegistry));
