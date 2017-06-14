@@ -65,8 +65,8 @@ public class VipAddHostHandler extends BasicHandler {
         }
         
         Vip vip = getVip(data.vipId, service);
-        if (vip.getDisabledHosts().contains(data.hostname)) {
-            vip.getDisabledHosts().remove(data.hostname);
+        if (vip.getBlackListHosts().contains(data.hostname)) {
+            vip.getBlackListHosts().remove(data.hostname);
             getDataAccess().saveVip(vip);
         }
         

@@ -935,7 +935,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         $scope.addHostToVip = function (h, vip) {
-            if (h.disabled) {
+            if (h.blackListed) {
                 var dataObject = {
                     serviceId: vip.serviceId,
                     vipId: vip.vipId,
@@ -952,7 +952,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         $scope.removeHostFromVip = function (h, vip) {
-            if (!h.disabled) {
+            if (!h.blackListed) {
                 var dataObject = {
                     serviceId: vip.serviceId,
                     vipId: vip.vipId,

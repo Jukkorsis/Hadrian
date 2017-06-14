@@ -66,8 +66,8 @@ public class VipGetDetailsHandler extends BasicHandler {
                         if (host.getComment() != null && !host.getComment().isEmpty()) {
                             row.comment = host.getComment();
                         }
-                        if (vip.getDisabledHosts().contains(host.getHostName())) {
-                            row.disabled = true;
+                        if (vip.getBlackListHosts().contains(host.getHostName())) {
+                            row.blackListed = true;
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class VipGetDetailsHandler extends BasicHandler {
                     if (host.getComment() != null && !host.getComment().isEmpty()) {
                         temp.comment = host.getComment();
                     }
-                    temp.disabled = true;
+                    temp.blackListed = true;
                     details.rows.add(temp);
                 }
             }
@@ -89,8 +89,8 @@ public class VipGetDetailsHandler extends BasicHandler {
                 for (Host host : hosts) {
                     if (host.getHostName().equalsIgnoreCase(row.hostName)) {
                         row.warning = "Host in VIP, but not in inventory";
-                        if (vip.getDisabledHosts().contains(host.getHostName())) {
-                            row.disabled = true;
+                        if (vip.getBlackListHosts().contains(host.getHostName())) {
+                            row.blackListed = true;
                         }
                     }
                 }

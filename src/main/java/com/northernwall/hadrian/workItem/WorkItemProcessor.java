@@ -209,9 +209,13 @@ public class WorkItemProcessor {
     public void processCallback(CallbackData callbackData) {
         WorkItem workItem = dataAccess.getWorkItem(callbackData.requestId);
         if (workItem == null) {
-            throw new Http404NotFoundException("Unable to find Work Item with requestId "
-                    + callbackData.requestId
-                    + ", unable to process callback.");
+            int status = dataAccess.getWorkItemStatus(callbackData.requestId);
+            if (status == -1) {
+                throw new Http404NotFoundException("Unable to find Work Item with requestId "
+                        + callbackData.requestId
+                        + ", unable to process callback.");
+            }
+            return;
         }
 
         Action action = getAction(workItem);
