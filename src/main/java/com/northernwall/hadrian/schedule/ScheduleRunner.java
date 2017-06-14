@@ -119,7 +119,7 @@ public class ScheduleRunner implements Runnable {
                 }
             }
         }
-        LOGGER.info("Run schedule for group {}, service count {}, smoke test count {}", group, serviceCount, smokeTestCount);
+        LOGGER.debug("Run schedule for group {}, service count {}, smoke test count {}", group, serviceCount, smokeTestCount);
     }
 
     private boolean checkCron(String cronExpression, ZonedDateTime now) {
