@@ -92,8 +92,10 @@
                               <span class="glyphicon glyphicon-align-justify"></span> <span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                              <li role="menuitem" ng-if="h.blackListed"><a ng-click="addHostToVip(h, ep);">Add host back to VIP</a></li>
-                              <li role="menuitem" ng-if="!h.blackListed"><a ng-click="removeHostFromVip(h, ep);">Remove host from VIP</a></li>
+                              <li role="menuitem" ng-if="h.blackListed"><a ng-click="doVipHost(h, ep, 'add');">Add host back to VIP</a></li>
+                              <li role="menuitem" ng-if="!h.blackListed"><a ng-click="doVipHost(h, ep, 'remove');">Remove host from VIP</a></li>
+                              <li role="menuitem" ng-if="h.warning === '-'"><a ng-click="doVipHost(h, ep, 'enable');">Enable host in VIP</a></li>
+                              <li role="menuitem" ng-if="h.warning === '-'"><a ng-click="doVipHost(h, ep, 'disable');">Disable host in VIP</a></li>
                             </ul>
                           </div>
                           {{h.hostName}}

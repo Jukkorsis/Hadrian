@@ -66,9 +66,6 @@ public class VipGetDetailsHandler extends BasicHandler {
                         if (host.getComment() != null && !host.getComment().isEmpty()) {
                             row.comment = host.getComment();
                         }
-                        if (vip.getBlackListHosts().contains(host.getHostName())) {
-                            row.blackListed = true;
-                        }
                     }
                 }
                 if (!found) {

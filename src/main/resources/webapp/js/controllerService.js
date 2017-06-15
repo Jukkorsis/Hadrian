@@ -934,31 +934,15 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
             }
         };
 
-        $scope.addHostToVip = function (h, vip) {
+        $scope.doVipHost = function (h, vip, action) {
             if (h.blackListed) {
                 var dataObject = {
                     serviceId: vip.serviceId,
                     vipId: vip.vipId,
-                    hostName: h.hostName
+                    hostName: h.hostName,
+                    action: action
                 };
-                var responsePromise = $http.post("/v1/vip/addHost", dataObject, {});
-                responsePromise.then(function (response) {
-                    $route.reload();
-                });
-                responsePromise.catch(function (response) {
-                    $route.reload();
-                });
-            }
-        };
-
-        $scope.removeHostFromVip = function (h, vip) {
-            if (!h.blackListed) {
-                var dataObject = {
-                    serviceId: vip.serviceId,
-                    vipId: vip.vipId,
-                    hostName: h.hostName
-                };
-                var responsePromise = $http.post("/v1/vip/removeHost", dataObject, {});
+                var responsePromise = $http.post("/v1/vip/host", dataObject, {});
                 responsePromise.then(function (response) {
                     $route.reload();
                 });

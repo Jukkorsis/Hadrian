@@ -19,9 +19,10 @@ package com.northernwall.hadrian.handlers.vip.dao;
  *
  * @author Richard
  */
-public class AddVipHostData {
+public class DoVipHostData {
     public String serviceId;
     public String vipId;
     public String hostName;
+    public String action;
     
 }
