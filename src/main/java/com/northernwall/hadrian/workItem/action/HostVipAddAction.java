@@ -47,12 +47,12 @@ public class HostVipAddAction extends HostVipBaseAction {
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Adding vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
-        return Result.success;
+        return processVips(workItem);
     }
     
+    @Override
     protected Result processVip(WorkItem workItem, Vip vip) {
-        LOGGER.info("Adding vip {} for {} {}", vip.getDns(), workItem.getHost().hostName, workItem.getService().serviceName);
+        LOGGER.info("Adding {} to vip {} in {}", workItem.getHost().hostName, vip.getDns(), workItem.getService().serviceName);
         return Result.success;
     }
 

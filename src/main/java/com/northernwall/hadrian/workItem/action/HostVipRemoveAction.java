@@ -47,8 +47,7 @@ public class HostVipRemoveAction extends HostVipBaseAction {
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Removing vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
-        return Result.success;
+        return processVips(workItem);
     }
     
     @Override

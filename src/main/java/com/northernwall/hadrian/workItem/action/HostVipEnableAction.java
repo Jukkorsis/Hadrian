@@ -43,8 +43,7 @@ public class HostVipEnableAction extends HostVipBaseAction {
 
     @Override
     public Result process(WorkItem workItem) {
-        LOGGER.info("Enabling vips for {} {}", workItem.getHost().hostName, workItem.getService().serviceName);
-        return Result.success;
+        return processVips(workItem);
     }
     
     @Override
