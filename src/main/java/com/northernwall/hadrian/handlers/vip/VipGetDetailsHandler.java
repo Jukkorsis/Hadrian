@@ -86,13 +86,14 @@ public class VipGetDetailsHandler extends BasicHandler {
 
         for (GetVipDetailRowData row : details.rows) {
             if (row.warning.equals("-")) {
+                boolean found = false;
                 for (Host host : hosts) {
                     if (host.getHostName().equalsIgnoreCase(row.hostName)) {
-                        row.warning = "Host in VIP, but not in inventory";
-                        if (vip.getBlackListHosts().contains(host.getHostName())) {
-                            row.blackListed = true;
-                        }
+                        found = true;
                     }
+                }
+                if (!found) {
+                    row.warning = "Host in VIP, but not in inventory";
                 }
             }
         }

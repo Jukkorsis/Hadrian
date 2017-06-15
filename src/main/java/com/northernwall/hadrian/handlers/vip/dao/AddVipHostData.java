@@ -22,6 +22,6 @@ package com.northernwall.hadrian.handlers.vip.dao;
 public class AddVipHostData {
     public String serviceId;
     public String vipId;
-    public String hostname;
+    public String hostName;
     
 }

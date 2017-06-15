@@ -59,13 +59,13 @@ public class VipRemoveHostHandler extends BasicHandler {
         Team team = getTeam(service.getTeamId(), null);
         User user = accessHelper.checkIfUserCanModify(request, team, "remove host from vip");
         
-        if (data.hostname == null || data.hostname.isEmpty()) {
+        if (data.hostName == null || data.hostName.isEmpty()) {
             throw new Http400BadRequestException("Hostname is null");
         }
         
         Vip vip = getVip(data.vipId, service);
-        if (!vip.getBlackListHosts().contains(data.hostname)) {
-            vip.getBlackListHosts().add(data.hostname);
+        if (!vip.getBlackListHosts().contains(data.hostName)) {
+            vip.getBlackListHosts().add(data.hostName);
             getDataAccess().saveVip(vip);
         }
         
@@ -74,7 +74,7 @@ public class VipRemoveHostHandler extends BasicHandler {
         List<Host> hosts = getDataAccess().getHosts(service.getServiceId());
         if (hosts != null && !hosts.isEmpty()) {
             for (Host host : hosts) {
-                if (host.getHostName().equals(data.hostname)) {
+                if (host.getHostName().equals(data.hostName)) {
                     WorkItem workItem = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, vip);
                     workItemProcessor.processWorkItem(workItem);
                 }

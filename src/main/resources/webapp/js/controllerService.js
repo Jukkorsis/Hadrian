@@ -939,7 +939,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 var dataObject = {
                     serviceId: vip.serviceId,
                     vipId: vip.vipId,
-                    hostame: h.hostName
+                    hostName: h.hostName
                 };
                 var responsePromise = $http.post("/v1/vip/addHost", dataObject, {});
                 responsePromise.then(function (response) {
@@ -956,7 +956,7 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
                 var dataObject = {
                     serviceId: vip.serviceId,
                     vipId: vip.vipId,
-                    hostname: h.hostName
+                    hostName: h.hostName
                 };
                 var responsePromise = $http.post("/v1/vip/removeHost", dataObject, {});
                 responsePromise.then(function (response) {
