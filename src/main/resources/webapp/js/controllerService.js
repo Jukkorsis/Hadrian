@@ -935,21 +935,19 @@ hadrianControllers.controller('ServiceCtrl', ['$scope', '$route', '$interval', '
         };
 
         $scope.doVipHost = function (h, vip, action) {
-            if (h.blackListed) {
-                var dataObject = {
-                    serviceId: vip.serviceId,
-                    vipId: vip.vipId,
-                    hostName: h.hostName,
-                    action: action
-                };
-                var responsePromise = $http.post("/v1/vip/host", dataObject, {});
-                responsePromise.then(function (response) {
-                    $route.reload();
-                });
-                responsePromise.catch(function (response) {
-                    $route.reload();
-                });
-            }
+            var dataObject = {
+                serviceId: vip.serviceId,
+                vipId: vip.vipId,
+                hostName: h.hostName,
+                action: action
+            };
+            var responsePromise = $http.post("/v1/vip/host", dataObject, {});
+            responsePromise.then(function (response) {
+                $route.reload();
+            });
+            responsePromise.catch(function (response) {
+                $route.reload();
+            });
         };
 
         $scope.openAddCustomFunctionModal = function (module) {
