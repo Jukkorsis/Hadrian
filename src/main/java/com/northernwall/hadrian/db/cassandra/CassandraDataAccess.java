@@ -932,7 +932,7 @@ public class CassandraDataAccess implements DataAccess {
     public void insertSearch(SearchSpace searchSpace, String searchText1, String searchText2, String teamId, String serviceId, String moduleId, String hostId, String vipId) {
         SearchResult searchResult = doSearch(searchSpace, searchText1, searchText2);
         if (searchResult != null) {
-            LOGGER.warn("Insert into search failed, record already exists s:{} t1:{} t2:{}",
+            LOGGER.debug("Insert into search failed, record already exists s:{} t1:{} t2:{}",
                     searchSpace,
                     searchText1,
                     searchText2);

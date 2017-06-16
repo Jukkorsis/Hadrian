@@ -299,68 +299,72 @@ public class WorkItemProcessor {
 
     private Action getAction(WorkItem workItem) {
         if (workItem.getOperation() == Operation.status) {
-            return constructAction("StatusUpdate", StatusUpdateAction.class);
+            return constructAction("StatusUpdate", StatusUpdateAction.class, workItem.getId());
         }
         switch (workItem.getType()) {
             case service:
                 switch (workItem.getOperation()) {
                     case create:
-                        return constructAction("serviceCreate", ServiceCreateAction.class);
+                        return constructAction("serviceCreate", ServiceCreateAction.class, workItem.getId());
                     case update:
-                        return constructAction("serviceUpdate", ServiceUpdateAction.class);
+                        return constructAction("serviceUpdate", ServiceUpdateAction.class, workItem.getId());
                     case transfer:
-                        return constructAction("serviceTransfer", ServiceUpdateAction.class);
+                        return constructAction("serviceTransfer", ServiceUpdateAction.class, workItem.getId());
                     case delete:
-                        return constructAction("serviceDelete", ServiceDeleteAction.class);
+                        return constructAction("serviceDelete", ServiceDeleteAction.class, workItem.getId());
                 }
             case module:
                 switch (workItem.getOperation()) {
                     case create:
-                        return constructAction("moduleCreate", ModuleCreateAction.class);
+                        return constructAction("moduleCreate", ModuleCreateAction.class, workItem.getId());
                     case update:
-                        return constructAction("moduleUpdate", ModuleUpdateAction.class);
+                        return constructAction("moduleUpdate", ModuleUpdateAction.class, workItem.getId());
                     case delete:
-                        return constructAction("moduleDelete", ModuleDeleteAction.class);
+                        return constructAction("moduleDelete", ModuleDeleteAction.class, workItem.getId());
                 }
             case host:
                 switch (workItem.getOperation()) {
                     case create:
-                        return constructAction("hostCreate", HostCreateAction.class);
+                        return constructAction("hostCreate", HostCreateAction.class, workItem.getId());
                     case deploy:
-                        return constructAction("hostDeploy", HostDeployAction.class);
+                        return constructAction("hostDeploy", HostDeployAction.class, workItem.getId());
                     case restart:
-                        return constructAction("hostRestart", HostRestartAction.class);
+                        return constructAction("hostRestart", HostRestartAction.class, workItem.getId());
                     case reboot:
-                        return constructAction("hostReboot", HostRebootAction.class);
+                        return constructAction("hostReboot", HostRebootAction.class, workItem.getId());
                     case enableVips:
-                        return constructAction("hostVipEnable", HostVipEnableAction.class);
+                        return constructAction("hostVipEnable", HostVipEnableAction.class, workItem.getId());
                     case disableVips:
-                        return constructAction("hostVipDisable", HostVipDisableAction.class);
+                        return constructAction("hostVipDisable", HostVipDisableAction.class, workItem.getId());
                     case addVips:
-                        return constructAction("hostVipAdd", HostVipAddAction.class);
+                        return constructAction("hostVipAdd", HostVipAddAction.class, workItem.getId());
                     case removeVips:
-                        return constructAction("hostVipRemove", HostVipRemoveAction.class);
+                        return constructAction("hostVipRemove", HostVipRemoveAction.class, workItem.getId());
                     case smokeTest:
-                        return constructAction("hostSmokeTest", HostSmokeTestAction.class);
+                        return constructAction("hostSmokeTest", HostSmokeTestAction.class, workItem.getId());
                     case delete:
-                        return constructAction("hostDelete", HostDeleteAction.class);
+                        return constructAction("hostDelete", HostDeleteAction.class, workItem.getId());
                 }
             case vip:
                 switch (workItem.getOperation()) {
                     case create:
-                        return constructAction("vipCreate", VipCreateAction.class);
+                        return constructAction("vipCreate", VipCreateAction.class, workItem.getId());
                     case update:
-                        return constructAction("vipUpdate", VipUpdateAction.class);
+                        return constructAction("vipUpdate", VipUpdateAction.class, workItem.getId());
                     case delete:
-                        return constructAction("vipDelete", VipDeleteAction.class);
+                        return constructAction("vipDelete", VipDeleteAction.class, workItem.getId());
                     case migrate:
-                        return constructAction("vipMigrate", VipMigrateAction.class);
+                        return constructAction("vipMigrate", VipMigrateAction.class, workItem.getId());
                 }
         }
         throw new RuntimeException("Unknown work item - " + workItem.getType() + " " + workItem.getOperation());
     }
 
     private Action constructAction(String name, Class defaultClass) {
+        return constructAction(name, defaultClass, "");
+    }
+
+    private Action constructAction(String name, Class defaultClass, String workItemId) {
         String factoryName = parameters.getString("action." + name, null);
         try {
             Class c;
@@ -372,7 +376,10 @@ public class WorkItemProcessor {
             }
             Action action = (Action) c.newInstance();
             action.init(name, dataAccess, messagingCoodinator, parameters, configHelper, client, gson, smokeTestHelper);
-            LOGGER.info("Constructed action {} with {}", name, factoryName);
+            LOGGER.info("Constructed action {} with {} {}", 
+                    name, 
+                    factoryName,
+                    workItemId);
             return action;
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Could not build Action " + name + ", could not find class " + factoryName, ex);
