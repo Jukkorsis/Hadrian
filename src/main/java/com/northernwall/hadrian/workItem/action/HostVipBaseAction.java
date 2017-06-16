@@ -44,49 +44,70 @@ public abstract class HostVipBaseAction extends Action {
     protected final Result processVips(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            LOGGER.warn("Could not find host {} who's VIP is being disabled", workItem.getHost().hostId);
+            LOGGER.warn("Could not find host {} who's VIP is being disabled, {}",
+                    workItem.getHost().hostName,
+                    workItem.getId());
             return Result.success;
         }
 
         List<Vip> vips = dataAccess.getVips(workItem.getService().serviceId);
         if (vips == null || vips.isEmpty()) {
+            LOGGER.info("Odd, there are no VIPs to process, {}",
+                    workItem.getId());
             return Result.success;
         }
 
+            LOGGER.info("Processing potentially {} VIPs, {}",
+                    vips.size(),
+                    workItem.getId());
         Result result = Result.success;
         for (Vip vip : vips) {
-            if (checkVip(workItem, vip)) {
-                if (vip.getBlackListHosts() == null
-                        || !vip.getBlackListHosts().contains(host.getHostName())) {
-                    if (vip.getModuleId().equals(workItem.getMainModule().moduleId)
-                            && vip.getEnvironment().equals(workItem.getHost().environment)) {
-                        result = processVip(workItem, vip);
-                        if (result == Result.error) {
-                            failedVip = vip;
-                            dataAccess.updateStatus(
-                                    workItem.getHost().hostId,
-                                    false,
-                                    "Failed to "
-                                    + getVerb()
-                                    + " host "
-                                    + getPreposition()
-                                    + " VIP",
-                                    Const.STATUS_ERROR);
-                            return result;
-                        }
-                        successVips.add(vip);
-                    }
+            if (checkVip(workItem, vip, host)) {
+            LOGGER.info("Processing {} on {}, {}",
+                    host.getHostName(),
+                    vip.getDns(),
+                    workItem.getId());
+                result = processVip(workItem, vip);
+                if (result == Result.error) {
+                    failedVip = vip;
+                    dataAccess.updateStatus(
+                            workItem.getHost().hostId,
+                            false,
+                            "Failed to "
+                            + getVerb()
+                            + " host "
+                            + getPreposition()
+                            + " VIP",
+                            Const.STATUS_ERROR);
+                    return result;
                 }
+                successVips.add(vip);
             }
         }
         return result;
     }
 
-    private boolean checkVip(WorkItem workItem, Vip vip) {
-        if (workItem.getVip() == null) {
-            return true;
+    private boolean checkVip(WorkItem workItem, Vip vip, Host host) {
+        if (workItem.getVip() != null) {
+            return workItem.getVip().vipId.equals(vip.getVipId());
         }
-        return workItem.getVip().vipId.equals(vip.getVipId());
+        if (!vip.getModuleId().equals(workItem.getMainModule().moduleId)) {
+            return false;
+        }
+        if (!vip.getEnvironment().equals(workItem.getHost().environment)) {
+            return false;
+        }
+        if (vip.getBlackListHosts() != null
+                && !vip.getBlackListHosts().isEmpty()
+                && vip.getBlackListHosts().contains(host.getHostName())) {
+            LOGGER.info("Not processing {} on {} because of blacklist, {}",
+                    host.getHostName(),
+                    vip.getDns(),
+                    workItem.getId());
+
+            return false;
+        }
+        return true;
     }
 
     protected abstract Result processVip(WorkItem workItem, Vip vip);
