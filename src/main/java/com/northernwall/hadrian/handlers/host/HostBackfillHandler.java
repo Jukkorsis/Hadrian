@@ -124,7 +124,7 @@ public class HostBackfillHandler extends BasicHandler {
         for (String hostname : hostnames) {
             String scrubedHostName = scrubHostname(hostname);
             if (scrubedHostName != null && !scrubedHostName.isEmpty()) {
-                validateHostname(team, scrubedHostName);
+                validateHostname(module, scrubedHostName);
                 scrubedHosts.add(scrubedHostName);
             }
         }
@@ -141,7 +141,7 @@ public class HostBackfillHandler extends BasicHandler {
         request.setHandled(true);
     }
 
-    private void validateHostname(Team team, String hostname) {
+    private void validateHostname(Module module, String hostname) {
         String pattern = parameters.getString(Const.CHECK_HOSTNAME_PATTERN, null);
         if (pattern != null && !pattern.isEmpty()) {
             try {
@@ -163,6 +163,18 @@ public class HostBackfillHandler extends BasicHandler {
             } catch (PatternSyntaxException ex) {
                 LOGGER.error("Match pattern '{}' is illegal, {}", pattern, ex.getMessage());
                 throw new RuntimeException("Internal pattern match failure, check pattern");
+            }
+        }
+
+        List<SearchResult> searchResults = getDataAccess().doSearchList(
+                SearchSpace.hostName,
+                hostname);
+        if (searchResults != null && !searchResults.isEmpty()) {
+            for (SearchResult searchResult : searchResults) {
+                if (module.getModuleId().equals(searchResult.moduleId)) {
+                    LOGGER.warn("Could not backfill host {} becuase it already exists in {}", hostname, module.getModuleName());
+                    throw new Http400BadRequestException(hostname + " is already associated to " + module.getModuleName());
+                }
             }
         }
 
