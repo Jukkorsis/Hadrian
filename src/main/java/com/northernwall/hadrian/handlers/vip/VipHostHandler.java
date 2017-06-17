@@ -32,6 +32,7 @@ import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.vip.dao.DoVipHostData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -120,8 +121,15 @@ public class VipHostHandler extends BasicHandler {
             getDataAccess().saveVip(vip);
         }
 
+        List<WorkItem> workItems = new LinkedList<>();
         WorkItem workItem = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, vip);
-        workItemProcessor.processWorkItem(workItem);
+        workItems.add(workItem);
+
+        WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+        workItemStatus.setReason("Host added to VIP %% ago");
+        workItems.add(workItemStatus);
+        
+        workItemProcessor.processWorkItems(workItems);
     }
 
     private void removeHostFromVip(Vip vip, Host host, Service service, User user, Team team, Module module) throws IOException {
@@ -130,18 +138,39 @@ public class VipHostHandler extends BasicHandler {
             getDataAccess().saveVip(vip);
         }
 
+        List<WorkItem> workItems = new LinkedList<>();
         WorkItem workItem = new WorkItem(Type.host, Operation.removeVips, user, team, service, module, host, vip);
-        workItemProcessor.processWorkItem(workItem);
+        workItems.add(workItem);
+
+        WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+        workItemStatus.setReason("Host removed from VIP %% ago");
+        workItems.add(workItemStatus);
+        
+        workItemProcessor.processWorkItems(workItems);
     }
 
     private void enableHostInVip(Vip vip, Host host, Service service, User user, Team team, Module module) throws IOException {
+        List<WorkItem> workItems = new LinkedList<>();
         WorkItem workItem = new WorkItem(Type.host, Operation.enableVips, user, team, service, module, host, vip);
-        workItemProcessor.processWorkItem(workItem);
+        workItems.add(workItem);
+
+        WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+        workItemStatus.setReason("Host enabled in VIP %% ago");
+        workItems.add(workItemStatus);
+        
+        workItemProcessor.processWorkItems(workItems);
     }
 
     private void disableHostInVip(Vip vip, Host host, Service service, User user, Team team, Module module) throws IOException {
+        List<WorkItem> workItems = new LinkedList<>();
         WorkItem workItem = new WorkItem(Type.host, Operation.disableVips, user, team, service, module, host, vip);
-        workItemProcessor.processWorkItem(workItem);
+        workItems.add(workItem);
+
+        WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
+        workItemStatus.setReason("Host disabled in VIP %% ago");
+        workItems.add(workItemStatus);
+        
+        workItemProcessor.processWorkItems(workItems);
     }
 
 }

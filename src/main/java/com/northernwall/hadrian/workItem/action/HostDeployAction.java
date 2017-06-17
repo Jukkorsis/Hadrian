@@ -73,12 +73,6 @@ public class HostDeployAction extends Action {
             return;
         }
 
-        dataAccess.updateStatus(
-                workItem.getHost().hostId,
-                false,
-                Const.STATUS_NO,
-                Const.STATUS_NO);
-
         if (workItem.getHost().version == null) {
             messagingCoodinator.sendMessage("Deployment to host '"
                     + workItem.getHost().hostName

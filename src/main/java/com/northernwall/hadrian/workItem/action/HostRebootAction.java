@@ -63,13 +63,7 @@ public class HostRebootAction extends Action {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
             LOGGER.warn("Could not find host {} being rebooted", workItem.getHost().hostId);
-            return;
         }
-        dataAccess.updateStatus(
-                workItem.getHost().hostId,
-                false,
-                Const.STATUS_NO,
-                Const.STATUS_NO);
     }
 
     @Override
