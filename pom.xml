@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.northernwall</groupId>
     <artifactId>Hadrian</artifactId>
-    <version>1.14.3-SNAPSHOT</version>
+    <version>1.14.3</version>
     <packaging>jar</packaging>
     <name>Hadrian</name>
     <url>https://github.com/Jukkorsis/Hadrian</url>
@@ -38,7 +38,7 @@
         <connection>scm:git:https://github.com/Jukkorsis/Hadrian.git</connection>
         <developerConnection>scm:git:https://github.com/Jukkorsis/Hadrian.git</developerConnection>
         <url>scm:git:https://github.com/Jukkorsis/Hadrian</url>
-        <tag>Hadrian-1.13.12</tag>
+        <tag>Hadrian-1.14.3</tag>
     </scm>
 
     <distributionManagement>
