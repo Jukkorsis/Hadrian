@@ -44,7 +44,7 @@ public abstract class HostVipBaseAction extends Action {
     protected final Result processVips(WorkItem workItem) {
         Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
         if (host == null) {
-            LOGGER.warn("Could not find host {} who's VIP is being disabled, {}",
+            LOGGER.warn("Could not find host {} who's VIP is being acted upon, {}",
                     workItem.getHost().hostName,
                     workItem.getId());
             return Result.success;
@@ -146,6 +146,20 @@ public abstract class HostVipBaseAction extends Action {
             }
         }
         writeAudit(workItem, result, notes, output);
+    }
+
+    @Override
+    public void error(WorkItem workItem) {
+        Host host = dataAccess.getHost(workItem.getService().serviceId, workItem.getHost().hostId);
+        if (host == null) {
+            LOGGER.warn("Could not find host {} that is being acted upon", workItem.getHost().hostId);
+            return;
+        }
+        dataAccess.updateStatus(
+                workItem.getHost().hostId,
+                false,
+                "Failed to " + getVerb() + " host " + getPreposition() + " VIP %% ago",
+                Const.STATUS_ERROR);
     }
 
     protected abstract String getVerb();
