@@ -30,6 +30,7 @@
       <label class="col-sm-3 control-label">Inbound Protocol:</label>
       <div class="col-sm-9">
         <select ng-model="formSaveVip.inboundProtocol" ng-options="ip as ip.name for ip in config.inboundProtocols" ng-change="formSaveVip.outboundProtocol = formSaveVip.inboundProtocol.outbound[0]; formSaveVip.inboundModifiers = null; formSaveVip.outboundModifiers = null;" class="form-control"></select>
+        <p class="help-block">The protocol used by the service's client to communicate with the load balancer.</p>
       </div>
     </div>
     <div ng-if="formSaveVip.inboundProtocol.modifiers.length > 0" class="form-group form-group-sm">
@@ -48,6 +49,7 @@
       <label class="col-sm-3 control-label">Outbound Protocol:</label>
       <div class="col-sm-9">
         <select ng-model="formSaveVip.outboundProtocol" ng-options="op as op.name for op in formSaveVip.inboundProtocol.outbound" ng-change="formSaveVip.outboundModifiers = null;" class="form-control"></select>
+        <p class="help-block">The protocol used by the load balancer to communicate with the service.</p>
       </div>
     </div>
     <div ng-if="formSaveVip.outboundProtocol.modifiers.length > 0" class="form-group form-group-sm">
@@ -66,12 +68,14 @@
       <label class="col-sm-3 control-label">VIP Port:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveVip.vipPort" type="number" class="form-control">
+        <p class="help-block">The port used by the service's client to communicate with the load balancer.</p>
       </div>
     </div>
     <div class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Service Port:</label>
       <div class="col-sm-9">
         <input ng-model="formSaveVip.servicePort" type="number" class="form-control">
+        <p class="help-block">The port used by the load balancer to communicate with the service.</p>
       </div>
     </div>
     <div ng-if="formSaveVip.outboundModifiers.length > 0" class="form-group form-group-sm">
