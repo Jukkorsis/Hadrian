@@ -25,12 +25,13 @@ import com.northernwall.hadrian.handlers.vip.dao.PostVipData;
  * @author Richard
  */
 public class VipValidator {
+
     private final ConfigHelper configHelper;
 
     public VipValidator(ConfigHelper configHelper) {
         this.configHelper = configHelper;
     }
-    
+
     public String checkVipName(PostVipData data) throws Http400BadRequestException {
         String dns = data.dns;
         if (dns == null || dns.isEmpty()) {
@@ -40,22 +41,22 @@ public class VipValidator {
         if (dns == null || dns.isEmpty()) {
             throw new Http400BadRequestException("VIP name is missing");
         }
-        
+
         if (!dns.matches("^[a-zA-Z0-9/-]+$")) {
             throw new Http400BadRequestException("VIP name contains an illegal character");
         }
-        
-        Config config = configHelper.getConfig();
-        for (String dataCenter : config.dataCenters) {
-            if (dns.endsWith("-" + dataCenter)) {
-                throw new Http400BadRequestException("VIP name can not end in -" + dataCenter);
-            }
-        }
+
+        //Config config = configHelper.getConfig();
+        //for (String dataCenter : config.dataCenters) {
+        //    if (dns.endsWith("-" + dataCenter)) {
+        //        throw new Http400BadRequestException("VIP name can not end in -" + dataCenter);
+        //    }
+        //}
         
         if (dns.length() < 2) {
             throw new Http400BadRequestException("VIP name is to short, minimum is 2");
         }
-        
+
         if (dns.length() > 45) {
             throw new Http400BadRequestException("VIP name is to long, maximum is 45");
         }
