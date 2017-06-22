@@ -5,6 +5,13 @@
   <div class="alert alert-danger" ng-if="errorMsg !== null">{{errorMsg}}</div>
   <div class="alert alert-warning" ng-if="configEnvironment.warning">{{configEnvironment.warning}}</div>
   <form class="form-horizontal">
+    <div ng-if="showDcOptions" class="form-group">    
+      <label class="col-sm-3 control-label">Data Centers:</label>
+      <div class="col-sm-9">
+        <select ng-model="formMigrateVip.dcOption" ng-options="c for c in dcOptions" class="form-control"></select>
+        <p class="help-block">Which Data Center(s) will be migrated</p>
+      </div>
+    </div>
     <div ng-if="showSpecialInstructions" class="form-group form-group-sm">
       <label class="col-sm-3 control-label">Special Instructions:</label>
       <div class="col-sm-9">
