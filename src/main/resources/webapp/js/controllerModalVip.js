@@ -23,7 +23,6 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$uibModalI
         $scope.formSaveVip.inboundModifiers = null;
         $scope.formSaveVip.outboundProtocol = $scope.formSaveVip.inboundProtocol.outbound[0];
         $scope.formSaveVip.outboundModifiers = null;
-        $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.httpCheckPort = 0;
@@ -40,7 +39,6 @@ hadrianControllers.controller('ModalAddVipCtrl', ['$scope', '$http', '$uibModalI
                 inboundModifiers: [],
                 outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
                 outboundModifiers: [],
-                priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
                 httpCheckPort: $scope.formSaveVip.httpCheckPort,
@@ -95,7 +93,6 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$uibM
         $scope.formSaveVip.inboundModifiers = null;
         $scope.formSaveVip.outboundProtocol = $scope.formSaveVip.inboundProtocol.outbound[0];
         $scope.formSaveVip.outboundModifiers = null;
-        $scope.formSaveVip.priorityMode = $scope.config.priorityModes[0];
         $scope.formSaveVip.vipPort = 0;
         $scope.formSaveVip.servicePort = 8080;
         $scope.formSaveVip.httpCheckPort = 0;
@@ -112,7 +109,6 @@ hadrianControllers.controller('ModalBackfillVipCtrl', ['$scope', '$http', '$uibM
                 inboundModifiers: [],
                 outboundProtocol: $scope.formSaveVip.outboundProtocol.code,
                 outboundModifiers: [],
-                priorityMode: $scope.formSaveVip.priorityMode,
                 vipPort: $scope.formSaveVip.vipPort,
                 servicePort: $scope.formSaveVip.servicePort,
                 httpCheckPort: $scope.formSaveVip.httpCheckPort,

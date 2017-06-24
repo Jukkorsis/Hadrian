@@ -28,7 +28,6 @@ public class PostVipData {
     public List<String> inboundModifiers;
     public String outboundProtocol;
     public List<String> outboundModifiers;
-    public String priorityMode;
     public int vipPort;
     public int servicePort;
     public int httpCheckPort;

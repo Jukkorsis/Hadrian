@@ -39,13 +39,10 @@ public class Vip implements Comparable<Vip>{
     private String domain;
     private boolean external;
     private String environment;
-    private String protocol; //Remove in the next version
     private String inboundProtocol;
     private List<String> inboundModifiers;
     private String outboundProtocol;
     private List<String> outboundModifiers;
-    private String lbConfig; //Remove in the next version
-    private String priorityMode;
     private int vipPort;
     private int servicePort;
     private int httpCheckPort;
@@ -73,7 +70,6 @@ public class Vip implements Comparable<Vip>{
         this.inboundModifiers = new LinkedList<>();
         this.outboundProtocol = null;
         this.outboundModifiers = new LinkedList<>();
-        this.priorityMode = null;
         this.vipPort = 0;
         this.servicePort = 8080;
         this.httpCheckPort = 0;
@@ -81,7 +77,7 @@ public class Vip implements Comparable<Vip>{
         this.migration = 0;
     }
 
-    public Vip(String serviceId, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, String priorityMode, int vipPort, int servicePort, int httpCheckPort) {
+    public Vip(String serviceId, String moduleId, String dns, String domain, boolean external, String environment, String inboundProtocol, List<String> inboundModifiers, String outboundProtocol, List<String> outboundModifiers, int vipPort, int servicePort, int httpCheckPort) {
         this.vipId = UUID.randomUUID().toString();
         this.serviceId = serviceId;
         this.busy = false;
@@ -96,7 +92,6 @@ public class Vip implements Comparable<Vip>{
         this.inboundModifiers = inboundModifiers;
         this.outboundProtocol = outboundProtocol;
         this.outboundModifiers = outboundModifiers;
-        this.priorityMode = priorityMode;
         this.vipPort = vipPort;
         this.servicePort = servicePort;
         this.httpCheckPort = httpCheckPort;
@@ -178,14 +173,6 @@ public class Vip implements Comparable<Vip>{
         this.environment = environment;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
     public String getInboundProtocol() {
         return inboundProtocol;
     }
@@ -216,22 +203,6 @@ public class Vip implements Comparable<Vip>{
 
     public void setOutboundModifiers(List<String> outboundModifiers) {
         this.outboundModifiers = outboundModifiers;
-    }
-
-    public String getLbConfig() {
-        return lbConfig;
-    }
-
-    public void setLbConfig(String lbConfig) {
-        this.lbConfig = lbConfig;
-    }
-
-    public String getPriorityMode() {
-        return priorityMode;
-    }
-
-    public void setPriorityMode(String priorityMode) {
-        this.priorityMode = priorityMode;
     }
 
     public int getVipPort() {

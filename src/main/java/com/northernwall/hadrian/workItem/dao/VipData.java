@@ -38,7 +38,6 @@ public class VipData {
         temp.inboundModifiers = vip.getInboundModifiers();
         temp.outboundProtocol = vip.getOutboundProtocol();
         temp.outboundModifiers = vip.getOutboundModifiers();
-        temp.priorityMode = vip.getPriorityMode();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
         temp.httpCheckPort = vip.getHttpCheckPort();
@@ -56,7 +55,6 @@ public class VipData {
     public List<String> inboundModifiers;
     public String outboundProtocol;
     public List<String> outboundModifiers;
-    public String priorityMode;
     public int vipPort;
     public int servicePort;
     public int httpCheckPort;

@@ -87,7 +87,6 @@ public class VipBackfillHandler extends BasicHandler {
                 data.inboundModifiers,
                 data.outboundProtocol,
                 data.outboundModifiers,
-                data.priorityMode,
                 data.vipPort,
                 data.servicePort,
                 data.httpCheckPort);
@@ -143,7 +142,6 @@ public class VipBackfillHandler extends BasicHandler {
         if (data.httpCheckPort > 0) {
             notes.put("HTTP_Check_Port", Integer.toString(data.httpCheckPort));
         }
-        notes.put("Pool_Contains", data.priorityMode);
         notes.put("External", Boolean.toString(data.isExternal()));
         notes.put("Reason", "Backfilled vip.");
         audit.notes = getGson().toJson(notes);

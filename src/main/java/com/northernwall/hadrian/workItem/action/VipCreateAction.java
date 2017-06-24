@@ -63,7 +63,6 @@ public class VipCreateAction extends Action {
         if (workItem.getVip().httpCheckPort > 0) {
             notes.put("HTTP_Check_Port", Integer.toString(workItem.getVip().httpCheckPort));
         }
-        notes.put("Pool_Contains", workItem.getVip().priorityMode);
         notes.put("External", Boolean.toString(workItem.getVip().external));
         writeAudit(workItem, result, notes, output);
     }

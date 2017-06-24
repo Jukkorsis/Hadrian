@@ -89,7 +89,6 @@ public class VipCreateHandler extends BasicHandler {
                 data.inboundModifiers,
                 data.outboundProtocol,
                 data.outboundModifiers,
-                data.priorityMode,
                 data.vipPort,
                 data.servicePort,
                 data.httpCheckPort);

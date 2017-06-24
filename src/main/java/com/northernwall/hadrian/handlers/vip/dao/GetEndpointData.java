@@ -42,7 +42,6 @@ public class GetEndpointData {
         temp.inboundModifiers = vip.getInboundModifiers();
         temp.outboundProtocol = vip.getOutboundProtocol();
         temp.outboundModifiers = vip.getOutboundModifiers();
-        temp.poolContainsMode = vip.getPriorityMode();
         temp.external = vip.isExternal();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
@@ -60,7 +59,6 @@ public class GetEndpointData {
     public List<String> inboundModifiers;
     public String outboundProtocol;
     public List<String> outboundModifiers;
-    public String poolContainsMode;
     public boolean external;
     public int vipPort;
     public int servicePort;

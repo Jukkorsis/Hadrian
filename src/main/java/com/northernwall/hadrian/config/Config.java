@@ -52,7 +52,6 @@ public class Config {
     public List<Environment> environments = new LinkedList<>();
     public List<String> platforms = new LinkedList<>();
     public List<InboundProtocol> inboundProtocols = new LinkedList<>();
-    public List<String> priorityModes = new LinkedList<>();
     public List<String> domains = new LinkedList<>();
     public List<String> artifactTypes = new LinkedList<>();
     public List<String> scopes = new LinkedList<>();

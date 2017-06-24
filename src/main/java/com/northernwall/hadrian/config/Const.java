@@ -201,8 +201,6 @@ public class Const {
     public static final String CONFIG_PLATFORMS_DEFAULT = "Java7, Java8";
     public static final String CONFIG_PROTOCOL_MODES = "config.protocolModes";
     public static final String CONFIG_PROTOCOL_MODES_DEFAULT = "[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"HTTPS\",\"code\":\"HTTPS\",\"modifiers\":[{\"name\":\"Redirect HTTP to HTTPS\",\"code\":\"Redirect\"},{\"name\":\"Mutual Authentication\",\"code\":\"MutualAuth\"}],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"HTTP and HTTPS\",\"code\":\"HTTP+HTTPS\",\"modifiers\":[{\"name\":\"Mutual Authentication\",\"code\":\"MutualAuth\"}],\"outbound\":[{\"name\":\"HTTP\",\"code\":\"HTTP\",\"modifiers\":[]}]},{\"name\":\"TCP\",\"code\":\"TCP\",\"modifiers\":[],\"outbound\":[{\"name\":\"TCP\",\"code\":\"TCP\",\"modifiers\":[{\"name\":\"Availability Check via HTTP\",\"code\":\"HttpCheck\",\"httpCheckPortRequired\":true}]}],\"vipPortRequired\":true}]";
-    public static final String CONFIG_PRIORITY_MODES = "config.priorityModes";
-    public static final String CONFIG_PRIORITY_MODES_DEFAULT = "Regional DCs, All DCs, Local DC";
     public static final String CONFIG_DOMAINS = "config.domains";
     public static final String CONFIG_DOMAINS_DEFAULT = "northernwall.com";
     public static final String CONFIG_ARTIFACT_TYPES = "config.artifactTypes";

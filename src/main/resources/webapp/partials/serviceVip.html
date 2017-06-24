@@ -28,8 +28,7 @@
             <table class="table table-hover table-striped table-condensed">
               <tr>
                 <th width="40%">DNS</th>
-                <th width="40%">Protocol</th>
-                <th width="10%">Pool Contains</th>
+                <th width="50%">Protocol</th>
                 <th width="10%">External</th>
               </tr>
               <tr ng-repeat-start="ep in mn.vips">
@@ -62,7 +61,6 @@
                   <span ng-if="ep.migration == 4">Migration to the F5s is complete.</span>
                 </td>
                 <td>{{ep.inboundText}} <span class="glyphicon glyphicon-arrow-right"></span> {{ep.outboundText}}</td>
-                <td>{{ep.priorityMode}}</td>
                 <td>{{ep.external}}</td>
               </tr>
               <tr ng-if="ep.expanded" ng-repeat-end="">
@@ -129,7 +127,6 @@
         <span class="glyphicon glyphicon-off text-danger"></span> - Host is disabled<br/>
         <span class="glyphicon glyphicon-fire text-danger"></span> - Host is enabled but availability is not 200<br/>
         <b>Connections</b> - The current number of connections to the host from clients within the Data Center.
-
       </uib-tab>
     </uib-tabset>
   </div>

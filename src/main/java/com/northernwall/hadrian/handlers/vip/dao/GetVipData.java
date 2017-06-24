@@ -36,7 +36,6 @@ public class GetVipData {
         temp.environment = vip.getEnvironment();
         temp.inboundProtocol = vip.getInboundProtocol();
         temp.outboundProtocol = vip.getOutboundProtocol();
-        temp.priorityMode = vip.getPriorityMode();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
         temp.migration = vip.getMigration();
@@ -56,7 +55,6 @@ public class GetVipData {
     public String environment;
     public String inboundProtocol;
     public String outboundProtocol;
-    public String priorityMode;
     public int vipPort;
     public int servicePort;
     public int migration;
