@@ -41,7 +41,7 @@ public class VipSummaryReport extends Report {
         Collections.sort(teams);
 
         //Header row
-        writer.println("vip,domain,team,service,env,migration");
+        writer.println("vip,domain,team,service,env,inboundProtocol,outboundProtocol,servicePort,external,migration");
 
         //Data rows
         if (teams != null && !teams.isEmpty() && services != null && !services.isEmpty()) {
@@ -63,6 +63,14 @@ public class VipSummaryReport extends Report {
                                         + service.getServiceName()
                                         + ","
                                         + vip.getEnvironment()
+                                        + ","
+                                        + vip.getInboundProtocol()
+                                        + ","
+                                        + vip.getOutboundProtocol()
+                                        + ","
+                                        + vip.getServicePort()
+                                        + ","
+                                        + vip.isExternal()
                                         + ","
                                         + vip.getMigration());
                             }
