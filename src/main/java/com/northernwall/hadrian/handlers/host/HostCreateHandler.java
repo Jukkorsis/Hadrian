@@ -147,17 +147,17 @@ public class HostCreateHandler extends BasicHandler {
         workItemCreate.getHost().configVersion = data.configVersion;
         workItems.add(workItemCreate);
 
+        if (service.isDoManageVip()) {
+            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
+            workItems.add(workItemEnable);
+        }
+
         if (service.isDoDeploys()) {
             WorkItem workItemDeploy = new WorkItem(Type.host, Operation.deploy, user, team, service, module, host, null);
             workItemDeploy.setReason(data.reason);
             workItemDeploy.getHost().version = data.version;
             workItemDeploy.getHost().configVersion = data.configVersion;
             workItems.add(workItemDeploy);
-        }
-
-        if (service.isDoManageVip()) {
-            WorkItem workItemEnable = new WorkItem(Type.host, Operation.addVips, user, team, service, module, host, null);
-            workItems.add(workItemEnable);
         }
 
         WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
