@@ -17,8 +17,10 @@
 package com.northernwall.hadrian.domain;
 
 import com.northernwall.hadrian.config.Const;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -47,8 +49,8 @@ public class Vip implements Comparable<Vip>{
     private int servicePort;
     private int httpCheckPort;
     private List<String> blackListHosts;
-    private List<String> migratedDCs;
-    private List<String> unmigratedDCs;
+    private Set<String> migratedDCs;
+    private Set<String> unmigratedDCs;
     
     /**
      * 0 - not migrated
@@ -76,8 +78,8 @@ public class Vip implements Comparable<Vip>{
         this.servicePort = 8080;
         this.httpCheckPort = 0;
         this.blackListHosts = new LinkedList<>();
-        this.migratedDCs = new LinkedList<>();
-        this.unmigratedDCs = new LinkedList<>();
+        this.migratedDCs = new HashSet<>();
+        this.unmigratedDCs = new HashSet<>();
         this.migration = 0;
     }
 
@@ -245,16 +247,16 @@ public class Vip implements Comparable<Vip>{
         this.migration = migration;
     }
 
-    public List<String> getMigratedDCs() {
+    public Set<String> getMigratedDCs() {
         if (migratedDCs == null) {
-            migratedDCs = new LinkedList<>();
+            migratedDCs = new HashSet<>();
         }
         return migratedDCs;
     }
 
-    public List<String> getUnmigratedDCs() {
+    public Set<String> getUnmigratedDCs() {
         if (unmigratedDCs == null) {
-            unmigratedDCs = new LinkedList<>();
+            unmigratedDCs = new HashSet<>();
         }
         return unmigratedDCs;
     }
