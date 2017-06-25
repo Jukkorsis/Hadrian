@@ -233,8 +233,8 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
         $scope.formMigrateVip.dcOption = null;
         $scope.config = config;
         $scope.showSpecialInstructions = false;
-        $scope.showDcOptions = false;
-        $scope.dcOptions = [];
+        $scope.showUnmigratedDCs = false;
+        $scope.showMigratedDCs = false;
 
         if (vip.migration === 1 && newState === 2) {
             $scope.modalTitle = "Migrate VIP Step 1";
@@ -249,13 +249,17 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
             $scope.helpText2 = "Step 2 involves manual tasks. Once step 2 is complete requests will be processed by the F5s.";
             
             $scope.showSpecialInstructions = true;
-            $scope.showDcOptions = true;
+            $scope.showUnmigratedDCs = true;
+            $scope.showMigratedDCs = true;
+        }
+        if (vip.migration === 2 && newState === 2) {
+            $scope.modalTitle = "Rollback VIP Migration";
+            $scope.buttonTitle = "Rollback";
+            $scope.helpText1 = "Rolling back step 2 involves manual tasks.";
+            $scope.helpText2 = "Please also escalate to Ops.";
             
-            $scope.dcOptions.push("All DCs");
-            //for (let i = 0; i < config.dataCenters.length; i++) {
-            //    $scope.dcOptions.push(config.dataCenters[i]);
-            //}
-            $scope.formMigrateVip.dcOption = $scope.dcOptions[0];
+            $scope.showSpecialInstructions = true;
+            $scope.showMigratedDCs = true;
         }
         if (vip.migration === 3 && newState === 2) {
             $scope.modalTitle = "Rollback VIP Migration";
@@ -278,7 +282,7 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
                 vipId: $scope.vip.vipId,
                 newState: $scope.newState,
                 specialInstructions: $scope.formMigrateVip.specialInstructions,
-                dcOption: $scope.formMigrateVip.dcOption
+                migrateDCs: $scope.formMigrateVip.migrateDCs
             };
 
             var responsePromise = $http.post("/v1/vip/migrate", dataObject, {});

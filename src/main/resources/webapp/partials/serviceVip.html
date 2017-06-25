@@ -43,20 +43,21 @@
                       <!--
                       <li role="menuitem"><a ng-click="openUpdateVipModal(ep);">Update VIP</a></li>
                       -->
-                      <li role="menuitem"><a ng-click="openDeleteVipModal(ep);">Delete VIP</a></li>
+                      <li role="menuitem" ng-if="ep.migration != 3">><a ng-click="openDeleteVipModal(ep);">Delete VIP</a></li>
                       <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 1"><a ng-click="openMigrateVipModal(ep, 2);">VIP Migrate Step 1</a></li>
                       <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 2"><a ng-click="openMigrateVipModal(ep, 3);">VIP Migrate Step 2</a></li>
+                      <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 2 && ep.migratedDCs.length > 0"><a ng-click="openMigrateVipModal(ep, 2);">VIP Migrate Rollback</a></li>
                       <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="openMigrateVipModal(ep, 2);">VIP Migrate Rollback</a></li>
                       <li role="menuitem" ng-if="config.enableVipMigration && ep.migration == 3"><a ng-click="openMigrateVipModal(ep, 4);">VIP Migrate Step 3</a></li>
                     </ul>
                   </div>
-                  <a href="{{ep.protocol}}://{{ep.dns}}.{{ep.domain}}:{{ep.vipPort}}" target="_blank">{{ep.dns}}.{{ep.domain}}</a>
+                  {{ep.dns}}.{{ep.domain}}
                   <span ng-if="ep.statusCode == 'info'" class="label label-success">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'wip'" class="label label-warning">{{ep.status}}</span>
                   <span ng-if="ep.statusCode == 'error'" class="label label-danger">{{ep.status}}</span>
                   <br/>
                   <span ng-if="ep.migration == 1">Requests are being processed by the A10s.</span>
-                  <span ng-if="ep.migration == 2">F5 configured, requests still using A10.</span>
+                  <span ng-if="ep.migration == 2">F5 configured. Requests in <spann ng-repeat="dc in ep.unmigratedDCs">{{dc}} </spann>still using A10.</span>
                   <span ng-if="ep.migration == 3">Requests are now being processed by the F5s. Service team is monitoring requests.</span>
                   <span ng-if="ep.migration == 4">Migration to the F5s is complete.</span>
                 </td>

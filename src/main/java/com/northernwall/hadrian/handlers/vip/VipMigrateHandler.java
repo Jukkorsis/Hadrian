@@ -28,6 +28,7 @@ import com.northernwall.hadrian.domain.Team;
 import com.northernwall.hadrian.domain.Type;
 import com.northernwall.hadrian.domain.User;
 import com.northernwall.hadrian.domain.WorkItem;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.vip.dao.MigrateVipData;
 import com.northernwall.hadrian.workItem.WorkItemProcessor;
 import java.io.IOException;
@@ -73,15 +74,27 @@ public class VipMigrateHandler extends BasicHandler {
 
         WorkItem workItemMigrate = new WorkItem(Type.vip, Operation.migrate, user, team, service, module, null, vip);
         workItemMigrate.getVip().migration = data.newState;
+        if (data.newState == 3) {
+            if (data.migrateDCs != null
+                    && !data.migrateDCs.isEmpty()) {
+                for (String key : data.migrateDCs.keySet()) {
+                    if (data.migrateDCs.get(key)) {
+                        workItemMigrate.getVip().migrateDCs.add(key);
+                    }
+                }
+            } else {
+                throw new Http400BadRequestException("No DCs selected");
+            }
+        }
         workItemMigrate.setSpecialInstructions(data.specialInstructions);
         workItems.add(workItemMigrate);
-                
+
         WorkItem workItemStatus = new WorkItem(Type.vip, Operation.status, user, team, service, module, null, vip);
         workItemStatus.setReason("Migrated %% ago");
         workItems.add(workItemStatus);
-                
+
         workItemProcessor.processWorkItems(workItems);
-        
+
         response.setStatus(200);
         request.setHandled(true);
     }

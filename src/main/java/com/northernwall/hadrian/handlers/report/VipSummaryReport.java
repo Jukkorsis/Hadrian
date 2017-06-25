@@ -41,7 +41,7 @@ public class VipSummaryReport extends Report {
         Collections.sort(teams);
 
         //Header row
-        writer.println("vip,domain,team,service,env,inboundProtocol,outboundProtocol,servicePort,external,migration");
+        writer.println("vip,domain,team,service,env,inboundProtocol,outboundProtocol,servicePort,external,migration,migrationCount");
 
         //Data rows
         if (teams != null && !teams.isEmpty() && services != null && !services.isEmpty()) {
@@ -72,7 +72,9 @@ public class VipSummaryReport extends Report {
                                         + ","
                                         + vip.isExternal()
                                         + ","
-                                        + vip.getMigration());
+                                        + vip.getMigration()
+                                        + ","
+                                        + vip.getMigratedDCs().size());
                             }
                         }
                     }

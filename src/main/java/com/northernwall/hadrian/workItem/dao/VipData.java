@@ -17,6 +17,7 @@
 package com.northernwall.hadrian.workItem.dao;
 
 import com.northernwall.hadrian.domain.Vip;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -40,8 +41,7 @@ public class VipData {
         temp.outboundModifiers = vip.getOutboundModifiers();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
-        temp.httpCheckPort = vip.getHttpCheckPort();
-        temp.migration = vip.getMigration();
+        temp.migrateDCs = new LinkedList<>();
         
         return temp;
     }
@@ -59,5 +59,6 @@ public class VipData {
     public int servicePort;
     public int httpCheckPort;
     public int migration;
+    public List<String> migrateDCs;
 
 }

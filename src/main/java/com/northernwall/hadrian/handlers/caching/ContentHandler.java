@@ -40,12 +40,16 @@ public class ContentHandler extends AbstractHandler {
 
     private final String rootPath;
     private final String indexPath;
+    private final String webRootPath;
+    private final int webRootLen;
     private final HtmlCompressor compressor;
     private final LoadingCache<String, CachedContent> cache;
 
-    public ContentHandler(String rootPath) {
+    public ContentHandler(String rootPath, String webRootPath) {
         this.rootPath = rootPath;
         indexPath = rootPath + "/index.html";
+        this.webRootPath = webRootPath;
+        webRootLen = webRootPath.length()-1;
         compressor = new HtmlCompressor();
         cache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
@@ -73,10 +77,10 @@ public class ContentHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String path;
-        if (target.equals("/ui/")) {
+        if (target.equals(webRootPath)) {
             path = indexPath;
         } else {
-            path = rootPath + target.substring(3);
+            path = rootPath + target.substring(webRootLen);
         }
         if (getContent(response, path)) {
             response.setStatus(200);

@@ -38,6 +38,8 @@ public class VipMigrateAction extends Action {
             return migrateStep1(workItem, vip);
         } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
             return migrateStep2(workItem, vip);
+        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 2) {
+            return rollbackStep2(workItem, vip);
         } else if (vip.getMigration() == 3 && workItem.getVip().migration == 2) {
             return rollbackStep2(workItem, vip);
         } else if (vip.getMigration() == 3 && workItem.getVip().migration == 4) {
@@ -51,20 +53,35 @@ public class VipMigrateAction extends Action {
     public Result migrateStep1(WorkItem workItem, Vip vip) {
         LOGGER.info("Migrating Vip {} 1->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
         vip.setMigration(2);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().addAll(configHelper.getConfig().dataCenters);
         dataAccess.saveVip(vip);
         return Result.success;
     }
 
     public Result migrateStep2(WorkItem workItem, Vip vip) {
         LOGGER.info("Migrating Vip {} 2->3 for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        vip.setMigration(3);
+        for (String dc : workItem.getVip().migrateDCs) {
+            if (vip.getMigratedDCs().contains(dc)) {
+                LOGGER.warn("DC {} selected for migration, but already migrated", dc);
+            } else {
+                vip.getMigratedDCs().add(dc);
+                vip.getUnmigratedDCs().remove(dc);
+            }
+        }
+        if (vip.getUnmigratedDCs().isEmpty()) {
+            vip.setMigration(3);
+        }
         dataAccess.saveVip(vip);
         return Result.success;
     }
 
     public Result rollbackStep2(WorkItem workItem, Vip vip) {
-        LOGGER.info("Rolling back Vip {} 3->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        LOGGER.info("Rolling back Vip {} {}->2 for {}", workItem.getVip().dns, vip.getMigration(), workItem.getService().serviceName);
         vip.setMigration(2);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().clear();
+        vip.getUnmigratedDCs().addAll(configHelper.getConfig().dataCenters);
         dataAccess.saveVip(vip);
         return Result.success;
     }
@@ -72,6 +89,8 @@ public class VipMigrateAction extends Action {
     public Result migrateStep3(WorkItem workItem, Vip vip) {
         LOGGER.info("Migrating Vip {} 3->4 for {}", workItem.getVip().dns, workItem.getService().serviceName);
         vip.setMigration(4);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().clear();
         dataAccess.saveVip(vip);
         return Result.success;
     }
@@ -87,6 +106,8 @@ public class VipMigrateAction extends Action {
             return migrateStep1Callback(workItem, vip, callbackData);
         } else if (vip.getMigration() == 2 && workItem.getVip().migration == 3) {
             return migrateStep2Callback(workItem, vip, callbackData);
+        } else if (vip.getMigration() == 2 && workItem.getVip().migration == 2) {
+            return rollbackStep2Callback(workItem, vip, callbackData);
         } else if (vip.getMigration() == 3 && workItem.getVip().migration == 2) {
             return rollbackStep2Callback(workItem, vip, callbackData);
         } else if (vip.getMigration() == 3 && workItem.getVip().migration == 4) {
@@ -106,14 +127,27 @@ public class VipMigrateAction extends Action {
 
     public Result migrateStep2Callback(WorkItem workItem, Vip vip, CallbackData callbackData) {
         LOGGER.info("Migrating Vip {} 2->3 for {}", workItem.getVip().dns, workItem.getService().serviceName);
-        vip.setMigration(3);
+        for (String dc : workItem.getVip().migrateDCs) {
+            if (vip.getMigratedDCs().contains(dc)) {
+                LOGGER.warn("DC {} selected for migration, but already migrated", dc);
+            } else {
+                vip.getMigratedDCs().add(dc);
+                vip.getUnmigratedDCs().remove(dc);
+            }
+        }
+        if (vip.getUnmigratedDCs().isEmpty()) {
+            vip.setMigration(3);
+        }
         dataAccess.saveVip(vip);
         return Result.success;
     }
 
     public Result rollbackStep2Callback(WorkItem workItem, Vip vip, CallbackData callbackData) {
-        LOGGER.info("Rolling back Vip {} 3->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
+        LOGGER.info("Rolling back Vip {} {}->2 for {}", workItem.getVip().dns, vip.getMigration(), workItem.getService().serviceName);
         vip.setMigration(2);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().clear();
+        vip.getUnmigratedDCs().addAll(configHelper.getConfig().dataCenters);
         dataAccess.saveVip(vip);
         return Result.success;
     }
@@ -121,6 +155,8 @@ public class VipMigrateAction extends Action {
     public Result migrateStep3Callback(WorkItem workItem, Vip vip, CallbackData callbackData) {
         LOGGER.info("Migrating Vip {} 3->4 for {}", workItem.getVip().dns, workItem.getService().serviceName);
         vip.setMigration(4);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().clear();
         dataAccess.saveVip(vip);
         return Result.success;
     }
@@ -173,7 +209,6 @@ public class VipMigrateAction extends Action {
                 false,
                 "Migration step " + vip.getMigration() + " failed %% ago",
                 Const.STATUS_ERROR);
-
 
         messagingCoodinator.sendMessage("VIP '"
                 + workItem.getVip().dns

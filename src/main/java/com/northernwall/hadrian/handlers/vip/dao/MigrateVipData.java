@@ -16,6 +16,9 @@
 
 package com.northernwall.hadrian.handlers.vip.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Richard Thurston
@@ -26,5 +29,6 @@ public class MigrateVipData {
     public int newState;
     public String specialInstructions;
     public String dcOption;
+    public Map<String,Boolean> migrateDCs = new HashMap<>();
 
 }

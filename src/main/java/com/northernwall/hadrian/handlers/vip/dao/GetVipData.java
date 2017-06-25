@@ -17,6 +17,7 @@
 package com.northernwall.hadrian.handlers.vip.dao;
 
 import com.northernwall.hadrian.domain.Vip;
+import java.util.List;
 
 /**
  *
@@ -39,6 +40,8 @@ public class GetVipData {
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
         temp.migration = vip.getMigration();
+        temp.migratedDCs = vip.getMigratedDCs();
+        temp.unmigratedDCs = vip.getUnmigratedDCs();
         temp.inboundText = "";
         temp.outboundText = "";
         return temp;
@@ -58,6 +61,8 @@ public class GetVipData {
     public int vipPort;
     public int servicePort;
     public int migration;
+    public List<String> migratedDCs;
+    public List<String> unmigratedDCs;
     public String inboundText;
     public String outboundText;
 

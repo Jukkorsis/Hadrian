@@ -206,7 +206,7 @@ public class Hadrian {
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/availability", new AvailabilityHandler(dataAccess), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/version", new VersionHandler(), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/health", new HealthHandler(accessHandler, dataAccess, moduleArtifactHelper, moduleConfigHelper, parameters, messagingCoodinator, scheduler), true);
-        ContentHandler contentHandler = new ContentHandler("/webcontent");
+        ContentHandler contentHandler = new ContentHandler("/webcontent", "/ui/");
         contentHandler.preload("/js/viz.js");
         contentHandler.preload("/js/angular.min.js");
         contentHandler.preload("/js/angular-animate.min.js");
@@ -216,13 +216,14 @@ public class Hadrian {
         contentHandler.preload("/js/showdown.min.js");
         contentHandler.preload("/css/bootstrap.min.css");
         routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", contentHandler, false);
+        routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/swagger/", new ContentHandler("/swagger", "/swagger/"), false);
         routingHandler.add(MethodRule.POST, TargetRule.STARTS_WITH, "/webhook/callback", new WorkItemCallbackHandler(gson, workItemProcessor), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/favicon.ico", new FaviconHandler(), false);
         //Accees Handler
         routingHandler.add(MethodRule.ANY, TargetRule.ANY, "/", accessHandler, false);
         //These urls require a login
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/config", new ConfigGetHandler(configHelper), true);
-        routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webapp"), false);
+        routingHandler.add(MethodRule.GET, TargetRule.STARTS_WITH, "/ui/", new ContentHandler("/webapp", "/ui/"), false);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/tree", new TreeHandler(dataAccess, accessHelper, parameters), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/catalog", new CatalogHandler(dataAccess), true);
         routingHandler.add(MethodRule.GET, TargetRule.EQUALS, "/v1/report", new ReportHandler(accessHelper, dataAccess, configHelper), true);

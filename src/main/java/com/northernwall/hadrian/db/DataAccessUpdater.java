@@ -39,14 +39,14 @@ public class DataAccessUpdater {
         }
 
         if (version.equals("1.12")) {
-            fixSearch(dataAccess);
+            fixSearch(dataAccess, config);
             LOGGER.info("Current DB version is 1.12, no upgrade required.");
         } else {
             throw new RuntimeException("DB is an old version, please upgrade. " + version);
         }
     }
 
-    private static void fixSearch(DataAccess dataAccess) {
+    private static void fixSearch(DataAccess dataAccess, Config config) {
         int serviceCount = 0;
         int hostCount = 0;
         int vipCount = 0;
@@ -123,6 +123,12 @@ public class DataAccessUpdater {
                                 vip.getModuleId(),
                                 null,
                                 vip.getVipId());
+                        if (vip.getMigration() == 2) {
+                            if (vip.getMigratedDCs().isEmpty() && vip.getUnmigratedDCs().isEmpty()) {
+                                vip.getUnmigratedDCs().addAll(config.dataCenters);
+                                dataAccess.saveVip(vip);
+                            }
+                        }
                         vipCount++;
                     }
                 }
