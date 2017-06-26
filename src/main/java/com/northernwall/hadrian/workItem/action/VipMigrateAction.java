@@ -121,6 +121,8 @@ public class VipMigrateAction extends Action {
     public Result migrateStep1Callback(WorkItem workItem, Vip vip, CallbackData callbackData) {
         LOGGER.info("Migrating Vip {} 1->2 for {}", workItem.getVip().dns, workItem.getService().serviceName);
         vip.setMigration(2);
+        vip.getMigratedDCs().clear();
+        vip.getUnmigratedDCs().addAll(configHelper.getConfig().dataCenters);
         dataAccess.saveVip(vip);
         return Result.success;
     }

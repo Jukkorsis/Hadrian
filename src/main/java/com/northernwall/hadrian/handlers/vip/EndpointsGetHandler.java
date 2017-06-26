@@ -24,6 +24,7 @@ import com.northernwall.hadrian.db.SearchSpace;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.handlers.routing.Http400BadRequestException;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.handlers.vip.dao.GetEndpointData;
 import java.io.IOException;
@@ -47,6 +48,11 @@ public class EndpointsGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String hostname = request.getParameter("hostname");
+        
+        if (hostname == null || hostname.isEmpty()) {
+            throw new Http400BadRequestException("hostname is missing");
+        }
+
         List<SearchResult> searchResults = getDataAccess().doSearchList(
                 SearchSpace.hostName,
                 hostname);
