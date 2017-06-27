@@ -41,6 +41,8 @@ public class VipData {
         temp.outboundModifiers = vip.getOutboundModifiers();
         temp.vipPort = vip.getVipPort();
         temp.servicePort = vip.getServicePort();
+        temp.httpCheckPort = vip.getHttpCheckPort();
+        temp.migration = vip.getMigration();
         temp.migrateDCs = new LinkedList<>();
         
         return temp;
