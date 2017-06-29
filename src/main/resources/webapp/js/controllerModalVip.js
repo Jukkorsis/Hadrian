@@ -245,8 +245,8 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
         if (vip.migration === 2 && newState === 3) {
             $scope.modalTitle = "Migrate VIP Step 2";
             $scope.buttonTitle = "Migrate VIP";
-            $scope.helpText1 = "Examples: External IP address needs to be preserved. Contact team to coodinate the execution of step 2. etc.";
-            $scope.helpText2 = "Step 2 involves manual tasks. Once step 2 is complete requests will be processed by the F5s.";
+            $scope.helpText1 = "Step 2 involves manual tasks, see the generated ticket for progress.";
+            $scope.helpText2 = "Once step 2 is complete, requests will be processed by the F5s in the requested data centers.";
             
             $scope.showSpecialInstructions = true;
             $scope.showUnmigratedDCs = true;
