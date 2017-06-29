@@ -80,7 +80,9 @@ public class VipHostHandler extends BasicHandler {
         Host host = null;
         if (hosts != null && !hosts.isEmpty()) {
             for (Host tempHost : hosts) {
-                if (tempHost.getHostName().equals(data.hostName)) {
+                if (tempHost.getHostName().equals(data.hostName)
+                        && vip.getModuleId().equals(tempHost.getModuleId())
+                        && vip.getEnvironment().equals(tempHost.getEnvironment())) {
                     host = tempHost;
                 }
             }
@@ -89,13 +91,6 @@ public class VipHostHandler extends BasicHandler {
             throw new Http400BadRequestException("Host could not be found");
         }
         
-        if (!vip.getModuleId().equals(host.getModuleId())) {
-            throw new Http400BadRequestException("Host and VIP don't belong to the same module");
-        }
-        if (!vip.getEnvironment().equals(host.getEnvironment())) {
-            throw new Http400BadRequestException("Host and VIP don't belong to the same environment");
-        }
-
         switch (data.action) {
             case "add":
                 addHostToVip(vip, host, service, user, team, module);
