@@ -76,14 +76,6 @@
                         <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
                       </tr>
                       <tr>
-                        <td>Name</td>
-                        <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsName(ep.details, dc)}}</td>
-                      </tr>
-                      <tr>
-                        <td>IP Address</td>
-                        <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsAddress(ep.details, dc)}}</td>
-                      </tr>
-                      <tr>
                         <td>Connections</td>
                         <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsConections(ep.details, dc)}}</td>
                       </tr>
