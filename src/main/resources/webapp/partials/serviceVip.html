@@ -75,10 +75,6 @@
                         <th></th>
                         <th ng-repeat="dc in config.dataCenters" class="text-center">{{dc}}</th>
                       </tr>
-                      <tr>
-                        <td>Connections</td>
-                        <td ng-repeat="dc in config.dataCenters" class="text-center">{{getVipDetailsConections(ep.details, dc)}}</td>
-                      </tr>
                       <tr ng-repeat="h in ep.details.rows| filter:hostFilter">
                         <td>
                           <div class="btn-group" uib-dropdown ng-if="!ep.busy && service.canModify" is-open="status.isopen">
@@ -105,6 +101,10 @@
                           <span ng-if="getVipDetailsError(h.details, dc)" class="glyphicon glyphicon-fire text-danger"></span>
                           {{getVipDetailsConnections(h.details, dc)}}
                         </td>
+                      </tr>
+                      <tr>
+                        <td><b>Total Connections</b></td>
+                        <td ng-repeat="dc in config.dataCenters" class="text-center"><b>{{getVipDetailsConections(ep.details, dc)}}</b></td>
                       </tr>
                     </table>
                   </div>
