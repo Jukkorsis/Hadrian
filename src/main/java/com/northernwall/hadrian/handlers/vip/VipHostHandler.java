@@ -80,17 +80,22 @@ public class VipHostHandler extends BasicHandler {
         Host host = null;
         if (hosts != null && !hosts.isEmpty()) {
             for (Host tempHost : hosts) {
-                if (tempHost.getHostName().equals(data.hostName)
-                        && vip.getModuleId().equals(tempHost.getModuleId())
-                        && vip.getEnvironment().equals(tempHost.getEnvironment())) {
-                    host = tempHost;
+                if (tempHost.getHostName().equals(data.hostName)) {
+                    if (data.action.equals("remove")) {
+                        host = tempHost;
+                    } else {
+                        if (vip.getModuleId().equals(tempHost.getModuleId())
+                                && vip.getEnvironment().equals(tempHost.getEnvironment())) {
+                            host = tempHost;
+                        }
+                    }
                 }
             }
         }
         if (host == null) {
             throw new Http400BadRequestException("Host could not be found");
         }
-        
+
         switch (data.action) {
             case "add":
                 addHostToVip(vip, host, service, user, team, module);
@@ -123,14 +128,17 @@ public class VipHostHandler extends BasicHandler {
         WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
         workItemStatus.setReason("Host added to VIP %% ago");
         workItems.add(workItemStatus);
-        
+
         workItemProcessor.processWorkItems(workItems);
     }
 
     private void removeHostFromVip(Vip vip, Host host, Service service, User user, Team team, Module module) throws IOException {
-        if (!vip.getBlackListHosts().contains(host.getHostName())) {
-            vip.getBlackListHosts().add(host.getHostName());
-            getDataAccess().saveVip(vip);
+        if (vip.getModuleId().equals(host.getModuleId())
+                && vip.getEnvironment().equals(host.getEnvironment())) {
+            if (!vip.getBlackListHosts().contains(host.getHostName())) {
+                vip.getBlackListHosts().add(host.getHostName());
+                getDataAccess().saveVip(vip);
+            }
         }
 
         List<WorkItem> workItems = new LinkedList<>();
@@ -140,7 +148,7 @@ public class VipHostHandler extends BasicHandler {
         WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
         workItemStatus.setReason("Host removed from VIP %% ago");
         workItems.add(workItemStatus);
-        
+
         workItemProcessor.processWorkItems(workItems);
     }
 
@@ -152,7 +160,7 @@ public class VipHostHandler extends BasicHandler {
         WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
         workItemStatus.setReason("Host enabled in VIP %% ago");
         workItems.add(workItemStatus);
-        
+
         workItemProcessor.processWorkItems(workItems);
     }
 
@@ -164,7 +172,7 @@ public class VipHostHandler extends BasicHandler {
         WorkItem workItemStatus = new WorkItem(Type.host, Operation.status, user, team, service, module, host, null);
         workItemStatus.setReason("Host disabled in VIP %% ago");
         workItems.add(workItemStatus);
-        
+
         workItemProcessor.processWorkItems(workItems);
     }
 
