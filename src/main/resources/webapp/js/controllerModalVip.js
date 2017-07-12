@@ -239,7 +239,11 @@ hadrianControllers.controller('ModalMigrateVipCtrl', ['$scope', '$http', '$uibMo
         if (vip.migration === 1 && newState === 2) {
             $scope.modalTitle = "Migrate VIP Step 1";
             $scope.buttonTitle = "Migrate VIP";
-            $scope.helpText1 = "Once step 1 is complete the F5s will be setup, but requests will still be processed by the A10s.";
+            if (vip.external) {
+                $scope.helpText1 = "Once step 1 and a follow up manual task are complete the F5s will be setup. Requests will still be processed by the A10s.";
+            } else {
+                $scope.helpText1 = "Once step 1 is complete the F5s will be setup. Requests will still be processed by the A10s.";
+            }
             $scope.helpText2 = "Use " + vip.dns + "-f5." + vip.domain + " to test.";
         }
         if (vip.migration === 2 && newState === 3) {

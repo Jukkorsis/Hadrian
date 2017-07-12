@@ -91,6 +91,7 @@
           <option value="true">True</option>
         </select>
         <p class="help-block">Does this service need to be accessible from the Internet.</p>
+        <p ng-if="formSaveVip.external === 'true'" class="help-block">A manual step is required to complete the configuration of External VIPs.</p>
       </div>
     </div>
   </form>
