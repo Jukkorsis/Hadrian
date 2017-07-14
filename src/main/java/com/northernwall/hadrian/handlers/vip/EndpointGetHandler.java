@@ -20,12 +20,14 @@ import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.db.SearchSpace;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
 import com.northernwall.hadrian.handlers.routing.Http404NotFoundException;
 import com.northernwall.hadrian.handlers.vip.dao.GetEndpointData;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,18 +46,19 @@ public class EndpointGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String fqdn = target.substring(13);
-        SearchResult result = getDataAccess().doSearch(
+        SearchResult searchResult = getDataAccess().doSearch(
                 SearchSpace.vipFqdn, 
                 fqdn);
         
-        if (result == null) {
+        if (searchResult == null) {
             throw new Http404NotFoundException("Could not find endpoint");
         }
         
-        Service service = getDataAccess().getService(result.serviceId);
-        Module module = getDataAccess().getModule(result.serviceId, result.moduleId);
-        Vip vip = getDataAccess().getVip(result.serviceId, result.vipId);
-        GetEndpointData endpoint = GetEndpointData.create(service, module, vip);
+        Service service = getDataAccess().getService(searchResult.serviceId);
+        Module module = getDataAccess().getModule(searchResult.serviceId, searchResult.moduleId);
+        Vip vip = getDataAccess().getVip(searchResult.serviceId, searchResult.vipId);
+        List<Host> hosts = getDataAccess().getHosts(searchResult.serviceId);
+        GetEndpointData endpoint = GetEndpointData.create(service, module, vip, hosts);
         
         toJson(response, endpoint);
         response.setStatus(200);

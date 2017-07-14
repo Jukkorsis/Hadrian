@@ -16,11 +16,11 @@
 package com.northernwall.hadrian.handlers.vip;
 
 import com.google.gson.Gson;
-import com.northernwall.hadrian.config.Const;
 import com.northernwall.hadrian.handlers.BasicHandler;
 import com.northernwall.hadrian.db.DataAccess;
 import com.northernwall.hadrian.db.SearchResult;
 import com.northernwall.hadrian.db.SearchSpace;
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
@@ -48,7 +48,7 @@ public class EndpointsGetHandler extends BasicHandler {
     @Override
     public void handle(String target, Request request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException, ServletException {
         String hostname = request.getParameter("hostname");
-        
+
         if (hostname == null || hostname.isEmpty()) {
             throw new Http400BadRequestException("hostname is missing");
         }
@@ -66,11 +66,14 @@ public class EndpointsGetHandler extends BasicHandler {
             Service service = getDataAccess().getService(searchResult.serviceId);
             Module module = getDataAccess().getModule(searchResult.serviceId, searchResult.moduleId);
 
+            List<Host> hosts = getDataAccess().getHosts(searchResult.serviceId);
             List<Vip> vips = getDataAccess().getVips(searchResult.serviceId);
-            for (Vip vip : vips) {
-                if (vip.getModuleId().equals(module.getModuleId())) {
-                    GetEndpointData endpoint = GetEndpointData.create(service, module, vip);
-                    endpoints.add(endpoint);
+            if (vips != null && !vips.isEmpty()) {
+                for (Vip vip : vips) {
+                    if (vip.getModuleId().equals(module.getModuleId())) {
+                        GetEndpointData endpoint = GetEndpointData.create(service, module, vip, hosts);
+                        endpoints.add(endpoint);
+                    }
                 }
             }
         }

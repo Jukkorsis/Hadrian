@@ -15,9 +15,12 @@
  */
 package com.northernwall.hadrian.handlers.vip.dao;
 
+import com.northernwall.hadrian.domain.Host;
 import com.northernwall.hadrian.domain.Module;
 import com.northernwall.hadrian.domain.Service;
 import com.northernwall.hadrian.domain.Vip;
+import com.northernwall.hadrian.handlers.host.dao.GetHostReducedData;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,9 +29,9 @@ import java.util.List;
  */
 public class GetEndpointData {
 
-    public static GetEndpointData create(Service service, Module module, Vip vip) {
+    public static GetEndpointData create(Service service, Module module, Vip vip, List<Host> hosts) {
         GetEndpointData temp = new GetEndpointData();
-        
+
         temp.serviceName = service.getServiceName();
 
         temp.moduleName = module.getModuleName();
@@ -47,6 +50,17 @@ public class GetEndpointData {
         temp.servicePort = vip.getServicePort();
         temp.httpCheckPort = vip.getHttpCheckPort();
         temp.migration = vip.getMigration();
+
+        temp.hosts = new LinkedList<>();
+        if (hosts != null && !hosts.isEmpty()) {
+            for (Host host : hosts) {
+                if (!vip.getBlackListHosts().contains(host.getHostName())
+                        && vip.getEnvironment().equals(host.getEnvironment())
+                        && vip.getModuleId().equals(host.getModuleId())) {
+                    temp.hosts.add(GetHostReducedData.create(host));
+                }
+            }
+        }
         return temp;
     }
 
@@ -65,4 +79,5 @@ public class GetEndpointData {
     public int httpCheckPort;
     public int migration;
     public String monitoringPath;
+    public List<GetHostReducedData> hosts;
 }
