@@ -15,14 +15,12 @@
  */
 package com.northernwall.hadrian.db.cassandra;
 
-import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.google.gson.Gson;
 import com.northernwall.hadrian.config.Const;
@@ -109,7 +107,10 @@ public class CassandraDataAccessFactory implements DataAccessFactory, Runnable {
             //Data tables
             session.execute("CREATE TABLE IF NOT EXISTS service (id text, data text, PRIMARY KEY (id));");
             session.execute("CREATE TABLE IF NOT EXISTS team (id text, data text, PRIMARY KEY (id));");
-            session.execute("CREATE TABLE IF NOT EXISTS user (id text, data text, PRIMARY KEY (id));");
+            try {
+                session.execute("DROP TABLE user;");
+            } catch (InvalidQueryException e) {
+            }
             session.execute("CREATE TABLE IF NOT EXISTS workItem (id text, data text, PRIMARY KEY (id));");
             session.execute("CREATE TABLE IF NOT EXISTS workItemStatus (id text, status int, PRIMARY KEY (id));");
             //Data tables below Service
