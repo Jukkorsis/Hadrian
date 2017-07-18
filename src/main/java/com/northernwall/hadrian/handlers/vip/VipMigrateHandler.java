@@ -64,6 +64,11 @@ public class VipMigrateHandler extends BasicHandler {
         Vip vip = getVip(data.vipId, service);
         Module module = getModule(vip.getModuleId(), null, service);
 
+        if (data.newState == 3
+                && (data.migrateDCs == null
+                || data.migrateDCs.isEmpty())) {
+            throw new Http400BadRequestException("No DCs selected");
+        }
         getDataAccess().updateStatus(
                 vip.getVipId(),
                 true,
@@ -75,15 +80,10 @@ public class VipMigrateHandler extends BasicHandler {
         WorkItem workItemMigrate = new WorkItem(Type.vip, Operation.migrate, user, team, service, module, null, vip);
         workItemMigrate.getVip().migration = data.newState;
         if (data.newState == 3) {
-            if (data.migrateDCs != null
-                    && !data.migrateDCs.isEmpty()) {
-                for (String key : data.migrateDCs.keySet()) {
-                    if (data.migrateDCs.get(key)) {
-                        workItemMigrate.getVip().migrateDCs.add(key);
-                    }
+            for (String key : data.migrateDCs.keySet()) {
+                if (data.migrateDCs.get(key)) {
+                    workItemMigrate.getVip().migrateDCs.add(key);
                 }
-            } else {
-                throw new Http400BadRequestException("No DCs selected");
             }
         }
         workItemMigrate.setSpecialInstructions(data.specialInstructions);
